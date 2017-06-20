@@ -1,12 +1,14 @@
 test_that("Plot 1 is not error-free", {
-  library(raster)
-  library(sp)
   library(igraph)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(sp)
+  library(raster)
+  library(reproducible)
   
   on.exit({
     detach("package:igraph")
     detach("package:raster")
+    detach("package:reproducible")
+    detach("package:sp")
   }, add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
