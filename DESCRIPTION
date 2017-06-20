@@ -1,6 +1,6 @@
 Package: quickPlot
 Type: Package
-Title: A system of plotting that uses 'grid', optimized for speed and modularity.
+Title: A system of plotting that uses 'grid', optimized for speed and modularity
 Description: A high-level plotting system, built using 'grid' graphics, that is
     optimized for speed and modularity. This has great utility for quick
     visualizations when testing code, with the key benefit that visualizations
