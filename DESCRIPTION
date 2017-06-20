@@ -1,0 +1,50 @@
+Package: quickPlot
+Type: Package
+Title: A system of plotting that uses grid optimized for speed and modularity
+Description: Built on top of 'grid', this package aims at
+    making a high-level plotting system that is optimized for speed and 
+    modularity. This has great utility for quick visualizations when testing code,
+    with key benefits visualizations are updated independently of one another.
+URL: https://github.com/PredictiveEcology/quickPlot
+Date: 2017-06-16
+Version: 0.0.1.9000
+Authors@R: c(
+    person(c("Eliot", "J", "B"), "McIntire", email = "eliot.mcintire@canada.ca",
+    role = c("aut", "cre")),
+    person(c("Alex", "M"), "Chubaty", email = "alexander.chubaty@canada.ca",
+    role = c("aut")),
+    person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
+    role = "cph")
+    )
+Depends:
+    R (>= 3.3.2)
+Imports:
+    data.table (>= 1.10.4),
+    ggplot2,
+    grDevices,
+    grid,
+    gridBase,
+    magrittr,
+    methods,
+    raster,
+    reproducible,
+    RColorBrewer,
+    sp,
+    stats
+Suggests:
+    fastshp
+Remotes: s-u/fastshp,
+    PredictiveEcology/reproducible,
+License: GPL-3
+BugReports: https://github.com/PredictiveEcology/quickPlot/issues
+ByteCompile: yes
+RoxygenNote: 6.0.1
+Collate: 
+    'environment.R'
+    'plotting-classes.R'
+    'plotting-colours.R'
+    'plotting-helpers.R'
+    'plotting-other.R'
+    'plotting.R'
+    'quickPlot-package.R'
+    'zzz.R'
