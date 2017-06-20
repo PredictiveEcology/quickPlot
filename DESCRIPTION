@@ -24,7 +24,7 @@ Imports:
     grDevices,
     grid,
     gridBase,
-    magrittr,
+    igraph,
     methods,
     raster,
     reproducible,
@@ -32,7 +32,8 @@ Imports:
     sp,
     stats
 Suggests:
-    fastshp
+    fastshp,
+    testthat (>= 1.0.2)
 Remotes: s-u/fastshp,
     PredictiveEcology/reproducible,
 License: GPL-3
@@ -46,5 +47,6 @@ Collate:
     'plotting-helpers.R'
     'plotting-other.R'
     'plotting.R'
+    'quickPlot-classes.R'
     'quickPlot-package.R'
     'zzz.R'
