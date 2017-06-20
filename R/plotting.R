@@ -415,7 +415,7 @@ setMethod(
       isList <- FALSE
     }
 
-    # Determine where the objects are located; they could be .GlobalEnv, simList, or any other place.
+    # Determine where the objects are located
     #  We need to know exactly where they are, so that they can be replotted later, if needed
     if (any(isDoCall)) {
 

@@ -150,7 +150,7 @@ setMethod("clearPlot",
 #'
 #' @export
 #' @include plotting-classes.R
-#' @importFrom raster is.factor factorValues
+#' @importFrom raster is.factor factorValues cellFromXY
 #' @docType methods
 #' @author Eliot McIntire
 #' @rdname quickPlotMouseClicks

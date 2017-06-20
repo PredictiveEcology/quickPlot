@@ -198,7 +198,7 @@ setReplaceMethod(
 })
 
 #' @rdname setColors
-#' @importFrom raster is.factor
+#' @importFrom raster is.factor maxValue
 setReplaceMethod(
   "setColors",
   signature("RasterLayer", "missing", "character"),

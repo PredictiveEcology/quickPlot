@@ -1,5 +1,5 @@
 ---
-title: "03 Plotting with `SpaDES`"
+title: "03 Plotting with `quickPlot`"
 author:
   - "Eliot J. B. McIntire"
 date: '`r strftime(Sys.Date(), "%B %d %Y")`'
@@ -11,36 +11,35 @@ output:
     toc: yes
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{03 Plotting with SpaDES}
-  %\VignetteDepends{ggplot2, igraph, RColorBrewer, SpaDES}
+  %\VignetteIndexEntry{03 Plotting with quickPlot}
+  %\VignetteDepends{ggplot2, igraph, RColorBrewer, quickPlot}
   %\VignetteKeyword{visualization, plotting, mapping}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r initial-clearPlot, eval=TRUE, echo=FALSE, message=FALSE}
-SpaDES::clearPlot()
+quickPlot::clearPlot()
 ```
 
-# Plotting in `SpaDES`
+# Plotting in `quickPlot`
 
 Most visualization approaches in R  (*e.g.*, `base`, `RgoogleVis`, `ggplot2`, `rgl`) are not optimized for speed or modularity.
 Rather, they are designed to build publication-quality or interactive figures that do not need to be redrawn hundreds or more times in rapid succession.
-Plotting requirements for simulation modeling are different.
+Plotting requirements for many other uses, including simulation modeling, are different.
 Changes to data, maps, objects can happen rapidly and repeatedly.
 Visualizing this can be critical, especially during the model building phase.
 Furthermore, no plotting method has been designed for modularity -- the ability to plot something without being aware of what is already there.
 
-`SpaDES` comes with a plotting function to fulfill these two gaps.
+`quickPlot` comes with a plotting function to fulfill these two gaps.
 The main plotting function, `Plot` (*i.e.*, with a capital `P`), is built using the grid package.
-We have specifically built a plotting system that allows for relatively fast plotting of rasters (in the `raster` package), `SpatialPoints`, `SpatialPolygons`, `SpatialLines` (all within the `sp` package), `ggplot` objects, histogram, and igraph (package `igraph`) objects as well as `simList` objects (it will plot all objects of the preceding classes contained within the `simList` environment) with the ability to make multi-frame plots without the module (or user) knowing which plots are already plotted.
-In other words, the main plotting function can handle SpaDES modules, each of which can add plots, without each knowing what the current state of the active plotting device is.
+We have specifically built a plotting system that allows for relatively fast plotting of rasters (in the `raster` package), `SpatialPoints`, `SpatialPolygons`, `SpatialLines` (all within the `sp` package), `ggplot` objects, histogram, and igraph (package `igraph`) objects with the ability to make multi-frame plots without knowing which plots are already plotted.
+In other words, the main plotting function can handle modular plotting, where each call to `Plot` adds plots, without each knowing what the current state of the active plotting device is.
 This means that plotting can be treated as modular.
-Importantly, conventional R plotting (*e.g.*, `plot`, `hist`, etc.) can still be used at any time, so you can use the features provided in this package or you can use other plotting functions without having to relearn a new set of plotting commands.
-The `Plot` function is therefore intended to be used as a way to interact visually during model development.
+The `Plot` function is therefore intended to be used as a way to interact visually especially during development of rapid, repeated visualizations, such as simulation modeling.
 If fine tuning and customization are desired, other plotting tools may be more suited (*e.g.*, `ggplot2`, or a dedicated GIS program).
 
 To demonstrate plotting, we first load some maps.
-These maps are randomly generated maps that come with the `SpaDES` package.
+These maps are randomly generated maps that come with the `quickPlot` package.
 In the code snippet below, we create the list of files to load, which is every file in the `maps/` subdirectory of the package.
 Then we load that list of files.
 
@@ -49,14 +48,16 @@ Then we load that list of files.
 library(data.table)
 library(igraph)
 library(raster)
-library(SpaDES)
-filelist <- data.frame(file = (system.file("maps", package = "SpaDES") %>%
-  dir(., full.names = TRUE, pattern = "tif"))[-c(2, 5) ])  # omit forestAge and percentPine for simplicity
+library(quickPlot)
+filelist <- data.frame(file = (system.file("maps", package = "quickPlot") %>%
+  dir(., full.names = TRUE, pattern = "tif"))[-c(2, 5) ], stringsAsFactors = FALSE)  
+       # omit forestAge and percentPine for simplicity
 print(filelist)
-# Load files to memory (using rasterToMemory), assign to a simList we call mySim 
-mySim <- loadFiles(filelist = filelist)
+# Load files to memory (using rasterToMemory), assign to a simList we call maps 
+maps <- lapply(filelist$file, function(x) raster(x))
+names(maps) <- sapply(basename(filelist$file), function(x) strsplit(x, split="\\.")[[1]][1])
 # put into a single stack object in the simulation environment for ease of use below
-landscape <- stack(mySim$DEM, mySim$forestCover, mySim$habitatQuality)
+landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
 ```
 
 # The `Plot` function
@@ -106,7 +107,7 @@ Any combination of `RasterStack`, `RasterLayer`, `SpatialPoints*`, and `SpatialP
 
 ```{r mixing_layer_types, eval=TRUE, echo=TRUE, fig.height=5}
 clearPlot()
-Plot(landscape, caribou, mySim$DEM, SpP, axes = TRUE,
+Plot(landscape, caribou, maps$DEM, SpP, axes = TRUE,
      gp = gpar(cex = 0.5), visualSqueeze = 0.65)
 ```
 
@@ -151,20 +152,14 @@ Plot(newPoints, newPoints2, addTo="scatterplot", col = "red")
 ```
 
 
-### `simList` objects
+### Other classes
 
-`Plot` can also handle `simList` objects. 
-A call to Plot will search for all plottable object types in the `simList` environment and plot them.
-
-```{r simList, eval=TRUE, echo=TRUE, cache=TRUE, fig.height=2}
-clearPlot()
-Plot(mySim)
-```
+`Plot` methods can be extended to accommodate other classes. See package `SpaDES` for examples. 
 
 ## Colours
 
 We likely won't want the default colours for every map.
-There are two ways to change the colour of a map: by adding a `colortable` to a `Raster*` object (*e.g.*, using the `setColors` function in `SpaDES`), or using the `cols` argument of the `Plot` function.
+There are two ways to change the colour of a map: by adding a `colortable` to a `Raster*` object (*e.g.*, using the `setColors` function in `quickPlot`), or using the `cols` argument of the `Plot` function.
 Adding a `colortable` to a `Raster*` will be more persistent (*i.e.*, it will stay with the same colour table even if the device is wiped clean or a new device is created.
 Every `RasterLayer` can have a `colortable`, which gives the mapping of raster values to colours.
 If not already set in the file (many `.tif` files and other formats already have their `colortable` set), we can use `setColors(Raster*)` with a named list of colours, if a `RasterStack`, or just a vector of colours if only a single `RasterLayer`.
@@ -209,9 +204,9 @@ Multiple entries can be used, but they must be passed as list elements and they 
 ```{r gp_gpAxis_gpText, eval=TRUE, echo=TRUE, fig.height=2}
 clearPlot()
 Plot(caribou, gpAxis = gpar(cex = 0.4), size = 1)
-Plot(mySim$DEM, gpText = gpar(cex = 0.4))
+Plot(maps$DEM, gpText = gpar(cex = 0.4))
 clearPlot()
-Plot(mySim$DEM, caribou, gpText = list(gpar(cex = 2), gpar(cex = 0.1)), new = TRUE)
+Plot(maps$DEM, caribou, gpText = list(gpar(cex = 2), gpar(cex = 0.1)), new = TRUE)
 ```
 
 ### `visualSqueeze`
@@ -226,9 +221,9 @@ If the plots need to be slightly smaller, this could be set to 0.6; if they can 
 ```{r visualSqueeze, eval=TRUE, echo=TRUE, fig.height=2}
 # x axis gets cut off in pdf and html
 clearPlot()
-Plot(mySim$DEM)
+Plot(maps$DEM)
 clearPlot()
-Plot(mySim$DEM, visualSqueeze = 0.6, new = TRUE)
+Plot(maps$DEM, visualSqueeze = 0.6, new = TRUE)
 ```
  
 A key reason why the legends or axes are cut off sometimes is because there is a minimum threshold for font size for readability.
@@ -244,7 +239,7 @@ Adding `legendRange = 0:20`, where `0:20` covers the expected range of all stage
 
 ```{r legendRange, eval=TRUE, echo=TRUE, fig.height=2}
 clearPlot()
-Plot(mySim$DEM, legendRange = c(0, 500), new = TRUE)
+Plot(maps$DEM, legendRange = c(0, 500), new = TRUE)
 ```
 
 ### `zoomExtent`
@@ -256,7 +251,7 @@ Then call `Plot(obj, zoomExtent=newZoom)`.
 This new zoom will persist with rearrangements.
 
 ```{r zoomExtent, eval=TRUE, echo=TRUE, fig.height=2}
-Plot(mySim$DEM, zoomExtent = extent(c(-1, 10, -1, 20)), new = TRUE)
+Plot(maps$DEM, zoomExtent = extent(c(-1, 10, -1, 20)), new = TRUE)
 ```
 
 ### `length`
@@ -265,15 +260,15 @@ For `SpatialLines*` objects, length will give arrow head length, in inches, mean
 
 ```{r arrows, eval=TRUE, echo=TRUE, fig.height=2}
 clearPlot()
-Plot(mySim$DEM)
-Plot(Sl, addTo = "mySim$DEM", length = 0.2)
+Plot(maps$DEM)
+Plot(Sl, addTo = "maps$DEM", length = 0.2)
 ```
 
 # Modularity
 
 One of the main purposes of the `Plot` function is modularity.
 The goal is to enable any `SpaDES` module to be able to add a plot to the plotting device, without being aware of what is already in the plotting device.
-To do this, each open plotting device has a corresponding `.spadesPlot` object in the `.spadesEnv`, that gets created when a first Plot function is called.
+To do this, each open plotting device has a corresponding `.quickPlot` object in the `.quickPlotEnv`, that gets created when a first Plot function is called.
 This object keeps the layer names, their extents, and whether they were in a RasterStack (and a few other things).
 So, when a new `Plot` is called, and `new` is used, then it will simply add the new layer.
 There may not be space on the plot device for this, in which case, everything will be replotted in a new arrangement, but taking the original R objects.
@@ -363,8 +358,8 @@ In the example here, the speedup actually slows down plotting because the raster
 This would not be the case when the original Raster had `1e8` pixels.
 
 ```{r speedup, eval=TRUE, echo=TRUE, fig.height=2}
-system.time(Plot(landscape, caribou, mySim$DEM, new = TRUE))
-system.time(Plot(landscape, caribou, mySim$DEM, speedup = 10, new = TRUE))
+system.time(Plot(landscape, caribou, maps$DEM, new = TRUE))
+system.time(Plot(landscape, caribou, maps$DEM, speedup = 10, new = TRUE))
 # can add a new plot to the plotting window
 ```
 
@@ -443,7 +438,7 @@ Further functionality like this will likely be in a future update.K
 rePlot()
 rePlot(4)
 rePlot(visualSqueeze = 1, axes = FALSE)
-rePlot(visualSqueeze = 0.7, axes = FALSE, cols = "Reds", new=TRUE)
+rePlot(visualSqueeze = 0.7, axes = FALSE, cols = "Reds")
 ```
 
 # Assigning `Plot()` to object
@@ -453,7 +448,7 @@ Simply pass the object name as if it were a Plot object.
 Any data changes made to the objects contained within the plot, if they are in the `.GlobalEnv` or a `envir` will be reflected in the new plot, because the data are replotted from their original source.
 This provides the same behavior as a call to `rePlot()`.
 
-```{r Plot a .spadesPlot object, eval=FALSE, echo=TRUE, cache=TRUE}
+```{r Plot a .quickPlot object, eval=FALSE, echo=TRUE, cache=TRUE}
 clearPlot()
 plots <- Plot(landscape)
 

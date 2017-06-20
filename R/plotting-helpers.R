@@ -1,3 +1,8 @@
+### deal with spurious data.table warnings
+if (getRversion() >= "3.1.0") {
+  utils::globalVariables(c("."))
+}
+
 ################################################################################
 #' Find the number of layers in a Spatial Object
 #'
@@ -867,7 +872,7 @@ setMethod(
 #' @keywords internal
 #' @rdname objectNames
 #' @author Eliot McIntire
-#'
+#' @export
 objectNames <- function(calledFrom = "Plot",
                         argClass = ".quickPlotObjects",
                         argName = "") {
@@ -1443,6 +1448,7 @@ setMethod(
 #' @param arr an \code{.arrangement} object
 #' @param speedup numeric, greater than 1 will usually speed up plotting at the expense of resolution
 #' @param newArr logical, whether this is a new arrangement or just adding to a previous one
+#' @importFrom raster ncell
 #'
 #' @include plotting-classes.R
 #' @keywords internal

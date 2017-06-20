@@ -1,2 +1,2 @@
 library(testthat)
-test_check("SpaDES")
+test_check("quickPlot")
