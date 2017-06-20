@@ -1,12 +1,12 @@
 Package: quickPlot
 Type: Package
-Title: A system of plotting that uses grid optimized for speed and modularity
-Description: Built on top of 'grid', this package aims at
-    making a high-level plotting system that is optimized for speed and 
-    modularity. This has great utility for quick visualizations when testing code,
-    with key benefits visualizations are updated independently of one another.
+Title: A system of plotting that uses 'grid', optimized for speed and modularity.
+Description: A high-level plotting system, built using 'grid' graphics, that is
+    optimized for speed and modularity. This has great utility for quick
+    visualizations when testing code, with the key benefit that visualizations
+    are updated independently of one another.
 URL: https://github.com/PredictiveEcology/quickPlot
-Date: 2017-06-16
+Date: 2017-06-20
 Version: 0.0.1.9000
 Authors@R: c(
     person(c("Eliot", "J", "B"), "McIntire", email = "eliot.mcintire@canada.ca",
