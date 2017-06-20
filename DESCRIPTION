@@ -29,6 +29,7 @@ Imports:
     raster,
     reproducible,
     RColorBrewer,
+    rgdal,
     sp,
     stats
 Suggests:
