@@ -792,34 +792,14 @@ setMethod(
   }
 
   if (!inGlobal) {
-    if (!exists(paste0("dev", dev.cur()), envir = .quickPlotEnv)) {
-      .quickPlotEnv[[paste0("dev", dev.cur())]] <- new.env(parent = emptyenv())
+    devCur <- paste0("dev", dev.cur())
+    if (!exists(devCur, envir = .quickPlotEnv)) {
+      .quickPlotEnv[[devCur]] <- new.env(parent = emptyenv())
     }
 
     tmp <- get(deparse(rev(elems)[[1]]), envir = envs) ## the sim object
-    if (is(tmp, "simList")) {
-      useElem <- 1
-      # If the user is passing a sub-element to say a Raster Stack
-      if (length(rev(elems)[-1]) > 1) {
-        # Only RasterStack implemented yet
-        if (is(get(deparse(rev(elems)[[2]]), envir = envir(tmp)), "RasterStack")) {
-          useElem <- 2
-        }
-      }
-      .quickPlotEnv[[paste0("dev", dev.cur())]] <- 
-        eval(parse(text=deparse(elems[[useElem]])), envir=envir(tmp))
-        
-      # changeObjEnv(deparse(elems[[useElem]]),
-      #              fromEnv = envir(tmp),
-      #              toEnv = .quickPlotEnv[[paste0("dev", dev.cur())]])
-    } else {
-      ## if it is NOT a simList.
-      .quickPlotEnv[[paste0("dev", dev.cur())]] <- 
-        eval(parse(text=paste(sapply(rev(elems), deparse), collapse = "$")), envir = envs)
-        
-      #changeObjEnv(paste(sapply(rev(elems), deparse), collapse = "$"),
-      #             fromEnv = envs, toEnv = .quickPlotEnv[[paste0("dev", dev.cur())]])
-    }
+    .quickPlotEnv[[devCur]] <- .parseElems(tmp=tmp, elems=elems, envir=envs)
+    
   }
 
   if (sapply(elems[[1]], is.numeric)) {
@@ -832,6 +812,38 @@ setMethod(
 
 }
 
+
+#############################
+################################################################################
+#' Parsing of elements
+#'
+#' This is a generic definition that can be extended according to class. Intended
+#' only for development use.
+#'
+#' @return An object, parsed from a character string and and environment
+#'
+#' @param tmp A evaluated object
+#' @param elems A character string to be parsed
+#' @param envir An environment
+#'
+#' @export
+#' @docType methods
+#' @rdname parseElems
+#' @author Eliot McIntire
+setGeneric(".parseElems", function(tmp, elems, envir) {
+  standardGeneric(".parseElems")
+})
+
+#' @export
+#' @rdname parseElems
+setMethod(
+  ".parseElems",
+  signature = "ANY",
+  definition = function(tmp, elems, envir) {
+    eval(parse(text=paste(sapply(rev(elems), deparse), collapse = "$")), envir = envir)
+  })
+
+#############################
 ################################################################################
 #' Extracts the object names
 #'
