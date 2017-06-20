@@ -1,4 +1,6 @@
 test_that("Plot 1 is not error-free", {
+  skip_if_not_installed("reproducible")
+  
   library(igraph)
   library(sp)
   library(raster)
@@ -184,7 +186,9 @@ test_that("Plot 1 is not error-free", {
 })
 
 test_that("Unit tests for image content is not error-free", {
+  skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
+  
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -271,7 +275,9 @@ test_that("Unit tests for image content is not error-free", {
 })
 
 test_that("Unit tests for plotting colors", {
+  skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
+  
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -360,7 +366,9 @@ test_that("Unit tests for plotting colors", {
 })
 
 test_that("Unit tests for internal functions in Plot", {
+  skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
+  
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -438,7 +446,9 @@ test_that("Unit tests for internal functions in Plot", {
 })
 
 test_that("Plot 2 is not error-free", {
+  skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
+  
   skip_on_travis()
 
   library(raster)
@@ -609,6 +619,9 @@ test_that("Plot 2 is not error-free", {
 
 test_that("setColors is not error-free", {
   skip("Apparently color palettes are not universal")
+  
+  skip_if_not_installed("reproducible")
+  
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -668,14 +681,16 @@ test_that("setColors is not error-free", {
 })
 
 test_that("Plot with base is not error-free", {
+  skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
+  
   skip_on_travis()
 
   library(visualTest)
   library(raster)
   library(ggplot2)
   library(igraph)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(reproducible)
   
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -685,6 +700,7 @@ test_that("Plot with base is not error-free", {
     detach("package:igraph")
     detach("package:ggplot2")
     detach("package:raster")
+    detach("package:reproducible")
     detach("package:visualTest")
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
@@ -876,6 +892,7 @@ test_that("Plot messages and warnings and errors", {
 })
 
 test_that("rePlot doesn't work", {
+  skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
@@ -913,6 +930,8 @@ test_that("rePlot doesn't work", {
 })
 
 test_that("Plot - going through package coverage", {
+  skip_if_not_installed("reproducible")
+  
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
   
@@ -937,7 +956,9 @@ test_that("Plot - going through package coverage", {
 })
 
 test_that("Plot lists", {
+  skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
+  
   skip_on_travis()
 
   library(ggplot2); on.exit(detach("package:ggplot2"), add = TRUE)
