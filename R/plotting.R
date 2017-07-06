@@ -155,7 +155,8 @@ if (getRversion() >= "3.1.0") {
 #' @param size Numeric. The size, in points, for \code{SpatialPoints} symbols,
 #'             if using a scalable symbol.
 #'
-#' @param cols (also \code{col}) Character vector or list of character vectors of colours. See details.
+#' @param cols (also \code{col}) Character vector or list of character vectors of colours.
+#'             See details.
 #'
 #' @param col (also \code{cols}) Alternative to \code{cols} to be consistent with \code{plot}.
 #'            \code{cols} takes precedence, if both are provided.
@@ -390,20 +391,14 @@ setMethod(
         clearPlot(dev.cur())
     }}
 
-    # I have commented this out because it is a waste of time for unusual cases, which
-    #  are currently not reproducible
-    # if (length(ls(.quickPlotEnv)) == 0 ) {
-    #   clearPlot()
-    # }
-
-    # this covers the case where R thinks that there is a base plot... must be cleared
-    #if(names(dev.cur()) %in% "null device") dev.new()
-
     # Determine object names that were passed and layer names of each
     scalls <- sys.calls()
-    isDoCall <- grepl("^do.call", scalls) & grepl("Plot", scalls) & !grepl("test_that", scalls) # This testthat is a work around
-                        # A test_that call can be very long, with many function calls, including Plot and do.call, even if
-                        #  they don't have anything to do with each other
+    
+    # This testthat is a work around:
+    # A test_that call can be very long, with many function calls, including Plot and do.call,
+    # even if they don't have anything to do with each other
+    isDoCall <- grepl("^do.call", scalls) & grepl("Plot", scalls) & !grepl("test_that", scalls)
+    
     dots <- list(...)
     if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") &
        !is(dots[[1]], "communities") & !is(dots[[1]], "igraph") & !is(dots[[1]], "histogram")) {

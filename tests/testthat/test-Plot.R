@@ -1,17 +1,17 @@
 test_that("Plot 1 is not error-free", {
   skip_if_not_installed("reproducible")
-  
-  library(igraph)
+
+    library(igraph)
   library(sp)
   library(raster)
   library(reproducible)
-  
+
   on.exit({
     detach("package:igraph")
     detach("package:raster")
     detach("package:reproducible")
     detach("package:sp")
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -21,13 +21,13 @@ test_that("Plot 1 is not error-free", {
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
-  ras <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10, 
-                        vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-  DEM87654 <- ras 
+  ras <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+                vals = sample(1:4, replace = TRUE, size = 100), res = 1)
+  DEM87654 <- ras
   names(DEM87654) <- "DEM87654"
-  habitatQuality87654 <- raster(ras) 
+  habitatQuality87654 <- raster(ras)
   habitatQuality87654[] <- sample(1:10, replace = TRUE, size = 100)
   names(habitatQuality87654) <- "habitatQuality87654"
   landscape87654 <- raster::stack(DEM87654, habitatQuality87654)
@@ -188,13 +188,13 @@ test_that("Plot 1 is not error-free", {
 test_that("Unit tests for image content is not error-free", {
   skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
-  
+
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot_imageContent") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -203,7 +203,7 @@ test_that("Unit tests for image content is not error-free", {
     if (length(dev.list()) > 0) dev.off()
     setwd(cwd)
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   ncol <- 3
   nrow <- 4
@@ -222,7 +222,7 @@ test_that("Unit tests for image content is not error-free", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(
     Sys.info()["sysname"],
     Darwin = "BB1FC0E03E1E3B30",
@@ -241,7 +241,7 @@ test_that("Unit tests for image content is not error-free", {
   Plot(ras)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "BB1FC0E03E1E3B30",
     Linux = "BB1EC4E03E1E3B30",
@@ -254,7 +254,7 @@ test_that("Unit tests for image content is not error-free", {
   nLevels <- 6
   N <- ncol * nrow
   set.seed(24334)
-  levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))]
+  levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
   ras <- raster(matrix(sample(levs, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
@@ -265,7 +265,7 @@ test_that("Unit tests for image content is not error-free", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "EEC0913E4AE16E2E",
     Linux = "EEC0913E4AE16E2E",
@@ -277,13 +277,13 @@ test_that("Unit tests for image content is not error-free", {
 test_that("Unit tests for plotting colors", {
   skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
-  
+
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot_colors") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -292,7 +292,7 @@ test_that("Unit tests for plotting colors", {
     if (length(dev.list()) > 0) dev.off()
     setwd(cwd)
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   ras <- raster(matrix(c(1, 0, 1, 2), ncol = 2))
   setColors(ras, n = 3) <- c("red", "blue", "green")
@@ -300,10 +300,12 @@ test_that("Unit tests for plotting colors", {
   ###################################
   png(file = "test.png", width = 400, height = 300)
   clearPlot()
-  Plot(ras, new = TRUE) # should be a 2 x 2 raster, bottom left red, top row blue, bottom right green
+  
+  # should be a 2 x 2 raster, bottom left red, top row blue, bottom right green
+  Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "BF6AC491C0663B66",
     Linux = "BF6AC491C0663B36",
@@ -318,18 +320,19 @@ test_that("Unit tests for plotting colors", {
   setColors(rasStack, n = 3) <- list(ras = c("black", "blue", "green"))
   png(file = "test.png", width = 400, height = 300)
   clearPlot()
-  Plot(rasStack, new = TRUE) # should be left 2 x 2 raster, blue top, black bot lef, green bot right,
-                             #  2nd raster, 2 x 2, topleft green, topRight & botLef grey, botright = beige
+  
+  # should be left 2 x 2 raster, blue top, black bot lef, green bot right;
+  # 2nd raster, 2 x 2, topleft green, topRight & botLef grey, botright = beige
+  Plot(rasStack, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "B93964CAC2C6939B",
     Linux = "B938649AC2CE939B",
     Windows = "B9386C9AC6C6939A"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
-  #unlink("test.png")
 
   ######################################
 
@@ -340,13 +343,14 @@ test_that("Unit tests for plotting colors", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "BF6AC491C0663B66",
     Linux = "BF6AC491C06E3B26",
     Windows = "BF6AC091C06E3B65"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
+
   ###########################################
 
   ras <- setColors(ras, c("yellow", "orange"))
@@ -355,7 +359,7 @@ test_that("Unit tests for plotting colors", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "AB95D06E84916F71",
     Linux = "BB95D06EC4916F30",
@@ -368,13 +372,13 @@ test_that("Unit tests for plotting colors", {
 test_that("Unit tests for internal functions in Plot", {
   skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
-  
+
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot_internal") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -383,7 +387,7 @@ test_that("Unit tests for internal functions in Plot", {
     if (length(dev.list()) > 0) dev.off()
     setwd(cwd)
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   #######################################
   # Test .makeColorMatrix for subsampled rasters
@@ -397,7 +401,7 @@ test_that("Unit tests for internal functions in Plot", {
   Plot(ras, new = TRUE, speedup = 2e5)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "AF8FD07080307F75",
     Linux = "AF8FD07080307F75",
@@ -416,7 +420,7 @@ test_that("Unit tests for internal functions in Plot", {
   suppressWarnings(Plot(ras, new = TRUE, speedup = 2e5))
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "A0CB77708A30DF74",
     Linux = "A0CB77708A30DF74",
@@ -436,7 +440,7 @@ test_that("Unit tests for internal functions in Plot", {
   Plot(ras, legendRange = 0:5, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "AF99D0E4C0653F64",
     Linux = "AF9BD0E481253F68",
@@ -448,13 +452,13 @@ test_that("Unit tests for internal functions in Plot", {
 test_that("Plot 2 is not error-free", {
   skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
-  
+
   skip_on_travis()
 
   library(raster)
   library(visualTest)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot2") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -466,7 +470,7 @@ test_that("Plot 2 is not error-free", {
     if (length(dev.list()) > 0) dev.off()
     if (file.exists("Rplots.pdf")) file.remove("Rplots.pdf")
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   set.seed(123)
   r <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -484,7 +488,7 @@ test_that("Plot 2 is not error-free", {
   )
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "AA68D51495C3D99D",
                  Linux = "AA68D51495C3D99D",
@@ -566,9 +570,9 @@ test_that("Plot 2 is not error-free", {
   r1 <- raster(ncol = 30, nrow = 30)
   r1[] <- sample(31:40, replace = TRUE, size = 900)
   Plot(r1, new = TRUE)
-  Plot(r1, new = TRUE, legendRange = c(0, 40)) # legend frmo 0 to 40, mostly green
+  Plot(r1, new = TRUE, legendRange = c(0, 40)) # legend from 0 to 40, mostly green
   Plot(r1, new = TRUE, zero.color = "black") # no black
-  Plot(r1, new = TRUE, zero.color = "black", legendRange = c(35, 40)) # lots of white, legend from 35 to 40
+  Plot(r1, new = TRUE, zero.color = "black", legendRange = c(35, 40)) # lots of white
 
   pixelGroupMap <- raster(xmn = 50, xmx = 50 + 3 * 100,
                           ymn = 50, ymx = 50 + 3 * 100,
@@ -581,7 +585,7 @@ test_that("Plot 2 is not error-free", {
   # legend Should have all colors
   Plot(pixelGroupMap, new = TRUE, cols = c("red", "yellow", "green", "blue"))
 
-  ### Test legend that is pre-set, even with various types of rasters
+  ## Test legend that is pre-set, even with various types of rasters
   # should be dark red raster, legend from 0 to 200
   clearPlot()
   Plot(r1, legendRange = c(0, 200), new = TRUE, cols = c("red", "green"))
@@ -619,14 +623,14 @@ test_that("Plot 2 is not error-free", {
 
 test_that("setColors is not error-free", {
   skip("Apparently color palettes are not universal")
-  
+
   skip_if_not_installed("reproducible")
-  
+
   skip_on_travis()
 
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_setColors") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -635,7 +639,7 @@ test_that("setColors is not error-free", {
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
   set.seed(1234)
 
   ras1 <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -683,7 +687,7 @@ test_that("setColors is not error-free", {
 test_that("Plot with base is not error-free", {
   skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
-  
+
   skip_on_travis()
 
   library(visualTest)
@@ -691,7 +695,7 @@ test_that("Plot with base is not error-free", {
   library(ggplot2)
   library(igraph)
   library(reproducible)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -705,7 +709,7 @@ test_that("Plot with base is not error-free", {
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   set.seed(123)
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
@@ -719,7 +723,7 @@ test_that("Plot with base is not error-free", {
   Plot(ras)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "B04CC39C93D3CE36",
                  Linux = "B14CC39C93D3CE86",
@@ -738,7 +742,7 @@ test_that("Plot with base is not error-free", {
   Plot(rasOrig)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "AED2D131E06D7A0E",
                  Linux = "AED2D1B1E06D3A0E",
@@ -759,7 +763,7 @@ test_that("Plot with base is not error-free", {
   Plot(rasOrig)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "BEC6C131E03F3A0E",
                  Linux = "BEC6C1B1E03F380E",
@@ -774,7 +778,7 @@ test_that("Plot with base is not error-free", {
   Plot(1:10, ylab = "hist")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "AB27BDD38284D94A",
                  Linux = "AB27BD730284D9CA",
@@ -789,7 +793,7 @@ test_that("Plot with base is not error-free", {
   Plot(1:10, ylab = "hist")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "9FE1E441C2FAE01E",
                  Linux = "9FE1E441C2F2E09E",
@@ -807,7 +811,8 @@ test_that("Plot with base is not error-free", {
   a <- hist(rnorm(10), plot = FALSE)
   Plot(a, addTo = "histogram", axes = "L", col = "#33EEAA33", xlim = c(-3, 3))
   a <- hist(rnorm(100), plot = FALSE)
-  Plot(a, addTo = "histogram", axes = FALSE, col = paste0("#1133FF", "33"), xlim = c(-3, 3), xlab = "", ylab = "")
+  Plot(a, addTo = "histogram", axes = FALSE, col = paste0("#1133FF", "33"),
+       xlim = c(-3, 3), xlab = "", ylab = "")
   ras2 <- raster(ras)
   ras2[] <- sample(1:8)
   Plot(ras2)
@@ -823,7 +828,7 @@ test_that("Plot with base is not error-free", {
   Plot(ras, cols = "Reds", addTo = "ras2")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "F3B5264A8C0FF04B",
                  Linux = "F3B5264A8C0FF04B",
@@ -851,7 +856,7 @@ test_that("Plot with base is not error-free", {
   Plot(ras)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "BC16C3CE96E1C364",
                  Linux = "BC1EC3CC96E1C364",
@@ -872,7 +877,7 @@ test_that("Plot with base is not error-free", {
   Plot(ras,  addTo = "ras", cols = "Blues")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "B14CC39A93B1CE96",
                  Linux = "A14CC39A93B3CE96",
@@ -898,7 +903,7 @@ test_that("rePlot doesn't work", {
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -907,7 +912,7 @@ test_that("rePlot doesn't work", {
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   png(file = "test1.png", width = 400, height = 300)
     a <- dev.cur()
@@ -931,10 +936,10 @@ test_that("rePlot doesn't work", {
 
 test_that("Plot - going through package coverage", {
   skip_if_not_installed("reproducible")
-  
+
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -943,7 +948,7 @@ test_that("Plot - going through package coverage", {
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   a <- dev.cur()
   set.seed(123)
@@ -952,20 +957,20 @@ test_that("Plot - going through package coverage", {
   expect_silent(Plot(ras, new = TRUE))
   clearPlot()
 
-  #do.call(Plot, list(ras))
+  #do.call(Plot, list(ras)) # nolint
 })
 
 test_that("Plot lists", {
   skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
-  
+
   skip_on_travis()
 
   library(ggplot2); on.exit(detach("package:ggplot2"), add = TRUE)
   library(raster); on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
   library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
-  
+
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
@@ -974,7 +979,7 @@ test_that("Plot lists", {
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE)
+  }, add = TRUE) # nolint
 
   clearPlot()
   set.seed(123)
@@ -994,7 +999,7 @@ test_that("Plot lists", {
   Plot(a)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "AD3CD238D2C7C34A",
                  Linux = "AD3CD238D2C7C26A",
@@ -1009,7 +1014,7 @@ test_that("Plot lists", {
   Plot(a)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "B756C8A6C8C85657",
                  Linux = "B75788AAC8C85657",
@@ -1026,7 +1031,7 @@ test_that("Plot lists", {
   Plot(a, b)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))
+  #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "8F627399CC8CF05A",
                  Linux = "877273AD8C8DF04A",

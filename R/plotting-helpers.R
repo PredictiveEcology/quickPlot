@@ -212,7 +212,7 @@ setMethod(
 
     env <- list(...)$env
     suppliedNames <- names(plotObjects)
-    if (any(!nzchar(suppliedNames, keepNA=TRUE))) {
+    if (any(!nzchar(suppliedNames, keepNA = TRUE))) {
       suppliedNames <- NULL
     }
     if (is.null(suppliedNames)) {
@@ -227,7 +227,7 @@ setMethod(
       x$objs)
 
     if (!is.null(suppliedNames)) {
-      if (all(sapply(suppliedNames, nzchar, keepNA=TRUE) )) {
+      if (all(sapply(suppliedNames, nzchar, keepNA = TRUE))) {
         names(plotObjects)[!is.na(suppliedNames)] <- suppliedNames
       }
     }
@@ -511,7 +511,7 @@ setMethod(
       }
     }
 
-    p$na.color <- if (is.list(p$na.color)) {
+    p$na.color <- if (is.list(p$na.color)) { # nolint
       if (length(p$na.color) != n) {
         rep(p$na.color, length.out = n)
       } else {
@@ -675,7 +675,8 @@ setMethod(
 
   while (length(parse(text = deparse(parseTxt))[[1]]) != 1) {
     if (length(parseTxt) == 2) {
-      stop("Please pass an object directly, or use get(x, envir = envName) or eval(x, envir = envName). ",
+      stop("Please pass an object directly, or use get(x, envir = envName) or ",
+           "eval(x, envir = envName). ",
            "Plot can not yet accept functions or complex objects internally.")
     }
 
@@ -755,7 +756,8 @@ setMethod(
       if (!is.null(names(eval(parseTxt[[2]], envir = e)))) {
         parseTxt[[3]] <- names(eval(parseTxt[[2]], envir = e))[parseTxt[[3]]]
         if (is.na(parseTxt[[3]])) {
-          stop("Please pass an object directly, or use get(x, envir = envName) or eval(x, envir = envName). ",
+          stop("Please pass an object directly, or use get(x, envir = envName) ",
+               "or eval(x, envir = envName). ",
                "Plot can not yet accept functions or complex objects internally.")
         }
       }
@@ -803,8 +805,7 @@ setMethod(
     }
 
     tmp <- get(deparse(rev(elems)[[1]]), envir = envs) ## the sim object
-    .quickPlotEnv[[devCur]] <- .parseElems(tmp=tmp, elems=elems, envir=envs)
-    
+    .quickPlotEnv[[devCur]] <- .parseElems(tmp = tmp, elems = elems, envir = envs)
   }
 
   if (sapply(elems[[1]], is.numeric)) {
@@ -814,11 +815,8 @@ setMethod(
   }
   return(list(objs = paste(sapply(rev(elems), deparse), collapse = "$"),
               envs = envs))
-
 }
 
-
-#############################
 ################################################################################
 #' Parsing of elements
 #'
@@ -845,10 +843,9 @@ setMethod(
   ".parseElems",
   signature = "ANY",
   definition = function(tmp, elems, envir) {
-    eval(parse(text=paste(sapply(rev(elems), deparse), collapse = "$")), envir = envir)
-  })
+    eval(parse(text = paste(sapply(rev(elems), deparse), collapse = "$")), envir = envir)
+})
 
-#############################
 ################################################################################
 #' Extracts the object names
 #'
@@ -884,7 +881,7 @@ objectNames <- function(calledFrom = "Plot",
   e <- sys.frame(frameCalledFrom[1])
   eminus1 <- sys.frame(frameCalledFrom - 1)
 
-  if (!nzchar(argName, keepNA=TRUE)) {
+  if (!nzchar(argName, keepNA = TRUE)) {
     callNamedArgs <- as.character(substitute(list(...), env = e))[-1]
   } else {
     callNamedArgs <- as.character(substitute(parse(text = sim), env = e))[-1]
@@ -1139,13 +1136,13 @@ setMethod(
           }
         }
 
-        args_plot1 <- sGrob@plotArgs[!(names(sGrob@plotArgs) %in%
+        argsPlot1 <- sGrob@plotArgs[!(names(sGrob@plotArgs) %in%
                                          c("new", "addTo", "gp", "gpAxis", "axisLabels",
                                          "zoomExtent", "gpText", "speedup", "size",
                                          "cols", "visualSqueeze", "legend", "legendRange",
                                          "legendText", "zero.color", "length", "arr",
                                          "na.color", "title", "userProvidedPlotFn"))]
-        args_plot1$axes <- isTRUE(sGrob@plotArgs$axes)
+        argsPlot1$axes <- isTRUE(sGrob@plotArgs$axes)
         makeSpaceForAxes <- as.numeric(
           !identical(FALSE, quickSubPlots[[subPlots]][[1]]@plotArgs$axes)
         )
@@ -1154,8 +1151,8 @@ setMethod(
                     0.25 + makeSpaceForAxes * 0.05, # bottom
                     0.9))                         # top
 
-        plotFn <- args_plot1$plotFn
-        args_plot1$plotFn <- NULL
+        plotFn <- argsPlot1$plotFn
+        argsPlot1$plotFn <- NULL
 
         # The actuall plot calls for base plotting
         if (is(grobToPlot, "igraph")) {
@@ -1172,31 +1169,26 @@ setMethod(
 
         } else if (quickPlotGrobCounter == 1 | wipe | isHist) {
           suppressWarnings(par(new = TRUE))
-          #args_plot1 <- lapply(args_plot1, unname)
-
 
           # This is a work around because I am not able to generically
           #  assess the formals of a function to remove any that aren't
           #  defined for that method... i.e., plot is the generic, but
           #  plot.igraph has different formals. Some of the functions
           #  are not exported, so their formals can't be found algorithmically
-          tryCatch(do.call(plotFn, args = args_plot1), error = function(x) {
+          tryCatch(do.call(plotFn, args = argsPlot1), error = function(x) {
             parsRm <- unlist(strsplit(gsub(x,
                                            pattern = ".*Unknown plot parameters: ",
                                            replacement = ""), split = ", "))
             parsRm <- gsub(parsRm, pattern = "\n", replacement = "")
-            args_plot1 <- args_plot1[!(names(args_plot1) %in% parsRm)]
-            do.call(plotFn, args = args_plot1)
+            argsPlot1 <- argsPlot1[!(names(argsPlot1) %in% parsRm)]
+            do.call(plotFn, args = argsPlot1)
           })
-          #suppressWarnings(do.call(plotFn,
-          #                         args = args_plot1))
-
         } else {
           # adding points to a plot
           #suppressWarnings(par(new = TRUE))
           tmpPlotFn <- if (plotFn == "plot") "points" else plotFn
-          args_plot1[c("axes", "xlab", "ylab", "plotFn")] <- NULL
-          suppressWarnings(do.call(tmpPlotFn, args = args_plot1))
+          argsPlot1[c("axes", "xlab", "ylab", "plotFn")] <- NULL
+          suppressWarnings(do.call(tmpPlotFn, args = argsPlot1))
         }
       }
 
@@ -1204,8 +1196,9 @@ setMethod(
         if (xyAxes$x | xyAxes$y & ((isBaseSubPlot & (isNewPlot | isReplot) | wipe))) {
           axesArgs <- sGrob@plotArgs
           axesArgs$side <- 1
-          axesArgs <- axesArgs[names(axesArgs) %in% c("at", "labels", "tick", "line", "pos", "outer", "font",
-                                                      "lty", "lwd", "lwd.ticks", "col.ticks", "hadj", "padj")]
+          axesArgs <- axesArgs[names(axesArgs) %in% c(
+            "at", "labels", "tick", "line", "pos", "outer", "font",
+            "lty", "lwd", "lwd.ticks", "col.ticks", "hadj", "padj")]
         }
 
         if (xyAxes$x & (isBaseSubPlot & (isNewPlot | isReplot) | wipe)) {
@@ -1262,7 +1255,8 @@ setMethod(
           grid.xaxis(name = "xaxis", gp = sGrob@plotArgs$gpAxis)
         }
         if (xyAxes$y & (isBaseSubPlot & (isNewPlot | isReplot) | wipe)) {
-          grid.yaxis(name = "yaxis", gp = sGrob@plotArgs$gpAxis, vp = vps$wholeVp$children[[paste0("outer", subPlots)]])
+          grid.yaxis(name = "yaxis", gp = sGrob@plotArgs$gpAxis,
+                     vp = vps$wholeVp$children[[paste0("outer", subPlots)]])
         }
         seekViewport(subPlots, recording = FALSE)
       }
@@ -1442,22 +1436,28 @@ setMethod(
 #' Then calculates the maxpixels to plot for speed.
 #'
 #' @param grobToPlot .quickPlotGrob
+#' 
 #' @param zoomExtent an extent object
+#' 
 #' @param legendRange a numeric vector of length >=2 indicating the desired legend range.
+#' 
 #' @param takeFromPlotObj logical. Should the object be found in the Plot call or .GlobalEnv
+#' 
 #' @param arr an \code{.arrangement} object
-#' @param speedup numeric, greater than 1 will usually speed up plotting at the expense of resolution
+#' 
+#' @param speedup numeric, greater than 1 will usually speed up plotting at the
+#'                expense of resolution
+#'                
 #' @param newArr logical, whether this is a new arrangement or just adding to a previous one
-#' @importFrom raster ncell
-#'
-#' @include plotting-classes.R
-#' @keywords internal
-#' @rdname prepareRaster
+#' 
 #' @author Eliot McIntire
+#' @keywords internal
+#' @importFrom raster ncell
+#' @include plotting-classes.R
+#' @rdname prepareRaster
 # igraph exports %>% from magrittr
 .prepareRaster <- function(grobToPlot, zoomExtent, legendRange,
                            takeFromPlotObj, arr, speedup, newArr) {
-
   if (is.null(zoomExtent)) {
     zoom <- extent(grobToPlot)
     npixels <- ncell(grobToPlot)
@@ -1524,7 +1524,7 @@ setMethod(
 
     addToPlotsNames <- sapply(newSP@quickPlotGrobList, function(x) {
       x[[1]]@plotArgs$addTo
-    }) %>% unlist
+    }) %>% unlist() # nolint
 
     if (length(addToPlotsNames) == length(newNames)) {
       overplots <- integer(0)
@@ -1553,21 +1553,21 @@ setMethod(
 
     # # Set FALSE as default for needPlotting
     needPlotting <- lapply(curr$curr@quickPlotGrobList, function(x) {
-      lapply(x, function(y) { FALSE })
+      lapply(x, function(y) FALSE)
     })
     #
     # # Set FALSE as default for isReplot
     isReplot <- lapply(curr$curr@quickPlotGrobList, function(x) {
-      lapply(x, function(y) { FALSE })
+      lapply(x, function(y) FALSE)
     })
     #
     # # Set TRUE as default for isBaseLayer
     # isBaseLayer <- lapply(curr$curr@quickPlotGrobList, function(x) {
-    #   lapply(x, function(y) { TRUE })
+    #   lapply(x, function(y) TRUE)
     # })
     #
     isNewPlot <- lapply(curr$curr@quickPlotGrobList, function(x) {
-      lapply(x, function(y) { FALSE })
+      lapply(x, function(y) FALSE)
     })
 
     #needPlotting <- curr$needPlotting
@@ -1578,8 +1578,9 @@ setMethod(
     # For overplots
     for (plots in newNames[overplots]) {
       # update only those plotArgs that have changed.
-      curr$curr@quickPlotGrobList[[plots]][[1]]@plotArgs[names(whichParamsChanged[[plots]])[whichParamsChanged[[plots]]]] <-
-        newSP@quickPlotGrobList[[plots]][[1]]@plotArgs[names(whichParamsChanged[[plots]])[whichParamsChanged[[plots]]]]
+      idNames <- names(whichParamsChanged[[plots]])[whichParamsChanged[[plots]]]
+      curr$curr@quickPlotGrobList[[plots]][[1]]@plotArgs[idNames] <-
+        newSP@quickPlotGrobList[[plots]][[1]]@plotArgs[idNames]
 
       needPlotting[[plots]][[plots]] <- TRUE
       isReplot[[plots]][[plots]] <- FALSE

@@ -178,13 +178,10 @@ setReplaceMethod(
       } else {
         ntmp <- n
       }
-      value <- RColorBrewer::brewer.pal(ntmp , value)
+      value <- RColorBrewer::brewer.pal(ntmp, value)
     }
     if (raster::is.factor(object)) {
       if (n != NROW(object@data@attributes[[1]])) {
-        #message("Number of colors not equal number of values: interpolating")
-        #pal <- colorRampPalette(value, alpha = TRUE, ...)
-        #n <- NROW(object@data@attributes[[1]])
         object@legend@colortable <- pal(n)
       } else {
         object@legend@colortable <- value
@@ -225,7 +222,7 @@ setReplaceMethod(
      nFull <- n
      if (length(n) != length(i)) {
        # not enough n values
-       if (sum(!nzchar(names(n), keepNA=TRUE)) > 0) {
+       if (sum(!nzchar(names(n), keepNA = TRUE)) > 0) {
          # are there unnamed ones
          nFull <- rep(n[!whNNamed], length.out = length(i))
          nFull[whValNamed] <- n[whNNamed]
@@ -433,7 +430,9 @@ setMethod(
           #   assume bottom is NA
           if (isFac) {
             factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
-              unique() %>% na.omit() %>% sort()
+              unique() %>%
+              na.omit() %>%
+              sort()
             if (length(factorValues) == length(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {

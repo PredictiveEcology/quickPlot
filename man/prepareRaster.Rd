@@ -18,7 +18,8 @@
 
 \item{arr}{an \code{.arrangement} object}
 
-\item{speedup}{numeric, greater than 1 will usually speed up plotting at the expense of resolution}
+\item{speedup}{numeric, greater than 1 will usually speed up plotting at the
+expense of resolution}
 
 \item{newArr}{logical, whether this is a new arrangement or just adding to a previous one}
 }

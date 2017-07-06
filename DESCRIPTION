@@ -4,10 +4,12 @@ Title: A system of plotting that uses 'grid', optimized for speed and modularity
 Description: A high-level plotting system, built using 'grid' graphics, that is
     optimized for speed and modularity. This has great utility for quick
     visualizations when testing code, with the key benefit that visualizations
-    are updated independently of one another.
+    are updated independently of one another. The suggested package 'fastshp'
+    can be installed with
+    'install.packages("fastshp", repos = "http://rforge.net", type = "source")'.
 URL: https://github.com/PredictiveEcology/quickPlot
-Date: 2017-06-20
-Version: 0.0.1.9000
+Date: 2017-07-07
+Version: 0.1.0
 Authors@R: c(
     person(c("Eliot", "J", "B"), "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut", "cre")),
@@ -16,6 +18,7 @@ Authors@R: c(
     person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
     role = "cph")
     )
+Additional_repositories: http://rforge.net
 Depends:
     R (>= 3.3.2)
 Imports:

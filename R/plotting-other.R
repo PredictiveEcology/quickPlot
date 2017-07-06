@@ -145,7 +145,8 @@ setMethod("clearPlot",
 #' @param n The number of mouse clicks to do.
 #'
 #' @return \code{clickValues} returns the layer names and values at the clicked points.
-#' \code{clickExtent} invisibly returns the extent object, and optionally plots it in a new device window.
+#' \code{clickExtent} invisibly returns the extent object, and optionally plots
+#' it in a new device window.
 #' \code{clickCoordinates} returns the xy coordinates in the units of the plot clicked on.
 #'
 #' @export
