@@ -525,7 +525,7 @@ setMethod(
       }
     }
 
-    p$zero.color <- if (is.list(p$zero.color)) {
+    p$zero.color <- if (is.list(p$zero.color)) { # nolint
       if (length(p$zero.color) != n) {
         rep(p$zero.color, length.out = n)
       } else {
@@ -639,7 +639,7 @@ setMethod(
       Lines(list(Line(
         coords = rbind(coordinates(from)[x, ], coordinates(to)[x, ])
       )), ID = x)
-    }), proj4string = crs(from))
+    }), proj4string = crs(from)) # nolint
 })
 
 ################################################################################
@@ -1031,10 +1031,10 @@ setMethod(
     }
 
     if (sGrob@plotArgs$axes == "L") {
-      if (sGrob@objClass == "Raster" & (arr@extents[whPlotFrame][[1]] ==
-                                      arr@extents[(ceiling(whPlotFrame / arr@columns) - 1) *
-                                                  arr@columns + 1][[1]])) {
-        if ((whPlotFrame - 1) %% arr@columns == 0) {
+      if (sGrob@objClass == "Raster" &
+          (arr@extents[whPlotFrame][[1]] ==
+           arr@extents[(ceiling(whPlotFrame / arr@columns) - 1) * arr@columns + 1][[1]])) {
+        if ((whPlotFrame - 1) %% arr@columns == 0) { # nolint
           yaxis <- TRUE
         } else {
           yaxis <- FALSE
@@ -1161,9 +1161,7 @@ setMethod(
             plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
             clearPlot()
           }
-          #a <- try(seekViewport(subPlots, recording = FALSE))
           suppressWarnings(par(new = TRUE))
-          #plotCall <- append(list(x = grobToPlot), nonPlotArgs)
           plotCall <- list(x = grobToPlot)
           suppressWarnings(do.call(plot, args = plotCall))
 
@@ -1185,7 +1183,6 @@ setMethod(
           })
         } else {
           # adding points to a plot
-          #suppressWarnings(par(new = TRUE))
           tmpPlotFn <- if (plotFn == "plot") "points" else plotFn
           argsPlot1[c("axes", "xlab", "ylab", "plotFn")] <- NULL
           suppressWarnings(do.call(tmpPlotFn, args = argsPlot1))
@@ -1193,7 +1190,7 @@ setMethod(
       }
 
       if (any(unlist(xyAxes)) & (isBaseSubPlot & (isNewPlot | isReplot) | wipe)) {
-        if (xyAxes$x | xyAxes$y & ((isBaseSubPlot & (isNewPlot | isReplot) | wipe))) {
+        if (xyAxes$x | xyAxes$y & (isBaseSubPlot & (isNewPlot | isReplot) | wipe)) {
           axesArgs <- sGrob@plotArgs
           axesArgs$side <- 1
           axesArgs <- axesArgs[names(axesArgs) %in% c(
@@ -1221,11 +1218,10 @@ setMethod(
         }
       } else {
         sGrob@plotArgs$legendTxt <- legendText
-        cTxt <-
-          legendText
+        cTxt <- legendText
       }
 
-      if (!isBaseSubPlot ) {
+      if (!isBaseSubPlot) {
         sGrob@plotArgs$legendTxt <- NULL
       }
 
@@ -1406,7 +1402,7 @@ setMethod(
     if (length(toPlot) == 0) takeFromPlotObj <- FALSE
 
     # Does it already exist on the plot device or not
-    if (nzchar(grobNamesi@layerName, keepNA=TRUE)) {
+    if (nzchar(grobNamesi@layerName, keepNA = TRUE)) {
       # means it is in a raster
       if (takeFromPlotObj) {
         grobToPlot <- unlist(toPlot[[1]], recursive = FALSE)[[grobNamesi@layerName]]
@@ -1436,20 +1432,20 @@ setMethod(
 #' Then calculates the maxpixels to plot for speed.
 #'
 #' @param grobToPlot .quickPlotGrob
-#' 
+#'
 #' @param zoomExtent an extent object
-#' 
+#'
 #' @param legendRange a numeric vector of length >=2 indicating the desired legend range.
-#' 
+#'
 #' @param takeFromPlotObj logical. Should the object be found in the Plot call or .GlobalEnv
-#' 
+#'
 #' @param arr an \code{.arrangement} object
-#' 
+#'
 #' @param speedup numeric, greater than 1 will usually speed up plotting at the
 #'                expense of resolution
-#'                
+#'
 #' @param newArr logical, whether this is a new arrangement or just adding to a previous one
-#' 
+#'
 #' @author Eliot McIntire
 #' @keywords internal
 #' @importFrom raster ncell
@@ -1560,20 +1556,12 @@ setMethod(
     isReplot <- lapply(curr$curr@quickPlotGrobList, function(x) {
       lapply(x, function(y) FALSE)
     })
-    #
-    # # Set TRUE as default for isBaseLayer
-    # isBaseLayer <- lapply(curr$curr@quickPlotGrobList, function(x) {
-    #   lapply(x, function(y) TRUE)
-    # })
-    #
+
     isNewPlot <- lapply(curr$curr@quickPlotGrobList, function(x) {
       lapply(x, function(y) FALSE)
     })
 
-    #needPlotting <- curr$needPlotting
-    #isReplot <- curr$isReplot
     isBaseLayer <- curr$isBaseLayer
-    #isNewPlot <- curr$isNewPlot
 
     # For overplots
     for (plots in newNames[overplots]) {
@@ -1584,23 +1572,24 @@ setMethod(
 
       needPlotting[[plots]][[plots]] <- TRUE
       isReplot[[plots]][[plots]] <- FALSE
-      #isBaseLayer[[plots]][[plots]] <- isBaseLayer[[plots]][[plots]]
       isNewPlot[[plots]][[plots]] <- FALSE
     }
 
     # put addTo plots into list of quickPlotGrobs that it will be added to
     if (!is.null(addToPlotsNames)) {
       for (plots in 1:length(addToPlotsNames)) {
-        #len <- length(curr$curr@quickPlotGrobList[[addToPlotsNames[plots]]])
-        curr$curr@quickPlotGrobList[[addToPlotsNames[plots]]][names(addToPlotsNames[plots])] <-
-          newSP@quickPlotGrobList[[names(addToPlotsNames[plots])]]
+        a2p <- addToPlotsNames[plots]
+        nA2P <- names(a2p)
+
+        curr$curr@quickPlotGrobList[[a2p]][nA2P] <- newSP@quickPlotGrobList[[nA2P]]
+
         # change the name of the plotName to the parent object
-        curr$curr@quickPlotGrobList[[addToPlotsNames[plots]]][[names(addToPlotsNames[plots])]]@plotName <-
-          curr$curr@quickPlotGrobList[[addToPlotsNames[plots]]][[1]]@plotName
-        needPlotting[[addToPlotsNames[plots]]][[names(addToPlotsNames[plots])]] <- TRUE
-        isReplot[[addToPlotsNames[plots]]][[names(addToPlotsNames[plots])]] <- FALSE
-        isBaseLayer[[addToPlotsNames[plots]]][[names(addToPlotsNames[plots])]] <- FALSE
-        isNewPlot[[addToPlotsNames[plots]]][[names(addToPlotsNames[plots])]] <- FALSE
+        curr$curr@quickPlotGrobList[[a2p]][[nA2P]]@plotName <-
+          curr$curr@quickPlotGrobList[[a2p]][[1]]@plotName
+        needPlotting[[a2p]][[nA2P]] <- TRUE
+        isReplot[[a2p]][[nA2P]] <- FALSE
+        isBaseLayer[[a2p]][[nA2P]] <- FALSE
+        isNewPlot[[a2p]][[nA2P]] <- FALSE
       }
     }
 
@@ -1673,9 +1662,8 @@ setMethod(
   ".arrangeViewports",
   signature = c(".quickPlot"),
   definition = function(sPlot, arr) {
-
     ds <- dev.size()
-    ds.ratio <- ds[1] / ds[2]
+    ds.ratio <- ds[1] / ds[2] # nolint
 
     sgl <- sPlot@quickPlotGrobList
 
@@ -1698,14 +1686,14 @@ setMethod(
             )
           } else {
             # for non spatial objects
-            c(1,1)
+            c(1, 1)
           }
         })
       })), 2, max)
 
     dimensionRatio <- dimx[1] / dimx[2]
 
-    ds.dimensionRatio <- ds.ratio / dimensionRatio
+    dsDimensionRatio <- ds.ratio / dimensionRatio # nolint
     if (is.null(arr)) {
 
       nPlots <- length(sgl)
@@ -1715,31 +1703,30 @@ setMethod(
         dev.new(height = 8, width = 10)
       }
 
-      col.by.row <- data.frame(matrix(ncol = 2, nrow = nPlots))
+      colByRow <- data.frame(matrix(ncol = 2, nrow = nPlots))
 
-      col.by.row[, 1] <- ceiling(nPlots / (1:nPlots))
-      col.by.row[, 2] <- ceiling(nPlots / col.by.row[, 1])
+      colByRow[, 1] <- ceiling(nPlots / (1:nPlots))
+      colByRow[, 2] <- ceiling(nPlots / colByRow[, 1])
 
-      # wh.best <- which.min(abs(apply(col.by.row, 1, function(x) { x[1]/x[2] }) - ds.dimensionRatio))
       # rewritten for clarity/brevity with pipes below
-      wh.best <- apply(col.by.row, 1, function(x) x[1] / x[2]) %>%
-        `-`(., ds.dimensionRatio) %>%
+      whBest <- apply(colByRow, 1, function(x) x[1] / x[2]) %>%
+        `-`(., dsDimensionRatio) %>%
         abs() %>%
         which.min()
 
-      columns <- col.by.row[wh.best, 1]
-      rows <- col.by.row[wh.best, 2]
+      columns <- colByRow[whBest, 1]
+      rows <- colByRow[whBest, 2]
     } else {
       columns <- arr[2]
       rows <- arr[1]
     }
 
-    actual.ratio <- columns / rows
+    actualRatio <- columns / rows
 
     out <- new(
       ".arrangement", rows = rows, columns = columns,
-      actual.ratio = actual.ratio,
-      ds.dimensionRatio = ds.dimensionRatio,
+      actual.ratio = actualRatio,
+      ds.dimensionRatio = dsDimensionRatio,
       ds = ds
     )
     return(out)
@@ -1875,8 +1862,6 @@ setMethod(
             thin = fastshp::thin(xyOrd[, 1], xyOrd[, 2],
                                  tolerance = speedupScale * speedup)
           )
-          #thinned[, groups := rep(1:NROW(idLength), idLength$V1)]
-          #idLength <- thinned[, sum(thin),by = groups]
           xyOrd <- xyOrd[thinned$thin, ]
         } else {
           message(
@@ -1924,7 +1909,8 @@ setMethod(
     } else {
       if (!is.null(legendText)) {
         nrowLegText <- NROW(legendText)
-        if (NCOL(legendText) > 1) { # means it was a factor
+        if (NCOL(legendText) > 1) {
+          # means it was a factor
           legendText$contigValue <- 1:nrowLegText
           if (nrowLegText > 20) {
             pr <- pretty(legendText$contigValue)
@@ -1941,13 +1927,13 @@ setMethod(
       }
     }
 
-    if (NCOL(legendText) == 1) { # means it was not a factor
+    if (NCOL(legendText) == 1) {
+      # means it was not a factor
       pr <- pr[pr <= maxv & pr >= minv]
     } else {
       pr <- pr[pr <= nrowLegText & pr >= 1]
     }
     if (length(pr) == 0) pr <- seq(minv, maxv, by = 2)
-    #maxNumCols = 100
     maxcol <- length(col)
     mincol <- 2
 
@@ -1993,7 +1979,8 @@ setMethod(
           txt <- if (is.null(legendText)) {
             pr
           } else {
-            if (NCOL(legendText) > 1) { # for factor legends
+            # factor legends
+            if (NCOL(legendText) > 1) {
               legendIndex <- pr
               legendText[legendIndex, 2]
             } else {
@@ -2005,14 +1992,15 @@ setMethod(
             txt, #vp = vp[[1]][[2]][[paste0("outer",name)]],
             x = 1.08,
             y = if (!real) {
-              if (NCOL(legendText) > 1) { # factors
+              # factors
+              if (NCOL(legendText) > 1) {
                 maxv <- legendText$contigValue[nrowLegText]
                 minv <- legendText$contigValue[1]
               }
-              ((pr - minv) / ((maxv + 1) - minv)) / 2 + 0.25 + 1 /
+              ((pr - minv) / ((maxv + 1) - minv)) / 2 + 0.25 + 1 / # nolint
                 (diff(range(minv, maxv)) + 1) / 4
             } else {
-              ((pr - minv) / ((maxv) - minv)) / 2 + 0.25
+              ((pr - minv) / ((maxv) - minv)) / 2 + 0.25 # nolint
             },
             gp = gpText,
             just = "left", check.overlap =
@@ -2067,17 +2055,20 @@ setMethod(
       grobToPlot@polygons[[x]]@plotOrder
     })
 
-    xyOrd.l <- lapply(ord, function(i) {
+    xyOrd.l <- lapply(ord, function(i) { # nolint
       xy[[i]][ordInner[[i]]]
     })
 
-    # idLength <- data.table(V1=unlist(lapply(xyOrd.l, function(i) lapply(i, length)))/2)
-    idLength <- lapply(xyOrd.l, function(i) { lapply(i, length) }) %>%
-      unlist %>%
+    idLength <- lapply(xyOrd.l, function(i) {
+      lapply(i, length)
+    }) %>%
+      unlist() %>%
       `/`(., 2) %>%
       data.table(V1 = .)
 
-    xyOrd <- do.call(rbind, lapply(xyOrd.l, function(i) { do.call(rbind, i) }))
+    xyOrd <- do.call(rbind, lapply(xyOrd.l, function(i) {
+      do.call(rbind, i)
+    }))
 
     if (!is.null(col)) {
       if (!is.null(gp)) {
@@ -2154,12 +2145,11 @@ setMethod(
       grobToPlot@lines[[i]]@Lines[[1]]@coords
     })
     idLength <- unlist(lapply(xy, length)) / 2
-    xy <- do.call(rbind,xy)
+    xy <- do.call(rbind, xy)
 
     if (NROW(xy) > 1e3) {
       # thin if fewer than 1000 pts
       if (speedup > 0.1) {
-
         if (requireNamespace("fastshp", quietly = TRUE)) {
           thinned <- fastshp::thin(xy[, 1], xy[, 2],
                                    tolerance = speedupScale * speedup)
@@ -2170,7 +2160,7 @@ setMethod(
             lastIDs <- cumsum(idLength)
 
             # Ensure first and last points of each line are kept:
-            thinned[c(1, lastIDs + 1)[-(1 + length(lastIDs))]] <- TRUE
+            thinned[c(1, lastIDs + 1)[-(1 + length(lastIDs))]] <- TRUE # nolint
             thinned[lastIDs] <- TRUE
           }
           xy <- xy[thinned, ]
@@ -2264,7 +2254,7 @@ setMethod(
   }
 
   # calculate the visualSqueeze for the width (i.e., vS.w)
-  vS.w <- min(
+  vS.w <- min( # nolint
     visualSqueeze / columns,
     visualSqueeze / columns * arr@actual.ratio / arr@ds.dimensionRatio
   )
@@ -2275,7 +2265,7 @@ setMethod(
                  unit(0.2, "null"))
 
   # calculate the visualSqueeze for the height (i.e., vS.h)
-  vS.h <- min(visualSqueeze / rows,
+  vS.h <- min(visualSqueeze / rows, # nolint
               visualSqueeze / rows * arr@ds.dimensionRatio / arr@actual.ratio)
   ht <- unit.c(unit(0.2, "null"),
                unit(rep(c(0.875, vS.h, 0.875), rows),
@@ -2360,36 +2350,32 @@ setMethod(
 
   for (extentInd in 1:length(extents)) {
     posInd <- match(nam[extentInd], names(sgl))
-    lpc <- ceiling((posInd - 1) %% columns + 1) * 3
+    lpc <- ceiling((posInd - 1) %% columns + 1) * 3 # nolint
     lpr <- ceiling(posInd / columns) * 3
 
     if (!sgl[[posInd]][[1]]@isSpatialObjects) {
-      lpc <- c((lpc - 1):(lpc + 1))
-      lpr <- c((lpr):(lpr + 1))
+      lpc <- c((lpc - 1):(lpc + 1)) # nolint
+      lpr <- c((lpr):(lpr + 1)) # nolint
     }
     # makes equal scale
     yrange <- extents[[extentInd]]@ymax - extents[[extentInd]]@ymin
     if (yrange > 0) {
-      if (abs((yrange / (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin)) -
-              (biggestDims[1] / biggestDims[2])) > (getOption("quickPlot.tolerance"))) {
+      if (abs((yrange / (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin)) - # nolint
+        (biggestDims[1] / biggestDims[2])) > getOption("quickPlot.tolerance")) {
         dimensionRatio <- arr@layout$wdthUnits * arr@ds[1] /
           (arr@layout$htUnits * arr@ds[2])
-        plotScaleRatio <-
-          (extents[[extentInd]]@xmin - extents[[extentInd]]@xmax) /
+        plotScaleRatio <- (extents[[extentInd]]@xmin - extents[[extentInd]]@xmax) /
           (extents[[extentInd]]@ymin - extents[[extentInd]]@ymax)
 
-        vS.w <- min(1, plotScaleRatio / dimensionRatio)
+        vS.w <- min(1, plotScaleRatio / dimensionRatio) # nolint
+        vS.h <- min(1, dimensionRatio / plotScaleRatio) # nolint
 
-        vS.h <- min(1, dimensionRatio / plotScaleRatio)
-
-        addY <-
-          abs(extents[[extentInd]]@ymax - extents[[extentInd]]@ymin -
-                (extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) /
-                vS.h) / 2
-        addX <-
-          abs(extents[[extentInd]]@xmax - extents[[extentInd]]@xmin -
-                (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) /
-                vS.w) / 2
+        addY <- abs(extents[[extentInd]]@ymax - extents[[extentInd]]@ymin -
+                      (extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) /
+                      vS.h) / 2
+        addX <- abs(extents[[extentInd]]@xmax - extents[[extentInd]]@xmin -
+                      (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) /
+                      vS.w) / 2
       } else {
         addY <- addX <- 0
       }

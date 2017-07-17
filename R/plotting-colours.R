@@ -33,14 +33,6 @@ setMethod("getColors",
             return(cols)
 })
 
-# @rdname getColors
-# setMethod("getColors",
-#           signature = "agentMatrix",
-#           definition = function(object) {
-#             cols <- as(object[,"color"], "data.frame")$color
-#             return(cols)
-# })
-
 #' @rdname getColors
 setMethod("getColors",
           signature = "ANY",
@@ -172,7 +164,7 @@ setReplaceMethod(
       }
     }
     rcolbrewInfo <- RColorBrewer::brewer.pal.info
-    if ((value %in% row.names(rcolbrewInfo))[1]) {
+    if ((value %in% row.names(rcolbrewInfo))[1]) { # nolint
       if (n > rcolbrewInfo[value, "maxcolors"]) {
         ntmp <- rcolbrewInfo[value, "maxcolors"]
       } else {
@@ -234,7 +226,8 @@ setReplaceMethod(
 
      for (x in i) {
        if (x %in% i[whValNamed]) {
-         setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <- value[[names(value)[x]]]
+         setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <-
+           value[[names(value)[x]]]
        } else {
          setColors(object[[names(value)[x]]], ..., n = nFull[x]) <- value[[names(value)[x]]]
        }
@@ -331,7 +324,7 @@ setMethod(
 setGeneric(
   ".makeColorMatrix",
    function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
-            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE) {
+            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE) { # nolint
      standardGeneric(".makeColorMatrix")
 })
 
@@ -341,14 +334,13 @@ setMethod(
   #signature = c("griddedClasses", "Extent", "numeric", "ANY"),
   signature = c("Raster", "Extent", "numeric", "ANY"),
   definition = function(grobToPlot, zoomExtent, maxpixels, legendRange,
-                        cols, na.color, zero.color, skipSample = TRUE) {
+                        cols, na.color, zero.color, skipSample = TRUE) { # nolint
     zoom <- zoomExtent
     isFac <- any(raster::is.factor(grobToPlot))
     # It is 5x faster to access the min and max from the Raster than to
     # calculate it, but it is also often wrong... it is only metadata
     # on the raster, so it is possible that it is incorrect.
     if (!skipSample) {
-      #if(is.na(zoom)) zoom <- extent(grobToPlot)
       colorTable <- getColors(grobToPlot)[[1]]
       if (!is(try(minValue(grobToPlot)), "try-error")) {
         minz <- minValue(grobToPlot)
@@ -391,16 +383,11 @@ setMethod(
       maxz <- max(legendRange)
     }
 
-  #} else {
-    #minz <- 1
-    #maxz <- NROW(raster::levels(grobToPlot)[[1]])
-  #}
-
     real <- any(na.omit(z) %% 1 != 0) # Test for real values or not
 
-    # Deal with colors - This gets all combinations, real vs. integers,
-    #  with zero, with no zero, with NA, with no NA, not enough numbers,
-    #  too many numbers
+    ## Deal with colors - This gets all combinations, real vs. integers,
+    ## with zero, with no zero, with NA, with no NA, not enough numbers,
+    ## too many numbers
     maxNumCols <- 100
 
     if (isFac) {
@@ -410,8 +397,8 @@ setMethod(
       if (any(is.na(legendRange))) {
         nValues <- ifelse(real, maxNumCols + 1, maxz - minz + 1)
       } else {
-        #realRange <- any(legendRange %% 1 != 0) # Test for real values or not
-        nValues <- ifelse(real, maxNumCols + 1, length(seq(legendRange[1], legendRange[length(legendRange)])))
+        nValues <- ifelse(real, maxNumCols + 1,
+                          length(seq(legendRange[1], legendRange[length(legendRange)])))
       }
     }
 
@@ -422,10 +409,10 @@ setMethod(
         colTable <- getColors(grobToPlot)[[1]]
         lenColTable <- length(colTable)
 
-        cols <- if ((nValues > lenColTable) & !isFac) {
+        cols <- if ((nValues > lenColTable) & !isFac) { # nolint
           # not enough colors, use colorRamp
           colorRampPalette(colTable)(nValues)
-        } else if ( (nValues <= lenColTable) | isFac ) {
+        } else if ((nValues <= lenColTable) | isFac) { # nolint
           # one more color than needed:
           #   assume bottom is NA
           if (isFac) {
@@ -444,13 +431,13 @@ setMethod(
         } else if (nValues <= (lenColTable - 1)) {
           # one more color than needed:
           #  assume bottom is NA
-          na.color <- colTable[1]
+          na.color <- colTable[1] # nolint
           colTable[minz:maxz - minz + 2]
         } else if (nValues <= (lenColTable - 2)) {
           # two more colors than needed,
           #  assume bottom is NA, second is white
-          na.color <- colTable[1]
-          zero.color <- colTable[2]
+          na.color <- colTable[1] # nolint
+          zero.color <- colTable[2] # nolint
           colTable[minz:maxz - minz + 3]
         } else {
           colTable
@@ -468,7 +455,7 @@ setMethod(
       cols <- if (nValues > length(cols)) {
         colorRampPalette(cols)(nValues)
       } else if (nValues < length(cols)) {
-        if ((minz + nValues - 1)  > length(cols)) {
+        if ((minz + nValues - 1)  > length(cols)) { # nolint
           # there are enough colors, but they don't start at 1
           cols[minz:maxz - minz + 1 + max(0, 1 - minz)]
         } else {
@@ -509,14 +496,11 @@ setMethod(
     if (isFac) {
       z <- match(z, facLevs$ID)
     } else {
-      if (real) {#& (maxz <= maxNumCols) ) {
+      if (real) {
         z <- maxNumCols / (maxz - minz) * (z - minz)
         if (length(whichZero)) {
           zeroValue <- maxNumCols / (maxz - minz) * (0 - minz)
         }
-        # rescale so the minimum is 1, not <1:
-        #z <- z + (((maxNumCols / maxz * minz) < 1) *
-        #            (-(maxNumCols / maxz * minz) + 1))
       } else {
         # rescale so that the minimum is 1, not <1:
         if (nValues > 1) {
@@ -541,15 +525,9 @@ setMethod(
     }
 
     if (any(!is.na(legendRange))) {
-      if ((max(legendRange) - min(legendRange) + 1) < length(cols)) {
+      if ((max(legendRange) - min(legendRange) + 1) < length(cols)) { # nolint
       } else {
-        #minz <- min(legendRange)
-        #maxz <- max(legendRange)
-        #minzOrig <- minz
-        #maxzOrig <- maxz
-        if (is.null(colTable)) {
-          #cols <- colorRampPalette(cols)(maxz - minz + 1)
-        } else {
+        if (!is.null(colTable)) {
           if (length(getColors(grobToPlot)[[1]]) > 0) {
             cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
           } else {
@@ -574,10 +552,11 @@ setMethod(
     }
 
     z <- z + 1 # for the NAs
-    z[is.na(z)] <- 1 # max(1, minz)
+    z[is.na(z)] <- 1
 
     if (isFac & !is.null(colTable)) {
-      cols <- rep(na.color, length(factorValues)) # changed from max to length to accommodate zeros or factors not starting at 1
+      # changed from max to length to accommodate zeros or factors not starting at 1
+      cols <- rep(na.color, length(factorValues))
       cols[seq_along(facLevs$ID) - min(factorValues) + 1] <- colTable
     }
     if (length(whichZeroLegend)) {
@@ -605,31 +584,36 @@ setMethod(
 #' Based on ideas from Maureen Kennedy, Nick Povak, and Alina Cansler.
 #'
 #' @param start.color  Start colour to be passed to \code{colorRampPalette}.
-#' @param end.color    End colour to be passed to \code{colorRampPalette}.
-#' @param min.value    Numeric minimum value corresponding to \code{start.colour}. If attempting
-#'                     to change the color of a Raster layer, this can be set to minValue(RasterObject)
 #'
-#' @param max.value    Numeric maximum value corresponding to \code{end.colour}. If attempting
-#'                     to change the color of a Raster layer, this can be set to maxValue(RasterObject)
+#' @param end.color    End colour to be passed to \code{colorRampPalette}.
+#'
+#' @param min.value    Numeric minimum value corresponding to \code{start.colour}.
+#'                     If attempting to change the color of a \code{RasterLayer},
+#'                     this can be set to \code{minValue(RasterObject)}.
+#'
+#' @param max.value    Numeric maximum value corresponding to \code{end.colour}.
+#'                     If attempting to change the color of a \code{RasterLayer},
+#'                     this can be set to \code{maxValue(RasterObject)}.
 #' @param mid.value    Numeric middle value corresponding to \code{mid.colour}.
 #'                     Default is \code{0}.
+#'
 #' @param mid.color    Middle colour to be passed to \code{colorRampPalette}.
 #'                     Defaults to \code{"white"}.
 #'
 #' @return A diverging colour palette.
 #'
-#' @seealso \code{\link{colorRampPalette}}
-#' @docType methods
 #' @aliases divergentColours
-#' @importFrom  grDevices colorRampPalette
-#' @export
 #' @author Eliot McIntire and Alex Chubaty
+#' @docType methods
+#' @export
+#' @importFrom  grDevices colorRampPalette
+#' @seealso \code{\link{colorRampPalette}}
 #'
 #' @examples
 #' divergentColors("darkred", "darkblue", -10, 10, 0, "white")
 setGeneric("divergentColors",
-           function(start.color, end.color, min.value, max.value,
-                    mid.value = 0, mid.color = "white") {
+           function(start.color, end.color, min.value, max.value, # nolint
+                    mid.value = 0, mid.color = "white") { # nolint
              standardGeneric("divergentColors")
 })
 
@@ -638,25 +622,24 @@ setGeneric("divergentColors",
 setMethod(
   "divergentColors",
   signature = c("character", "character", "numeric", "numeric"),
-  definition = function(start.color, end.color, min.value, max.value,
-                        mid.value, mid.color) {
+  definition = function(start.color, end.color, min.value, max.value, # nolint
+                        mid.value, mid.color) { # nolint
   ramp1 <- colorRampPalette(c(start.color, mid.color))
   ramp2 <- colorRampPalette(c(mid.color, end.color))
 
   # now specify the number of values on either side of "mid.value"
-  max.breaks <- floor((max.value - mid.value) + 1)
-  min.breaks <- floor((mid.value - min.value) + 1)
+  maxBreaks <- floor((max.value - mid.value) + 1) # nolint
+  minBreaks <- floor((mid.value - min.value) + 1) # nolint
 
-  # num.breaks <- max(max.breaks, min.breaks)
-  low.ramp <- ramp1(min.breaks)
-  high.ramp <- ramp2(max.breaks)
-  if (min.breaks == 1) low.ramp <- mid.color
+  lowRamp <- ramp1(minBreaks)
+  highRamp <- ramp2(maxBreaks)
+  if (minBreaks == 1) lowRamp <- mid.color
 
-  # now create a combined ramp from the higher values of "low.ramp" and
-  # the lower values of "high.ramp", with the longer one using all values
-  # high.ramp starts at 2 to avoid duplicating zero
+  # now create a combined ramp from the higher values of "lowRamp" and
+  # the lower values of "highRamp", with the longer one using all values
+  # highRamp starts at 2 to avoid duplicating zero
 
-  myColors <- c(low.ramp[1:min.breaks], high.ramp[2:max.breaks])
+  myColors <- c(lowRamp[1:minBreaks], highRamp[2:maxBreaks])
 
   return(myColors)
 })

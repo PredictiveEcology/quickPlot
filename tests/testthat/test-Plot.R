@@ -300,7 +300,7 @@ test_that("Unit tests for plotting colors", {
   ###################################
   png(file = "test.png", width = 400, height = 300)
   clearPlot()
-  
+
   # should be a 2 x 2 raster, bottom left red, top row blue, bottom right green
   Plot(ras, new = TRUE)
   dev.off()
@@ -320,7 +320,7 @@ test_that("Unit tests for plotting colors", {
   setColors(rasStack, n = 3) <- list(ras = c("black", "blue", "green"))
   png(file = "test.png", width = 400, height = 300)
   clearPlot()
-  
+
   # should be left 2 x 2 raster, blue top, black bot lef, green bot right;
   # 2nd raster, 2 x 2, topleft green, topRight & botLef grey, botright = beige
   Plot(rasStack, new = TRUE)

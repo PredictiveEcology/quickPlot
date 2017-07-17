@@ -290,19 +290,21 @@ clickCoordinates <- function(n = 1) {
       stop("No plot at those coordinates")
     }
     column <-  which(xInt == grepNpcsW)
-    row <- which((yInt == grepNpcsH)[length(grepNpcsH):1])
+    row <- which((yInt == grepNpcsH)[length(grepNpcsH):1]) # nolint
     map <- column + (row - 1) * arr$curr@arr@columns
 
     maxLayX <- cumsum(widthNpcs)[xInt]
     minLayX <- cumsum(widthNpcs)[xInt - 1]
-    grobLoc$x <- unit((as.numeric(strsplit(
-      as.character(gloc$x), "npc"
+    grobLoc$x <- unit(
+      (as.numeric(strsplit(
+        as.character(gloc$x), "npc"
       )[[1]]) - minLayX) / (maxLayX - minLayX), "npc")
 
     maxLayY <- cumsum(heightNpcs)[yInt]
     minLayY <- cumsum(heightNpcs)[yInt - 1]
-    grobLoc$y <- unit((as.numeric(strsplit(
-      as.character(gloc$y), "npc"
+    grobLoc$y <- unit(
+      (as.numeric(strsplit(
+        as.character(gloc$y), "npc"
       )[[1]]) - minLayY) / (maxLayY - minLayY), "npc")
 
     clickCoords[i, ] <- .clickCoord(arr$curr@quickPlotGrobList[[map]][[1]]@plotName,
@@ -323,7 +325,7 @@ clickCoordinates <- function(n = 1) {
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname quickPlotMouseClicks
-.clickCoord <- function(X, n = 1, gl = NULL) {
+.clickCoord <- function(X, n = 1, gl = NULL) { # nolint 
   pts <- data.frame(x = NA_real_, y = NA_real_, stringsAsFactors = FALSE)
   seekViewport(X, recording = FALSE)
   for (i in 1:n) {
@@ -419,7 +421,7 @@ newPlot <- function(noRStudioGD = TRUE, ...) {
 
 #' @export
 #' @rdname newPlot
-dev.useRSGD <- function(useRSGD = FALSE) {
+dev.useRSGD <- function(useRSGD = FALSE) { # nolint
   if (isTRUE(useRSGD)) {
     options(device = "RStudioGD")
   } else {

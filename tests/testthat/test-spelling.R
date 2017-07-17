@@ -7,29 +7,29 @@ test_that("spelling errors", {
 
   ## ensure that stats terms are included in the word list
   pkg <- "quickPlot"
-  .words.file <- system.file("dict/words.rds", package = pkg)
-  .words <- readRDS(.words.file)
-  .en_stats <- hunspell::en_stats
+  .wordsFile <- system.file("dict/words.rds", package = pkg)
+  .words <- readRDS(.wordsFile)
+  .en_stats <- hunspell::en_stats # nolint
   .complete <- all(.en_stats %in% .words)
   expect_true(.complete)
 
   ## if needed, add any new stats words to the word list
   if (interactive() && !.complete) {
     ignore <- sort(unique(c(.en_stats, .words, pkg)))
-    saveRDS(ignore, .words.file)
+    saveRDS(ignore, .wordsFile)
   }
 
   pkgDir <- system.file(package = pkg)
 
   ## check vignettes
-  wrds_Rmd <- aspell_package_vignettes(pkgDir)
-  expect_equal(nrow(wrds_Rmd), 0)
+  wrdsRmd <- aspell_package_vignettes(pkgDir)
+  expect_equal(nrow(wrdsRmd), 0)
 
   ## check help (Rd) files
-  wrds_Rd <- aspell_package_Rd_files(pkgDir, drop = c("\\author", "\\references"))
-  expect_equal(nrow(wrds_Rd), 0)
+  wrdsRd <- aspell_package_Rd_files(pkgDir, drop = c("\\author", "\\references"))
+  expect_equal(nrow(wrdsRd), 0)
 
   ## check code files (messages, warnings, etc.)
-  #wrds_C <- aspell_package_C_files(pkgDir)
-  #expect_equal(nrow(wrds_C), 0)
+  wrdsC <- aspell_package_C_files(pkgDir)
+  expect_equal(nrow(wrdsC), 0)
 })

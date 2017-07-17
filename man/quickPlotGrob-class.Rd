@@ -9,18 +9,16 @@
 This class contains the plotting .quickPlotGrob information.
 }
 \details{
-These \code{gp*} parameters will specify plot parameters that are
-available with \code{gpar()}. \code{gp} will adjust plot parameters,
-\code{gpText} will adjust title and legend text, \code{gpAxis} will
-adjust the axes. \code{size} adjusts point size in a
-\code{SpatialPoints} object. These will persist with the
-original \code{Plot} call for each individual object. Multiple
-entries can be used, but they must be named list elements
-and they must match the \code{...} items to plot. This is true
-for a RasterStack also, i.e., the list of named elements
-must be the same length as the number of layers being
-plotted. The naming convention used is: \code{RasterStackName$layerName},
-i.e, \code{landscape$DEM}.
+These \code{gp*} parameters will specify plot parameters that are available
+with \code{gpar()}. \code{gp} will adjust plot parameters, \code{gpText} will
+adjust title and legend text, \code{gpAxis} will adjust the axes.
+\code{size} adjusts point size in a \code{SpatialPoints} object.
+These will persist with the original \code{Plot} call for each individual object.
+Multiple entries can be used, but they must be named list elements
+and they must match the \code{...} items to plot.
+This is true for a \code{RasterStack} also, i.e., the list of named elements
+must be the same length as the number of layers being plotted.
+The naming convention used is: \code{RasterStackName$layerName}, i.e, \code{landscape$DEM}.
 }
 \section{Slots}{
 

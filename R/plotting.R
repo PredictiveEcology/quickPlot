@@ -364,8 +364,8 @@ setGeneric(
            gp = gpar(), gpText = gpar(), gpAxis = gpar(), axes = FALSE,
            speedup = 1, size = 5, cols = NULL, col = NULL, zoomExtent = NULL,
            visualSqueeze = NULL, legend = TRUE, legendRange = NULL,
-           legendText = NULL, pch = 19, title = TRUE, na.color = "#FFFFFF00",
-           zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot") {
+           legendText = NULL, pch = 19, title = TRUE, na.color = "#FFFFFF00", # nolint
+           zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot") { # nolint
     standardGeneric("Plot")
 })
 
@@ -376,8 +376,8 @@ setMethod(
   signature("ANY"),
   definition = function(..., new, addTo, gp, gpText, gpAxis, axes, speedup,
                         size, cols, col, zoomExtent, visualSqueeze, legend,
-                        legendRange, legendText, pch, title, na.color,
-                        zero.color, length, arr, plotFn) {
+                        legendRange, legendText, pch, title, na.color, # nolint
+                        zero.color, length, arr, plotFn) { # nolint
     # Section 1 - extract object names, and determine which ones need plotting,
     # which ones need replotting etc.
 
@@ -385,20 +385,20 @@ setMethod(
     # this covers the case where R thinks that there is nothing, but
     #  there may in fact be something.
     if (sum(news) > 0) {
-      if ((length(ls(.quickPlotEnv)) +
-           numLayers(.quickPlotEnv[[paste0("quickPlot", dev.cur())]]) - 1) <= sum(news) |
+      if (length(ls(.quickPlotEnv)) +
+           numLayers(.quickPlotEnv[[paste0("quickPlot", dev.cur())]]) - 1 <= sum(news) |
           length(ls(.quickPlotEnv)) == 0) {
         clearPlot(dev.cur())
     }}
 
     # Determine object names that were passed and layer names of each
     scalls <- sys.calls()
-    
+
     # This testthat is a work around:
     # A test_that call can be very long, with many function calls, including Plot and do.call,
     # even if they don't have anything to do with each other
     isDoCall <- grepl("^do.call", scalls) & grepl("Plot", scalls) & !grepl("test_that", scalls)
-    
+
     dots <- list(...)
     if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") &
        !is(dots[[1]], "communities") & !is(dots[[1]], "igraph") & !is(dots[[1]], "histogram")) {
@@ -473,10 +473,11 @@ setMethod(
               "Please call Plot for base plots separately.")
 
     # Create plotObjs object, which is a cleaned up version of the objects passed into Plot
-    if (all(!whichQuickPlottables) ) {
+    if (all(!whichQuickPlottables)) {
       ## if not a .quickPlottables then it is a pass to plot or points
       if (!exists(paste0("basePlots_", dev.cur()), envir = .quickPlotEnv))
-        .assignQuickPlot(paste0("basePlots_", dev.cur()), new.env(hash = FALSE, parent = .quickPlotEnv))
+        .assignQuickPlot(paste0("basePlots_", dev.cur()),
+                         new.env(hash = FALSE, parent = .quickPlotEnv))
       mc <- match.call(get(plotArgs$plotFn), call(plotArgs$plotFn, quote(...)))
       mcPlot <- match.call(Plot, call = sys.call(whFrame))
       plotArgs$userProvidedPlotFn <- ("plotFn" %in% names(mcPlot))
@@ -510,7 +511,7 @@ setMethod(
 
       if (is.null(mcPlot$col)) {
         if (!any(unlist(lapply(dotObjs, function(x) {
-          any(unlist(lapply(c("histogram", "igraph", "communities"), function(y) is(x,y))))
+          any(unlist(lapply(c("histogram", "igraph", "communities"), function(y) is(x, y))))
         })))) #default for histogram is NULL
           plotArgs$col <- "black"
       }
@@ -519,17 +520,16 @@ setMethod(
       basePlotDots$main <- plotArgs$main
 
       if (addTo %in% ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) {
-        plotObjsName <- paste0(addTo, "_", length(ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) + 1)
-
+        plotObjsName <- paste0(addTo, "_",
+                               length(ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) + 1)
       } else {
         plotObjsName <- addTo
       }
       names(plotObjs) <- plotObjsName
       assign(plotObjsName, basePlotDots, envir = .getQuickPlot(paste0("basePlots_", dev.cur())))
       objFrame <- .getQuickPlot(paste0("basePlots_", dev.cur()))
-
-    } else { # non base plots
-
+    } else {
+      # non base plots
       canPlot <- if (!is.null(names(whichQuickPlottables))) {
         whichQuickPlottables[names(whichQuickPlottables) != "env"]
       } else {
@@ -537,7 +537,7 @@ setMethod(
       }
 
       if (!all(canPlot)) {
-        if ((sum(canPlot) - length(grep(pattern = "col", names(canPlot)))) > 0) {
+        if ((sum(canPlot) - length(grep(pattern = "col", names(canPlot)))) > 0) { # nolint
           # don't message if col is passed
           message(paste(
             "Plot can only plot objects of class .quickPlottables.",
@@ -559,14 +559,13 @@ setMethod(
       if (!tryCatch(
         addTo %in%
           unlist(layerNames(get(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv))),
-        error = function(x) FALSE))
-        {
+        error = function(x) FALSE)) {
           plotArgs$addTo <- NULL
         }
     }
 
     # Create a .quickPlot object from the plotObjs and plotArgs
-    isQuickPlot <- sapply(plotObjs, function(x) { is(x, ".quickPlot") })
+    isQuickPlot <- sapply(plotObjs, function(x) is(x, ".quickPlot"))
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
     newQuickPlots <- .makeQuickPlot(
@@ -587,21 +586,17 @@ setMethod(
       newArr <- (
         length(updated$curr@quickPlotGrobList) >
           prod(currQuickPlots$curr@arr@columns, currQuickPlots$curr@arr@rows)
-      ) | !identical(currQuickPlots$curr@arr@ds,dev.size())
+      ) | !identical(currQuickPlots$curr@arr@ds, dev.size())
 
       if (newArr) {
         updated$needPlotting <- lapply(updated$needPlotting, function(x) {
-          sapply(x, function(y) { TRUE })
+          sapply(x, function(y) TRUE)
         })
         updated$isReplot <- lapply(updated$isReplot, function(x) {
-          sapply(x, function(y) { TRUE })
+          sapply(x, function(y) TRUE)
         })
-        # updated$isNewPlot <- lapply(updated$isNewPlot, function(x) {
-        #     sapply(x, function(y) { TRUE })
-        # })
         clearPlot(removeData = FALSE)
       }
-
     } else if (all(isQuickPlot)) {
       currQuickPlots <- .makeQuickPlot()
       newQuickPlots <- plotObjs[[1]]
@@ -629,24 +624,17 @@ setMethod(
       }
       updated$curr@arr <- .arrangeViewports(updated$curr, arr = arr)
       updated$curr@arr@layout <- .makeLayout(
-        updated$curr@arr, sapply(visualSqueeze, max), sapply(legend,any),
-        sapply(axes, function(x) { !any(x == TRUE) })
+        updated$curr@arr, sapply(visualSqueeze, max), sapply(legend, any),
+        sapply(axes, function(x) !any(x == TRUE))
       )
     }
 
     # Create the viewports as per the optimal layout
     if (length(newQuickPlots@quickPlotGrobList) > 0) {
       vps <- .makeViewports(updated$curr, newArr = newArr)
-      #if (!all(unlist(new)) & !newArr & !is.null(current.parent())) {
-      #if (!all(unlist(new)) & !newArr & !is.null(current.parent())) {
-      #    upViewport(1)
-      #}
-      #if(newArr) {
       upViewport(0)
       pushViewport(vps$wholeVp, recording = FALSE)
       upViewport(0)
-
-      #}
     }
     updated$curr@arr@extents <- vps$extents
     updated$curr@arr@names <- names(updated$curr@quickPlotGrobList)
@@ -676,18 +664,19 @@ setMethod(
                                   sGrob@plotName)
           whLayerFromPO <- which(layerFromPlotObj)
 
-          objNames <- unique(unname(unlist(lapply(newQuickPlots@quickPlotGrobList, function(x) x[[1]]@objName))))
+          objNames <- unique(unname(unlist(lapply(newQuickPlots@quickPlotGrobList,
+                                                  function(x) x[[1]]@objName))))
           whPlotObj <- which(objNames %in% sGrob@objName)
 
 
-          layerFromPlotObj <- if (length(whLayerFromPO) == 0) { FALSE
+          layerFromPlotObj <- if (length(whLayerFromPO) == 0) {
+            FALSE
           } else if (isQuickPlotLong[whLayerFromPO]) {
             FALSE
           } else {
             layerFromPlotObj[whLayerFromPO]
           }
-          grobToPlot <- .identifyGrobToPlot(sGrob, plotObjs[whPlotObj],
-                                            layerFromPlotObj)
+          grobToPlot <- .identifyGrobToPlot(sGrob, plotObjs[whPlotObj], layerFromPlotObj)
 
           isPlotFnAddable <- if (!is(grobToPlot, ".quickPlotObjects")) {
             if (is(grobToPlot, ".quickPlot")) {
@@ -701,17 +690,14 @@ setMethod(
             FALSE
           }
 
-          if (sGrob@plotArgs$new | is(grobToPlot, "igraph") | #plotArgs$new |
-             is(grobToPlot, "histogram") | #is(grobToPlot$x, "histogram") |
-               isPlotFnAddable) {# draw a white rectangle to clear plot
-
-            #if(sGrob@plotArgs$new)
-              sGrob <- .refreshGrob(sGrob, subPlots, legendRange,
+          if (sGrob@plotArgs$new | is(grobToPlot, "igraph") |
+             is(grobToPlot, "histogram") | isPlotFnAddable) {
+            ## draw a white rectangle to clear plot
+            sGrob <- .refreshGrob(sGrob, subPlots, legendRange,
                                   grobToPlot, plotArgs = sGrob@plotArgs,
                                   nColumns = updated$curr@arr@columns,
                                   whLayerFromPO)
             wipe <- TRUE # can't overplot a histogram
-
           } else {
             wipe <- FALSE
           }
@@ -740,14 +726,14 @@ setMethod(
           }}
 
           # Plot any grobToPlot to device, given all the parameters
-
           sGrob <- .Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
-                isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
-                vps, nonPlotArgs)
+                         isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
+                         vps, nonPlotArgs)
 
         } # needPlot
         updated$isNewPlot[[subPlots]][[quickPlotGrobCounter]] <- FALSE
-        updated$curr@quickPlotGrobList[[subPlots]][[quickPlotGrobCounter]]@plotArgs <- sGrob@plotArgs
+        updated$curr@quickPlotGrobList[[subPlots]][[quickPlotGrobCounter]]@plotArgs <-
+          sGrob@plotArgs
       } # sGrob
     } # subPlots
 
@@ -755,7 +741,6 @@ setMethod(
     .assignQuickPlot(paste0("quickPlot", dev.cur()), updated)
     return(invisible(updated$curr))
 })
-
 
 ################################################################################
 #' Re-plot to a specific device

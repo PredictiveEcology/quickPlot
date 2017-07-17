@@ -1,6 +1,6 @@
 Package: quickPlot
 Type: Package
-Title: A system of plotting that uses 'grid', optimized for speed and modularity
+Title: A System of Plotting Optimized for Speed and Modularity
 Description: A high-level plotting system, built using 'grid' graphics, that is
     optimized for speed and modularity. This has great utility for quick
     visualizations when testing code, with the key benefit that visualizations
@@ -8,7 +8,7 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
     can be installed with
     'install.packages("fastshp", repos = "http://rforge.net", type = "source")'.
 URL: https://github.com/PredictiveEcology/quickPlot
-Date: 2017-07-07
+Date: 2017-07-17
 Version: 0.1.0
 Authors@R: c(
     person(c("Eliot", "J", "B"), "McIntire", email = "eliot.mcintire@canada.ca",
@@ -38,11 +38,9 @@ Suggests:
     fastshp,
     hunspell,
     knitr,
-    reproducible,
     rmarkdown,
     testthat (>= 1.0.2)
 Remotes:
-    PredictiveEcology/reproducible,
     s-u/fastshp
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown

@@ -4,17 +4,14 @@ setOldClass("gg")
 selectMethod("show", "gg")
 
 ### Allow histogram S3 class to be used with Plot, an S4 function
-# all of `graphics` is being imported in `spades-package.R`
 setOldClass("histogram")
 selectMethod("show", "histogram")
 
 ### Allow igraph S3 class to be used with Plot, an S4 function
-# all of `igraph` is being imported in `spades-package.R`
 setOldClass("igraph")
 selectMethod("show", "igraph")
 
 ### Allow gpar S3 class to be used with Plot, an S4 function
-# all of `grid` is being imported in `spades-package.R`
 setOldClass("gpar")
 
 setAs(from = "list", to = "gpar", function(from) {
@@ -82,36 +79,33 @@ setClassUnion(name = "spatialObjects",
 #' This class contains the union of spatialObjects and several other plot-type objects.
 #' These are the object classes that the \code{\link{Plot}} function can handle.
 #'
-#' @seealso \code{\link{quickPlotClasses}}
-#'
 #' @slot members SpatialPoints*, SpatialPolygons*, SpatialLines*, RasterLayer, RasterStack
+#'
 #' @importFrom ggplot2 ggplot
 #' @aliases .quickPlotObjects
+#' @author Eliot McIntire
 #' @name .quickPlotObjects-class
 #' @rdname quickPlotObjects-class
-#' @author Eliot McIntire
-## all of `graphics` (for histogram) is being imported in `spades-package.R`
-## all of `igraph` (for igraph) has to be imported in `spades-package.R`
+#' @seealso \code{\link{quickPlotClasses}}
+#'
 setClassUnion(name = ".quickPlotObjects",
-              members = c("spatialObjects", "gg"))#, "igraph", "communities"))
+              members = c("spatialObjects", "gg"))
 
 ################################################################################
 #' The \code{.quickPlotGrob} class
 #'
 #' This class contains the plotting .quickPlotGrob information.
 #'
-#' These \code{gp*} parameters will specify plot parameters that are
-#' available with \code{gpar()}. \code{gp} will adjust plot parameters,
-#' \code{gpText} will adjust title and legend text, \code{gpAxis} will
-#' adjust the axes. \code{size} adjusts point size in a
-#' \code{SpatialPoints} object. These will persist with the
-#' original \code{Plot} call for each individual object. Multiple
-#' entries can be used, but they must be named list elements
-#' and they must match the \code{...} items to plot. This is true
-#' for a RasterStack also, i.e., the list of named elements
-#' must be the same length as the number of layers being
-#' plotted. The naming convention used is: \code{RasterStackName$layerName},
-#' i.e, \code{landscape$DEM}.
+#' These \code{gp*} parameters will specify plot parameters that are available
+#' with \code{gpar()}. \code{gp} will adjust plot parameters, \code{gpText} will
+#' adjust title and legend text, \code{gpAxis} will adjust the axes.
+#' \code{size} adjusts point size in a \code{SpatialPoints} object.
+#' These will persist with the original \code{Plot} call for each individual object.
+#' Multiple entries can be used, but they must be named list elements
+#' and they must match the \code{...} items to plot.
+#' This is true for a \code{RasterStack} also, i.e., the list of named elements
+#' must be the same length as the number of layers being plotted.
+#' The naming convention used is: \code{RasterStackName$layerName}, i.e, \code{landscape$DEM}.
 #'
 #' @seealso \code{\link{quickPlotClasses}}
 #'
