@@ -70,5 +70,5 @@ However, as we submit further `SpaDES` spinoff packages, this package will becom
 
 - `SpaDES` (Imports)
 - `SpaDES.addins` (Imports)
-- `SpaDES.core` (Imports)
+- `SpaDES.core` (Depends)
 - `SpaDES.tools` (Imports)
