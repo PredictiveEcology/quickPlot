@@ -1,3 +1,17 @@
+#' The \code{quickPlot} package
+#'
+#' A high-level plotting system, built using 'grid' graphics, that is optimized
+#' for speed and modularity. This has great utility for quick visualizations
+#' when testing code, with the key benefit that visualizations are updated
+#' independently of one another.
+#' 
+#' @note
+#' 
+#' The suggested package \code{fastshp} can be installed with
+#' \code{install.packages("fastshp", repos = "http://rforge.net", type = "source")}.
+#' 
+"_PACKAGE"
+
 ################################################################################
 # data documentation
 #
