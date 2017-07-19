@@ -26,35 +26,31 @@ trajectories of agents.
 }
 \examples{
 library(sp)
+library(raster)
+
 # Make 2 objects
-caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50), y = stats::runif(10, -50, 50)))
-caribou2 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50), y = stats::runif(10, -50, 50)))
+caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
+                                y = stats::runif(10, -50, 50)))
+caribou2 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
+                                y = stats::runif(10, -50, 50)))
 
 caribouTraj <- makeLines(caribou1, caribou2)
-  if (interactive()) {
-    clearPlot()
-    Plot(caribouTraj, length = 0.1)
-  }
+
+clearPlot()
+Plot(caribouTraj, length = 0.1)
 
 # or  to a previous Plot
-\dontrun{
-filelist <- data.frame(files =
-     dir(file.path(find.package("quickPlot", quiet = FALSE), "maps"),
-         full.names = TRUE, pattern = "tif"),
-     functions = "rasterToMemory",
-     packages = "quickPlot")
+files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
+maps <- lapply(files, raster)
+names(maps) <- lapply(maps, names)
 
-# Load files to memory (using rasterToMemory)
-sim1 <- loadFiles(filelist = filelist)
 caribouTraj <- makeLines(caribou1, caribou2)
 
-  if (interactive()) {
-    clearPlot()
-    Plot(sim1$DEM)
-    Plot(caribouTraj, addTo = "sim1$DEM", length = 0.1)
-  }
-}
+clearPlot()
+Plot(maps$DEM)
+Plot(caribouTraj, addTo = "maps$DEM", length = 0.1)
 
+clearPlot()
 }
 \author{
 Eliot McIntire

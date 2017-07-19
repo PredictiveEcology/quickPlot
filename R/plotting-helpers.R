@@ -586,44 +586,15 @@ setMethod(
 #'         \code{Plot} call and the \code{length} argument is specified, then
 #'         arrow heads will be drawn. See examples.
 #'
+#' @author Eliot McIntire
+#' @docType methods
+#' @export
 #' @include plotting-classes.R
 #' @importFrom raster crs
 #' @importFrom sp coordinates Line Lines SpatialLines
-#' @export
-#' @docType methods
 #' @rdname makeLines
-#' @author Eliot McIntire
 #'
-#' @examples
-#' library(sp)
-#' # Make 2 objects
-#' caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50), y = stats::runif(10, -50, 50)))
-#' caribou2 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50), y = stats::runif(10, -50, 50)))
-#'
-#' caribouTraj <- makeLines(caribou1, caribou2)
-#'   if (interactive()) {
-#'     clearPlot()
-#'     Plot(caribouTraj, length = 0.1)
-#'   }
-#'
-#' # or  to a previous Plot
-#' \dontrun{
-#' filelist <- data.frame(files =
-#'      dir(file.path(find.package("quickPlot", quiet = FALSE), "maps"),
-#'          full.names = TRUE, pattern = "tif"),
-#'      functions = "rasterToMemory",
-#'      packages = "quickPlot")
-#'
-#' # Load files to memory (using rasterToMemory)
-#' sim1 <- loadFiles(filelist = filelist)
-#' caribouTraj <- makeLines(caribou1, caribou2)
-#'
-#'   if (interactive()) {
-#'     clearPlot()
-#'     Plot(sim1$DEM)
-#'     Plot(caribouTraj, addTo = "sim1$DEM", length = 0.1)
-#'   }
-#' }
+#' @example inst/examples/example_makeLines.R
 #'
 setGeneric("makeLines", function(from, to) {
   standardGeneric("makeLines")
@@ -1316,6 +1287,7 @@ setMethod(
     } else {
       legendRange
     }
+    sGrob@plotArgs$legendTxt <- NULL
     seekViewport(subPlots, recording = FALSE)
     return(sGrob)
 })
@@ -1803,24 +1775,21 @@ setMethod(
 #'
 #' @param ...     Additional arguments. None currently implemented.
 #'
+#' @author Eliot McIntire
 #' @docType methods
+#' @importFrom data.table ':=' data.table
+#' @importFrom grDevices as.raster
+#' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
+#' @importFrom sp proj4string
+#' @importFrom raster extent pointDistance xmin xmax ymin ymax
 #' @keywords internal
 #' @rdname plotGrob
 #'
-#' @importFrom data.table ':=' data.table
-#' @importFrom raster extent pointDistance xmin xmax ymin ymax
-#'
-#' @importFrom sp proj4string
-#' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
-#' @importFrom grDevices as.raster
-#'
-#' @author Eliot McIntire
-setGeneric(".plotGrob", function(grobToPlot, col = NULL, real = FALSE,
-                                 size = unit(5, "points"), minv, maxv,
-                                 legend = TRUE, legendText = NULL,
-                                 length = NULL,
-                                 gp = gpar(), gpText = gpar(), pch = 19,
-                                 speedup = 1, name = character(), vp = list(), ...) {
+setGeneric(
+  ".plotGrob",
+  function(grobToPlot, col = NULL, real = FALSE, size = unit(5, "points"), minv, maxv,
+           legend = TRUE, legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
+           pch = 19, speedup = 1, name = character(), vp = list(), ...) {
   standardGeneric(".plotGrob")
 })
 
@@ -1989,7 +1958,7 @@ setMethod(
             }
           }
           textGrob(
-            txt, #vp = vp[[1]][[2]][[paste0("outer",name)]],
+            txt,
             x = 1.08,
             y = if (!real) {
               # factors
