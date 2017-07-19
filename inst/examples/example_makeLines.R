@@ -1,5 +1,5 @@
-library(raster)
 library(sp)
+library(raster)
 
 # Make 2 objects
 caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
@@ -22,3 +22,5 @@ caribouTraj <- makeLines(caribou1, caribou2)
 clearPlot()
 Plot(maps$DEM)
 Plot(caribouTraj, addTo = "maps$DEM", length = 0.1)
+
+clearPlot()

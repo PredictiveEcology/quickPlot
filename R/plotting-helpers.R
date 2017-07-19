@@ -1775,24 +1775,21 @@ setMethod(
 #'
 #' @param ...     Additional arguments. None currently implemented.
 #'
+#' @author Eliot McIntire
 #' @docType methods
+#' @importFrom data.table ':=' data.table
+#' @importFrom grDevices as.raster
+#' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
+#' @importFrom sp proj4string
+#' @importFrom raster extent pointDistance xmin xmax ymin ymax
 #' @keywords internal
 #' @rdname plotGrob
 #'
-#' @importFrom data.table ':=' data.table
-#' @importFrom raster extent pointDistance xmin xmax ymin ymax
-#'
-#' @importFrom sp proj4string
-#' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
-#' @importFrom grDevices as.raster
-#'
-#' @author Eliot McIntire
-setGeneric(".plotGrob", function(grobToPlot, col = NULL, real = FALSE,
-                                 size = unit(5, "points"), minv, maxv,
-                                 legend = TRUE, legendText = NULL,
-                                 length = NULL,
-                                 gp = gpar(), gpText = gpar(), pch = 19,
-                                 speedup = 1, name = character(), vp = list(), ...) {
+setGeneric(
+  ".plotGrob",
+  function(grobToPlot, col = NULL, real = FALSE, size = unit(5, "points"), minv, maxv,
+           legend = TRUE, legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
+           pch = 19, speedup = 1, name = character(), vp = list(), ...) {
   standardGeneric(".plotGrob")
 })
 
@@ -1961,7 +1958,7 @@ setMethod(
             }
           }
           textGrob(
-            txt, #vp = vp[[1]][[2]][[paste0("outer",name)]],
+            txt,
             x = 1.08,
             y = if (!real) {
               # factors
