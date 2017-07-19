@@ -1287,6 +1287,7 @@ setMethod(
     } else {
       legendRange
     }
+    sGrob@plotArgs$legendTxt <- NULL
     seekViewport(subPlots, recording = FALSE)
     return(sGrob)
 })
