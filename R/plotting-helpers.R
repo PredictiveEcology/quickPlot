@@ -586,44 +586,15 @@ setMethod(
 #'         \code{Plot} call and the \code{length} argument is specified, then
 #'         arrow heads will be drawn. See examples.
 #'
+#' @author Eliot McIntire
+#' @docType methods
+#' @export
 #' @include plotting-classes.R
 #' @importFrom raster crs
 #' @importFrom sp coordinates Line Lines SpatialLines
-#' @export
-#' @docType methods
 #' @rdname makeLines
-#' @author Eliot McIntire
 #'
-#' @examples
-#' library(sp)
-#' # Make 2 objects
-#' caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50), y = stats::runif(10, -50, 50)))
-#' caribou2 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50), y = stats::runif(10, -50, 50)))
-#'
-#' caribouTraj <- makeLines(caribou1, caribou2)
-#'   if (interactive()) {
-#'     clearPlot()
-#'     Plot(caribouTraj, length = 0.1)
-#'   }
-#'
-#' # or  to a previous Plot
-#' \dontrun{
-#' filelist <- data.frame(files =
-#'      dir(file.path(find.package("quickPlot", quiet = FALSE), "maps"),
-#'          full.names = TRUE, pattern = "tif"),
-#'      functions = "rasterToMemory",
-#'      packages = "quickPlot")
-#'
-#' # Load files to memory (using rasterToMemory)
-#' sim1 <- loadFiles(filelist = filelist)
-#' caribouTraj <- makeLines(caribou1, caribou2)
-#'
-#'   if (interactive()) {
-#'     clearPlot()
-#'     Plot(sim1$DEM)
-#'     Plot(caribouTraj, addTo = "sim1$DEM", length = 0.1)
-#'   }
-#' }
+#' @example inst/examples/example_makeLines.R
 #'
 setGeneric("makeLines", function(from, to) {
   standardGeneric("makeLines")

@@ -1,5 +1,10 @@
 Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
+version 0.1.1
+=============
+
+* *do* run examples (per CRAN)
+
 version 0.1.0
 =============
 
