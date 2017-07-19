@@ -306,16 +306,13 @@ Srs2 <- Polygons(list(Sr2), "s2")
 SpP <- SpatialPolygons(list(Srs1, Srs2), 1:2)
 
 clearPlot()
-Plot(ras)
-
-clearPlot()
 Plot(landscape)
 
 # Can overplot, using addTo
 Plot(caribou, addTo = "landscape$forestAge", size = 4, axes = FALSE)
 
-# can add a plot to the plotting window
-Plot(caribou, new = FALSE)
+# or can add a plot to the plotting window
+Plot(caribou)
 
 # Can add two maps with same name, if one is in a stack; they are given
 #  unique names based on object name
@@ -331,7 +328,9 @@ Plot(SpP)
 Plot(SpP, addTo = "landscape$forestCover", gp = gpar(lwd = 2))
 
 # provide arrangement, NumRow, NumCol
+clearPlot()
 Plot(SpP, arr = c(1,4), new = TRUE)
+Plot(habitatQuality2, caribou, maps$DEM)
 
 # example base plot
 clearPlot()
@@ -350,6 +349,7 @@ a$SpP <- SpP
 clearPlot()
 Plot(a)
 
+# clean up
 clearPlot()
 }
 \seealso{
