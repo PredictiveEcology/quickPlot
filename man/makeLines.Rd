@@ -49,6 +49,8 @@ caribouTraj <- makeLines(caribou1, caribou2)
 clearPlot()
 Plot(maps$DEM)
 Plot(caribouTraj, addTo = "maps$DEM", length = 0.1)
+
+clearPlot()
 }
 \author{
 Eliot McIntire
