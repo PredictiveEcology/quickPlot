@@ -1,3 +1,4 @@
+library(raster)
 library(sp)
 
 # Make 2 objects
