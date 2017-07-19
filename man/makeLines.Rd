@@ -25,8 +25,8 @@ The primary conceived usage of this is to draw arrows following the
 trajectories of agents.
 }
 \examples{
-library(raster)
 library(sp)
+library(raster)
 
 # Make 2 objects
 caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),

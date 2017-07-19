@@ -1,5 +1,5 @@
-library(raster)
 library(sp)
+library(raster)
 
 # Make 2 objects
 caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
