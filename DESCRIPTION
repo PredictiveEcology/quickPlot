@@ -8,8 +8,8 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
     can be installed with
     'install.packages("fastshp", repos = "http://rforge.net", type = "source")'.
 URL: https://github.com/PredictiveEcology/quickPlot
-Version: 0.1.0.9000
-Date: 2017-07-19
+Version: 0.1.1.9000
+Date: 2017-07-20
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut", "cre")),
@@ -41,7 +41,8 @@ Suggests:
     rmarkdown,
     testthat (>= 1.0.2)
 Remotes:
-    s-u/fastshp
+    s-u/fastshp,
+    MangoTheCat/visualTest
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues

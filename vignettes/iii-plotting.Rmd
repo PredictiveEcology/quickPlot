@@ -12,12 +12,12 @@ output:
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{03 Plotting with quickPlot}
-  %\VignetteDepends{data.table, ggplot2, igraph, RColorBrewer, quickPlot}
+  %\VignetteDepends{data.table, ggplot2, grDevices, igraph, RColorBrewer, quickPlot, stats}
   %\VignetteKeyword{visualization, plotting, mapping}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r initial-clearPlot, eval=TRUE, echo=FALSE, message=FALSE}
+```{r initial-clearPlot, eval=TRUE, echo=FALSE, fig.keep='none', message=FALSE}
 quickPlot::clearPlot()
 ```
 
@@ -49,10 +49,12 @@ library(data.table)
 library(igraph)
 library(raster)
 library(quickPlot)
+
+# omit forestAge and percentPine maps for simplicity
 filelist <- data.frame(file = (system.file("maps", package = "quickPlot") %>%
-  dir(., full.names = TRUE, pattern = "tif"))[-c(2, 5) ], stringsAsFactors = FALSE)  
-       # omit forestAge and percentPine for simplicity
+  dir(., full.names = TRUE, pattern = "tif"))[-c(2, 5) ], stringsAsFactors = FALSE) 
 print(filelist)
+
 # Load files to memory (using rasterToMemory), assign to a simList we call maps 
 maps <- lapply(filelist$file, function(x) raster(x))
 names(maps) <- sapply(basename(filelist$file), function(x) strsplit(x, split = "\\.")[[1]][1])
@@ -81,33 +83,33 @@ Plot(caribou)
 Plot(caribou, addTo = "landscape$habitatQuality")
 
 # from SpatialPolygons help file
-Sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2))*20-50)
-Sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2))*20-50)
+sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
+sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
 
-Srs1 <- Polygons(list(Sr1), "s1")
-Srs2 <- Polygons(list(Sr2), "s2")
-SpP <- SpatialPolygons(list(Srs1, Srs2), 1:2)
-Plot(SpP)
-Plot(SpP, addTo = "landscape$habitatQuality", gp = gpar(lwd = 2))
+srs1 <- Polygons(list(sr1), "s1")
+srs2 <- Polygons(list(sr2), "s2")
+spP <- SpatialPolygons(list(srs1, srs2), 1:2)
+Plot(spP)
+Plot(spP, addTo = "landscape$habitatQuality", gp = gpar(lwd = 2))
 
 # from SpatialLines help file
 l1 = cbind(c(10, 2, 30), c(30, 2, 2))
 l1a = cbind(l1[, 1] + .05, l1[, 2] + .05)
 l2 = cbind(c(1, 20, 3), c(10, 1.5, 1))
-Sl1 = Line(l1)
-Sl1a = Line(l1a)
-Sl2 = Line(l2)
-S1 = Lines(list(Sl1, Sl1a), ID = "a")
-S2 = Lines(list(Sl2), ID = "b")
-Sl = SpatialLines(list(S1, S2))
-Plot(Sl, gp = gpar(col = c("red", "blue"), lwd = 2), addTo = "landscape$DEM")
+sl1 = Line(l1)
+sl1a = Line(l1a)
+sl2 = Line(l2)
+s1 = Lines(list(sl1, sl1a), ID = "a")
+s2 = Lines(list(sl2), ID = "b")
+sl = SpatialLines(list(s1, s2))
+Plot(sl, gp = gpar(col = c("red", "blue"), lwd = 2), addTo = "landscape$DEM")
 ```
 
 Any combination of `RasterStack`, `RasterLayer`, `SpatialPoints*`, and `SpatialPolygons*` objects can be plotted from a single invocation of `Plot`:
 
 ```{r mixing_layer_types, eval=TRUE, echo=TRUE, fig.height=5}
 clearPlot()
-Plot(landscape, caribou, maps$DEM, SpP, axes = TRUE,
+Plot(landscape, caribou, maps$DEM, spP, axes = TRUE,
      gp = gpar(cex = 0.5), visualSqueeze = 0.65)
 ```
 
@@ -120,12 +122,12 @@ These can be combined with spatial objects as well.
 
 ```{r ggplot, eval=TRUE, echo=TRUE, cache=TRUE, fig.height=2}
 library(ggplot2)
+
 ggObj <- qplot(stats::rnorm(1e3), binwidth = 0.1)
 clearPlot()
-Plot(caribou, axes = "L", new=TRUE) 
+Plot(caribou, axes = "L", new = TRUE) 
 Plot(ggObj) 
 ```
-
 
 ### `base` plotting
 
@@ -151,7 +153,6 @@ newPoints2 <- newPoints * 1.2 + rnorm(10)
 Plot(newPoints, newPoints2, addTo = "scatterplot", col = "red")
 ```
 
-
 ### Other classes
 
 `Plot` methods can be extended to accommodate other classes.
@@ -164,7 +165,7 @@ There are two ways to change the colour of a map: by adding a `colortable` to a 
 Adding a `colortable` to a `Raster*` will be more persistent (*i.e.*, it will stay with the same colour table even if the device is wiped clean or a new device is created.
 Every `RasterLayer` can have a `colortable`, which gives the mapping of raster values to colours.
 If not already set in the file (many `.tif` files and other formats already have their `colortable` set), we can use `setColors(Raster*)` with a named list of colours, if a `RasterStack`, or just a vector of colours if only a single `RasterLayer`.
-These can be easily built with the `RColorBrewer` package, with the function `brewer.pal()`, `colorRampPalette`, `heat.colors()`, or just a character vector of colours that will be interpolated.
+These can be easily built with the `RColorBrewer` package, with the function `brewer.pal()`, `colorRampPalette()`, `heat.colors()`, or just a character vector of colours that will be interpolated.
 Note that overplotting (accomplished with `addTo=`) will not overplot the legend; in general, overplotting should be used for cases where the maps are compatible with the underlying map layer.
 See overplotting below.
 
@@ -190,7 +191,7 @@ mapColours <- list(
   habitatQuality = brewer.pal(9, "Spectral")
 )
 setColors(landscape, n = 50) <- mapColours
-Plot(landscape, new =TRUE) # oh, how pretty!
+Plot(landscape, new = TRUE) # oh, how pretty!
 ```
 
 ## `Plot` arguments
@@ -262,7 +263,7 @@ For `SpatialLines*` objects, length will give arrow head length, in inches, mean
 ```{r arrows, eval=TRUE, echo=TRUE, fig.height=2}
 clearPlot()
 Plot(maps$DEM)
-Plot(Sl, addTo = "maps$DEM", length = 0.2)
+Plot(sl, addTo = "maps$DEM", length = 0.2)
 ```
 
 # Modularity
@@ -408,7 +409,7 @@ This can be used to obtain the values on the plotting device at the locations of
 This will work on multipanel plots.
 Note that plotting of rasters with the grid package does not allow for partial pixels to be plotted at the edges of the raster.
 As a result, the edges of pixels may not perfectly line up with the coordinates that they appear with.
-*Do not rely on exact values when zoomed it*
+*Do not rely on exact values when zoomed in*
 
 ```{r clickValues, eval=FALSE, echo=TRUE}
 clearPlot()
@@ -462,5 +463,5 @@ rePlot()
 
 # but can be combined with other objects
 Plot(caribou, plots)
-Plot(caribou, plots, Sl)
+Plot(caribou, plots, sl)
 ```
