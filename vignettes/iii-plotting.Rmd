@@ -122,12 +122,12 @@ These can be combined with spatial objects as well.
 
 ```{r ggplot, eval=TRUE, echo=TRUE, cache=TRUE, fig.height=2}
 library(ggplot2)
+
 ggObj <- qplot(stats::rnorm(1e3), binwidth = 0.1)
 clearPlot()
 Plot(caribou, axes = "L", new = TRUE) 
 Plot(ggObj) 
 ```
-
 
 ### `base` plotting
 
@@ -153,7 +153,6 @@ newPoints2 <- newPoints * 1.2 + rnorm(10)
 Plot(newPoints, newPoints2, addTo = "scatterplot", col = "red")
 ```
 
-
 ### Other classes
 
 `Plot` methods can be extended to accommodate other classes.
@@ -166,7 +165,7 @@ There are two ways to change the colour of a map: by adding a `colortable` to a 
 Adding a `colortable` to a `Raster*` will be more persistent (*i.e.*, it will stay with the same colour table even if the device is wiped clean or a new device is created.
 Every `RasterLayer` can have a `colortable`, which gives the mapping of raster values to colours.
 If not already set in the file (many `.tif` files and other formats already have their `colortable` set), we can use `setColors(Raster*)` with a named list of colours, if a `RasterStack`, or just a vector of colours if only a single `RasterLayer`.
-These can be easily built with the `RColorBrewer` package, with the function `brewer.pal()`, `colorRampPalette`, `heat.colors()`, or just a character vector of colours that will be interpolated.
+These can be easily built with the `RColorBrewer` package, with the function `brewer.pal()`, `colorRampPalette()`, `heat.colors()`, or just a character vector of colours that will be interpolated.
 Note that overplotting (accomplished with `addTo=`) will not overplot the legend; in general, overplotting should be used for cases where the maps are compatible with the underlying map layer.
 See overplotting below.
 
@@ -410,7 +409,7 @@ This can be used to obtain the values on the plotting device at the locations of
 This will work on multipanel plots.
 Note that plotting of rasters with the grid package does not allow for partial pixels to be plotted at the edges of the raster.
 As a result, the edges of pixels may not perfectly line up with the coordinates that they appear with.
-*Do not rely on exact values when zoomed it*
+*Do not rely on exact values when zoomed in*
 
 ```{r clickValues, eval=FALSE, echo=TRUE}
 clearPlot()
