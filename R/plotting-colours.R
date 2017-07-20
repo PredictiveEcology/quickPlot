@@ -1,5 +1,5 @@
 ################################################################################
-#' Get colours for plotting Raster* objects.
+#' Get and set colours for plotting Raster* objects.
 #'
 #' @param object     A \code{Raster*} object.
 #'
@@ -8,20 +8,37 @@
 #' @export
 #' @docType methods
 #' @aliases getColours
-#' @rdname getColors
+#' @rdname setGetColors
 #'
 #' @seealso \code{\link{setColors<-}},
 #'          \code{\link[RColorBrewer]{brewer.pal}}
 #'
 #' @author Alex Chubaty
+#' @examples 
+#' library(raster)
+#' library(RColorBrewer)
+#' files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, raster)
+#' names(maps) <- lapply(maps, names)
+#' # put layers into a single stack for convenience
+#' landscape <- stack(maps$DEM, maps$forestCover, maps$forestAge,
+#'                   maps$habitatQuality, maps$percentPine)
+#' Plot(landscape)
 #'
-#' #@importClassesFrom NetLogoRClasses agentMatrix
+#' # can change color palette
+#' setColors(landscape, n = 50) <- list(DEM = topo.colors(50),
+#'                                      forestCover = brewer.pal(9, "Set1"),
+#'                                      forestAge = brewer.pal("Blues", n = 8),
+#'                                      habitatQuality = brewer.pal(9, "Spectral"),
+#'                                      percentPine = brewer.pal("GnBu", n = 8))
+#' Plot(landscape, new=TRUE) # update legend too
+#' getColors(landscape)
 #'
 setGeneric("getColors", function(object) {
   standardGeneric("getColors")
 })
 
-#' @rdname getColors
+#' @rdname setGetColors
 setMethod("getColors",
           signature = "Raster",
           definition = function(object) {
@@ -33,14 +50,14 @@ setMethod("getColors",
             return(cols)
 })
 
-#' @rdname getColors
+#' @rdname setGetColors
 setMethod("getColors",
           signature = "ANY",
           definition = function(object) {
             return(NULL)
 })
 
-#' @rdname getColors
+#' @rdname setGetColors
 setMethod("getColors",
           signature = "SpatialPoints",
           definition = function(object) {
@@ -49,8 +66,6 @@ setMethod("getColors",
 })
 
 ################################################################################
-#' Set colours for plotting Raster* objects.
-#'
 #' \code{setColors} works as a replacement method or a normal function call.
 #' This function can accept RColorBrewer colors by name. See example.
 #'
@@ -72,7 +87,7 @@ setMethod("getColors",
 #' @importFrom RColorBrewer brewer.pal brewer.pal.info
 #' @docType methods
 #' @aliases setColours
-#' @rdname setColors
+#' @rdname setGetColors
 #'
 #' @seealso \code{\link[RColorBrewer]{brewer.pal}},
 #'          \code{\link[grDevices]{colorRampPalette}}.
@@ -86,7 +101,7 @@ setGeneric("setColors<-",
              standardGeneric("setColors<-")
 })
 
-#' @rdname setColors
+#' @rdname setGetColors
 #' @importFrom raster is.factor
 setReplaceMethod(
   "setColors",
@@ -125,7 +140,7 @@ setReplaceMethod(
     return(object)
 })
 
-#' @rdname setColors
+#' @rdname setGetColors
 #' @importFrom raster is.factor maxValue
 setReplaceMethod(
   "setColors",
@@ -141,7 +156,7 @@ setReplaceMethod(
     return(object)
 })
 
-#' @rdname setColors
+#' @rdname setGetColors
 setReplaceMethod(
   "setColors",
    signature("RasterStack", "numeric", "list"),
@@ -174,7 +189,7 @@ setReplaceMethod(
      return(object)
 })
 
-#' @rdname setColors
+#' @rdname setGetColors
 setReplaceMethod(
   "setColors",
    signature("Raster", "missing", "list"),
@@ -188,12 +203,12 @@ setReplaceMethod(
 })
 
 #' @export
-#' @rdname setColors
+#' @rdname setGetColors
 setGeneric("setColors", function(object, value, n) {
   standardGeneric("setColors")
 })
 
-#' @rdname setColors
+#' @rdname setGetColors
 setMethod(
   "setColors",
   signature("RasterLayer", "character", "numeric"),
@@ -202,7 +217,7 @@ setMethod(
     return(object)
 })
 
-#' @rdname setColors
+#' @rdname setGetColors
 setMethod(
   "setColors",
   signature("RasterLayer", "character", "missing"),
