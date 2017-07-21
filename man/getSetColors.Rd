@@ -69,7 +69,7 @@ This function can accept \code{RColorBrewer} colors by name. See examples.
 library(igraph)
 library(raster)
 
-ras <- raster(matrix(c(0,0,1,2), ncol = 2, nrow = 2))
+ras <- raster(matrix(c(0, 0 , 1,2), ncol = 2, nrow = 2))
 
 getColors(ras) ## none
 

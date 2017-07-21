@@ -26,9 +26,9 @@
 #' @importFrom grid grid.newpage
 #' @include plotting-classes.R
 #' @rdname clearPlot
-#' 
+#'
 #' @example inst/examples/example_Plot.R
-#' 
+#'
 setGeneric("clearPlot", function(dev = dev.cur(), removeData = TRUE, force = FALSE) {
   standardGeneric("clearPlot")
 })
@@ -418,15 +418,16 @@ dev <- function(x, ...) {
 #' @export
 #' @importFrom grDevices dev.new
 #' @rdname newPlot
-#' 
+#'
 #' @examples
 #' \dontrun{
 #'   ## set option to avoid using Rstudio graphics device
 #'   dev.useRSGD(FALSE)
-#'   
+#'
 #'   ## open new plotting window
 #'   newPlot()
 #' }
+#'
 newPlot <- function(noRStudioGD = TRUE, ...) {
   dev.new(noRStudioGD = TRUE, ...)
 }
@@ -447,7 +448,7 @@ dev.useRSGD <- function(useRSGD = FALSE) { # nolint
 }
 
 #' Default plotting parameters
-#' 
+#'
 #' @keywords internal
 #' @name .parOrig
 #' @rdname parOrig

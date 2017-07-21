@@ -15,7 +15,7 @@
 #'          \code{\link[RColorBrewer]{brewer.pal}}
 #'
 #' @example inst/examples/example_setColors.R
-#' 
+#'
 setGeneric("getColors", function(object) {
   standardGeneric("getColors")
 })

@@ -240,7 +240,7 @@ if (getRversion() >= "3.1.0") {
 #' @rdname Plot
 #'
 #' @example inst/examples/example_Plot.R
-#' 
+#'
 setGeneric(
   "Plot",
   signature = "...",

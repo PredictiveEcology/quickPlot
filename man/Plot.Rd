@@ -329,7 +329,7 @@ Plot(spP)
 Plot(spP, addTo = "landscape$forestCover", gp = gpar(lwd = 2))
 
 # provide arrangement, NumRow, NumCol
-Plot(spP, arr = c(1,4), new = TRUE)
+Plot(spP, arr = c(1, 4), new = TRUE)
 
 # example base plot
 clearPlot()

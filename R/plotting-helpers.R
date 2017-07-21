@@ -20,11 +20,11 @@ if (getRversion() >= "3.1.0") {
 #' @export
 #' @include plotting-classes.R
 #' @rdname numLayers
-#' 
+#'
 #' @examples
 #' library(igraph)
 #' library(raster)
-#' 
+#'
 #' files <- system.file("maps", package = "quickPlot") %>%
 #'   dir(., full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) raster(x))
@@ -32,10 +32,10 @@ if (getRversion() >= "3.1.0") {
 #'   strsplit(x, split = "\\.")[[1]][1]
 #' })
 #' stck <- stack(maps)
-#' 
+#'
 #' numLayers(maps) 
 #' numLayers(stck)
-#' 
+#'
 setGeneric("numLayers", function(x) {
   standardGeneric("numLayers")
 })
@@ -109,11 +109,11 @@ setMethod(
 #' @export
 #' @include plotting-classes.R
 #' @rdname layerNames
-#' 
+#'
 #' @examples
 #' library(igraph)
 #' library(raster)
-#' 
+#'
 #' ## RasterLayer objects
 #' files <- system.file("maps", package = "quickPlot") %>%
 #'   dir(., full.names = TRUE, pattern = "tif")
@@ -122,7 +122,7 @@ setMethod(
 #'   strsplit(x, split = "\\.")[[1]][1]
 #' })
 #' layerNames(maps)
-#' 
+#'
 #' ## Spatial* objects
 #' caribou <- SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
 #'                                         y = stats::runif(1e2, -50, 50)))
@@ -134,7 +134,7 @@ setMethod(
 #' srs2 <- Polygons(list(sr2), "s2")
 #' spP <- SpatialPolygons(list(srs1, srs2), 1:2)
 #' layerNames(spP)
-#' 
+#'
 #' l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
 #' l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
 #' l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
@@ -145,7 +145,7 @@ setMethod(
 #' s2 <- Lines(list(sl2), ID = "b")
 #' sl <- SpatialLines(list(s1, s2))
 #' layerNames(sl)
-#' 
+#'
 setGeneric("layerNames", function(object) {
   standardGeneric("layerNames")
 })
@@ -200,15 +200,15 @@ setMethod(
 #' Assess whether a list of extents are all equal
 #'
 #' @param extents list of extents objects
-#' 
+#'
 #' @author Eliot McIntire
 #' @export
 #' @rdname equalExtent
-#' 
+#'
 #' @examples
 #' library(igraph)
 #' library(raster)
-#' 
+#'
 #' files <- system.file("maps", package = "quickPlot") %>%
 #'   dir(., full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) raster(x))
@@ -217,7 +217,7 @@ setMethod(
 #' })
 #' extnts <- lapply(maps, extent)
 #' equalExtent(extnts) ## TRUE
-#' 
+#'
 setGeneric("equalExtent", function(extents) {
   standardGeneric("equalExtent")
 })
@@ -937,14 +937,14 @@ objectNames <- function(calledFrom = "Plot",
 #' can change \code{Plot} arguments without having to load the entire grid package.
 #'
 #' @inheritParams grid::gpar
-#' 
+#'
 #' @aliases gpar
 #' @export
 #' @importFrom grid gpar
 #' @name gpar
 #' @rdname grid-functions
 #' @seealso \code{\link[grid]{gpar}}
-#' 
+#'
 setGeneric("gpar", function(...) {
   standardGeneric("gpar")
 })
