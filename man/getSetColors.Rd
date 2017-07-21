@@ -16,7 +16,7 @@
 \alias{setColors}
 \alias{setColors,RasterLayer,character,numeric-method}
 \alias{setColors,RasterLayer,character,missing-method}
-\title{Get and set colours for plotting Raster* objects.}
+\title{Get and set colours for plotting \code{Raster*} objects}
 \usage{
 getColors(object)
 
@@ -53,8 +53,6 @@ of levels from which to interpolate the color palette.}
 \item{value}{Named list of hex color codes (e.g., from
 \code{RColorBrewer::brewer.pal}), corresponding to the names
 of \code{RasterLayer}s in \code{x}.}
-
-\item{object}{A \code{Raster*} object.}
 }
 \value{
 Returns a named list of colors.
@@ -62,92 +60,68 @@ Returns a named list of colors.
 Returns a Raster with the \code{colortable} slot set to \code{values}.
 }
 \description{
-Get and set colours for plotting Raster* objects.
+Get and set colours for plotting \code{Raster*} objects
 
 \code{setColors} works as a replacement method or a normal function call.
-This function can accept RColorBrewer colors by name. See example.
+This function can accept \code{RColorBrewer} colors by name. See examples.
 }
 \examples{
-library(raster)
-library(RColorBrewer)
-files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
-maps <- lapply(files, raster)
-names(maps) <- lapply(maps, names)
-# put layers into a single stack for convenience
-landscape <- stack(maps$DEM, maps$forestCover, maps$forestAge,
-                  maps$habitatQuality, maps$percentPine)
-Plot(landscape)
-
-# can change color palette
-setColors(landscape, n = 50) <- list(DEM = topo.colors(50),
-                                     forestCover = brewer.pal(9, "Set1"),
-                                     forestAge = brewer.pal("Blues", n = 8),
-                                     habitatQuality = brewer.pal(9, "Spectral"),
-                                     percentPine = brewer.pal("GnBu", n = 8))
-Plot(landscape, new=TRUE) # update legend too
-getColors(landscape)
-
 library(igraph)
 library(raster)
 
 ras <- raster(matrix(c(0,0,1,2), ncol = 2, nrow = 2))
 
+getColors(ras) ## none
+
 # Use replacement method
 setColors(ras, n = 3) <- c("red", "blue", "green")
-if (interactive()) {
-  clearPlot()
-  Plot(ras)
-}
+getColors(ras)
+
+clearPlot()
+Plot(ras)
 
 # Use function method
 ras <- setColors(ras, n = 3, c("red", "blue", "yellow"))
-if (interactive()) {
-  clearPlot()
-  Plot(ras)
-}
+getColors(ras)
+
+clearPlot()
+Plot(ras)
 
 # Using the wrong number of colors, e.g., here 2 provided,
 # for a raster with 3 values... causes interpolation, which may be surprising
 ras <- setColors(ras, c("red", "blue"))
-if (interactive()) {
-  clearPlot()
-  Plot(ras)
-}
+clearPlot()
+Plot(ras)
 
 # Real number rasters - interpolation is used
 ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) \%>\%
   setColors(c("red", "yellow")) # interpolates when real numbers, gives warning
-if (interactive()) {
-  clearPlot()
-  Plot(ras)
-}
+
+clearPlot()
+Plot(ras)
 
 # Factor rasters, can be contiguous (numerically) or not, in this case not:
 ras <- raster(matrix(sample(c(1, 3, 6), size = 9, replace = TRUE), ncol = 3, nrow = 3))
 levels(ras) <- data.frame(ID = c(1, 3, 6), Names = c("red", "purple", "yellow"))
 ras <- setColors(ras, n = 3, c("red", "purple", "yellow"))
-if (interactive()) {
-  clearPlot()
-  Plot(ras)
-}
+getColors(ras)
+
+clearPlot()
+Plot(ras)
 
 # if a factor raster, and not enough labels are provided, then a warning
 #   will be given, and colors will be interpolated
 #   The level called purple is not purple, but interpolated betwen red and yellow
 suppressWarnings({
   ras <- setColors(ras, c("red", "yellow"))
-  if (interactive()) {
-    clearPlot()
-    Plot(ras)
-  }
+  clearPlot()
+  Plot(ras)
 })
 
 # use RColorBrewer colors
 setColors(ras) <- "Reds"
-if (interactive()) {
-  clearPlot()
-  Plot(ras)
-}
+clearPlot()
+Plot(ras)
 }
 \seealso{
 \code{\link{setColors<-}},
@@ -157,7 +131,5 @@ if (interactive()) {
          \code{\link[grDevices]{colorRampPalette}}.
 }
 \author{
-Alex Chubaty
-
 Alex Chubaty
 }
