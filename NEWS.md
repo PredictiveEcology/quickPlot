@@ -8,7 +8,7 @@ version 0.1.1.9000
 version 0.1.1
 =============
 
-* *do* run examples (per CRAN)
+* add more examples to non-internal functions and *do* run them (per CRAN)
 
 version 0.1.0
 =============
