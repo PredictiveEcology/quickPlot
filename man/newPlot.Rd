@@ -38,7 +38,7 @@ and \code{dev.useRSGD(TRUE)} to use the RStudio graphics device.
   
   ## open new plotting window
   newPlot()
- }
+}
 }
 \seealso{
 \code{\link{dev}}.

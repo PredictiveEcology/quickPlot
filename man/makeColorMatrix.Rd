@@ -4,10 +4,6 @@
 \name{.makeColorMatrix}
 \alias{.makeColorMatrix}
 \alias{makeColourMatrix}
-\alias{#}
-\alias{@importClassesFrom}
-\alias{NetLogoRClasses}
-\alias{griddedClasses}
 \alias{.makeColorMatrix,Raster,Extent,numeric-method}
 \title{Convert Raster to color matrix usable by raster function for plotting}
 \usage{

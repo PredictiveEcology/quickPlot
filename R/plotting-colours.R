@@ -241,20 +241,16 @@ setMethod(
 #' @param skipSample   Logical. If no downsampling is necessary, skip.
 #'                     Default \code{TRUE}.
 #'
-#' @rdname makeColorMatrix
 #' @aliases makeColourMatrix
-#'
-#' # @importClassesFrom NetLogoRClasses griddedClasses
-#'
-#' @include plotting-classes.R
+#' @author Eliot McIntire
+#' @docType methods
 #' @importFrom grDevices colorRampPalette terrain.colors
 #' @importFrom raster minValue getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
-#'
-#' @docType methods
+#' @include plotting-classes.R
 #' @keywords internal
-#' @author Eliot McIntire
+#' @rdname makeColorMatrix
 #'
 setGeneric(
   ".makeColorMatrix",
