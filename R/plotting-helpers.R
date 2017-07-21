@@ -15,15 +15,32 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @return The number of layers in the object.
 #'
+#' @author Eliot McIntire
+#' @docType methods
 #' @export
 #' @include plotting-classes.R
-#' @author Eliot McIntire
 #' @rdname numLayers
-#' @export
+#' 
+#' @examples
+#' library(igraph)
+#' library(raster)
+#' 
+#' files <- system.file("maps", package = "quickPlot") %>%
+#'   dir(., full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, function(x) raster(x))
+#' names(maps) <- sapply(basename(files), function(x) {
+#'   strsplit(x, split = "\\.")[[1]][1]
+#' })
+#' stck <- stack(maps)
+#' 
+#' numLayers(maps) 
+#' numLayers(stck)
+#' 
 setGeneric("numLayers", function(x) {
   standardGeneric("numLayers")
 })
 
+#' @export
 #' @rdname numLayers
 setMethod(
   "numLayers",
@@ -48,6 +65,7 @@ setMethod(
     return(length(x@arr@extents))
 })
 
+#' @export
 #' @importFrom raster nlayers
 #' @rdname numLayers
 setMethod(
@@ -57,6 +75,7 @@ setMethod(
     return(nlayers(x))
 })
 
+#' @export
 #' @rdname numLayers
 setMethod(
   "numLayers",
@@ -65,6 +84,7 @@ setMethod(
     return(1L)
 })
 
+#' @export
 #' @rdname numLayers
 setMethod(
   "numLayers",
@@ -85,10 +105,47 @@ setMethod(
 #' @param object  A \code{Raster*}, \code{SpatialPoints*}, \code{SpatialLines*},
 #'                or \code{SpatialPolygons*} object; or list of these.
 #'
-#' @rdname layerNames
-#' @include plotting-classes.R
 #' @author Eliot McIntire
 #' @export
+#' @include plotting-classes.R
+#' @rdname layerNames
+#' 
+#' @examples
+#' library(igraph)
+#' library(raster)
+#' 
+#' ## RasterLayer objects
+#' files <- system.file("maps", package = "quickPlot") %>%
+#'   dir(., full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, function(x) raster(x))
+#' names(maps) <- sapply(basename(files), function(x) {
+#'   strsplit(x, split = "\\.")[[1]][1]
+#' })
+#' layerNames(maps)
+#' 
+#' ## Spatial* objects
+#' caribou <- SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
+#'                                         y = stats::runif(1e2, -50, 50)))
+#' layerNames(caribou)
+#'
+#' sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
+#' sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
+#' srs1 <- Polygons(list(sr1), "s1")
+#' srs2 <- Polygons(list(sr2), "s2")
+#' spP <- SpatialPolygons(list(srs1, srs2), 1:2)
+#' layerNames(spP)
+#' 
+#' l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
+#' l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
+#' l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
+#' sl1 <- Line(l1)
+#' sl1a <- Line(l1a)
+#' sl2 <- Line(l2)
+#' s1 <- Lines(list(sl1, sl1a), ID = "a")
+#' s2 <- Lines(list(sl2), ID = "b")
+#' sl <- SpatialLines(list(s1, s2))
+#' layerNames(sl)
+#' 
 setGeneric("layerNames", function(object) {
   standardGeneric("layerNames")
 })
@@ -120,15 +177,13 @@ setMethod(
     names(object)
 })
 
-#' @export
 #' @rdname layerNames
 setMethod(
   "layerNames",
   signature = ".quickPlot",
   definition = function(object) {
     return(sapply(object@quickPlotGrobList, function(x) {
-      sapply(x, function(y)
-        y@plotName)[[1]]
+      sapply(x, function(y) y@plotName)[[1]]
     }))
 })
 
@@ -145,9 +200,24 @@ setMethod(
 #' Assess whether a list of extents are all equal
 #'
 #' @param extents list of extents objects
-#' @rdname equalExtent
+#' 
 #' @author Eliot McIntire
 #' @export
+#' @rdname equalExtent
+#' 
+#' @examples
+#' library(igraph)
+#' library(raster)
+#' 
+#' files <- system.file("maps", package = "quickPlot") %>%
+#'   dir(., full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, function(x) raster(x))
+#' names(maps) <- sapply(basename(files), function(x) {
+#'   strsplit(x, split = "\\.")[[1]][1]
+#' })
+#' extnts <- lapply(maps, extent)
+#' equalExtent(extnts) ## TRUE
+#' 
 setGeneric("equalExtent", function(extents) {
   standardGeneric("equalExtent")
 })
@@ -187,11 +257,11 @@ setMethod(
 #' (i.e., layout and dimensions) and onefor all of the \code{quickPlotGrobs}
 #' (stored as a quickPlotGrobList of lists \code{.quickPlotGrob} objects).
 #'
-#' @include plotting-classes.R
-#' @include plotting-helpers.R
-#' @export
 #' @author Eliot McIntire
 #' @docType methods
+#' @export
+#' @include plotting-classes.R
+#' @include plotting-helpers.R
 #' @keywords internal
 #' @rdname makeQuickPlot
 #'
@@ -867,12 +937,14 @@ objectNames <- function(calledFrom = "Plot",
 #' can change \code{Plot} arguments without having to load the entire grid package.
 #'
 #' @inheritParams grid::gpar
-#' @name gpar
+#' 
 #' @aliases gpar
-#' @importFrom grid gpar
 #' @export
+#' @importFrom grid gpar
+#' @name gpar
 #' @rdname grid-functions
 #' @seealso \code{\link[grid]{gpar}}
+#' 
 setGeneric("gpar", function(...) {
   standardGeneric("gpar")
 })
@@ -899,13 +971,13 @@ setMethod("gpar",
 #' @param subPlots Character. Name of plot area.
 #' @param cols Color vector.
 #'
-#' @include plotting-classes.R
+#' @aliases PlotHelpers
+#' @author Eliot McIntire
 #' @docType methods
+#' @include plotting-classes.R
 #' @keywords internal
 #' @name .convertSpatialToPlotGrob
 #' @rdname Plot-internal
-#' @aliases PlotHelpers
-#' @author Eliot McIntire
 #'
 setGeneric(".convertSpatialToPlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                                                  quickPlotGrobCounter, subPlots, cols) {

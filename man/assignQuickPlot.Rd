@@ -5,7 +5,7 @@
 \alias{.assignQuickPlot}
 \alias{.assignQuickPlot,character,ANY-method}
 \alias{.assignQuickPlot,character,missing-method}
-\title{Assign to the internal quickPlot environment.}
+\title{Assign to the internal \code{quickPlot} environment.}
 \usage{
 .assignQuickPlot(x, value, ...)
 

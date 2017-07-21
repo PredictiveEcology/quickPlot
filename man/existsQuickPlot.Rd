@@ -4,7 +4,7 @@
 \name{.existsQuickPlot}
 \alias{.existsQuickPlot}
 \alias{.existsQuickPlot,ANY-method}
-\title{Is an object defined in the .quickPlotEnv environment?}
+\title{Is an object defined in the \code{.quickPlotEnv} environment?}
 \usage{
 .existsQuickPlot(x, ...)
 

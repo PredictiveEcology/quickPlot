@@ -19,13 +19,16 @@
 #'              device number. If "all", then all quickPlot related data from all devices
 #'              will be cleared, in addition to device closing and reopening.
 #'
+#' @author Eliot McIntire
+#' @docType methods
 #' @export
 #' @importFrom grDevices dev.cur dev.off
 #' @importFrom grid grid.newpage
-#' @docType methods
-#' @rdname clearPlot
 #' @include plotting-classes.R
-#' @author Eliot McIntire
+#' @rdname clearPlot
+#' 
+#' @example inst/examples/example_Plot.R
+#' 
 setGeneric("clearPlot", function(dev = dev.cur(), removeData = TRUE, force = FALSE) {
   standardGeneric("clearPlot")
 })
@@ -402,7 +405,8 @@ dev <- function(x, ...) {
 #' @param ...         Additional arguments.
 #'
 #' @note \code{\link{dev.new}} is supposed to be the correct way to open a new
-#' window in a platform-generic way; however, doesn't work in RStudio (#116).
+#' window in a platform-generic way; however, doesn't work in RStudio
+#' (\href{https://github.com/PredictiveEcology/SpaDES/issues/116}{SpaDES#116}).
 #' Use \code{dev.useRSGD(FALSE)} to avoid RStudio for the remainder of this session,
 #' and \code{dev.useRSGD(TRUE)} to use the RStudio graphics device.
 #' (This sets the default device via the \code{device} option.)
@@ -410,11 +414,19 @@ dev <- function(x, ...) {
 #' @seealso \code{\link{dev}}.
 #'
 #' @author Eliot McIntire and Alex Chubaty
-#'
+#' @docType methods
 #' @export
 #' @importFrom grDevices dev.new
-#' @docType methods
 #' @rdname newPlot
+#' 
+#' @examples
+#' \dontrun{
+#'   ## set option to avoid using Rstudio graphics device
+#'   dev.useRSGD(FALSE)
+#'   
+#'   ## open new plotting window
+#'   newPlot()
+#'  }
 newPlot <- function(noRStudioGD = TRUE, ...) {
   dev.new(noRStudioGD = TRUE, ...)
 }
@@ -434,6 +446,11 @@ dev.useRSGD <- function(useRSGD = FALSE) { # nolint
   }
 }
 
+#' Default plotting parameters
+#' 
+#' @keywords internal
+#' @name .parOrig
+#' @rdname parOrig
 assign(".parOrig", envir = .quickPlotEnv,
        structure(list(xlog = FALSE, ylog = FALSE, adj = 0.5, ann = TRUE,
                       ask = FALSE, bg = "white", bty = "o", cex = 1, cex.axis = 1,
