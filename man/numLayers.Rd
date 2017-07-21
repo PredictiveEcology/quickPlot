@@ -46,7 +46,7 @@ names(maps) <- sapply(basename(files), function(x) {
 })
 stck <- stack(maps)
 
-numLayers(maps) 
+numLayers(maps)
 numLayers(stck)
 
 }

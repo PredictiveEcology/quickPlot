@@ -33,7 +33,7 @@ if (getRversion() >= "3.1.0") {
 #' })
 #' stck <- stack(maps)
 #'
-#' numLayers(maps) 
+#' numLayers(maps)
 #' numLayers(stck)
 #'
 setGeneric("numLayers", function(x) {
