@@ -42,7 +42,7 @@ the plot with the same name, such as plotting a
 \code{SpatialPoints*} object on a \code{RasterLayer}.}
 
 \item{gp}{A \code{gpar} object, created by \code{\link{gpar}} function,
-to change plotting parameters (see \code{grid} package).}
+to change plotting parameters (see \pkg{grid} package).}
 
 \item{gpText}{A \code{gpar} object for the title text.
 Default \code{gpar(col = "black")}.}
@@ -85,8 +85,8 @@ the data bounds contained within the \code{grobToPlot}.}
 \item{legendText}{Character vector of legend value labels.
 Defaults to \code{NULL}, which results in a pretty numeric
 representation.
-If \code{Raster*} has a Raster Attribute Table (rat; see
-\code{\link{raster}} package), this will be used by default.
+If \code{Raster*} has a Raster Attribute Table (\code{rat};
+see \pkg{raster} package), this will be used by default.
 Currently, only a single vector is accepted.
 The length of this must match the length of the legend, so
 this is mosty useful for discrete-valued rasters.}
@@ -149,8 +149,8 @@ Customization of the \code{ggplot2} elements can be done as a normal
 Re-plot to a specific device
 }
 \details{
-NOTE: Plot uses the \code{grid} package; therefore, it is NOT compatible with
-base R graphics. Also, because it does not by default wipe the plotting device
+\strong{NOTE:} Plot uses the \pkg{grid} package; therefore, it is NOT compatible
+with base R graphics. Also, because it does not by default wipe the plotting device
 before plotting, a call to \code{\link{clearPlot}} is helpful to resolve
 many errors. Careful use of the other device tools, such as \code{dev.off()} and
 \code{dev.list()} might also clear problems that may arise.

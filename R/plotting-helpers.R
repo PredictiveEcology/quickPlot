@@ -1778,7 +1778,7 @@ setMethod(
 
 
 ################################################################################
-#' Plot spatial grobs (using \code{grid} package)
+#' Plot spatial grobs (using \pkg{grid} package)
 #'
 #' Internal function. Plot a raster Grob, a points Grob, polygon Grob.
 #'
@@ -1788,7 +1788,7 @@ setMethod(
 #' plotting, without losing visible quality. Nevertheless, to force all points to
 #' be plotted, use a speedup value less than 0.1.
 #' From a speed perspective, there appears to be an optimal subsampling when
-#' using \code{thin} from the \code{fastshp} package.
+#' using \code{thin} from the \pkg{fastshp} package.
 #' Presumably, too much thinning requires large distance matrices to be
 #' calculated, slowing plotting down.
 #' Too little thinning causes an overabundance of points to be plotted, slowing
@@ -1820,7 +1820,7 @@ setMethod(
 #' @param legendText  Vector of values to use for legend value labels.
 #'                    Defaults to \code{NULL} which results in a pretty numeric
 #'                    representation. If \code{Raster*} has a Raster Attribute
-#'                    Table (rat; see \code{raster} package), this will be used
+#'                    Table (rat; see \pkg{raster} package), this will be used
 #'                    by default. Currently, only a single vector is accepted.
 #'
 #' @param length  Numeric.
