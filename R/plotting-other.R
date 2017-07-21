@@ -152,12 +152,14 @@ setMethod("clearPlot",
 #' it in a new device window.
 #' \code{clickCoordinates} returns the xy coordinates in the units of the plot clicked on.
 #'
-#' @export
-#' @include plotting-classes.R
-#' @importFrom raster is.factor factorValues cellFromXY
-#' @docType methods
 #' @author Eliot McIntire
+#' @docType methods
+#' @export
+#' @importFrom raster is.factor factorValues cellFromXY
+#' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
+#'
+#' @example inst/examples/example_click.R
 #'
 clickValues <- function(n = 1) {
   coords <- clickCoordinates(n = n)
@@ -189,12 +191,11 @@ clickValues <- function(n = 1) {
 #'                new extent. Default \code{TRUE}.
 #'
 #' @export
-#' @docType methods
 #' @importFrom grDevices dev.cur
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
+#'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
-
   corners <- clickCoordinates(2)
   zoom <- extent(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
 
@@ -224,11 +225,9 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
   }
 }
 
-#' @docType methods
 #' @export
-#' @importFrom grid grid.layout grid.locator unit
 #' @importFrom grDevices dev.cur
-# igraph exports %>% from magrittr
+#' @importFrom grid grid.layout grid.locator unit
 #' @include environment.R
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
