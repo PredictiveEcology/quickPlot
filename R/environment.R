@@ -15,7 +15,6 @@
 #' @param ... Additional arguments to pass to \code{get}.
 #'
 #' @author Alex Chubaty
-#' @docType methods
 #' @keywords internal
 #' @name .getQuickPlot
 #' @rdname getQuickPlot
@@ -47,7 +46,6 @@ setMethod(".getQuickPlot",
 #'
 #' @return Only used for its side effect, namely the object assigned to the \code{.quickPlotEnv}
 #'
-#' @docType methods
 #' @keywords internal
 #' @rdname assignQuickPlot
 #'
@@ -81,7 +79,6 @@ setMethod(".assignQuickPlot",
 #' @param ... Additional arguments passed to \code{\link{exists}}
 #'
 #' @author Alex Chubaty
-#' @docType methods
 #' @keywords internal
 #' @rdname existsQuickPlot
 #'

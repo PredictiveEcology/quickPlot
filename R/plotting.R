@@ -5,14 +5,14 @@ if (getRversion() >= "3.1.0") {
 }
 
 ################################################################################
-#' Plot: Fast, optimally arranged, multipanel plotting function
+#' \code{Plot}: Fast, optimally arranged, multipanel plotting
 #'
 #' This can take objects of type \code{Raster*}, \code{SpatialPoints*},
-#' \code{SpatialPolygons*}, and any combination of those. These can be provided
-#' as individual objects, or a named list. If a named list, the names either represent
-#' a different original object in the calling environment and that will be
-#' used, or if the names don't exist in the calling environment, then they will be
-#' copied to the .quickPlotEnv for reuse later.
+#' \code{SpatialPolygons*}, and any combination of those.
+#' These can be provided as individual objects, or a named list.
+#' If a named list, the names either represent a different original object in the
+#' calling environment and that will be used, or if the names don't exist in the
+#' calling environment, then they will be copied to \code{.quickPlotEnv} for reuse later.
 #' It can also handle \code{ggplot2} objects or \code{base::histogram} objects
 #' created via call to \code{exHist <- hist(1:10, plot = FALSE)}. It can also take
 #' arguments as if it were a call to \code{plot}. In this latter

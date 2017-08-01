@@ -7,7 +7,6 @@
 #'
 #' @aliases getColours
 #' @author Alex Chubaty
-#' @docType methods
 #' @export
 #' @rdname getSetColors
 #'
@@ -243,7 +242,6 @@ setMethod(
 #'
 #' @aliases makeColourMatrix
 #' @author Eliot McIntire
-#' @docType methods
 #' @importFrom grDevices colorRampPalette terrain.colors
 #' @importFrom raster minValue getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
@@ -535,7 +533,6 @@ setMethod(
 #'
 #' @aliases divergentColours
 #' @author Eliot McIntire and Alex Chubaty
-#' @docType methods
 #' @export
 #' @importFrom  grDevices colorRampPalette
 #' @seealso \code{\link{colorRampPalette}}

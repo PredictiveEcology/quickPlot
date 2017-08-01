@@ -20,7 +20,6 @@
 #'              will be cleared, in addition to device closing and reopening.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @importFrom grDevices dev.cur dev.off
 #' @importFrom grid grid.newpage
@@ -110,7 +109,6 @@ setMethod("clearPlot",
 #' @param grid.locator an object that was output by a call to \code{grid.locator}
 #'                     and mouse click(s).
 #'
-#' @docType methods
 #' @export
 #' @keywords internal
 #' @rdname unittrim
@@ -153,7 +151,6 @@ setMethod("clearPlot",
 #' \code{clickCoordinates} returns the xy coordinates in the units of the plot clicked on.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @importFrom raster is.factor factorValues cellFromXY
 #' @include plotting-classes.R
@@ -321,7 +318,6 @@ clickCoordinates <- function(n = 1) {
 #'
 #' @param gl An object created by a call to \code{grid.locator}.
 #'
-#' @docType methods
 #' @export
 #' @importFrom grid seekViewport grid.locator convertX convertY
 #' @include plotting-classes.R
@@ -362,12 +358,11 @@ clickCoordinates <- function(n = 1) {
 #' @return Opens a new plot device on the screen. Invisibly returns the
 #' device number selected.
 #'
-#' @export
-#' @include plotting-classes.R
-#' @importFrom grDevices dev.list dev.set
-#' @docType methods
-#' @rdname dev
 #' @author Eliot McIntire and Alex Chubaty
+#' @export
+#' @importFrom grDevices dev.list dev.set
+#' @include plotting-classes.R
+#' @rdname dev
 #'
 dev <- function(x, ...) {
   if (missing(x)) {
@@ -413,7 +408,6 @@ dev <- function(x, ...) {
 #' @seealso \code{\link{dev}}.
 #'
 #' @author Eliot McIntire and Alex Chubaty
-#' @docType methods
 #' @export
 #' @importFrom grDevices dev.new
 #' @rdname newPlot

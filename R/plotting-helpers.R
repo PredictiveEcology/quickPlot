@@ -16,7 +16,6 @@ if (getRversion() >= "3.1.0") {
 #' @return The number of layers in the object.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @include plotting-classes.R
 #' @rdname numLayers
@@ -258,7 +257,6 @@ setMethod(
 #' (stored as a quickPlotGrobList of lists \code{.quickPlotGrob} objects).
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @include plotting-classes.R
 #' @include plotting-helpers.R
@@ -412,7 +410,6 @@ setMethod(
 #'                 of the \code{RasterStack}s. So passed manually.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname makeList
@@ -657,7 +654,6 @@ setMethod(
 #'         arrow heads will be drawn. See examples.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @include plotting-classes.R
 #' @importFrom raster crs
@@ -699,7 +695,6 @@ setMethod(
 #' standardized representation (i.e., replacing \code{[[]]} with \code{$}
 #' notation for objects) of objects and their layers (if \code{RasterStacks}).
 #'
-#' @docType methods
 #' @importFrom grDevices dev.cur
 #' @include plotting-classes.R
 #' @keywords internal
@@ -871,7 +866,6 @@ setMethod(
 #' @param envir An environment
 #'
 #' @export
-#' @docType methods
 #' @rdname parseElems
 #' @author Eliot McIntire
 setGeneric(".parseElems", function(tmp, elems, envir) {
@@ -906,7 +900,6 @@ setMethod(
 #' @return \code{NULL}. This function is invoked for its side effects.
 #'
 #' @include plotting-classes.R
-#' @docType methods
 #' @keywords internal
 #' @rdname objectNames
 #' @author Eliot McIntire
@@ -973,7 +966,6 @@ setMethod("gpar",
 #'
 #' @aliases PlotHelpers
 #' @author Eliot McIntire
-#' @docType methods
 #' @include plotting-classes.R
 #' @keywords internal
 #' @name .convertSpatialToPlotGrob
@@ -1035,7 +1027,6 @@ setMethod(
 #' @param whPlotFrame Numeric. Which plot within the quickPlotGrobPlots object.
 #'
 #' @include plotting-classes.R
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .xyAxes
@@ -1108,7 +1099,6 @@ setMethod(
 #'
 #' @include plotting-classes.R
 #' @importFrom grid seekViewport grid.text
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .Plot
@@ -1321,7 +1311,6 @@ setMethod(
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .refreshGrob
@@ -1366,7 +1355,6 @@ setMethod(
 
 
 #' @include plotting-classes.R
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .updateGrobGPTextAxis
@@ -1543,7 +1531,6 @@ setMethod(
 #' @importFrom stats na.omit
 #' @include plotting-classes.R
 #' @author Eliot McIntire
-#' @docType methods
 #' @keywords internal
 #' @rdname updateQuickPlot
 setGeneric(".updateQuickPlot", function(newSP, curr, ...) {
@@ -1687,15 +1674,14 @@ setMethod(
 #' @param sPlot A \code{.quickPlot} object.
 #' @inheritParams Plot
 #'
-#' @rdname arrangeViewports
-#' @include plotting-classes.R
+#' @author Eliot McIntire
+#' @export
 #' @importFrom grDevices dev.cur dev.new dev.size
 #' @importFrom sp bbox
-#' @export
+#' @include plotting-classes.R
 #' @keywords internal
-#' @author Eliot McIntire
-#' @docType methods
-# igraph exports %>% from magrittr
+#' @rdname arrangeViewports
+#'
 setGeneric(".arrangeViewports", function(sPlot, arr=NULL) {
   standardGeneric(".arrangeViewports")
 })
@@ -1848,7 +1834,6 @@ setMethod(
 #' @param ...     Additional arguments. None currently implemented.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @importFrom data.table ':=' data.table
 #' @importFrom grDevices as.raster
 #' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
@@ -2271,7 +2256,6 @@ setMethod(
 #'              written above plots and should be included as part of layout
 #'               calculation. Default is \code{TRUE}.
 #'
-#' @docType methods
 #' @include plotting-classes.R
 #' @importFrom grid unit unit.c
 #' @keywords internal
