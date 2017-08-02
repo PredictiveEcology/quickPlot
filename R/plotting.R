@@ -170,7 +170,7 @@ if (getRversion() >= "3.1.0") {
 #' @param visualSqueeze Numeric. The proportion of the white space to be used
 #'                      for plots. Default is 0.75.
 #'
-#' @param legend Logical idicating whether a legend should be drawn.
+#' @param legend Logical indicating whether a legend should be drawn.
 #'               Default is \code{TRUE}.
 #'
 #' @param legendRange Numeric vector giving values that, representing the lower
@@ -185,7 +185,7 @@ if (getRversion() >= "3.1.0") {
 #'                   see \pkg{raster} package), this will be used by default.
 #'                   Currently, only a single vector is accepted.
 #'                   The length of this must match the length of the legend, so
-#'                   this is mosty useful for discrete-valued rasters.
+#'                   this is mostly useful for discrete-valued rasters.
 #'
 #' @param na.color Character string indicating the color for \code{NA} values.
 #'                 Default transparent.
