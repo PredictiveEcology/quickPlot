@@ -1,27 +1,25 @@
 ################################################################################
-#' Get colours for plotting Raster* objects.
+#' Get and set colours for plotting \code{Raster*} objects
 #'
 #' @param object     A \code{Raster*} object.
 #'
 #' @return Returns a named list of colors.
 #'
-#' @export
-#' @docType methods
 #' @aliases getColours
-#' @rdname getColors
+#' @author Alex Chubaty
+#' @export
+#' @rdname getSetColors
 #'
 #' @seealso \code{\link{setColors<-}},
 #'          \code{\link[RColorBrewer]{brewer.pal}}
 #'
-#' @author Alex Chubaty
-#'
-#' #@importClassesFrom NetLogoRClasses agentMatrix
+#' @example inst/examples/example_setColors.R
 #'
 setGeneric("getColors", function(object) {
   standardGeneric("getColors")
 })
 
-#' @rdname getColors
+#' @rdname getSetColors
 setMethod("getColors",
           signature = "Raster",
           definition = function(object) {
@@ -33,14 +31,14 @@ setMethod("getColors",
             return(cols)
 })
 
-#' @rdname getColors
+#' @rdname getSetColors
 setMethod("getColors",
           signature = "ANY",
           definition = function(object) {
             return(NULL)
 })
 
-#' @rdname getColors
+#' @rdname getSetColors
 setMethod("getColors",
           signature = "SpatialPoints",
           definition = function(object) {
@@ -48,13 +46,8 @@ setMethod("getColors",
             return(cols)
 })
 
-################################################################################
-#' Set colours for plotting Raster* objects.
-#'
 #' \code{setColors} works as a replacement method or a normal function call.
-#' This function can accept RColorBrewer colors by name. See example.
-#'
-#' @param object     A \code{Raster*} object.
+#' This function can accept \code{RColorBrewer} colors by name. See examples.
 #'
 #' @param ...   Additional arguments to \code{colorRampPalette}.
 #'
@@ -67,27 +60,23 @@ setMethod("getColors",
 #'
 #' @return Returns a Raster with the \code{colortable} slot set to \code{values}.
 #'
+#' @aliases setColours
 #' @export
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal brewer.pal.info
-#' @docType methods
-#' @aliases setColours
-#' @rdname setColors
+#' @rdname getSetColors
 #'
 #' @seealso \code{\link[RColorBrewer]{brewer.pal}},
 #'          \code{\link[grDevices]{colorRampPalette}}.
 #'
-#' @author Alex Chubaty
-#'
-#' @example inst/examples/example_setColors.R
-#' 
 setGeneric("setColors<-",
            function(object, ..., n, value) {
              standardGeneric("setColors<-")
 })
 
-#' @rdname setColors
+#' @export
 #' @importFrom raster is.factor
+#' @rdname getSetColors
 setReplaceMethod(
   "setColors",
   signature("RasterLayer", "numeric", "character"),
@@ -125,8 +114,9 @@ setReplaceMethod(
     return(object)
 })
 
-#' @rdname setColors
+#' @export
 #' @importFrom raster is.factor maxValue
+#' @rdname getSetColors
 setReplaceMethod(
   "setColors",
   signature("RasterLayer", "missing", "character"),
@@ -141,7 +131,8 @@ setReplaceMethod(
     return(object)
 })
 
-#' @rdname setColors
+#' @export
+#' @rdname getSetColors
 setReplaceMethod(
   "setColors",
    signature("RasterStack", "numeric", "list"),
@@ -174,7 +165,8 @@ setReplaceMethod(
      return(object)
 })
 
-#' @rdname setColors
+#' @export
+#' @rdname getSetColors
 setReplaceMethod(
   "setColors",
    signature("Raster", "missing", "list"),
@@ -188,12 +180,14 @@ setReplaceMethod(
 })
 
 #' @export
-#' @rdname setColors
+#' @export
+#' @rdname getSetColors
 setGeneric("setColors", function(object, value, n) {
   standardGeneric("setColors")
 })
 
-#' @rdname setColors
+#' @export
+#' @rdname getSetColors
 setMethod(
   "setColors",
   signature("RasterLayer", "character", "numeric"),
@@ -202,7 +196,8 @@ setMethod(
     return(object)
 })
 
-#' @rdname setColors
+#' @export
+#' @rdname getSetColors
 setMethod(
   "setColors",
   signature("RasterLayer", "character", "missing"),
@@ -245,20 +240,15 @@ setMethod(
 #' @param skipSample   Logical. If no downsampling is necessary, skip.
 #'                     Default \code{TRUE}.
 #'
-#' @rdname makeColorMatrix
 #' @aliases makeColourMatrix
-#'
-#' # @importClassesFrom NetLogoRClasses griddedClasses
-#'
-#' @include plotting-classes.R
+#' @author Eliot McIntire
 #' @importFrom grDevices colorRampPalette terrain.colors
 #' @importFrom raster minValue getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
-#'
-#' @docType methods
+#' @include plotting-classes.R
 #' @keywords internal
-#' @author Eliot McIntire
+#' @rdname makeColorMatrix
 #'
 setGeneric(
   ".makeColorMatrix",
@@ -543,13 +533,13 @@ setMethod(
 #'
 #' @aliases divergentColours
 #' @author Eliot McIntire and Alex Chubaty
-#' @docType methods
 #' @export
 #' @importFrom  grDevices colorRampPalette
 #' @seealso \code{\link{colorRampPalette}}
 #'
 #' @examples
 #' divergentColors("darkred", "darkblue", -10, 10, 0, "white")
+#'
 setGeneric("divergentColors",
            function(start.color, end.color, min.value, max.value, # nolint
                     mid.value = 0, mid.color = "white") { # nolint

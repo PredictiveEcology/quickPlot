@@ -19,13 +19,15 @@
 #'              device number. If "all", then all quickPlot related data from all devices
 #'              will be cleared, in addition to device closing and reopening.
 #'
+#' @author Eliot McIntire
 #' @export
 #' @importFrom grDevices dev.cur dev.off
 #' @importFrom grid grid.newpage
-#' @docType methods
-#' @rdname clearPlot
 #' @include plotting-classes.R
-#' @author Eliot McIntire
+#' @rdname clearPlot
+#'
+#' @example inst/examples/example_Plot.R
+#'
 setGeneric("clearPlot", function(dev = dev.cur(), removeData = TRUE, force = FALSE) {
   standardGeneric("clearPlot")
 })
@@ -107,7 +109,6 @@ setMethod("clearPlot",
 #' @param grid.locator an object that was output by a call to \code{grid.locator}
 #'                     and mouse click(s).
 #'
-#' @docType methods
 #' @export
 #' @keywords internal
 #' @rdname unittrim
@@ -149,12 +150,34 @@ setMethod("clearPlot",
 #' it in a new device window.
 #' \code{clickCoordinates} returns the xy coordinates in the units of the plot clicked on.
 #'
-#' @export
-#' @include plotting-classes.R
-#' @importFrom raster is.factor factorValues cellFromXY
-#' @docType methods
 #' @author Eliot McIntire
+#' @export
+#' @importFrom raster is.factor factorValues cellFromXY
+#' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
+#'
+#' @examples
+#' \dontrun{
+#'   library(igraph)
+#'   library(raster)
+#'   
+#'   files <- system.file("maps", package = "quickPlot") %>%
+#'     dir(., full.names = TRUE, pattern = "tif")
+#'   maps <- lapply(files, function(x) raster(x))
+#'   names(maps) <- sapply(basename(files), function(x) {
+#'     strsplit(x, split = "\\.")[[1]][1]
+#'   })
+#'   landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
+#'   
+#'   clearPlot()
+#'   Plot(landscape)
+#'   clickValues(3) # click at three locations on the Plot device
+#'   
+#'   clearPlot()
+#'   Plot(landscape)
+#'   e <- clickExtent() # click at two locations on the Plot device
+#'   print(e)
+#' }
 #'
 clickValues <- function(n = 1) {
   coords <- clickCoordinates(n = n)
@@ -186,12 +209,11 @@ clickValues <- function(n = 1) {
 #'                new extent. Default \code{TRUE}.
 #'
 #' @export
-#' @docType methods
 #' @importFrom grDevices dev.cur
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
+#'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
-
   corners <- clickCoordinates(2)
   zoom <- extent(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
 
@@ -221,11 +243,9 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
   }
 }
 
-#' @docType methods
 #' @export
-#' @importFrom grid grid.layout grid.locator unit
 #' @importFrom grDevices dev.cur
-# igraph exports %>% from magrittr
+#' @importFrom grid grid.layout grid.locator unit
 #' @include environment.R
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
@@ -319,7 +339,6 @@ clickCoordinates <- function(n = 1) {
 #'
 #' @param gl An object created by a call to \code{grid.locator}.
 #'
-#' @docType methods
 #' @export
 #' @importFrom grid seekViewport grid.locator convertX convertY
 #' @include plotting-classes.R
@@ -360,12 +379,16 @@ clickCoordinates <- function(n = 1) {
 #' @return Opens a new plot device on the screen. Invisibly returns the
 #' device number selected.
 #'
-#' @export
-#' @include plotting-classes.R
-#' @importFrom grDevices dev.list dev.set
-#' @docType methods
-#' @rdname dev
 #' @author Eliot McIntire and Alex Chubaty
+#' @export
+#' @importFrom grDevices dev.list dev.set
+#' @include plotting-classes.R
+#' @rdname dev
+#' 
+#' @examples
+#' \dontrun{
+#'   dev(4)
+#' }
 #'
 dev <- function(x, ...) {
   if (missing(x)) {
@@ -402,7 +425,8 @@ dev <- function(x, ...) {
 #' @param ...         Additional arguments.
 #'
 #' @note \code{\link{dev.new}} is supposed to be the correct way to open a new
-#' window in a platform-generic way; however, doesn't work in RStudio (#116).
+#' window in a platform-generic way; however, doesn't work in RStudio
+#' (\href{https://github.com/PredictiveEcology/SpaDES/issues/116}{SpaDES#116}).
 #' Use \code{dev.useRSGD(FALSE)} to avoid RStudio for the remainder of this session,
 #' and \code{dev.useRSGD(TRUE)} to use the RStudio graphics device.
 #' (This sets the default device via the \code{device} option.)
@@ -410,11 +434,19 @@ dev <- function(x, ...) {
 #' @seealso \code{\link{dev}}.
 #'
 #' @author Eliot McIntire and Alex Chubaty
-#'
 #' @export
 #' @importFrom grDevices dev.new
-#' @docType methods
 #' @rdname newPlot
+#'
+#' @examples
+#' \dontrun{
+#'   ## set option to avoid using Rstudio graphics device
+#'   dev.useRSGD(FALSE)
+#'
+#'   ## open new plotting window
+#'   newPlot()
+#' }
+#'
 newPlot <- function(noRStudioGD = TRUE, ...) {
   dev.new(noRStudioGD = TRUE, ...)
 }
@@ -434,35 +466,42 @@ dev.useRSGD <- function(useRSGD = FALSE) { # nolint
   }
 }
 
-assign(".parOrig", envir = .quickPlotEnv,
-       structure(list(xlog = FALSE, ylog = FALSE, adj = 0.5, ann = TRUE,
-                      ask = FALSE, bg = "white", bty = "o", cex = 1, cex.axis = 1,
-                      cex.lab = 1, cex.main = 1.2, cex.sub = 1, col = "black",
-                      col.axis = "black", col.lab = "black", col.main = "black",
-                      col.sub = "black", crt = 0, err = 0L, family = "", fg = "black",
-                      fig = c(0.5, 0.9866, 0.0233, 0.875),
-                      fin = c(5.00285625, 2.155865625),
-                      font = 1L, font.axis = 1L, font.lab = 1L, font.main = 2L,
-                      font.sub = 1L, lab = c(5L, 5L, 7L), las = 0L, lend = "round",
-                      lheight = 1, ljoin = "round", lmitre = 10, lty = "solid",
-                      lwd = 1, mai = c(1.02, 0.82, 0.82, 0.42),
-                      mar = c(5.1, 4.1, 4.1, 2.1), mex = 1, mfcol = c(1L, 1L),
-                      mfg = c(1L, 1L, 1L, 1L), mfrow = c(1L, 1L), mgp = c(3, 1, 0),
-                      mkh = 0.001, new = FALSE,
-                      oma = c(0, 0, 0, 0), omd = c(0, 1, 0, 1), omi = c(0, 0, 0, 0),
-                      pch = 1L, pin = c(3.6020565, 1.293519375),
-                      plt = c(0.23, 0.95, 0.3, 0.9), ps = 12L, pty = "m",
-                      smo = 1, srt = 0, tck = NA_real_,
-                      tcl = -0.5, usr = c(0.64, 10.36, -1.74682466270393, 0.852684557824307
-                      ), xaxp = c(2, 10, 4), xaxs = "r", xaxt = "s", xpd = FALSE,
-                      yaxp = c(-1.5, 0.5, 4), yaxs = "r", yaxt = "s", ylbias = 0.2),
-                 .Names = c("xlog", "ylog", "adj", "ann", "ask", "bg", "bty", "cex", "cex.axis",
-                            "cex.lab", "cex.main", "cex.sub", "col", "col.axis", "col.lab",
-                            "col.main", "col.sub", "crt", "err", "family", "fg", "fig", "fin",
-                            "font", "font.axis", "font.lab", "font.main", "font.sub", "lab",
-                            "las", "lend", "lheight", "ljoin", "lmitre", "lty", "lwd", "mai",
-                            "mar", "mex", "mfcol", "mfg", "mfrow", "mgp", "mkh", "new", "oma",
-                            "omd", "omi", "pch", "pin", "plt", "ps", "pty", "smo", "srt",
-                            "tck", "tcl", "usr", "xaxp", "xaxs", "xaxt", "xpd", "yaxp", "yaxs",
-                            "yaxt", "ylbias")
+#' Default plotting parameters
+#'
+#' @keywords internal
+#' @name .parOrig
+#' @rdname parOrig
+assign(
+  ".parOrig",
+  envir = .quickPlotEnv,
+  structure(list(xlog = FALSE, ylog = FALSE, adj = 0.5, ann = TRUE,
+                 ask = FALSE, bg = "white", bty = "o", cex = 1, cex.axis = 1,
+                 cex.lab = 1, cex.main = 1.2, cex.sub = 1, col = "black",
+                 col.axis = "black", col.lab = "black", col.main = "black",
+                 col.sub = "black", crt = 0, err = 0L, family = "", fg = "black",
+                 fig = c(0.5, 0.9866, 0.0233, 0.875),
+                 fin = c(5.00285625, 2.155865625),
+                font = 1L, font.axis = 1L, font.lab = 1L, font.main = 2L,
+                font.sub = 1L, lab = c(5L, 5L, 7L), las = 0L, lend = "round",
+                lheight = 1, ljoin = "round", lmitre = 10, lty = "solid",
+                lwd = 1, mai = c(1.02, 0.82, 0.82, 0.42),
+                mar = c(5.1, 4.1, 4.1, 2.1), mex = 1, mfcol = c(1L, 1L),
+                mfg = c(1L, 1L, 1L, 1L), mfrow = c(1L, 1L), mgp = c(3, 1, 0),
+                mkh = 0.001, new = FALSE,
+                oma = c(0, 0, 0, 0), omd = c(0, 1, 0, 1), omi = c(0, 0, 0, 0),
+                pch = 1L, pin = c(3.6020565, 1.293519375),
+                plt = c(0.23, 0.95, 0.3, 0.9), ps = 12L, pty = "m",
+                smo = 1, srt = 0, tck = NA_real_,
+                tcl = -0.5, usr = c(0.64, 10.36, -1.74682466270393, 0.852684557824307
+                ), xaxp = c(2, 10, 4), xaxs = "r", xaxt = "s", xpd = FALSE,
+                yaxp = c(-1.5, 0.5, 4), yaxs = "r", yaxt = "s", ylbias = 0.2),
+            .Names = c("xlog", "ylog", "adj", "ann", "ask", "bg", "bty", "cex", "cex.axis",
+                       "cex.lab", "cex.main", "cex.sub", "col", "col.axis", "col.lab",
+                       "col.main", "col.sub", "crt", "err", "family", "fg", "fig", "fin",
+                       "font", "font.axis", "font.lab", "font.main", "font.sub", "lab",
+                       "las", "lend", "lheight", "ljoin", "lmitre", "lty", "lwd", "mai",
+                       "mar", "mex", "mfcol", "mfg", "mfrow", "mgp", "mkh", "new", "oma",
+                       "omd", "omi", "pch", "pin", "plt", "ps", "pty", "smo", "srt",
+                       "tck", "tcl", "usr", "xaxp", "xaxs", "xaxt", "xpd", "yaxp", "yaxs",
+                       "yaxt", "ylbias")
 ))

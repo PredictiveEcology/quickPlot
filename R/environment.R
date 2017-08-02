@@ -14,12 +14,10 @@
 #'
 #' @param ... Additional arguments to pass to \code{get}.
 #'
-#' @docType methods
+#' @author Alex Chubaty
 #' @keywords internal
 #' @name .getQuickPlot
 #' @rdname getQuickPlot
-#'
-#' @author Alex Chubaty
 #'
 setGeneric(".getQuickPlot", function(x, ...) {
   standardGeneric(".getQuickPlot")
@@ -30,10 +28,9 @@ setMethod(".getQuickPlot",
           signature(x = "ANY"),
           definition = function(x, ...) {
             get(x, envir = .quickPlotEnv, ...)
-          })
+})
 
-
-#' Assign to the internal quickPlot environment.
+#' Assign to the internal \code{quickPlot} environment.
 #'
 #' Internal function. Simple wrapper for \code{\link{assign}}.
 #'
@@ -49,7 +46,6 @@ setMethod(".getQuickPlot",
 #'
 #' @return Only used for its side effect, namely the object assigned to the \code{.quickPlotEnv}
 #'
-#' @docType methods
 #' @keywords internal
 #' @rdname assignQuickPlot
 #'
@@ -63,16 +59,16 @@ setMethod(".assignQuickPlot",
           signature(x = "character", value = "ANY"),
           definition = function(x, value, ...) {
             assign(x, value, envir = .quickPlotEnv, ...)
-          })
+})
 
 #' @rdname assignQuickPlot
 setMethod(".assignQuickPlot",
           signature(x = "character", value = "missing"),
           definition = function(x, value, ...) {
             assign(x, get(x), envir = .quickPlotEnv, ...)
-          })
+})
 
-#' Is an object defined in the .quickPlotEnv environment?
+#' Is an object defined in the \code{.quickPlotEnv} environment?
 #'
 #' Internal function. Simple wrapper for \code{\link{exists}}.
 #'
@@ -82,11 +78,9 @@ setMethod(".assignQuickPlot",
 #'
 #' @param ... Additional arguments passed to \code{\link{exists}}
 #'
-#' @docType methods
+#' @author Alex Chubaty
 #' @keywords internal
 #' @rdname existsQuickPlot
-#'
-#' @author Alex Chubaty
 #'
 setGeneric(".existsQuickPlot", function(x, ...) {
   standardGeneric(".existsQuickPlot")
@@ -97,4 +91,4 @@ setMethod(".existsQuickPlot",
           signature(x = "ANY"),
           definition = function(x, ...) {
             exists(x, envir = .quickPlotEnv, ...)
-          })
+})

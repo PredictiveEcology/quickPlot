@@ -32,8 +32,8 @@ setAs(from = "list", to = "gpar", function(from) {
 ################################################################################
 #' The \code{spatialObjects} class
 #'
-#' This class is the union of several spatial objects from \code{raster} and
-#' \code{sp} packages.
+#' This class is the union of several spatial objects from \pkg{raster} and
+#' \pkg{sp} packages.
 #'
 #' Members:
 #'

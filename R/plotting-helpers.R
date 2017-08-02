@@ -15,15 +15,31 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @return The number of layers in the object.
 #'
+#' @author Eliot McIntire
 #' @export
 #' @include plotting-classes.R
-#' @author Eliot McIntire
 #' @rdname numLayers
-#' @export
+#'
+#' @examples
+#' library(igraph)
+#' library(raster)
+#'
+#' files <- system.file("maps", package = "quickPlot") %>%
+#'   dir(., full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, function(x) raster(x))
+#' names(maps) <- sapply(basename(files), function(x) {
+#'   strsplit(x, split = "\\.")[[1]][1]
+#' })
+#' stck <- stack(maps)
+#'
+#' numLayers(maps)
+#' numLayers(stck)
+#'
 setGeneric("numLayers", function(x) {
   standardGeneric("numLayers")
 })
 
+#' @export
 #' @rdname numLayers
 setMethod(
   "numLayers",
@@ -48,6 +64,7 @@ setMethod(
     return(length(x@arr@extents))
 })
 
+#' @export
 #' @importFrom raster nlayers
 #' @rdname numLayers
 setMethod(
@@ -57,6 +74,7 @@ setMethod(
     return(nlayers(x))
 })
 
+#' @export
 #' @rdname numLayers
 setMethod(
   "numLayers",
@@ -65,6 +83,7 @@ setMethod(
     return(1L)
 })
 
+#' @export
 #' @rdname numLayers
 setMethod(
   "numLayers",
@@ -85,10 +104,47 @@ setMethod(
 #' @param object  A \code{Raster*}, \code{SpatialPoints*}, \code{SpatialLines*},
 #'                or \code{SpatialPolygons*} object; or list of these.
 #'
-#' @rdname layerNames
-#' @include plotting-classes.R
 #' @author Eliot McIntire
 #' @export
+#' @include plotting-classes.R
+#' @rdname layerNames
+#'
+#' @examples
+#' library(igraph)
+#' library(raster)
+#'
+#' ## RasterLayer objects
+#' files <- system.file("maps", package = "quickPlot") %>%
+#'   dir(., full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, function(x) raster(x))
+#' names(maps) <- sapply(basename(files), function(x) {
+#'   strsplit(x, split = "\\.")[[1]][1]
+#' })
+#' layerNames(maps)
+#'
+#' ## Spatial* objects
+#' caribou <- SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
+#'                                         y = stats::runif(1e2, -50, 50)))
+#' layerNames(caribou)
+#'
+#' sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
+#' sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
+#' srs1 <- Polygons(list(sr1), "s1")
+#' srs2 <- Polygons(list(sr2), "s2")
+#' spP <- SpatialPolygons(list(srs1, srs2), 1:2)
+#' layerNames(spP)
+#'
+#' l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
+#' l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
+#' l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
+#' sl1 <- Line(l1)
+#' sl1a <- Line(l1a)
+#' sl2 <- Line(l2)
+#' s1 <- Lines(list(sl1, sl1a), ID = "a")
+#' s2 <- Lines(list(sl2), ID = "b")
+#' sl <- SpatialLines(list(s1, s2))
+#' layerNames(sl)
+#'
 setGeneric("layerNames", function(object) {
   standardGeneric("layerNames")
 })
@@ -120,15 +176,13 @@ setMethod(
     names(object)
 })
 
-#' @export
 #' @rdname layerNames
 setMethod(
   "layerNames",
   signature = ".quickPlot",
   definition = function(object) {
     return(sapply(object@quickPlotGrobList, function(x) {
-      sapply(x, function(y)
-        y@plotName)[[1]]
+      sapply(x, function(y) y@plotName)[[1]]
     }))
 })
 
@@ -145,9 +199,24 @@ setMethod(
 #' Assess whether a list of extents are all equal
 #'
 #' @param extents list of extents objects
-#' @rdname equalExtent
+#'
 #' @author Eliot McIntire
 #' @export
+#' @rdname equalExtent
+#'
+#' @examples
+#' library(igraph)
+#' library(raster)
+#'
+#' files <- system.file("maps", package = "quickPlot") %>%
+#'   dir(., full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, function(x) raster(x))
+#' names(maps) <- sapply(basename(files), function(x) {
+#'   strsplit(x, split = "\\.")[[1]][1]
+#' })
+#' extnts <- lapply(maps, extent)
+#' equalExtent(extnts) ## TRUE
+#'
 setGeneric("equalExtent", function(extents) {
   standardGeneric("equalExtent")
 })
@@ -187,11 +256,10 @@ setMethod(
 #' (i.e., layout and dimensions) and onefor all of the \code{quickPlotGrobs}
 #' (stored as a quickPlotGrobList of lists \code{.quickPlotGrob} objects).
 #'
+#' @author Eliot McIntire
+#' @export
 #' @include plotting-classes.R
 #' @include plotting-helpers.R
-#' @export
-#' @author Eliot McIntire
-#' @docType methods
 #' @keywords internal
 #' @rdname makeQuickPlot
 #'
@@ -216,7 +284,7 @@ setMethod(
       suppliedNames <- NULL
     }
     if (is.null(suppliedNames)) {
-      objs <- objectNames()[whichQuickPlottables]
+      objs <- .objectNames()[whichQuickPlottables]
     } else {
       objs <- lapply(suppliedNames, function(x) {
         list(objs = x, envs = env)
@@ -342,7 +410,6 @@ setMethod(
 #'                 of the \code{RasterStack}s. So passed manually.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname makeList
@@ -587,7 +654,6 @@ setMethod(
 #'         arrow heads will be drawn. See examples.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @export
 #' @include plotting-classes.R
 #' @importFrom raster crs
@@ -629,7 +695,6 @@ setMethod(
 #' standardized representation (i.e., replacing \code{[[]]} with \code{$}
 #' notation for objects) of objects and their layers (if \code{RasterStacks}).
 #'
-#' @docType methods
 #' @importFrom grDevices dev.cur
 #' @include plotting-classes.R
 #' @keywords internal
@@ -801,7 +866,6 @@ setMethod(
 #' @param envir An environment
 #'
 #' @export
-#' @docType methods
 #' @rdname parseElems
 #' @author Eliot McIntire
 setGeneric(".parseElems", function(tmp, elems, envir) {
@@ -835,13 +899,13 @@ setMethod(
 #'
 #' @return \code{NULL}. This function is invoked for its side effects.
 #'
-#' @include plotting-classes.R
-#' @docType methods
-#' @keywords internal
-#' @rdname objectNames
 #' @author Eliot McIntire
 #' @export
-objectNames <- function(calledFrom = "Plot",
+#' @include plotting-classes.R
+#' @keywords internal
+#' @rdname objectNames
+#' 
+.objectNames <- function(calledFrom = "Plot",
                         argClass = ".quickPlotObjects",
                         argName = "") {
   scalls <- sys.calls()
@@ -867,12 +931,14 @@ objectNames <- function(calledFrom = "Plot",
 #' can change \code{Plot} arguments without having to load the entire grid package.
 #'
 #' @inheritParams grid::gpar
-#' @name gpar
+#'
 #' @aliases gpar
-#' @importFrom grid gpar
 #' @export
+#' @importFrom grid gpar
+#' @name gpar
 #' @rdname grid-functions
 #' @seealso \code{\link[grid]{gpar}}
+#'
 setGeneric("gpar", function(...) {
   standardGeneric("gpar")
 })
@@ -899,13 +965,12 @@ setMethod("gpar",
 #' @param subPlots Character. Name of plot area.
 #' @param cols Color vector.
 #'
+#' @aliases PlotHelpers
+#' @author Eliot McIntire
 #' @include plotting-classes.R
-#' @docType methods
 #' @keywords internal
 #' @name .convertSpatialToPlotGrob
 #' @rdname Plot-internal
-#' @aliases PlotHelpers
-#' @author Eliot McIntire
 #'
 setGeneric(".convertSpatialToPlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                                                  quickPlotGrobCounter, subPlots, cols) {
@@ -963,7 +1028,6 @@ setMethod(
 #' @param whPlotFrame Numeric. Which plot within the quickPlotGrobPlots object.
 #'
 #' @include plotting-classes.R
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .xyAxes
@@ -1036,7 +1100,6 @@ setMethod(
 #'
 #' @include plotting-classes.R
 #' @importFrom grid seekViewport grid.text
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .Plot
@@ -1249,7 +1312,6 @@ setMethod(
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .refreshGrob
@@ -1294,7 +1356,6 @@ setMethod(
 
 
 #' @include plotting-classes.R
-#' @docType methods
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .updateGrobGPTextAxis
@@ -1471,7 +1532,6 @@ setMethod(
 #' @importFrom stats na.omit
 #' @include plotting-classes.R
 #' @author Eliot McIntire
-#' @docType methods
 #' @keywords internal
 #' @rdname updateQuickPlot
 setGeneric(".updateQuickPlot", function(newSP, curr, ...) {
@@ -1615,15 +1675,14 @@ setMethod(
 #' @param sPlot A \code{.quickPlot} object.
 #' @inheritParams Plot
 #'
-#' @rdname arrangeViewports
-#' @include plotting-classes.R
+#' @author Eliot McIntire
+#' @export
 #' @importFrom grDevices dev.cur dev.new dev.size
 #' @importFrom sp bbox
-#' @export
+#' @include plotting-classes.R
 #' @keywords internal
-#' @author Eliot McIntire
-#' @docType methods
-# igraph exports %>% from magrittr
+#' @rdname arrangeViewports
+#'
 setGeneric(".arrangeViewports", function(sPlot, arr=NULL) {
   standardGeneric(".arrangeViewports")
 })
@@ -1706,7 +1765,7 @@ setMethod(
 
 
 ################################################################################
-#' Plot spatial grobs (using \code{grid} package)
+#' Plot spatial grobs (using \pkg{grid} package)
 #'
 #' Internal function. Plot a raster Grob, a points Grob, polygon Grob.
 #'
@@ -1716,7 +1775,7 @@ setMethod(
 #' plotting, without losing visible quality. Nevertheless, to force all points to
 #' be plotted, use a speedup value less than 0.1.
 #' From a speed perspective, there appears to be an optimal subsampling when
-#' using \code{thin} from the \code{fastshp} package.
+#' using \code{thin} from the \pkg{fastshp} package.
 #' Presumably, too much thinning requires large distance matrices to be
 #' calculated, slowing plotting down.
 #' Too little thinning causes an overabundance of points to be plotted, slowing
@@ -1748,7 +1807,7 @@ setMethod(
 #' @param legendText  Vector of values to use for legend value labels.
 #'                    Defaults to \code{NULL} which results in a pretty numeric
 #'                    representation. If \code{Raster*} has a Raster Attribute
-#'                    Table (rat; see \code{raster} package), this will be used
+#'                    Table (rat; see \pkg{raster} package), this will be used
 #'                    by default. Currently, only a single vector is accepted.
 #'
 #' @param length  Numeric.
@@ -1776,7 +1835,6 @@ setMethod(
 #' @param ...     Additional arguments. None currently implemented.
 #'
 #' @author Eliot McIntire
-#' @docType methods
 #' @importFrom data.table ':=' data.table
 #' @importFrom grDevices as.raster
 #' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
@@ -2199,7 +2257,6 @@ setMethod(
 #'              written above plots and should be included as part of layout
 #'               calculation. Default is \code{TRUE}.
 #'
-#' @docType methods
 #' @include plotting-classes.R
 #' @importFrom grid unit unit.c
 #' @keywords internal

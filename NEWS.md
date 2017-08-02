@@ -1,9 +1,15 @@
 Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
+version 0.1.1.9000
+==================
+
+
+
 version 0.1.1
 =============
 
-* *do* run examples (per CRAN)
+* add more examples to non-internal functions and *do* run them (per CRAN)
+* added checks in the tests to ensure all exported functions have examples
 
 version 0.1.0
 =============

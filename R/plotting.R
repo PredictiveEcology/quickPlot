@@ -5,14 +5,14 @@ if (getRversion() >= "3.1.0") {
 }
 
 ################################################################################
-#' Plot: Fast, optimally arranged, multipanel plotting function
+#' \code{Plot}: Fast, optimally arranged, multipanel plotting
 #'
 #' This can take objects of type \code{Raster*}, \code{SpatialPoints*},
-#' \code{SpatialPolygons*}, and any combination of those. These can be provided
-#' as individual objects, or a named list. If a named list, the names either represent
-#' a different original object in the calling environment and that will be
-#' used, or if the names don't exist in the calling environment, then they will be
-#' copied to the .quickPlotEnv for reuse later.
+#' \code{SpatialPolygons*}, and any combination of those.
+#' These can be provided as individual objects, or a named list.
+#' If a named list, the names either represent a different original object in the
+#' calling environment and that will be used, or if the names don't exist in the
+#' calling environment, then they will be copied to \code{.quickPlotEnv} for reuse later.
 #' It can also handle \code{ggplot2} objects or \code{base::histogram} objects
 #' created via call to \code{exHist <- hist(1:10, plot = FALSE)}. It can also take
 #' arguments as if it were a call to \code{plot}. In this latter
@@ -20,8 +20,8 @@ if (getRversion() >= "3.1.0") {
 #' Customization of the \code{ggplot2} elements can be done as a normal
 #' \code{ggplot2} plot, then added with \code{Plot(ggplotObject)}.
 #'
-#' NOTE: Plot uses the \code{grid} package; therefore, it is NOT compatible with
-#' base R graphics. Also, because it does not by default wipe the plotting device
+#' \strong{NOTE:} Plot uses the \pkg{grid} package; therefore, it is NOT compatible
+#' with base R graphics. Also, because it does not by default wipe the plotting device
 #' before plotting, a call to \code{\link{clearPlot}} is helpful to resolve
 #' many errors. Careful use of the other device tools, such as \code{dev.off()} and
 #' \code{dev.list()} might also clear problems that may arise.
@@ -138,7 +138,7 @@ if (getRversion() >= "3.1.0") {
 #'              \code{SpatialPoints*} object on a \code{RasterLayer}.
 #'
 #' @param gp A \code{gpar} object, created by \code{\link{gpar}} function,
-#'           to change plotting parameters (see \code{grid} package).
+#'           to change plotting parameters (see \pkg{grid} package).
 #'
 #' @param gpText A \code{gpar} object for the title text.
 #'               Default \code{gpar(col = "black")}.
@@ -181,8 +181,8 @@ if (getRversion() >= "3.1.0") {
 #' @param legendText Character vector of legend value labels.
 #'                   Defaults to \code{NULL}, which results in a pretty numeric
 #'                   representation.
-#'                   If \code{Raster*} has a Raster Attribute Table (rat; see
-#'                   \code{\link{raster}} package), this will be used by default.
+#'                   If \code{Raster*} has a Raster Attribute Table (\code{rat};
+#'                   see \pkg{raster} package), this will be used by default.
 #'                   Currently, only a single vector is accepted.
 #'                   The length of this must match the length of the legend, so
 #'                   this is mosty useful for discrete-valued rasters.
@@ -240,7 +240,7 @@ if (getRversion() >= "3.1.0") {
 #' @rdname Plot
 #'
 #' @example inst/examples/example_Plot.R
-#' 
+#'
 setGeneric(
   "Plot",
   signature = "...",

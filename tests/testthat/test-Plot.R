@@ -1,7 +1,7 @@
 test_that("Plot 1 is not error-free", {
   skip_if_not_installed("reproducible")
 
-    library(igraph)
+  library(igraph)
   library(sp)
   library(raster)
   library(reproducible)

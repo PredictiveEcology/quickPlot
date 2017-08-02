@@ -4,12 +4,12 @@
 #' for speed and modularity. This has great utility for quick visualizations
 #' when testing code, with the key benefit that visualizations are updated
 #' independently of one another.
-#' 
+#'
 #' @note
-#' 
-#' The suggested package \code{fastshp} can be installed with
+#'
+#' The suggested package \pkg{fastshp} can be installed with
 #' \code{install.packages("fastshp", repos = "http://rforge.net", type = "source")}.
-#' 
+#'
 "_PACKAGE"
 
 ################################################################################

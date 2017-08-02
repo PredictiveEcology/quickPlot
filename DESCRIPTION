@@ -41,7 +41,8 @@ Suggests:
     rmarkdown,
     testthat (>= 1.0.2)
 Remotes:
-    s-u/fastshp
+    s-u/fastshp,
+    MangoTheCat/visualTest
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues

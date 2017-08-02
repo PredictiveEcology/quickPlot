@@ -34,6 +34,22 @@ Adding methods for \code{list}, \code{SpatialPolygons}, \code{SpatialLines},
 and \code{SpatialPoints}, \code{gg}, \code{histogram}, \code{igraph}.
 These latter classes return \code{1}.
 }
+\examples{
+library(igraph)
+library(raster)
+
+files <- system.file("maps", package = "quickPlot") \%>\%
+  dir(., full.names = TRUE, pattern = "tif")
+maps <- lapply(files, function(x) raster(x))
+names(maps) <- sapply(basename(files), function(x) {
+  strsplit(x, split = "\\\\.")[[1]][1]
+})
+stck <- stack(maps)
+
+numLayers(maps)
+numLayers(stck)
+
+}
 \author{
 Eliot McIntire
 }
