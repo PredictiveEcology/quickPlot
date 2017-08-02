@@ -43,6 +43,7 @@ Based on ideas from Maureen Kennedy, Nick Povak, and Alina Cansler.
 }
 \examples{
 divergentColors("darkred", "darkblue", -10, 10, 0, "white")
+
 }
 \seealso{
 \code{\link{colorRampPalette}}

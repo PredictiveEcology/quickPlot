@@ -539,6 +539,7 @@ setMethod(
 #'
 #' @examples
 #' divergentColors("darkred", "darkblue", -10, 10, 0, "white")
+#'
 setGeneric("divergentColors",
            function(start.color, end.color, min.value, max.value, # nolint
                     mid.value = 0, mid.color = "white") { # nolint

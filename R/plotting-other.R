@@ -363,6 +363,11 @@ clickCoordinates <- function(n = 1) {
 #' @importFrom grDevices dev.list dev.set
 #' @include plotting-classes.R
 #' @rdname dev
+#' 
+#' @examples
+#' \dontrun{
+#'   dev(4)
+#' }
 #'
 dev <- function(x, ...) {
   if (missing(x)) {
