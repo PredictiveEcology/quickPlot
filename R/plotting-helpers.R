@@ -284,7 +284,7 @@ setMethod(
       suppliedNames <- NULL
     }
     if (is.null(suppliedNames)) {
-      objs <- objectNames()[whichQuickPlottables]
+      objs <- .objectNames()[whichQuickPlottables]
     } else {
       objs <- lapply(suppliedNames, function(x) {
         list(objs = x, envs = env)
@@ -899,12 +899,13 @@ setMethod(
 #'
 #' @return \code{NULL}. This function is invoked for its side effects.
 #'
+#' @author Eliot McIntire
+#' @export
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname objectNames
-#' @author Eliot McIntire
-#' @export
-objectNames <- function(calledFrom = "Plot",
+#' 
+.objectNames <- function(calledFrom = "Plot",
                         argClass = ".quickPlotObjects",
                         argName = "") {
   scalls <- sys.calls()
