@@ -95,7 +95,7 @@ If \code{Raster*} has a Raster Attribute Table (\code{rat};
 see \pkg{raster} package), this will be used by default.
 Currently, only a single vector is accepted.
 The length of this must match the length of the legend, so
-this is mosty useful for discrete-valued rasters.}
+this is mostly useful for discrete-valued rasters.}
 
 \item{vps}{A viewport tree resulting from \code{.makeViewports}}
 
