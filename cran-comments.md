@@ -50,7 +50,7 @@ There were 2 NOTEs:
               Modularity (3:53)
               modularity (5:29)
 
-    c. The `fastshp` package in Suggests is optionally installed from Rforge and not required to use the package. Instructions for installation are provided in the Description, README, and via a message to the user. We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
+    c. The `fastshp` package in Suggests is optionally installed from Rforge and not required to use the package. Instructions for installation are provided in the README and via a message to the user. We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
 
             Suggests or Enhances not in mainstream repositories:
               fastshp
