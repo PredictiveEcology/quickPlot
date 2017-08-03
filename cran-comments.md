@@ -4,6 +4,9 @@ This is a spin off of an existing CRAN package (`SpaDES`), which we have split d
 
 We have removed `\dontrun` from the examples so that they *do* run, added additional examples to non-internal functions, and have added the examples to our tests.
 
+Installation instructions for suggested package `fastshp` were removed from DESCRIPTION per CRAN's request.
+These instructions are provided in various places in the documentation.
+
 ## Test environments
 
 ### Previous R versions
@@ -54,12 +57,6 @@ There were 2 NOTEs:
           
             Availability using Additional_repositories specification:
               fastshp   yes   http://rforge.net
-
-    d. The URL used to install the suggested package `fastshp` should not be in angle brackets because it's part of an R command:
-
-            The Description field contains
-              repos = "http://rforge.net", type = "source")'.
-              Please enclose URLs in angle brackets (<...>).
 
 2. As noted above, we provide instructions for the user to install the suggested `fastshp` package.
 
