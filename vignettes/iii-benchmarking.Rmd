@@ -1,0 +1,77 @@
+---
+title: "04 Benchmarking with `quickPlot`"
+author:
+  - "Eliot J. B. McIntire"
+date: '`r strftime(Sys.Date(), "%B %d %Y")`'
+output:
+  rmarkdown::html_vignette:
+    fig_width: 7
+    number_sections: yes
+    self_contained: yes
+    toc: yes
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{03 Plotting with quickPlot}
+  %\VignetteDepends{microbenchmark, quickPlot, raster, sp}
+  %\VignetteKeyword{visualization, plotting, mapping}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r initial-clearPlot, eval=TRUE, echo=FALSE, fig.keep='none', message=FALSE}
+quickPlot::clearPlot()
+```
+
+# Rasters
+
+Most of the time has been spent on speeding up geographic objects, at the expense of precision. This is analogous to making pyramids (ESRI) or tiles (leaflet) for large map objects. This does mean, of course, that there is information lost in the plot. Zooming in, of course, will allow looking at that information.
+
+
+```{r raster, fig.show=FALSE, fig.keep="none"}
+
+library(raster)
+library(microbenchmark)
+library(quickPlot)
+
+dev() # note that Rstudio's plot device (as of v1.0.143) is too slow to bother with any of these tests
+b <- raster(extent(0,3000,0,3000), res = 1, vals = sample(1:40, replace = TRUE, size = 9e6))
+
+# plot vs Plot 
+clearPlot();microbenchmark(Plot(b), times = 1)
+clearPlot();microbenchmark(plot(b), times = 1)
+```
+
+*About 40% faster out of the box for a large raster*
+
+# `speedup` argument is similar to `maxpixels` argument
+
+20% faster for equivelent pixels:
+
+```{r raster2, fig.show=FALSE, fig.keep="none"}
+# using speedup arg  -- analogous to maxpixels argument in plot
+clearPlot();microbenchmark(Plot(b, speedup = 4), times = 1)
+clearPlot();microbenchmark(plot(b, maxpixels = 15e4), times = 1)
+```
+
+
+# Stacks
+
+Default arguments for `RasterStack` currently have relatively high resolution. Using `speedup` to keep it equivalent to `plot`.
+```{r stack, fig.show=FALSE, fig.keep="none"}
+d <- stack(list(a = b,b = b,c = b,d = b))
+clearPlot();microbenchmark(Plot(d, speedup = 4), times = 1)
+clearPlot();microbenchmark(plot(d), times = 1)
+
+```
+
+### Modular plotting -- Greatest speedup
+
+This modular aspect is where there are substantial speeding up and ease of use. Essentially, this is much faster because only one element of the figure needs to be updated. In this example with a stack of 4 rasters, it is at least 4x faster.
+
+```{r single-elements, fig.show=FALSE, fig.keep="none"}
+clearPlot();Plot(d)
+microbenchmark(Plot(d$d, speedup = 4), times = 1)
+clearPlot();plot(d)
+microbenchmark(plot(d), times = 1)
+```
+
+
