@@ -71,13 +71,36 @@
       
       </header><div class="row">
   <div class="contents col-md-9">
-    <div id="quickplot" class="section level2">
-<h2 class="hasAnchor">
-<a href="#quickplot" class="anchor"></a>quickPlot</h2>
+    <div id="quickplot" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#quickplot" class="anchor"></a>quickPlot</h1></div>
 
 <p>Built on top of <code>grid</code>, this package aims at making a high-level plotting system that is optimized for speed and modularity. This has great utility for quick visualizations when testing code, with the key benefit that visualizations are updated independently of one another.</p>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
 <p>The suggested package <code>fastshp</code> can be installed with:</p>
 <pre class="{r}"><code>install.packages("fastshp", repos = "http://rforge.net", type = "source")</code></pre>
+<p>Building packages from source requires the appropriate development libraries for your operating system (<em>e.g.</em>, Windows users should install <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>).</p>
+<div id="current-stable-release" class="section level3">
+<h3 class="hasAnchor">
+<a href="#current-stable-release" class="anchor"></a>Current stable release</h3>
+<p><strong>Install from CRAN:</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"quickPlot"</span>)</code></pre></div>
+<p><strong>Install from GitHub:</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#install.packages("devtools")</span>
+<span class="kw">library</span>(<span class="st">"devtools"</span>)
+<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PredictiveEcology/quickPlot"</span>, <span class="dt">dependencies =</span> <span class="ot">TRUE</span>) <span class="co"># stable</span></code></pre></div>
+</div>
+<div id="development-version-unstable" class="section level3">
+<h3 class="hasAnchor">
+<a href="#development-version-unstable" class="anchor"></a>Development version (unstable)</h3>
+<p><strong>Install from GitHub:</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#install.packages("devtools")</span>
+<span class="kw">library</span>(<span class="st">"devtools"</span>)
+<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PredictiveEcology/quickPlot"</span>, <span class="dt">ref =</span> <span class="st">"development"</span>, <span class="dt">dependencies =</span> <span class="ot">TRUE</span>) <span class="co"># unstable</span></code></pre></div>
+</div>
+</div>
 </div>
   </div>
 
