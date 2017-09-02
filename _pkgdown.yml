@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 url: https://quickplot.predictiveecology.org/
+=======
+url: https://predictiveecology.github.io/quickPlot
+>>>>>>> development
 
 template:
   params:

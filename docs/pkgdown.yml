@@ -1,6 +1,11 @@
 urls:
+<<<<<<< HEAD
   reference: https://quickplot.predictiveecology.org//reference
   article: https://quickplot.predictiveecology.org//articles
+=======
+  reference: https://predictiveecology.github.io/quickPlot/reference
+  article: https://predictiveecology.github.io/quickPlot/articles
+>>>>>>> development
 articles:
   iii-plotting: iii-plotting.html
 
