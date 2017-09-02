@@ -1,0 +1,6 @@
+url: https://quickplot.predictiveecology.org/
+
+template:
+  params:
+    bootswatch: flatly
+

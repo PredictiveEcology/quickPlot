@@ -6,10 +6,10 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
     visualizations when testing code, with the key benefit that visualizations
     are updated independently of one another.
 URL:
-    https://predictiveecology.github.io/quickPlot/,
+    http://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
 Version: 0.1.1.9000
-Date: 2017-08-23
+Date: 2017-09-02
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut", "cre")),
