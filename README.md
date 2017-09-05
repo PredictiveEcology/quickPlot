@@ -14,7 +14,7 @@ This has great utility for quick visualizations when testing code, with the key 
 The suggested package `fastshp` can be installed with:
 
 ```{r}
-install.packages("fastshp", repos = "http://rforge.net", type = "source")
+install.packages("fastshp", repos = "https://rforge.net", type = "source")
 ```
 
 Building packages from source requires the appropriate development libraries for your operating system (*e.g.*, Windows users should install [Rtools](https://cran.r-project.org/bin/windows/Rtools/)).
