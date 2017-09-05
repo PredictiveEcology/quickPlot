@@ -18,6 +18,7 @@ The suggested package \pkg{fastshp} can be installed with
 \seealso{
 Useful links:
 \itemize{
+  \item \url{http://quickplot.predictiveecology.org}
   \item \url{https://github.com/PredictiveEcology/quickPlot}
   \item Report bugs at \url{https://github.com/PredictiveEcology/quickPlot/issues}
 }

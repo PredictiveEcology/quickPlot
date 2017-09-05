@@ -904,10 +904,9 @@ setMethod(
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname objectNames
-#' 
-.objectNames <- function(calledFrom = "Plot",
-                        argClass = ".quickPlotObjects",
-                        argName = "") {
+#'
+.objectNames <- function(calledFrom = "Plot", argClass = ".quickPlotObjects",
+                         argName = "") {
   scalls <- sys.calls()
   # Extract from the sys.calls only the function "calledFrom"
   frameCalledFrom <- which(sapply(scalls, function(x) {

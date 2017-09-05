@@ -160,7 +160,7 @@ setMethod("clearPlot",
 #' \dontrun{
 #'   library(igraph)
 #'   library(raster)
-#'   
+#'
 #'   files <- system.file("maps", package = "quickPlot") %>%
 #'     dir(., full.names = TRUE, pattern = "tif")
 #'   maps <- lapply(files, function(x) raster(x))
@@ -168,11 +168,11 @@ setMethod("clearPlot",
 #'     strsplit(x, split = "\\.")[[1]][1]
 #'   })
 #'   landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
-#'   
+#'
 #'   clearPlot()
 #'   Plot(landscape)
 #'   clickValues(3) # click at three locations on the Plot device
-#'   
+#'
 #'   clearPlot()
 #'   Plot(landscape)
 #'   e <- clickExtent() # click at two locations on the Plot device
@@ -384,7 +384,7 @@ clickCoordinates <- function(n = 1) {
 #' @importFrom grDevices dev.list dev.set
 #' @include plotting-classes.R
 #' @rdname dev
-#' 
+#'
 #' @examples
 #' \dontrun{
 #'   dev(4)
