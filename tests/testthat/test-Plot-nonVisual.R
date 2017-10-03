@@ -1,4 +1,12 @@
-test_that("Plotting types without visual checking works",{
+test_that("Plotting types without visual checking works", {
+  library(sp)
+  library(raster)
+  
+  on.exit({
+    detach("package:raster")
+    detach("package:sp")
+  }, add = TRUE)
+  
   r1 <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
                vals = sample(1:4, replace = TRUE, size = 100), res = 1)
   
@@ -9,13 +17,13 @@ test_that("Plotting types without visual checking works",{
   sp1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
                              y = stats::runif(10, -50, 50)))
   
-  if(interactive()) {
+  if (interactive()) {
     clearPlot()
     
     expect_silent(Plot(sp1))
     a <- .getQuickPlot(paste0("quickPlot", dev.cur()))
-    expect_true(length(a$isBaseLayer)==1)
-    expect_true(length(a$curr@quickPlotGrobList)==1)
+    expect_true(length(a$isBaseLayer) == 1)
+    expect_true(length(a$curr@quickPlotGrobList) == 1)
     
     expect_silent(Plot(r1, axes = TRUE, new=TRUE))
     a <- .getQuickPlot(paste0("quickPlot", dev.cur()))
@@ -55,8 +63,7 @@ test_that("Plotting types without visual checking works",{
     
     expect_silent(rePlot())
     a <- .getQuickPlot(paste0("quickPlot", dev.cur()))
-    expect_true(length(a$isBaseLayer)==9)
-    expect_true(length(a$curr@quickPlotGrobList)==9)
-    
+    expect_true(length(a$isBaseLayer) == 9)
+    expect_true(length(a$curr@quickPlotGrobList) == 9)
   }
 })

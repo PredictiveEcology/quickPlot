@@ -10,14 +10,14 @@ sp2sl(sp1, from)
 \item{sp1}{SpatialPoints* object}
 
 \item{from}{SpatialPoints* object. Optional. If not provided, then the function
-will attempt to find the "previous" coordinates as columns 
+will attempt to find the "previous" coordinates as columns
 (\code{prevX}, \code{prevY}) in the \code{sp1} object.}
 }
 \description{
-This will convert 2 objects whose coordinates can be extracted with \code{coordinates} 
-(e.g., \code{sp::SpatialPoints*} or \code{NetLogoR::agentMatrix} ) 
+This will convert 2 objects whose coordinates can be extracted with \code{coordinates}
+(e.g., \code{sp::SpatialPoints*})
 to a single SpatialLines
-object. The first object is treated as the "to" or destination, and the 
+object. The first object is treated as the "to" or destination, and the
 second object the "from" or source. This can be used to represent
 directional SpatialLines, especially with with arrow heads, as in
 \code{Plot(sl, length = 0.1)}
@@ -27,6 +27,6 @@ caribou <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
                                         y = stats::runif(1e1, -50, 50)))
 caribouFrom <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
                                         y = stats::runif(1e1, -50, 50)))
-caribouLines <- sp2sl(caribou, caribouFrom)      
+caribouLines <- sp2sl(caribou, caribouFrom)
 Plot(caribouLines, length = 0.1)
 }
