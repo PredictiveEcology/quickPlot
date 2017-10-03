@@ -2,7 +2,10 @@ Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
 version 0.1.1.9000
 ==================
-
+* Small tweaks that allow methods to be built by other packages (e.g., PredictiveEcology\NetLogoR)
+* new functions
+    - sp2sl to convert pairs of SpatialPoints objects to single SpatialLines objects, principally for plotting arrows as connected points.
+* bugfix Spatial* objects that had a color column, which was not working correctly
 
 
 version 0.1.1

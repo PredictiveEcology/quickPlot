@@ -260,8 +260,8 @@ setGeneric(
 #' @rdname makeColorMatrix
 setMethod(
   ".makeColorMatrix",
-  #signature = c("griddedClasses", "Extent", "numeric", "ANY"),
-  signature = c("Raster", "Extent", "numeric", "ANY"),
+  signature = c("griddedClasses", "Extent", "numeric", "ANY"),
+  #signature = c("Raster", "Extent", "numeric", "ANY"),
   definition = function(grobToPlot, zoomExtent, maxpixels, legendRange,
                         cols, na.color, zero.color, skipSample = TRUE) { # nolint
     zoom <- zoomExtent
@@ -282,7 +282,7 @@ setMethod(
         cols <- colorTable
       }
     }
-    z <- getValues(grobToPlot)
+    z <- grobToPlot[] # more general that getValues(grobToPlot)
 
     # If minValue is defined, then use it, otherwise, calculate them.
     #  This is different than maxz because of the sampleRegular.
