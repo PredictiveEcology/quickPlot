@@ -566,7 +566,7 @@ setMethod(
           }
 
           # if whPlotObj is length 0, it means that the object is being taken from sGrob@envir
-          if(length(whPlotObj)==0 | !layerFromPlotObj) {
+          if (length(whPlotObj) == 0 | !layerFromPlotObj) {
             grobToPlot <-
               eval(parse(text = sGrob@objName), sGrob@envir)
             layerFromPlotObj <- FALSE
