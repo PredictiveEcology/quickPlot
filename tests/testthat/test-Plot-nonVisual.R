@@ -1,21 +1,13 @@
 test_that("Plotting types without visual checking works", {
-  library(sp)
-  library(raster)
+  r1 <- raster::raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+                       vals = sample(1:4, replace = TRUE, size = 100), res = 1)
 
-  on.exit({
-    detach("package:raster")
-    detach("package:sp")
-  }, add = TRUE)
+  r2 <- raster::raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+                       vals = sample(1:4, replace = TRUE, size = 100), res = 1)
 
-  r1 <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
-               vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-
-  r2 <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
-               vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-
-  s1 <- stack(r1, r2)
-  sp1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
-                             y = stats::runif(10, -50, 50)))
+  s1 <- raster::stack(r1, r2)
+  sp1 <- sp::SpatialPoints(cbind(x = stats::runif(10, -50, 50),
+                                 y = stats::runif(10, -50, 50)))
 
   if (interactive()) {
     clearPlot()
