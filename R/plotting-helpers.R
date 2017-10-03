@@ -304,9 +304,9 @@ setMethod(
     lNamesPlotObj <- layerNames(plotObjects)
 
     isQuickPlot <- sapply(plotObjects, function(x) is(x, ".quickPlot"))
-    
+
     # The second component will test for a 3 dimensional array
-    isStack <- sapply(plotObjects, function(x) is(x, "RasterStack") | isTRUE(dim(x)[3]>1))
+    isStack <- sapply(plotObjects, function(x) is(x, "RasterStack") | isTRUE(dim(x)[3] > 1))
 
     # Stacks are like lists in that they are a single object, with many
     # layers.  Plot must treat these as any other layers, except that
@@ -2349,7 +2349,8 @@ setMethod(
       } else {
         obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
         # if the object has an extent method
-        if(hasMethod("extent", is(obj)[1]) & !is.list(obj)) { # list has an extent method, but too general
+        if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
+          # list has an extent method, but too general
           extent(obj)
         } else {
           # for non spatial objects
@@ -2404,8 +2405,8 @@ setMethod(
         vS.w <- min(1, plotScaleRatio / dimensionRatio) # nolint
         vS.h <- min(1, dimensionRatio / plotScaleRatio) # nolint
 
-        addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025)
-        addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025)
+        addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025) # nolint
+        addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025) # nolint
         # addY <- abs(extents[[extentInd]]@ymax - extents[[extentInd]]@ymin -
         #               (extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) /
         #               vS.h) / 2
@@ -2416,8 +2417,8 @@ setMethod(
         addY <- addX <- 0
       }
     } else {
-      addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025)
-      addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025)
+      addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025) # nolint
+      addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025) # nolint
     }
     # end equal scale
     plotVps[[nam[extentInd]]] <- viewport(
@@ -2455,25 +2456,17 @@ setMethod(
   if (z == TRUE) {
     hasBbox <- TRUE
   } else {
-    if(existsMethod("bbox", objClass[1])) {
+    if (existsMethod("bbox", objClass[1])) {
       hasBbox <- TRUE
     } else {
       hasBbox <- FALSE
     }
   }
-  if(hasBbox) {
+  if (hasBbox) {
     # for spatial objects
-    apply(bbox(
-      eval(
-        parse(text = objName),
-        envir = objEnv
-      )
-    ),
-    1,
-    function(y) {
+    apply(bbox(eval(parse(text = objName), envir = objEnv)), 1, function(y) {
       diff(range(y))
-    }
-    )
+    })
   } else {
     # for non spatial objects
     c(1, 1)
@@ -2505,17 +2498,16 @@ setMethod(
 #' Plot(caribouLines, length = 0.1)
 sp2sl <- function(sp1, from) {
   l <- vector("list", NROW(sp1))
-  begin.coord <- coordinates(sp1)
-  if(missing(from)) {
-    end.coord <- sp1[,c("prevX", "prevY")]
+  beginCoord <- coordinates(sp1)
+  if (missing(from)) {
+    endCoord <- sp1[, c("prevX", "prevY")]
   } else {
-    end.coord <- coordinates(from)
+    endCoord <- coordinates(from)
   }
 
   for (i in seq_along(l)) {
-    l[[i]] <- Lines(list(Line(rbind(begin.coord[i, ], end.coord[i,]))), as.character(i))
+    l[[i]] <- Lines(list(Line(rbind(beginCoord[i, ], endCoord[i, ]))), as.character(i))
   }
 
   SpatialLines(l)
 }
-

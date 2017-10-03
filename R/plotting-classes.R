@@ -103,8 +103,8 @@ setClassUnion(name = "spatialObjects",
 #' The \code{.quickPlotObjects} class
 #'
 #' This class contains the union of spatialObjects and several other plot-type objects.
-#' Currently, this includes SpatialPoints*, SpatialPolygons*, SpatialLines*, RasterLayer, RasterStack,
-#' and ggplot objects.
+#' Currently, this includes \code{SpatialPoints*}, \code{SpatialPolygons*},
+#' \code{SpatialLines*}, \code{RasterLayer}, \code{RasterStack}, and \code{ggplot} objects.
 #' These are the object classes that the \code{\link{Plot}} function can handle.
 #'
 #' @importFrom ggplot2 ggplot
