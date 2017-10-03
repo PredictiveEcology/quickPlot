@@ -329,7 +329,7 @@ test_that("Unit tests for plotting colors", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "B93964CAC2C6939B",
-    Linux = "B938649AC2CE939B",
+    Linux = "B9386492C6C69B9B",
     Windows = "B9386C9AC6C6939A"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -346,7 +346,7 @@ test_that("Unit tests for plotting colors", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "BF6AC491C0663B66",
-    Linux = "BF6AC491C06E3B26",
+    Linux = "BF6AC091C06E3B66",
     Windows = "BF6AC091C06E3B65"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -404,7 +404,7 @@ test_that("Unit tests for internal functions in Plot", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "AF8FD07080307F75",
-    Linux = "AF8FD07080307F75",
+    Linux = "AF8FD074C0302F75",
     Windows = "AFCFD074C0302F74"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -423,7 +423,7 @@ test_that("Unit tests for internal functions in Plot", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "A0CB77708A30DF74",
-    Linux = "A0CB77708A30DF74",
+    Linux = "A0CF75708A30DF74",
     Windows = "A0CF75708A30DF74"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -443,7 +443,7 @@ test_that("Unit tests for internal functions in Plot", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "AF99D0E4C0653F64",
-    Linux = "AF9BD0E481253F68",
+    Linux = "A499776499649B66",
     Windows = "AF99D066C1273F60"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -726,7 +726,7 @@ test_that("Plot with base is not error-free", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "B04CC39C93D3CE36",
-                 Linux = "B14CC39C93D3CE86",
+                 Linux = "A699666699669966",
                  Windows = "B0CCC39893D3CE36"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))

@@ -452,10 +452,10 @@ setMethod(
         }
     }
 
-    # Create a .quickPlot object from the plotObjs and plotArgs
     isQuickPlot <- sapply(plotObjs, function(x) is(x, ".quickPlot"))
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
+    # Create a .quickPlot object from the plotObjs and plotArgs
     newQuickPlots <- .makeQuickPlot(
       plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
@@ -566,8 +566,9 @@ setMethod(
           }
 
           # if whPlotObj is length 0, it means that the object is being taken from sGrob@envir
-          if (length(whPlotObj) == 0) {
-            grobToPlot <- eval(parse(text = sGrob@objName), sGrob@envir)
+          if(length(whPlotObj)==0 | !layerFromPlotObj) {
+            grobToPlot <-
+              eval(parse(text = sGrob@objName), sGrob@envir)
             layerFromPlotObj <- FALSE
           } else {
             grobToPlot <- plotObjs[[whPlotObj]]
