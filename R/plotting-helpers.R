@@ -304,7 +304,9 @@ setMethod(
     lNamesPlotObj <- layerNames(plotObjects)
 
     isQuickPlot <- sapply(plotObjects, function(x) is(x, ".quickPlot"))
-    isStack <- sapply(plotObjects, function(x) is(x, "RasterStack"))
+    
+    # The second component will test for a 3 dimensional array
+    isStack <- sapply(plotObjects, function(x) is(x, "RasterStack") | isTRUE(dim(x)[3]>1))
 
     # Stacks are like lists in that they are a single object, with many
     # layers.  Plot must treat these as any other layers, except that
@@ -952,7 +954,7 @@ setMethod("gpar",
 ################################################################################
 #' Internal functions used by Plot
 #'
-#' Not meant to be used by user.
+#' Extract colors, legends and other things from object, and convert to a plotGrob
 #'
 #' @param grobToPlot Graphical object to plot
 #' @param sGrob quickPlotGrob object
@@ -968,60 +970,80 @@ setMethod("gpar",
 #' @author Eliot McIntire
 #' @include plotting-classes.R
 #' @keywords internal
-#' @name .convertSpatialToPlotGrob
+#' @name .preparePlotGrob
 #' @rdname Plot-internal
 #'
-setGeneric(".convertSpatialToPlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+setGeneric(".preparePlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                                                  quickPlotGrobCounter, subPlots, cols) {
-  standardGeneric(".convertSpatialToPlotGrob")
+  standardGeneric(".preparePlotGrob")
 })
 
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @rdname Plot-internal
 setMethod(
-  ".convertSpatialToPlotGrob",
-  signature = c("spatialObjects", ".quickPlotGrob"),
+  ".preparePlotGrob",
+  signature = c("griddedClasses", ".quickPlotGrob"),
   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                         quickPlotGrobCounter, subPlots, cols) {
-    if (is(grobToPlot, "Raster")) {
-      # Rasters may be zoomed into and subsampled and have unique legend
-      #            if (sGrob@plotArgs$new)
-      pR <- .prepareRaster(grobToPlot, sGrob@plotArgs$zoomExtent,
-                           sGrob@plotArgs$legendRange, takeFromPlotObj,
-                           arr, sGrob@plotArgs$speedup, newArr = newArr)
-      zMat <- .makeColorMatrix(grobToPlot, pR$zoom, pR$maxpixels,
-                               pR$legendRange,
-                               na.color = sGrob@plotArgs$na.color,
-                               zero.color = sGrob@plotArgs$zero.color,
-                               cols = sGrob@plotArgs$cols,
-                               skipSample = pR$skipSample)
-    } else if (is(grobToPlot, "SpatialPoints")) {
-      if (!is.null(sGrob@plotArgs$zoomExtent)) {
-        grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
-      }
-      # This handles SpatialPointsDataFrames with column "color"
-      if (any(grepl(pattern = "color", colnames(grobToPlot))) & is.null(cols))
-        sGrob@plotArgs$cols <- getColors(grobToPlot)
-
-      zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
-                   cols = sGrob@plotArgs$cols, real = FALSE)
-    } else if (is(grobToPlot, "SpatialPolygons")) {
-      if (!is.null(sGrob@plotArgs$zoomExtent)) {
-        grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
-      }
-      zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
-                   cols = sGrob@plotArgs$cols, real = FALSE)
-
-    } else if (is(grobToPlot, "SpatialLines")) {
-      if (!is.null(sGrob@plotArgs$zoomExtent)) {
-        grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
-      }
-      zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
-                   cols = sGrob@plotArgs$cols, real = FALSE)
-    }
+    # Rasters may be zoomed into and subsampled and have unique legend
+    #            if (sGrob@plotArgs$new)
+    pR <- .prepareRaster(grobToPlot, sGrob@plotArgs$zoomExtent,
+                         sGrob@plotArgs$legendRange, takeFromPlotObj,
+                         arr, sGrob@plotArgs$speedup, newArr = newArr)
+    zMat <- .makeColorMatrix(grobToPlot, pR$zoom, pR$maxpixels,
+                             pR$legendRange,
+                             na.color = sGrob@plotArgs$na.color,
+                             zero.color = sGrob@plotArgs$zero.color,
+                             cols = sGrob@plotArgs$cols,
+                             skipSample = pR$skipSample)
     return(zMat)
 })
+
+setMethod(
+  ".preparePlotGrob",
+  signature = c("Spatial", ".quickPlotGrob"),
+  definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+                        quickPlotGrobCounter, subPlots, cols) {
+    if (!is.null(sGrob@plotArgs$zoomExtent)) {
+      grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+    }
+
+    # This handles SpatialPointsDataFrames with column "color"
+    if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
+      sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
+
+    zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
+                 cols = sGrob@plotArgs$cols, real = FALSE)
+    return(zMat)
+  })
+
+
+setMethod(
+  ".preparePlotGrob",
+  signature = c("ANY", ".quickPlotGrob"),
+  definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+                        quickPlotGrobCounter, subPlots, cols) {
+    if (any(grepl(pattern = "color", colnames(grobToPlot))) & is.null(cols))
+      sGrob@plotArgs$cols <- grobToPlot$color
+
+    list(z = grobToPlot, minz = 0, maxz = 0,
+         cols = sGrob@plotArgs$cols, real = FALSE)
+  })
+
+setMethod(
+  ".preparePlotGrob",
+  signature = c("SpatialLines", ".quickPlotGrob"),
+  definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+                        quickPlotGrobCounter, subPlots, cols) {
+  if (!is.null(sGrob@plotArgs$zoomExtent)) {
+    grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+  }
+  zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
+               cols = sGrob@plotArgs$cols, real = FALSE)
+  return(zMat)
+})
+
 
 ################################################################################
 #' @param whPlotFrame Numeric. Which plot within the quickPlotGrobPlots object.
@@ -1088,7 +1110,7 @@ setMethod(
 #' @param isNewPlot Logical. Is the currently being plotted object a new, additional plot
 #' @param isReplot Logical. Is the currently being plotted object a replot due to something
 #'                 like a rearrangement
-#' @param zMat List resulting from \code{.convertSpatialToPlotGrob}
+#' @param zMat List resulting from \code{.preparePlotGrob}
 #' @param wipe Logical. Is the currently being plotted object require a white rectangle to
 #'             be plotted first, and subsequent other changes.
 #' @param xyAxes List of length 2, resulting from \code{.xyAxes}
@@ -1407,11 +1429,9 @@ setMethod(
 #' the data for the grob should come from, the current call or the global
 #' environment.
 #'
-#' @param grobNamesi name of the object to plot
-#'
-#' @param toPlot list containing the objects to plot, made as a call to the
-#'               \code{Plot} function
-#'
+#' @param toPlot The object to plot. Should be a single layer if from a multi-layer
+#'               object such as a RasterStack.
+#' @param sGrob quickPlot grob object
 #' @param takeFromPlotObj Logical. Should the data come from the argument passed
 #'                        into Plot (\code{TRUE}), or from the (\code{.quickPlotEnv})
 #'                        (\code{FALSE}).
@@ -1419,38 +1439,39 @@ setMethod(
 #' @author Eliot McIntire
 #' @include plotting-classes.R
 #' @keywords internal
+#' @export
 #' @rdname identifyGrobToPlot
-setGeneric(".identifyGrobToPlot", function(grobNamesi, toPlot, takeFromPlotObj) {
+setGeneric(".identifyGrobToPlot", function(toPlot, sGrob, takeFromPlotObj) {
   standardGeneric(".identifyGrobToPlot")
 })
 
 #' @rdname identifyGrobToPlot
 setMethod(
   ".identifyGrobToPlot",
-  signature = c(".quickPlotGrob", "list"),
-  function(grobNamesi, toPlot, takeFromPlotObj) {
+  signature = c("ANY", ".quickPlotGrob"),
+  function(toPlot, sGrob, takeFromPlotObj) {
     ## get the object name associated with this grob
 
     if (length(toPlot) == 0) takeFromPlotObj <- FALSE
 
     # Does it already exist on the plot device or not
-    if (nzchar(grobNamesi@layerName, keepNA = TRUE)) {
+    if (nzchar(sGrob@layerName, keepNA = TRUE)) {
       # means it is in a raster
       if (takeFromPlotObj) {
-        grobToPlot <- unlist(toPlot[[1]], recursive = FALSE)[[grobNamesi@layerName]]
+          grobToPlot <- unlist(toPlot, recursive = FALSE)[[sGrob@layerName]]
       } else {
-        grobToPlot <- eval(parse(text = grobNamesi@objName),
-                           grobNamesi@envir)[[grobNamesi@layerName]]
+          grobToPlot <- eval(parse(text = sGrob@objName),
+                           sGrob@envir)[[sGrob@layerName]]
       }
     } else {
       if (takeFromPlotObj) {
-        if (!is(toPlot[[1]], "gg") & !is(toPlot[[1]], "igraph")) {
-          grobToPlot <- unlist(toPlot[[1]], recursive = FALSE)
+        if (!is(toPlot, "gg") & !is(toPlot, "igraph")) {
+          grobToPlot <- unlist(toPlot, recursive = FALSE)
         } else {
-          grobToPlot <- toPlot[[1]]
+          grobToPlot <- toPlot
         }
       } else {
-        grobToPlot <- eval(parse(text = grobNamesi@objName), grobNamesi@envir)
+        grobToPlot <- eval(parse(text = sGrob@objName), sGrob@envir)
       }
     }
     return(grobToPlot)
@@ -1700,24 +1721,10 @@ setMethod(
     dimx <- apply(do.call(
       rbind, sapply(1:length(sgl), function(x) {
         lapply(sgl[[x]][[1]]@isSpatialObjects, function(z) {
-          if (z == TRUE) {
-            # for spatial objects
-            apply(
-              bbox(
-                eval(
-                  parse(text = sgl[[x]][[1]]@objName),
-                  envir = sgl[[x]][[1]]@envir
-                )
-              ),
-              1,
-              function(y) {
-                diff(range(y))
-              }
-            )
-          } else {
-            # for non spatial objects
-            c(1, 1)
-          }
+          .hasBbox(z, sgl[[x]][[1]]@objClass,
+                   sgl[[x]][[1]]@objName,
+                   sgl[[x]][[1]]@envir)
+
         })
       })), 2, max)
 
@@ -1841,6 +1848,8 @@ setMethod(
 #' @importFrom raster extent pointDistance xmin xmax ymin ymax
 #' @keywords internal
 #' @rdname plotGrob
+#' @export
+#' @exportMethod .plotGrob
 #'
 setGeneric(
   ".plotGrob",
@@ -2316,8 +2325,6 @@ setMethod(
 #' @param newArr  Logical indicating whether this function will create a
 #'                completely new viewport. Default \code{FALSE}.
 #'
-#' # @importFrom NetLogoRClasses extent
-#'
 #' @author Eliot McIntire
 #' @include plotting-classes.R
 #' @importFrom grid viewport vpTree vpList
@@ -2340,8 +2347,15 @@ setMethod(
           extent(eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir))
         }
       } else {
-        # for non spatial objects
-        extent(c(xmin = 0, xmax = 2, ymin = 0, ymax = 2))
+        obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
+        # if the object has an extent method
+        if(hasMethod("extent", is(obj)[1]) & !is.list(obj)) { # list has an extent method, but too general
+          extent(obj)
+        } else {
+          # for non spatial objects
+          extent(c(xmin = 0, xmax = 2, ymin = 0, ymax = 2))
+        }
+
       }
     }))
   }))
@@ -2363,13 +2377,8 @@ setMethod(
   #  Need to replicate it here because all plots are scaled to this
   biggestDims <- apply(do.call(rbind, sapply(1:length(sgl), function(x) {
     lapply(sgl[[x]][[1]]@isSpatialObjects, function(z) {
-      if (z == TRUE) {
-        # for spatial objects
-        apply(bbox(extents[[x]]), 1, function(y) diff(range(y)))
-      } else {
-        # for non spatial objects
-        c(2, 2)
-      }
+      .hasBbox(z, sgl[[x]][[1]]@objClass, sgl[[x]][[1]]@objName,
+               sgl[[x]][[1]]@envir)
     })
   })), 2, max)
 
@@ -2395,18 +2404,20 @@ setMethod(
         vS.w <- min(1, plotScaleRatio / dimensionRatio) # nolint
         vS.h <- min(1, dimensionRatio / plotScaleRatio) # nolint
 
-        addY <- abs(extents[[extentInd]]@ymax - extents[[extentInd]]@ymin -
-                      (extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) /
-                      vS.h) / 2
-        addX <- abs(extents[[extentInd]]@xmax - extents[[extentInd]]@xmin -
-                      (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) /
-                      vS.w) / 2
+        addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025)
+        addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025)
+        # addY <- abs(extents[[extentInd]]@ymax - extents[[extentInd]]@ymin -
+        #               (extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) /
+        #               vS.h) / 2
+        # addX <- abs(extents[[extentInd]]@xmax - extents[[extentInd]]@xmin -
+        #               (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) /
+        #               vS.w) / 2
       } else {
         addY <- addX <- 0
       }
     } else {
-      addX <- extents[[extentInd]]@xmin * 0.05
-      addY <- extents[[extentInd]]@ymin * 0.05
+      addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025)
+      addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025)
     }
     # end equal scale
     plotVps[[nam[extentInd]]] <- viewport(
@@ -2430,3 +2441,81 @@ setMethod(
 
   return(list(wholeVp = wholeVp, extents = extents))
 }
+
+#' Test whether class has bbox method
+#'
+#' For internal use only.
+#'
+#' @rdname hasBbox
+#' @param z Logical, whether this object is a SpatialObject
+#' @param objClass The class of the object
+#' @param objName The character string name of the object
+#' @param objEnv The environment where the object can be found
+.hasBbox <- function(z, objClass, objName, objEnv) {
+  if (z == TRUE) {
+    hasBbox <- TRUE
+  } else {
+    if(existsMethod("bbox", objClass[1])) {
+      hasBbox <- TRUE
+    } else {
+      hasBbox <- FALSE
+    }
+  }
+  if(hasBbox) {
+    # for spatial objects
+    apply(bbox(
+      eval(
+        parse(text = objName),
+        envir = objEnv
+      )
+    ),
+    1,
+    function(y) {
+      diff(range(y))
+    }
+    )
+  } else {
+    # for non spatial objects
+    c(1, 1)
+  }
+}
+
+#' Convert pairs of coordinates to SpatialLines
+#'
+#' This will convert 2 objects whose coordinates can be extracted with \code{coordinates}
+#' (e.g., \code{sp::SpatialPoints*})
+#' to a single SpatialLines
+#' object. The first object is treated as the "to" or destination, and the
+#' second object the "from" or source. This can be used to represent
+#' directional SpatialLines, especially with with arrow heads, as in
+#' \code{Plot(sl, length = 0.1)}
+#'
+#' @export
+#' @importFrom sp SpatialLines Lines Line coordinates
+#' @param sp1 SpatialPoints* object
+#' @param from SpatialPoints* object. Optional. If not provided, then the function
+#'             will attempt to find the "previous" coordinates as columns
+#'             (\code{prevX}, \code{prevY}) in the \code{sp1} object.
+#' @examples
+#' caribou <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
+#'                                         y = stats::runif(1e1, -50, 50)))
+#' caribouFrom <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
+#'                                         y = stats::runif(1e1, -50, 50)))
+#' caribouLines <- sp2sl(caribou, caribouFrom)
+#' Plot(caribouLines, length = 0.1)
+sp2sl <- function(sp1, from) {
+  l <- vector("list", NROW(sp1))
+  begin.coord <- coordinates(sp1)
+  if(missing(from)) {
+    end.coord <- sp1[,c("prevX", "prevY")]
+  } else {
+    end.coord <- coordinates(from)
+  }
+
+  for (i in seq_along(l)) {
+    l[[i]] <- Lines(list(Line(rbind(begin.coord[i, ], end.coord[i,]))), as.character(i))
+  }
+
+  SpatialLines(l)
+}
+

@@ -7,14 +7,10 @@
 \title{The \code{.quickPlotObjects} class}
 \description{
 This class contains the union of spatialObjects and several other plot-type objects.
+Currently, this includes SpatialPoints*, SpatialPolygons*, SpatialLines*, RasterLayer, RasterStack,
+and ggplot objects.
 These are the object classes that the \code{\link{Plot}} function can handle.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{members}}{SpatialPoints*, SpatialPolygons*, SpatialLines*, RasterLayer, RasterStack}
-}}
-
 \seealso{
 \code{\link{quickPlotClasses}}
 }
