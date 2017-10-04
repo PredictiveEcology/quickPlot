@@ -3,19 +3,19 @@
 \docType{methods}
 \name{.identifyGrobToPlot}
 \alias{.identifyGrobToPlot}
-\alias{.identifyGrobToPlot,.quickPlotGrob,list-method}
+\alias{.identifyGrobToPlot,ANY,.quickPlotGrob-method}
 \title{Identify where to get the grob from}
 \usage{
-.identifyGrobToPlot(grobNamesi, toPlot, takeFromPlotObj)
+.identifyGrobToPlot(toPlot, sGrob, takeFromPlotObj)
 
-\S4method{.identifyGrobToPlot}{.quickPlotGrob,list}(grobNamesi, toPlot,
+\S4method{.identifyGrobToPlot}{ANY,.quickPlotGrob}(toPlot, sGrob,
   takeFromPlotObj)
 }
 \arguments{
-\item{grobNamesi}{name of the object to plot}
+\item{toPlot}{The object to plot. Should be a single layer if from a multi-layer
+object such as a RasterStack.}
 
-\item{toPlot}{list containing the objects to plot, made as a call to the
-\code{Plot} function}
+\item{sGrob}{quickPlot grob object}
 
 \item{takeFromPlotObj}{Logical. Should the data come from the argument passed
 into Plot (\code{TRUE}), or from the (\code{.quickPlotEnv})

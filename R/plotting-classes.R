@@ -30,6 +30,34 @@ setAs(from = "list", to = "gpar", function(from) {
 })
 
 ################################################################################
+#' The \code{griddedClasses} class
+#'
+#' This class is the union of several spatial objects from \pkg{raster} and
+#' \pkg{sp} packages.
+#'
+#' Members:
+#'
+#' \itemize{
+#'   \item \code{RasterLayer}, \code{RasterLayerSparse}, \code{RasterStack};
+#' }
+#'
+#' Notably missing is \code{RasterBrick}, for now.
+#'
+#' @seealso \code{\link{quickPlotClasses}}
+#'
+#' @aliases griddedClasses
+#' @importClassesFrom raster RasterLayer
+#' @importClassesFrom raster RasterLayerSparse
+#' @importClassesFrom raster RasterStack
+#' @name griddedClasses-class
+#' @rdname griddedClasses-class
+#' @author Eliot McIntire
+#' @exportClass griddedClasses
+setClassUnion(name = "griddedClasses",
+              members = c("RasterLayer", "RasterLayerSparse", "RasterStack")
+)
+
+################################################################################
 #' The \code{spatialObjects} class
 #'
 #' This class is the union of several spatial objects from \pkg{raster} and
@@ -50,9 +78,6 @@ setAs(from = "list", to = "gpar", function(from) {
 #' @seealso \code{\link{quickPlotClasses}}
 #'
 #' @aliases spatialObjects
-#' @importClassesFrom raster RasterLayer
-#' @importClassesFrom raster RasterLayerSparse
-#' @importClassesFrom raster RasterStack
 #' @importClassesFrom sp SpatialLines
 #' @importClassesFrom sp SpatialLinesDataFrame
 #' @importClassesFrom sp SpatialPixels
@@ -66,20 +91,21 @@ setAs(from = "list", to = "gpar", function(from) {
 #' @author Eliot McIntire
 #' @exportClass spatialObjects
 setClassUnion(name = "spatialObjects",
-              members = c("RasterLayer", "RasterLayerSparse", "RasterStack",
+              members = c("griddedClasses",
                           "SpatialLines", "SpatialLinesDataFrame",
                           "SpatialPixels", "SpatialPixelsDataFrame",
                           "SpatialPoints", "SpatialPointsDataFrame",
                           "SpatialPolygons", "SpatialPolygonsDataFrame")
 )
 
+
 ################################################################################
 #' The \code{.quickPlotObjects} class
 #'
 #' This class contains the union of spatialObjects and several other plot-type objects.
+#' Currently, this includes \code{SpatialPoints*}, \code{SpatialPolygons*},
+#' \code{SpatialLines*}, \code{RasterLayer}, \code{RasterStack}, and \code{ggplot} objects.
 #' These are the object classes that the \code{\link{Plot}} function can handle.
-#'
-#' @slot members SpatialPoints*, SpatialPolygons*, SpatialLines*, RasterLayer, RasterStack
 #'
 #' @importFrom ggplot2 ggplot
 #' @aliases .quickPlotObjects
@@ -291,13 +317,11 @@ setClass(".quickPlot",
 #'
 #' @seealso \code{\link{quickPlotClasses}}
 #'
-#' @slot members \code{\link{.quickPlotObjects}} and \code{\link{.quickPlot}}
-#'
 #' @aliases .quickPlottables
 #' @keywords internal
 #' @name .quickPlottables-class
 #' @rdname quickPlottables-class
 #' @author Eliot McIntire
-#'
+#' @exportClass .quickPlottables
 setClassUnion(name = ".quickPlottables",
               members = c(".quickPlotObjects", ".quickPlot"))

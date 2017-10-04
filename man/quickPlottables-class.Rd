@@ -11,12 +11,6 @@ This class is the union of all .quickPlotObjects (e.g., \code{RasterLayer*},
 and \code{\link{.quickPlot}} class objects.
 This allows replotting of a \code{\link{.quickPlot}} object.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{members}}{\code{\link{.quickPlotObjects}} and \code{\link{.quickPlot}}}
-}}
-
 \seealso{
 \code{\link{quickPlotClasses}}
 }
