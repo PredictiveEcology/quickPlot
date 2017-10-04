@@ -10,9 +10,7 @@
 \item{sPlot}{An object of class \code{.quickPlot}.}
 
 \item{newArr}{Logical indicating whether this function will create a
-               completely new viewport. Default \code{FALSE}.
-
-# @importFrom NetLogoRClasses extent}
+completely new viewport. Default \code{FALSE}.}
 }
 \description{
 Given a set of extents, and a layout for these extents, this function will

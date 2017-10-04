@@ -120,7 +120,11 @@ if (getRversion() >= "3.1.0") {
 #' The naming convention used is: \code{RasterStackName$layerName}, i.e,
 #' \code{landscape$DEM}.
 #'
-#' @param ... A combination of \code{spatialObjects} or some non-spatial objects.
+#' @param ... A combination of \code{spatialObjects} or non-spatial objects.
+#'            For many object classes, there are specific \code{Plot} methods. Where
+#'            there are no specific ones, the base plotting will be used internally.
+#'            This means that for objects with no specific \code{Plot} methods,
+#'            many arguments, such as \code{addTo}, will not work.
 #'            See details.
 #'
 #' @param new Logical. If \code{TRUE}, then the previous named plot area is wiped
@@ -448,10 +452,10 @@ setMethod(
         }
     }
 
-    # Create a .quickPlot object from the plotObjs and plotArgs
     isQuickPlot <- sapply(plotObjs, function(x) is(x, ".quickPlot"))
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
+    # Create a .quickPlot object from the plotObjs and plotArgs
     newQuickPlots <- .makeQuickPlot(
       plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
@@ -511,6 +515,7 @@ setMethod(
         updated$curr@arr, sapply(visualSqueeze, max), sapply(legend, any),
         sapply(axes, function(x) !any(x == TRUE))
       )
+
     }
 
     # Create the viewports as per the optimal layout
@@ -552,7 +557,6 @@ setMethod(
                                                   function(x) x[[1]]@objName))))
           whPlotObj <- which(objNames %in% sGrob@objName)
 
-
           layerFromPlotObj <- if (length(whLayerFromPO) == 0) {
             FALSE
           } else if (isQuickPlotLong[whLayerFromPO]) {
@@ -560,18 +564,24 @@ setMethod(
           } else {
             layerFromPlotObj[whLayerFromPO]
           }
-          grobToPlot <- .identifyGrobToPlot(sGrob, plotObjs[whPlotObj], layerFromPlotObj)
 
-          isPlotFnAddable <- if (!is(grobToPlot, ".quickPlotObjects")) {
-            if (is(grobToPlot, ".quickPlot")) {
-              FALSE
-            } else if (sGrob@plotArgs$userProvidedPlotFn & !isTRUE(grobToPlot[["add"]])) {
-              TRUE
-            } else {
-              FALSE
-            }
+          # if whPlotObj is length 0, it means that the object is being taken from sGrob@envir
+          if (length(whPlotObj) == 0 | !layerFromPlotObj) {
+            grobToPlot <-
+              eval(parse(text = sGrob@objName), sGrob@envir)
+            layerFromPlotObj <- FALSE
           } else {
-            FALSE
+            grobToPlot <- plotObjs[[whPlotObj]]
+          }
+          grobToPlot <- .identifyGrobToPlot(grobToPlot, sGrob, layerFromPlotObj)
+
+          isPlotFnAddable <- FALSE
+          if (!is(grobToPlot, ".quickPlotObjects")) {
+            if (!is(grobToPlot, ".quickPlot")) {
+              if (sGrob@plotArgs$userProvidedPlotFn & !isTRUE(grobToPlot[["add"]])) {
+                isPlotFnAddable <- TRUE
+              }
+            }
           }
 
           if (sGrob@plotArgs$new | is(grobToPlot, "igraph") |
@@ -588,20 +598,9 @@ setMethod(
 
           sGrob <- .updateGrobGPTextAxis(sGrob, arr = updated$curr@arr, newArr = newArr)
 
-          if (is(grobToPlot, "spatialObjects")) {
-            zMat <- .convertSpatialToPlotGrob(grobToPlot, sGrob, layerFromPlotObj,
-                                              arr = updated$curr@arr, newArr,
-                                              quickPlotGrobCounter, subPlots, cols)
-          } else {
-            zMat <- NULL
-          }
-
-          # SpatialPointsDataFrame could have a column named color
-          if (is(grobToPlot, "SpatialPointsDataFrame")) {
-            if (any(grepl(pattern = "color", colnames(grobToPlot))) & is.null(cols))
-              sGrob@plotArgs$cols <- getColors(grobToPlot)
-          }
-
+          zMat <- .preparePlotGrob(grobToPlot, sGrob, layerFromPlotObj,
+                                            arr = updated$curr@arr, newArr,
+                                            quickPlotGrobCounter, subPlots, cols)
           # Add legendRange if not provided
           if (is(grobToPlot, "Raster")) {
             if (is.null(sGrob@plotArgs$legendRange)) {
@@ -610,7 +609,7 @@ setMethod(
           }}
 
           # Plot any grobToPlot to device, given all the parameters
-          sGrob <- .Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
+        sGrob <- .Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                          isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
                          vps, nonPlotArgs)
 

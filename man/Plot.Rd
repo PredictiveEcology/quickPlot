@@ -24,7 +24,11 @@ Plot(..., new = FALSE, addTo = NULL, gp = gpar(), gpText = gpar(),
 rePlot(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ...)
 }
 \arguments{
-\item{...}{A combination of \code{spatialObjects} or some non-spatial objects.
+\item{...}{A combination of \code{spatialObjects} or non-spatial objects.
+For many object classes, there are specific \code{Plot} methods. Where
+there are no specific ones, the base plotting will be used internally.
+This means that for objects with no specific \code{Plot} methods,
+many arguments, such as \code{addTo}, will not work.
 See details.}
 
 \item{new}{Logical. If \code{TRUE}, then the previous named plot area is wiped

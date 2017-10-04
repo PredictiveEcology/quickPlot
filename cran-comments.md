@@ -1,11 +1,6 @@
-## New submission
+## Updated package
 
-This is a spin off of an existing CRAN package (`SpaDES`), which we have split due to growing package size.
-
-We have removed `\dontrun` from the examples so that they *do* run, added additional examples to non-internal functions, and have added the examples to our tests.
-
-Installation instructions for suggested package `fastshp` were removed from DESCRIPTION per CRAN's request.
-These instructions are provided in various places in the documentation.
+This update adds exported methods to allow extensions by other packages, and provides some additional bug fixes.
 
 ## Test environments
 
@@ -24,11 +19,11 @@ These instructions are provided in various places in the documentation.
 * Windows 7            (local), R 3.4.1
 
 ### Development R version
-* Debian:testing (rocker/r-devel), R 3.5.0 (2017-07-26 r72972)
-* Ubuntu 14.04        (travis-ci), R 3.5.0 (2017-08-02 r73018)
-* Ubuntu 16.04            (local), R 3.5.0 (2017-08-02 r73018)
-* Windows              (appveyor), R 3.5.0 (2017-08-02 r73018)
-* Windows           (win-builder), R 3.5.0 (2017-08-02 r73018)
+* Debian:testing (rocker/r-devel), R 3.5.0 (2017-09-13 r73254)
+* Ubuntu 14.04        (travis-ci), R 3.5.0 (2017-10-04 r73462)
+* Ubuntu 16.04            (local), R 3.5.0 (2017-10-04 r73462)
+* Windows              (appveyor), R 3.5.0 (2017-10-03 r73455)
+* Windows           (win-builder), R 3.5.0 (2017-09-12 r73242)
 
 ## R CMD check results
 
@@ -41,10 +36,8 @@ There were 2 NOTEs:
     a. This is a new package submission:
     
             Maintainer: 'Eliot McIntire <eliot.mcintire@canada.ca>'
-            
-            New submission
 
-    b. Some words were flagged as possibly mispelled, but they are not. 
+    b. Some words were flagged as possibly mispelled, but they are false positives.
      
             Possibly mis-spelled words in DESCRIPTION: 
               Modularity (3:53)
@@ -64,10 +57,4 @@ There were 2 NOTEs:
 
 ## Downstream dependencies
 
-There are currently no downstream dependencies of this package.
-However, as we submit further `SpaDES` spinoff packages, this package will become a dependency for the following packages:
-
-- `SpaDES` (Imports)
-- `SpaDES.addins` (Imports)
-- `SpaDES.core` (Depends)
-- `SpaDES.tools` (Imports)
+We have run R CMD check on all downstream dependencies, and all installable packages passed.
