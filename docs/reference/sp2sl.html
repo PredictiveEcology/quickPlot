@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Identify where to get the grob from — .identifyGrobToPlot • quickPlot</title>
+<title>Convert pairs of coordinates to SpatialLines — sp2sl • quickPlot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -95,59 +95,52 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Identify where to get the grob from</h1>
+    <h1>Convert pairs of coordinates to SpatialLines</h1>
     </div>
 
     
-    <p>Internal function.</p>
+    <p>This will convert 2 objects whose coordinates can be extracted with <code>coordinates</code>
+(e.g., <code>sp::SpatialPoints*</code>)
+to a single SpatialLines
+object. The first object is treated as the "to" or destination, and the
+second object the "from" or source. This can be used to represent
+directional SpatialLines, especially with with arrow heads, as in
+<code><a href='Plot.html'>Plot(sl, length = 0.1)</a></code></p>
     
 
-    <pre class="usage"><span class='fu'>.identifyGrobToPlot</span>(<span class='no'>toPlot</span>, <span class='no'>sGrob</span>, <span class='no'>takeFromPlotObj</span>)
-
-<span class='co'># S4 method for ANY,.quickPlotGrob</span>
-<span class='fu'>.identifyGrobToPlot</span>(<span class='no'>toPlot</span>, <span class='no'>sGrob</span>,
-  <span class='no'>takeFromPlotObj</span>)</pre>
+    <pre class="usage"><span class='fu'>sp2sl</span>(<span class='no'>sp1</span>, <span class='no'>from</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>toPlot</th>
-      <td><p>The object to plot. Should be a single layer if from a multi-layer
-object such as a RasterStack.</p></td>
+      <th>sp1</th>
+      <td><p>SpatialPoints* object</p></td>
     </tr>
     <tr>
-      <th>sGrob</th>
-      <td><p>quickPlot grob object</p></td>
-    </tr>
-    <tr>
-      <th>takeFromPlotObj</th>
-      <td><p>Logical. Should the data come from the argument passed
-into Plot (<code>TRUE</code>), or from the (<code>.quickPlotEnv</code>)
-(<code>FALSE</code>).</p></td>
+      <th>from</th>
+      <td><p>SpatialPoints* object. Optional. If not provided, then the function
+will attempt to find the "previous" coordinates as columns
+(<code>prevX</code>, <code>prevY</code>) in the <code>sp1</code> object.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Because the Plot function can use the global environment as a source of
-objects to plot, not just the call itself, this function identifies where
-the data for the grob should come from, the current call or the global
-environment.</p>
-    
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>caribou</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sp</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>cbind</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1e1</span>, -<span class='fl'>50</span>, <span class='fl'>50</span>),
+                                        <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1e1</span>, -<span class='fl'>50</span>, <span class='fl'>50</span>)))
+<span class='no'>caribouFrom</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sp</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPoints'>SpatialPoints</a></span>(<span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>cbind</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1e1</span>, -<span class='fl'>50</span>, <span class='fl'>50</span>),
+                                        <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1e1</span>, -<span class='fl'>50</span>, <span class='fl'>50</span>)))
+<span class='no'>caribouLines</span> <span class='kw'>&lt;-</span> <span class='fu'>sp2sl</span>(<span class='no'>caribou</span>, <span class='no'>caribouFrom</span>)
+<span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>caribouLines</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)</div><div class='img'><img src='sp2sl-1.png' alt='' width='700' height='432.632880098887' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#details">Details</a></li>
-          </ul>
-
-    <h2>Author</h2>
-    
-Eliot McIntire
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

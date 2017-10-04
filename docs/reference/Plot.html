@@ -136,7 +136,11 @@ Customization of the <code>ggplot2</code> elements can be done as a normal
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>...</th>
-      <td><p>A combination of <code>spatialObjects</code> or some non-spatial objects.
+      <td><p>A combination of <code>spatialObjects</code> or non-spatial objects.
+For many object classes, there are specific <code>Plot</code> methods. Where
+there are no specific ones, the base plotting will be used internally.
+This means that for objects with no specific <code>Plot</code> methods,
+many arguments, such as <code>addTo</code>, will not work.
 See details.</p></td>
     </tr>
     <tr>

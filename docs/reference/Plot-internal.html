@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Internal functions used by Plot — .convertSpatialToPlotGrob • quickPlot</title>
+<title>Internal functions used by Plot — .preparePlotGrob • quickPlot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -99,15 +99,15 @@
     </div>
 
     
-    <p>Not meant to be used by user.</p>
+    <p>Extract colors, legends and other things from object, and convert to a plotGrob</p>
     
 
-    <pre class="usage"><span class='fu'>.convertSpatialToPlotGrob</span>(<span class='no'>grobToPlot</span>, <span class='no'>sGrob</span>, <span class='no'>takeFromPlotObj</span>, <span class='no'>arr</span>, <span class='no'>newArr</span>,
+    <pre class="usage"><span class='fu'>.preparePlotGrob</span>(<span class='no'>grobToPlot</span>, <span class='no'>sGrob</span>, <span class='no'>takeFromPlotObj</span>, <span class='no'>arr</span>, <span class='no'>newArr</span>,
   <span class='no'>quickPlotGrobCounter</span>, <span class='no'>subPlots</span>, <span class='no'>cols</span>)
 
-<span class='co'># S4 method for spatialObjects,.quickPlotGrob</span>
-<span class='fu'>.convertSpatialToPlotGrob</span>(<span class='no'>grobToPlot</span>,
-  <span class='no'>sGrob</span>, <span class='no'>takeFromPlotObj</span>, <span class='no'>arr</span>, <span class='no'>newArr</span>, <span class='no'>quickPlotGrobCounter</span>, <span class='no'>subPlots</span>, <span class='no'>cols</span>)
+<span class='co'># S4 method for griddedClasses,.quickPlotGrob</span>
+<span class='fu'>.preparePlotGrob</span>(<span class='no'>grobToPlot</span>, <span class='no'>sGrob</span>,
+  <span class='no'>takeFromPlotObj</span>, <span class='no'>arr</span>, <span class='no'>newArr</span>, <span class='no'>quickPlotGrobCounter</span>, <span class='no'>subPlots</span>, <span class='no'>cols</span>)
 
 <span class='fu'>.xyAxes</span>(<span class='no'>sGrob</span>, <span class='no'>arr</span>, <span class='no'>whPlotFrame</span>)
 
@@ -194,7 +194,7 @@ like a rearrangement</p></td>
     </tr>
     <tr>
       <th>zMat</th>
-      <td><p>List resulting from <code>.convertSpatialToPlotGrob</code></p></td>
+      <td><p>List resulting from <code>.preparePlotGrob</code></p></td>
     </tr>
     <tr>
       <th>wipe</th>
