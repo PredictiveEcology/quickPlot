@@ -10,13 +10,13 @@ This update adds exported methods to allow extensions by other packages, and pro
 * Windows 7               (local), R 3.3.3
 
 ### Current R versions
-* macOS Sierra         (local), R 3.4.1
-* OS X El Capitan  (travis-ci), R 3.4.1
-* Ubuntu 14.04     (travis-ci), R 3.4.1
-* Ubuntu 16.04         (local), R 3.4.1
-* Windows           (appveyor), R 3.4.1
-* Windows        (win-builder), R 3.4.1
-* Windows 7            (local), R 3.4.1
+* macOS Sierra         (local), R 3.4.2
+* OS X El Capitan  (travis-ci), R 3.4.2
+* Ubuntu 14.04     (travis-ci), R 3.4.2
+* Ubuntu 16.04         (local), R 3.4.2
+* Windows           (appveyor), R 3.4.2
+* Windows        (win-builder), R 3.4.2
+* Windows 7            (local), R 3.4.2
 
 ### Development R version
 * Debian:testing (rocker/r-devel), R 3.5.0 (2017-09-13 r73254)
