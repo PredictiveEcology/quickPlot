@@ -1,4 +1,5 @@
 test_that("Plotting types without visual checking works", {
+  library(raster)
   r1 <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
                vals = sample(1:4, replace = TRUE, size = 100), res = 1)
   r2 <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,

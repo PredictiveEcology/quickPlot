@@ -253,9 +253,9 @@ setMethod(
 setGeneric(
   ".makeColorMatrix",
    function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
-            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE) { # nolint
+            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE)  # nolint
      standardGeneric(".makeColorMatrix")
-})
+)
 
 #' @rdname makeColorMatrix
 setMethod(
