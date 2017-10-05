@@ -269,7 +269,7 @@ setMethod(
     # Section 1 - extract object names, and determine which ones need plotting,
     # which ones need replotting etc.
 
-    news <- sapply(new, function(x) x)
+    news <- unlist(lapply(new, function(x) x))
     # this covers the case where R thinks that there is nothing, but
     #  there may in fact be something.
     if (sum(news) > 0) {

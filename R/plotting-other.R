@@ -182,18 +182,18 @@ setMethod("clearPlot",
 clickValues <- function(n = 1) {
   coords <- clickCoordinates(n = n)
   objLay <- strsplit(coords$map, "\\$")
-  objNames <- sapply(objLay, function(x) x[1])
-  layNames <- sapply(objLay, function(x) x[2])
+  objNames <- unlist(lapply(objLay, function(x) x[1]))
+  layNames <- unlist(lapply(objLay, function(x) x[2]))
   for (i in 1:n) {
     ras1 <- eval(parse(text = objNames[i]), envir = coords$envir[[i]])
     if (!is.na(layNames[i])) {
-      coords$coords$value <- sapply(seq_len(n), function(i) {
+      coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
         ras1[[layNames[i]]][cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
-      })
+      }))
     } else {
-      coords$coords$value <- sapply(seq_len(n), function(i) {
+      coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
         ras1[cellFromXY(ras1, coords$coords[i, 1:2])]
-      })
+      }))
     }
   }
   if (any(raster::is.factor(ras1))) {
@@ -226,8 +226,8 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
     }
 
     objLay <- strsplit(corners$map, "\\$")
-    objNames <- unique(sapply(objLay, function(x) x[1]))
-    layNames <- unique(sapply(objLay, function(x) x[2]))
+    objNames <- unique(unlist(lapply(objLay, function(x) x[1])))
+    layNames <- unique(unlist(lapply(objLay, function(x) x[2])))
     if (!is.na(layNames)) {
       Plot(eval(parse(text = objNames), envir = corners$envir[[1]])[[layNames]],
            zoomExtent = zoom, new = TRUE)
