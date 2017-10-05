@@ -253,7 +253,7 @@ clickCoordinates <- function(n = 1) {
   dc <- dev.cur()
 
   arr <- try(.getQuickPlot(paste0("quickPlot", dc)))
-  if (is(arr, "try-error")) {
+  if (inherits(arr, "try-error")) {
     stop(paste("Plot does not already exist on current device.",
                "clearPlot() or change device to",
                "one that has objects from a call to Plot()."))

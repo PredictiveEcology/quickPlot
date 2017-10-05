@@ -288,8 +288,8 @@ setMethod(
     isDoCall <- grepl("^do.call", scalls) & grepl("Plot", scalls) & !grepl("test_that", scalls)
 
     dots <- list(...)
-    if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") &
-       !is(dots[[1]], "communities") & !is(dots[[1]], "igraph") & !is(dots[[1]], "histogram")) {
+    if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") & # some reason, `inherits` doesn't work here for ggplot
+       !inherits(dots[[1]], "communities") & !inherits(dots[[1]], "igraph") & !inherits(dots[[1]], "histogram")) {
       dots <- unlist(dots, recursive = FALSE)
       isList <- TRUE
       if (is.null(names(dots)))
@@ -353,7 +353,7 @@ setMethod(
     }
 
     whichQuickPlottables <- sapply(dotObjs, function(x) {
-      is(x, ".quickPlottables")
+      is(x, ".quickPlottables") # `inherits` doesn't work for gg objects, need `is`
     })
 
     if (!(all(!whichQuickPlottables) | all(whichQuickPlottables)))
@@ -399,7 +399,7 @@ setMethod(
 
       if (is.null(mcPlot$col)) {
         if (!any(unlist(lapply(dotObjs, function(x) {
-          any(unlist(lapply(c("histogram", "igraph", "communities"), function(y) is(x, y))))
+          any(unlist(lapply(c("histogram", "igraph", "communities"), function(y) inherits(x, y))))
         })))) #default for histogram is NULL
           plotArgs$col <- "black"
       }
@@ -452,7 +452,7 @@ setMethod(
         }
     }
 
-    isQuickPlot <- sapply(plotObjs, function(x) is(x, ".quickPlot"))
+    isQuickPlot <- sapply(plotObjs, function(x) inherits(x, ".quickPlot"))
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
     # Create a .quickPlot object from the plotObjs and plotArgs
@@ -577,15 +577,15 @@ setMethod(
 
           isPlotFnAddable <- FALSE
           if (!is(grobToPlot, ".quickPlotObjects")) {
-            if (!is(grobToPlot, ".quickPlot")) {
+            if (!inherits(grobToPlot, ".quickPlot")) {
               if (sGrob@plotArgs$userProvidedPlotFn & !isTRUE(grobToPlot[["add"]])) {
                 isPlotFnAddable <- TRUE
               }
             }
           }
 
-          if (sGrob@plotArgs$new | is(grobToPlot, "igraph") |
-             is(grobToPlot, "histogram") | isPlotFnAddable) {
+          if (sGrob@plotArgs$new | inherits(grobToPlot, "igraph") |
+             inherits(grobToPlot, "histogram") | isPlotFnAddable) {
             ## draw a white rectangle to clear plot
             sGrob <- .refreshGrob(sGrob, subPlots, legendRange,
                                   grobToPlot, plotArgs = sGrob@plotArgs,
@@ -602,7 +602,7 @@ setMethod(
                                             arr = updated$curr@arr, newArr,
                                             quickPlotGrobCounter, subPlots, cols)
           # Add legendRange if not provided
-          if (is(grobToPlot, "Raster")) {
+          if (inherits(grobToPlot, "Raster")) {
             if (is.null(sGrob@plotArgs$legendRange)) {
               sGrob@plotArgs$legendRange <-
                 c(zMat$minz, zMat$maxz)

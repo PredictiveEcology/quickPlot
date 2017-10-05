@@ -35,9 +35,7 @@ if (getRversion() >= "3.1.0") {
 #' numLayers(maps)
 #' numLayers(stck)
 #'
-setGeneric("numLayers", function(x) {
-  standardGeneric("numLayers")
-})
+setGeneric("numLayers", function(x) standardGeneric("numLayers"))
 
 #' @export
 #' @rdname numLayers
@@ -45,15 +43,13 @@ setMethod(
   "numLayers",
   signature = "list",
   definition = function(x) {
-    y <- sum(sapply(x, function(x) {
-      if (is(x, "RasterStack")) {
-        x <- numLayers(x)
+    sum(unlist(lapply(x, function(x) {
+      if (inherits(x, "RasterStack")) {
+        numLayers(x)
       } else {
-        x <- 1L
+        1L
       }
-      return(x)
-    }))
-    return(y)
+    })))
 })
 
 #' @rdname numLayers
@@ -275,7 +271,7 @@ setMethod(
   definition = function(plotObjects, plotArgs, whichQuickPlottables, ...) {
 
     isSpatialObjects <- sapply(plotObjects, function(x) {
-      is(x, "spatialObjects")
+      inherits(x, "spatialObjects")
     })
 
     env <- list(...)$env
@@ -303,10 +299,10 @@ setMethod(
 
     lNamesPlotObj <- layerNames(plotObjects)
 
-    isQuickPlot <- sapply(plotObjects, function(x) is(x, ".quickPlot"))
+    isQuickPlot <- sapply(plotObjects, function(x) inherits(x, ".quickPlot"))
 
     # The second component will test for a 3 dimensional array
-    isStack <- sapply(plotObjects, function(x) is(x, "RasterStack") | isTRUE(dim(x)[3] > 1))
+    isStack <- sapply(plotObjects, function(x) inherits(x, "RasterStack") | isTRUE(dim(x)[3] > 1))
 
     # Stacks are like lists in that they are a single object, with many
     # layers.  Plot must treat these as any other layers, except that
@@ -457,7 +453,7 @@ setMethod(
       }
     }
 
-    p$gp <- if (is(p$gp, "gpar")) {
+    p$gp <- if (inherits(p$gp, "gpar")) {
       rep(list(p$gp), n)
     } else {
       if (is.list(p$gp)) {
@@ -465,7 +461,7 @@ setMethod(
       }
     }
 
-    p$gpText <- if (is(p$gpText, "gpar")) {
+    p$gpText <- if (inherits(p$gpText, "gpar")) {
       rep(list(p$gpText), n)
     } else {
       if (is.list(p$gpText)) {
@@ -473,7 +469,7 @@ setMethod(
       }
     }
 
-    p$gpAxis <- if (is(p$gpAxis, "gpar")) {
+    p$gpAxis <- if (inherits(p$gpAxis, "gpar")) {
       rep(list(p$gpAxis), n)
     } else {
       if (is.list(p$gpAxis)) {
@@ -808,7 +804,7 @@ setMethod(
     # if evaluating the parsed text is a character,
     # then this is likely then name we want to keep:
     isChar <- tryCatch(
-      is(eval(elems[[i]], envir = eminus1), "character"),
+      is.character(eval(elems[[i]], envir = eminus1)),
       error = function(x) FALSE
     )
     if (isChar) {
@@ -827,7 +823,7 @@ setMethod(
     .[[length(.)]]
 
   inGlobal <- identical(envs, .GlobalEnv)
-  if (is(eval(parse(text = deparsedTxt), envir = envs), "environment")) {
+  if (is.environment(eval(parse(text = deparsedTxt), envir = envs))) {
     envs <- eval(parse(text = deparsedTxt), envir = envs)
   } else {
     if (!lastOneDone) elems[[i]] <- parseTxt
@@ -1151,7 +1147,7 @@ setMethod(
       sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
 
       # clear out all arguments that don't have meaning in plot.default
-      if (is(grobToPlot, "gg")) {
+      if (inherits(grobToPlot, "gg")) {
         print(grobToPlot, vp = subPlots)
         a <- try(seekViewport(subPlots, recording = FALSE))
       } else {
@@ -1180,10 +1176,10 @@ setMethod(
 
         isHist <- FALSE
         if (!is.null(grobToPlot$x)) {
-          if (is(grobToPlot$x, "histogram")) {
+          if (inherits(grobToPlot$x, "histogram")) {
             isHist <- TRUE
             sGrob@plotArgs$ylab <- if (is.null(sGrob@plotArgs$ylab)) "Frequency"
-          } else if (is(grobToPlot$x, "numeric")) {
+          } else if (is.numeric(grobToPlot$x)) {
             if (length(sGrob@plotArgs$axisLabels) == 1) {
               sGrob@plotArgs$ylab <- sGrob@plotArgs$xlab
               sGrob@plotArgs$xlab <- "Index"
@@ -1210,7 +1206,7 @@ setMethod(
         argsPlot1$plotFn <- NULL
 
         # The actuall plot calls for base plotting
-        if (is(grobToPlot, "igraph")) {
+        if (inherits(grobToPlot, "igraph")) {
           # this next is a work around that I can't understand
           if (names(dev.cur()) == "null device") {
             plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
@@ -1352,7 +1348,7 @@ setMethod(
   definition = function(sGrob, subPlots, legendRange,
                         grobToPlot, plotArgs, nColumns, whPlotObj) {
     seekViewport(paste0("outer", subPlots), recording = FALSE)
-    grid.rect(x = 0, width = unit(1 + is(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
+    grid.rect(x = 0, width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
               gp = gpar(fill = "white", col = "white"), just = "left")
     plotArgsByPlot <- lapply(plotArgs, function(x) {
       if (is.list(x)) {
@@ -1392,13 +1388,13 @@ setMethod(
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, arr, newArr) {
 
-    if (!is(sGrob@plotArgs$gpText, "gpar")) {
+    if (!inherits(sGrob@plotArgs$gpText, "gpar")) {
       sGrob@plotArgs$gpText <- as(sGrob@plotArgs$gpText, "gpar")
     }
-    if (!is(sGrob@plotArgs$gpAxis, "gpar")) {
+    if (!inherits(sGrob@plotArgs$gpAxis, "gpar")) {
       sGrob@plotArgs$gpAxis <- as(sGrob@plotArgs$gpAxis, "gpar")
     }
-    if (!is(sGrob@plotArgs$gp, "gpar")) {
+    if (!inherits(sGrob@plotArgs$gp, "gpar")) {
       sGrob@plotArgs$gp <- as(sGrob@plotArgs$gp, "gpar")
     }
 
@@ -1465,7 +1461,7 @@ setMethod(
       }
     } else {
       if (takeFromPlotObj) {
-        if (!is(toPlot, "gg") & !is(toPlot, "igraph")) {
+        if (!inherits(toPlot, "gg") & !inherits(toPlot, "igraph")) {
           grobToPlot <- unlist(toPlot, recursive = FALSE)
         } else {
           grobToPlot <- toPlot
@@ -1976,16 +1972,16 @@ setMethod(
     if (length(gpText) == 0)
       gpText <- gpar(col = "black", cex = 0.6)
 
-    rastGrob <- gTree(
-      grobToPlot = grobToPlot, pr = pr, col = col,
-      children = gList(
-        rasterGrob(
-          as.raster(grobToPlot),
-          interpolate = FALSE,
-          name = "raster"
-        )),
-      gp = gp, cl = "plotRast")
-    grid.draw(rastGrob)
+    # rastGrob <- gTree(
+    #   grobToPlot = grobToPlot, pr = pr, col = col,
+    #   children = gList(
+    #     rasterGrob(
+    #       as.raster(grobToPlot),
+    #       interpolate = FALSE,
+    #       name = "raster"
+    #     )),
+    #   gp = gp, cl = "plotRast")
+    # grid.draw(rastGrob)
 
     rastGrob2 <- gTree(
       grobToPlot = grobToPlot, pr = pr, col = col,
@@ -2050,7 +2046,7 @@ setMethod(
     seekViewport(paste0("outer", name), recording = FALSE)
     grid.draw(rastGrob2)
 
-    return(invisible(rastGrob))
+    return(invisible())
 })
 
 ################################################################################

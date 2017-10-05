@@ -302,7 +302,7 @@ setClass(".quickPlot",
          prototype = list(arr = new(".arrangement"), quickPlotGrobList = as.list(NULL)),
          validity = function(object) {
            # check for valid extents
-           if (any(is(object@arr, ".arrangement"))) {
+           if (any(inherits(object@arr, ".arrangement"))) {
              stop("must supply an arrangement")
            }
 })
