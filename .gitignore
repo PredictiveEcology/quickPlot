@@ -1,3 +1,4 @@
+revdep/.cache.rds
 vignettes/*_cache
 vignettes/*_files
 vignettes/*.html
@@ -11,7 +12,6 @@ vignettes/*.R
 
 #################
 ## LaTeX
-#################
 *.acn
 *.acr
 *.alg
@@ -44,3 +44,4 @@ vignettes/*.R
 *.vrb
 *.xdy
 *.tdo
+

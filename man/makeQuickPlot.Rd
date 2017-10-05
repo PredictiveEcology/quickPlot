@@ -32,7 +32,7 @@ the specific grob types, e.g., rasterGrob, polygonGrob, etc.}
 }
 \value{
 A \code{\link{.quickPlot}} object, which has 2 slots, one for the plot arrangement
-(i.e., layout and dimensions) and onefor all of the \code{quickPlotGrobs}
+(i.e., layout and dimensions) and one for all of the \code{quickPlotGrobs}
 (stored as a quickPlotGrobList of lists \code{.quickPlotGrob} objects).
 }
 \description{
