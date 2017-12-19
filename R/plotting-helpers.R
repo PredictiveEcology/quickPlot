@@ -847,7 +847,7 @@ setMethod(
                                      collapse = "[["), "]]"),
                 envs = envs))
   }
-  return(list(objs = paste(unlist(lapply(rev(elems), deparse)), collapse = "$"),
+  return(list(objs = paste(unlist(lapply(rev(elems), deparse, backtick = TRUE)), collapse = "$"),
               envs = envs))
 }
 
