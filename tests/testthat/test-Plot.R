@@ -1039,3 +1039,16 @@ test_that("Plot lists", {
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
 })
+
+
+test_that("Plot non complicated object names", {
+  library(raster); on.exit(detach("package:raster"), add = TRUE)
+  
+  a <- list()
+  a$e <- new.env()
+  rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  a$e$p <- rasOrig 
+  Plot(a$e$p)
+  Plot(a$e[["p"]])
+  
+})

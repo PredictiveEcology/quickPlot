@@ -335,7 +335,7 @@ setMethod(
     # Make new .quickPlot object.
     # This will be merged to existing later.
     newPlots <- new(".quickPlot")
-
+    
     newPlots@arr <- new(".arrangement")
 
     newPlots@quickPlotGrobList <- lapply(1:length(lN), function(x) {

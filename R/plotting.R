@@ -291,6 +291,7 @@ setMethod(
     if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") & # some reason, `inherits` doesn't work here for ggplot
        !inherits(dots[[1]], "communities") & !inherits(dots[[1]], "igraph") & !inherits(dots[[1]], "histogram")) {
       dots <- unlist(dots, recursive = FALSE)
+      listNames <- names(dots)
       isList <- TRUE
       if (is.null(names(dots)))
         stop("If providing a list of objects to Plot, it must be a named list.")
@@ -315,20 +316,6 @@ setMethod(
       whFrame <- grep(scalls, pattern = "^Plot")
       dotObjs <- dots
 
-      if (isList) {
-        # perhaps push objects into an environment, if they are only in the list
-        env <- sys.frame(whFrame - 1)
-        onlyInList <- !unlist(lapply(names(dots), exists, envir = env, inherits = FALSE))
-        if (any(onlyInList)) {
-          assign(paste0("Dev", dev.cur()), new.env(hash = FALSE, parent = .quickPlotEnv),
-                 envir = .quickPlotEnv)
-          dots$env <- list2env(dots, envir = get(paste0("Dev", dev.cur()), envir = .quickPlotEnv))
-
-        } else {
-          dots$env <- env
-        }
-
-      }
       plotFrame <- sys.frame(whFrame)
       plotArgs <- mget(names(formals("Plot")), plotFrame)[-1]
     }
@@ -345,16 +332,11 @@ setMethod(
       }
     }
 
-    if (!is.null(dots$env)) {
-      objFrame <- dots$env
-      dotObjs$env <- NULL
-    } else {
-      objFrame <- plotFrame
-    }
-
     whichQuickPlottables <- sapply(dotObjs, function(x) {
       is(x, ".quickPlottables") # `inherits` doesn't work for gg objects, need `is`
     })
+    
+    
 
     if (!(all(!whichQuickPlottables) | all(whichQuickPlottables)))
       stop("Can't mix base plots with .quickPlottables objects in one function call. ",
@@ -436,7 +418,29 @@ setMethod(
       }
       plotObjs <- dotObjs[whichQuickPlottables]
     }
+    
+    if (any(whichQuickPlottables)) {
+        # perhaps push objects into an environment, if they are only in the list
+      if (isList) {
+        assign(paste0("Dev", dev.cur()), new.env(hash = FALSE, parent = .quickPlotEnv),
+               envir = .quickPlotEnv)
+        objFrame <- get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
+        dots$env <- list2env(dots, envir = objFrame)
 
+      } else {
+        objNames <- lapply(substitute(placeholderFunction(...))[-1],
+                           deparse, backtick = TRUE)
+        objFrame <- where2(objNames[[1]])
+        names(plotObjs)[whichQuickPlottables] <- objNames  
+      }
+      
+    }
+    
+    
+    if (!is.null(dots$env)) {
+      dotObjs$env <- NULL
+    }
+    
     nonPlotArgs <- dotObjs[!whichQuickPlottables]
     if (any(grepl(pattern = "col", names(nonPlotArgs)))) {
       nonPlotArgs$col <- "black"
@@ -458,7 +462,7 @@ setMethod(
     # Create a .quickPlot object from the plotObjs and plotArgs
     newQuickPlots <- .makeQuickPlot(
       plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
-
+    
     if (exists(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv)) {
       currQuickPlots <- .getQuickPlot(paste0("quickPlot", dev.cur()))
 
@@ -468,6 +472,19 @@ setMethod(
         visualSqueeze
       }
 
+      if (FALSE) {
+        
+        #checkTracemem -- incomplete -- to compare differently named, but identical objects
+        #  e.g., sim$a and sim@.envir$a
+        ob <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x) lapply(x, function(y) y@objName)))
+        en <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x) lapply(x, function(y) y@envir)))
+        lapply(seq_along(ob), function(n) {
+          lapply(seq_along(objNames), function(x) {
+            identical(tracemem(eval(parse(text = ob[n]), envir = en[n])),
+                      tracemem(eval(parse(text = objNames[[x]]), objFrame)))})})
+        
+      }
+      
       updated <- .updateQuickPlot(newQuickPlots, currQuickPlots)
 
       # Do all the plots fit into the device?
@@ -656,5 +673,17 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
         "where x is the active device number."
       )
     )
+  }
+}
+
+
+where2 <- function(name, whFrame = -1) {
+  name <- strsplit(name, split="@|\\$|\\[\\[")[[1]][1]
+  if (exists(name, envir = sys.frame(whFrame), inherits = FALSE)) {
+    # Success case
+    sys.frame(whFrame)
+  } else {
+    # Recursive case
+    where2(name, whFrame-2) # need -2 because each recursion introduced one more
   }
 }
