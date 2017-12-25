@@ -679,6 +679,11 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
 
 where2 <- function(name, whFrame = -1) {
   name <- strsplit(name, split="@|\\$|\\[\\[")[[1]][1]
+  
+  if (sys.nframe() < (-whFrame)) {
+    stop(name, " is not on the call stack.", call. = FALSE)
+  }
+  
   if (exists(name, envir = sys.frame(whFrame), inherits = FALSE)) {
     # Success case
     sys.frame(whFrame)
