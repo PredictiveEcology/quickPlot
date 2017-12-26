@@ -1047,8 +1047,12 @@ test_that("Plot non complicated object names", {
   a <- list()
   a$e <- new.env()
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig2 <- rasOrig
   a$e$p <- rasOrig 
-  Plot(a$e$p)
-  Plot(a$e[["p"]])
+  a$e$s <- stack(rasOrig2, rasOrig)
+  expect_silent(Plot(a$e$p))
+  expect_silent(Plot(a$e[["p"]]))
+  expect_silent(Plot(a$e[["s"]]$layer.1))
+  expect_silent(Plot(a$e[["s"]]$layer.1[1:10], addTo = "secondPlot"))
   
 })
