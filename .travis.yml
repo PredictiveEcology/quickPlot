@@ -22,6 +22,8 @@ matrix:
           - libproj-dev
     r_binary_packages:
       - covr
+    r_packages:
+      - devtools  
     r_github_packages:
       - jimhester/lintr
     after_success:
