@@ -332,12 +332,14 @@ setMethod(
       }
     }
     
+    if (!is.null(dots$env)) {
+      dotObjs$env <- NULL
+    }
+    
     whichQuickPlottables <- sapply(dotObjs, function(x) {
       is(x, ".quickPlottables") # `inherits` doesn't work for gg objects, need `is`
     })
-    
-    
-    
+
     if (!(all(!whichQuickPlottables) | all(whichQuickPlottables)))
       stop("Can't mix base plots with .quickPlottables objects in one function call. ",
            "Please call Plot for base plots separately.")
@@ -434,11 +436,6 @@ setMethod(
         names(plotObjs)[whichQuickPlottables] <- objNames  
       }
       
-    }
-    
-    
-    if (!is.null(dots$env)) {
-      dotObjs$env <- NULL
     }
     
     nonPlotArgs <- dotObjs[!whichQuickPlottables]
