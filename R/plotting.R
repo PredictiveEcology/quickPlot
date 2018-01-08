@@ -303,15 +303,16 @@ setMethod(
     #  We need to know exactly where they are, so that they can be replotted later, if needed
     if (any(isDoCall)) {
       
-      whFrame <- which(isDoCall)
-      plotFrame <- sys.frame(whFrame - 1)
-      if (is.null(dots$env))
-        dots$env <- plotFrame
-      #stop("Currently, Plot can not be called within a do.call. ",
-      #     "Try passing a named list of objects to Plot instead.")
-      dotObjs <- get(as.character(match.call(do.call, call = sys.call(whFrame))$args),
-                      envir = plotFrame)
-      plotArgs <- mget(names(formals("Plot")[-1]), sys.frame(whFrame - 2)) # 2 up with do.call
+      stop("Currently, Plot can not be called within a do.call. ",
+           "Try passing a named list of objects to Plot instead.")
+      # whFrame <- which(isDoCall)
+      # plotFrame <- sys.frame(whFrame - 1)
+      # if (is.null(dots$env))
+      #   dots$env <- plotFrame
+      # dotObjs <- eval(match.call(do.call, call = sys.call(whFrame))$args,
+      #                 envir = plotFrame)
+      # whFrame <- whFrame + 1
+      #plotArgs <- mget(names(formals("Plot")[-1]), sys.frame(whFrame)) # 2 up with do.call
     } else {
       whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
       dotObjs <- dots
