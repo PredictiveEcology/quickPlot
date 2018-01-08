@@ -310,14 +310,23 @@ setMethod(
       #stop("Currently, Plot can not be called within a do.call. ",
       #     "Try passing a named list of objects to Plot instead.")
       dotObjs <- get(as.character(match.call(do.call, call = sys.call(whFrame))$args),
-                     envir = plotFrame)
+                      envir = plotFrame)
       plotArgs <- mget(names(formals("Plot")[-1]), sys.frame(whFrame - 2)) # 2 up with do.call
     } else {
-      whFrame <- grep(scalls, pattern = "^Plot")
+      whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
       dotObjs <- dots
-      
-      plotFrame <- sys.frame(whFrame)
-      plotArgs <- mget(names(formals("Plot")), plotFrame)[-1]
+    }
+    
+    for(fr in whFrame) {
+      plotFrame <- sys.frame(fr)
+      plotArgs <- tryCatch(mget(names(formals("Plot")), plotFrame), error = function(x) TRUE)
+      if (isTRUE(plotArgs)) { 
+        conti <- TRUE
+      } else {
+        plotArgs <- plotArgs[-1]
+        conti <- FALSE
+      }
+      if (!conti) break
     }
     
     # if user uses col instead of cols

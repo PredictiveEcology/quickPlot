@@ -1054,5 +1054,13 @@ test_that("Plot non complicated object names", {
   expect_silent(Plot(a$e[["p"]]))
   expect_silent(Plot(a$e[["s"]]$layer.1))
   expect_silent(Plot(a$e[["s"]]$layer.1[1:10], addTo = "secondPlot"))
+test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
   
+  Plot <- function(x)
+  {
+    quickPlot::Plot(x)
+  }
+  
+  expect_silent(Plot(raster(matrix(1:100, 10, 10))))
 })
