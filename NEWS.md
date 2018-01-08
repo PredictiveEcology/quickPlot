@@ -2,7 +2,7 @@ Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
 version 0.1.2.9000
 ==================
-
+* minor bug fix for when quickPlot::Plot is called inside a custom function called "Plot"
 
 
 version 0.1.2
