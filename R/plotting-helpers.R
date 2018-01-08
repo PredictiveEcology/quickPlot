@@ -302,7 +302,8 @@ setMethod(
     isQuickPlot <- unlist(lapply(plotObjects, function(x) inherits(x, ".quickPlot")))
 
     # The second component will test for a 3 dimensional array
-    isStack <- unlist(lapply(plotObjects, function(x) inherits(x, "RasterStack") | isTRUE(dim(x)[3] > 1)))
+    isStack <- unlist(lapply(plotObjects, function(x)
+      inherits(x, "RasterStack") | isTRUE(dim(x)[3] > 1)))
 
     # Stacks are like lists in that they are a single object, with many
     # layers.  Plot must treat these as any other layers, except that
@@ -335,7 +336,7 @@ setMethod(
     # Make new .quickPlot object.
     # This will be merged to existing later.
     newPlots <- new(".quickPlot")
-    
+   
     newPlots@arr <- new(".arrangement")
 
     newPlots@quickPlotGrobList <- lapply(1:length(lN), function(x) {
@@ -970,7 +971,7 @@ setMethod("gpar",
 #' @rdname Plot-internal
 #'
 setGeneric(".preparePlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-                                                 quickPlotGrobCounter, subPlots, cols) 
+                                                 quickPlotGrobCounter, subPlots, cols)
   standardGeneric(".preparePlotGrob")
 )
 
@@ -1348,7 +1349,8 @@ setMethod(
   definition = function(sGrob, subPlots, legendRange,
                         grobToPlot, plotArgs, nColumns, whPlotObj) {
     seekViewport(paste0("outer", subPlots), recording = FALSE)
-    grid.rect(x = 0, width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
+    grid.rect(x = 0,
+              width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
               gp = gpar(fill = "white", col = "white"), just = "left")
     plotArgsByPlot <- lapply(plotArgs, function(x) {
       if (is.list(x)) {

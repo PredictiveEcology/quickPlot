@@ -282,7 +282,7 @@ setMethod(
         cols <- colorTable
       }
     }
-    if(inherits(grobToPlot, "Raster")) {
+    if (inherits(grobToPlot, "Raster")) {
       z <- getValues(grobToPlot) # more general that getValues(grobToPlot)
     } else {
       z <- grobToPlot[]

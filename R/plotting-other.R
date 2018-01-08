@@ -344,7 +344,7 @@ clickCoordinates <- function(n = 1) {
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname quickPlotMouseClicks
-.clickCoord <- function(X, n = 1, gl = NULL) { # nolint 
+.clickCoord <- function(X, n = 1, gl = NULL) { # nolint
   pts <- data.frame(x = NA_real_, y = NA_real_, stringsAsFactors = FALSE)
   seekViewport(X, recording = FALSE)
   for (i in 1:n) {
