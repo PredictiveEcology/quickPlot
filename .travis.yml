@@ -23,7 +23,7 @@ matrix:
     r_binary_packages:
       - covr
     r_packages:
-      - devtools  
+      - devtools
     r_github_packages:
       - jimhester/lintr
     after_success:

@@ -268,7 +268,7 @@ setMethod(
                         zero.color, length, arr, plotFn) { # nolint
     # Section 1 - extract object names, and determine which ones need plotting,
     # which ones need replotting etc.
-  
+
     news <- unlist(lapply(new, function(x) x))
     # this covers the case where R thinks that there is nothing, but
     #  there may in fact be something.
@@ -278,15 +278,15 @@ setMethod(
           length(ls(.quickPlotEnv)) == 0) {
         clearPlot(dev.cur())
       }}
-  
+
     # Determine object names that were passed and layer names of each
     scalls <- sys.calls()
-  
+
     # This testthat is a work around:
     # A test_that call can be very long, with many function calls, including Plot and do.call,
     # even if they don't have anything to do with each other
     isDoCall <- grepl("^do.call", scalls) & grepl("Plot", scalls) & !grepl("test_that", scalls)
-  
+
     dots <- list(...)
     if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") &
         # some reason, `inherits` doesn't work here for ggplot
@@ -300,7 +300,7 @@ setMethod(
     } else {
       isList <- FALSE
     }
-  
+
     if (any(isDoCall)) {
       stop("Currently, Plot can not be called within a do.call. ",
            "Try passing a named list of objects to Plot instead.")
@@ -309,7 +309,7 @@ setMethod(
     #  We need to know exactly where they are, so that they can be replotted later, if needed
     whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
     dotObjs <- dots
-   
+
     for (fr in whFrame) {
       plotFrame <- sys.frame(fr)
       plotArgs <- tryCatch(mget(names(formals("Plot")), plotFrame), error = function(x) TRUE)
@@ -321,7 +321,7 @@ setMethod(
       }
       if (!conti) break
     }
-  
+
     # if user uses col instead of cols
     if (is.null(cols)) {
       if (!is.null(col)) {
@@ -333,11 +333,11 @@ setMethod(
         message("cols and col both supplied. Using cols")
       }
     }
-  
+
     if (!is.null(dots$env)) {
       dotObjs$env <- NULL
     }
-  
+
     whichQuickPlottables <- sapply(dotObjs, function(x) {
       is(x, ".quickPlottables") # `inherits` doesn't work for gg objects, need `is`
     })
@@ -345,7 +345,7 @@ setMethod(
     if (!(all(!whichQuickPlottables) | all(whichQuickPlottables)))
       stop("Can't mix base plots with .quickPlottables objects in one function call. ",
            "Please call Plot for base plots separately.")
- 
+
     # Create plotObjs object, which is a cleaned up version of the objects passed into Plot
     if (all(!whichQuickPlottables)) {
       ## if not a .quickPlottables then it is a pass to plot or points
@@ -355,7 +355,7 @@ setMethod(
       mc <- match.call(get(plotArgs$plotFn), call(plotArgs$plotFn, quote(...)))
       mcPlot <- match.call(Plot, call = sys.call(whFrame))
       plotArgs$userProvidedPlotFn <- ("plotFn" %in% names(mcPlot))
-   
+
       basePlotDots <- list()
       for (i in names(mc)[-1]) basePlotDots[[i]] <- eval(mc[[i]])
       plotObjs <- list(list(basePlotDots))
@@ -369,20 +369,20 @@ setMethod(
       } else {
         plotArgs$axisLabels <- list(unlist(lapply(plotXYArgs[1:xAndYSum + 1], deparse)))
       }
-   
+
       if (is.null(addTo)) {
         addTo <- "basePlot1"
       }
       plotArgs$addTo <- addTo
-   
+
       if (is.null(mcPlot$axes)) {
         plotArgs$axes <- "L"
       }
-   
+
       if (is.null(plotArgs$title)) {
         plotArgs$title <- mc$main
       }
-   
+
       if (is.null(mcPlot$col)) {
         if (!any(unlist(lapply(dotObjs, function(x) {
           any(unlist(lapply(c("histogram", "igraph", "communities"), function(y) inherits(x, y))))
@@ -392,7 +392,7 @@ setMethod(
       plotArgs$main <- ""
       plotObjs[[1]][[1]]$main <- plotArgs$main
       basePlotDots$main <- plotArgs$main
-   
+
       if (addTo %in% ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) {
         plotObjsName <- paste0(addTo, "_",
                                length(ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) + 1)
@@ -409,7 +409,7 @@ setMethod(
       } else {
         whichQuickPlottables
       }
-   
+
       if (!all(canPlot)) {
         if ((sum(canPlot) - length(grep(pattern = "col", names(canPlot)))) > 0) { # nolint
           # don't message if col is passed
@@ -422,7 +422,7 @@ setMethod(
       }
       plotObjs <- dotObjs[whichQuickPlottables]
     }
- 
+
     if (any(whichQuickPlottables)) {
       # perhaps push objects into an environment, if they are only in the list
       if (isList) {
@@ -430,21 +430,21 @@ setMethod(
                envir = .quickPlotEnv)
         objFrame <- get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
         dots$env <- list2env(dots, envir = objFrame)
-     
+
       } else {
         objNames <- lapply(substitute(placeholderFunction(...))[-1],
                            deparse, backtick = TRUE)
         objFrame <- whereInStack(objNames[[1]])
         names(plotObjs)[whichQuickPlottables] <- objNames
       }
-   
+
     }
- 
+
     nonPlotArgs <- dotObjs[!whichQuickPlottables]
     if (any(grepl(pattern = "col", names(nonPlotArgs)))) {
       nonPlotArgs$col <- "black"
     }
- 
+
     # intercept cases that don't make sense, and give meaningful error
     if (!is.null(addTo)) {
       if (!tryCatch(
@@ -454,25 +454,25 @@ setMethod(
         plotArgs$addTo <- NULL
       }
     }
- 
+
     isQuickPlot <- sapply(plotObjs, function(x) inherits(x, ".quickPlot"))
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
- 
+
     # Create a .quickPlot object from the plotObjs and plotArgs
     newQuickPlots <- .makeQuickPlot(
       plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
- 
+
     if (exists(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv)) {
       currQuickPlots <- .getQuickPlot(paste0("quickPlot", dev.cur()))
-   
+
       visualSqueeze <- if (is.null(visualSqueeze)) {
         currQuickPlots$curr@arr@layout$visualSqueeze
       } else {
         visualSqueeze
       }
-   
+
       if (FALSE) {
-     
+
         #checkTracemem -- incomplete -- to compare differently named, but identical objects
         #  e.g., sim$a and sim@.envir$a
         ob <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x)
@@ -483,17 +483,17 @@ setMethod(
           lapply(seq_along(objNames), function(x) {
             identical(tracemem(eval(parse(text = ob[n]), envir = en[n])),
                       tracemem(eval(parse(text = objNames[[x]]), objFrame)))})})
-     
+
       }
-   
+
       updated <- .updateQuickPlot(newQuickPlots, currQuickPlots)
-   
+
       # Do all the plots fit into the device?
       newArr <- (
         length(updated$curr@quickPlotGrobList) >
           prod(currQuickPlots$curr@arr@columns, currQuickPlots$curr@arr@rows)
       ) | !identical(currQuickPlots$curr@arr@ds, dev.size())
-    
+
       if (newArr) {
         updated$needPlotting <- lapply(updated$needPlotting, function(x) {
           sapply(x, function(y) TRUE)
@@ -506,13 +506,13 @@ setMethod(
     } else if (all(isQuickPlot)) {
       currQuickPlots <- .makeQuickPlot()
       newQuickPlots <- plotObjs[[1]]
-    
+
       visualSqueeze <- if (is.null(visualSqueeze)) {
         newQuickPlots@arr@layout$visualSqueeze
       } else {
         visualSqueeze
       }
-    
+
       updated <- .updateQuickPlot(newQuickPlots)
       newArr <- TRUE
     } else {
@@ -520,7 +520,7 @@ setMethod(
       updated <- .updateQuickPlot(newQuickPlots)
       newArr <- TRUE
     }
-  
+
     # Section 2 # Optimal Layout and viewport making
     # Create optimal layout, given the objects to be plotted, whether legend and axes are to be
     #  plotted, and visualSqueeze
@@ -533,9 +533,9 @@ setMethod(
         updated$curr@arr, sapply(visualSqueeze, max), sapply(legend, any),
         sapply(axes, function(x) !any(x == TRUE))
       )
-    
+
     }
-  
+
     # Create the viewports as per the optimal layout
     if (length(newQuickPlots@quickPlotGrobList) > 0) {
       vps <- .makeViewports(updated$curr, newArr = newArr)
@@ -545,9 +545,9 @@ setMethod(
     }
     updated$curr@arr@extents <- vps$extents
     updated$curr@arr@names <- names(updated$curr@quickPlotGrobList)
-  
+
     quickSubPlots <- updated$curr@quickPlotGrobList
-  
+
     # Section 3 - the actual Plotting
     # Plot each element passed to Plot function, one at a time
     for (subPlots in names(quickSubPlots)) {
@@ -555,26 +555,26 @@ setMethod(
       for (sGrob in quickSubPlots[[subPlots]]) {
         quickPlotGrobCounter <- quickPlotGrobCounter + 1
         needPlot <- updated$needPlotting[[subPlots]][[quickPlotGrobCounter]]
-      
+
         if (needPlot) {
           isNewPlot <- updated$isNewPlot[[subPlots]][[quickPlotGrobCounter]]
           isReplot <- updated$isReplot[[subPlots]][[quickPlotGrobCounter]]
           isBaseSubPlot <- updated$isBaseLayer[[subPlots]][[quickPlotGrobCounter]]
-        
+
           whPlotFrame <- match(sGrob@plotName, names(quickSubPlots))
-        
+
           # Check that the extents are equal.
           # If not, then x and y axes are written where necessary.
           xyAxes <- .xyAxes(sGrob, arr = updated$curr@arr, whPlotFrame)
-        
+
           layerFromPlotObj <- (names(newQuickPlots@quickPlotGrobList) %in%
                                  sGrob@plotName)
           whLayerFromPO <- which(layerFromPlotObj)
-        
+
           objNames <- unique(unname(unlist(lapply(newQuickPlots@quickPlotGrobList,
                                                   function(x) x[[1]]@objName))))
           whPlotObj <- which(objNames %in% sGrob@objName)
-        
+
           layerFromPlotObj <- if (length(whLayerFromPO) == 0) {
             FALSE
           } else if (isQuickPlotLong[whLayerFromPO]) {
@@ -582,7 +582,7 @@ setMethod(
           } else {
             layerFromPlotObj[whLayerFromPO]
           }
-        
+
           # if whPlotObj is length 0, it means that the object is being taken from sGrob@envir
           if (length(whPlotObj) == 0 | !layerFromPlotObj) {
             grobToPlot <-
@@ -592,7 +592,7 @@ setMethod(
             grobToPlot <- plotObjs[[whPlotObj]]
           }
           grobToPlot <- .identifyGrobToPlot(grobToPlot, sGrob, layerFromPlotObj)
-        
+
           isPlotFnAddable <- FALSE
           if (!is(grobToPlot, ".quickPlotObjects")) {
             if (!inherits(grobToPlot, ".quickPlot")) {
@@ -601,7 +601,7 @@ setMethod(
               }
             }
           }
-        
+
           if (sGrob@plotArgs$new | inherits(grobToPlot, "igraph") |
               inherits(grobToPlot, "histogram") | isPlotFnAddable) {
             ## draw a white rectangle to clear plot
@@ -613,9 +613,9 @@ setMethod(
           } else {
             wipe <- FALSE
           }
-        
+
           sGrob <- .updateGrobGPTextAxis(sGrob, arr = updated$curr@arr, newArr = newArr)
-        
+
           zMat <- .preparePlotGrob(grobToPlot, sGrob, layerFromPlotObj,
                                    arr = updated$curr@arr, newArr,
                                    quickPlotGrobCounter, subPlots, cols)
@@ -625,19 +625,19 @@ setMethod(
               sGrob@plotArgs$legendRange <-
                 c(zMat$minz, zMat$maxz)
             }}
-        
+
           # Plot any grobToPlot to device, given all the parameters
           sGrob <- .Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                          isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
                          vps, nonPlotArgs)
-        
+
         } # needPlot
         updated$isNewPlot[[subPlots]][[quickPlotGrobCounter]] <- FALSE
         updated$curr@quickPlotGrobList[[subPlots]][[quickPlotGrobCounter]]@plotArgs <-
           sGrob@plotArgs
       } # sGrob
     } # subPlots
-  
+
     seekViewport("top", recording = FALSE)
     .assignQuickPlot(paste0("quickPlot", dev.cur()), updated)
     return(invisible(updated$curr))
@@ -735,7 +735,7 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
 #' }
 #' findB3() # same as findB(), but marginally faster, because it omits the stripping on
 #'          #   sub elements that may be part of the name argument
-#'        
+#'
 #'
 #' b <- list()
 #' findB3 <- function(x) {
@@ -760,9 +760,9 @@ whereInStack <- function(name, whFrame = -1) {
   }
 
   snframe <- sys.nframe()
- 
+
   while (!(exists(objectName, envir = sys.frame(whFrame), inherits = FALSE))) {
-  
+
     whFrame <- whFrame - 1
     if (snframe < (-whFrame)) {
       stop(objectName, " is not on the call stack.", call. = FALSE)

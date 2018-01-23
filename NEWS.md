@@ -4,7 +4,6 @@ version 0.1.2.9000
 ==================
 * minor bug fix for when quickPlot::Plot is called inside a custom function called "Plot"
 
-
 version 0.1.2
 =============
 * Small tweaks that allow methods to be built by other packages (*e.g.*, [PredictiveEcology/NetLogoR](https://github.com/PredictiveEcology/NetLogoR))

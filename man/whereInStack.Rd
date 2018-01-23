@@ -64,7 +64,7 @@ findB3 <- function(x) {
 }
 findB3() # same as findB(), but marginally faster, because it omits the stripping on
          #   sub elements that may be part of the name argument
-       
+
 
 b <- list()
 findB3 <- function(x) {
