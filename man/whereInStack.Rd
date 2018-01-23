@@ -12,23 +12,23 @@ whereInStack(name, whFrame = -1)
 \item{whFrame}{A numeric indicating which sys.frame (by negative number) to start searching in}
 }
 \value{
-The environment that is in the call stack where the object exists, that is closest to the 
+The environment that is in the call stack where the object exists, that is closest to the
 frame in which this function is called.
 }
 \description{
 This is similar to \code{pryr::where}, except instead of working up the search() path
 of packages, it searches up the call stack for an object. Ostensibly similar
 to \code{base::dynGet}, but it will only return the environment, not the object
-itself and it will try to extract just the object name from \code{name}, 
-even if supplied with a more complicated name 
+itself and it will try to extract just the object name from \code{name},
+even if supplied with a more complicated name
 (e.g., if \code{obj$firstElement@slot1$size} is
 supplied, the function will only search for obj). The function is fairly fast.
 This function is an important component to the \code{Plot} function.
 }
 \details{
-The difference between this and what \code{get} and \code{exists} do, is that these other 
+The difference between this and what \code{get} and \code{exists} do, is that these other
 functions
-search up the enclosing environments, i.e., it matters where the functions were defined. 
+search up the enclosing environments, i.e., it matters where the functions were defined.
 \code{whereInStack} looks up the call stack environments. See the example for the difference.
 }
 \examples{
@@ -53,7 +53,7 @@ findB2 <- function(x) {
 }
 findB2() # Finds 1 because b has a value of 1 in the enclosing environment of innerGet
 b <- 3
-findB2() # Finds 3 because b has a value of 3 in the enclosing environment of innerGet, 
+findB2() # Finds 3 because b has a value of 3 in the enclosing environment of innerGet,
          #  i.e., the environment in which innerGet was defined
 findB() # Still finds 2 because the call stack hasn't changed
 
@@ -62,9 +62,9 @@ findB3 <- function(x) {
   b <- 2
   dynGet("b")
 }
-findB3() # same as findB(), but marginally faster, because it omits the stripping on 
-         #   sub elements that may be part of the name argument 
-         
+findB3() # same as findB(), but marginally faster, because it omits the stripping on
+         #   sub elements that may be part of the name argument
+       
 
 b <- list()
 findB3 <- function(x) {
