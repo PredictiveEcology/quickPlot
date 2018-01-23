@@ -37,6 +37,8 @@ matrix:
         packages:
           - libgdal1-dev
           - libproj-dev
+    r_packages:
+    - devtools
   - os: osx
     osx_image: xcode8.2
     latex: false
