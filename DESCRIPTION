@@ -20,7 +20,7 @@ Authors@R: c(
     )
 Additional_repositories: https://rforge.net
 Depends:
-    R (>= 3.3.3)
+    R (>= 3.3.0)
 Imports:
     data.table (>= 1.10.4),
     ggplot2,
