@@ -11,9 +11,7 @@ This is a major update to our package.
 * Windows 7               (local), R 3.3.3 YES
 
 ### Current R versions
-* macOS High Sierra      (local), R 3.4.3
 * OSX Sierra 10.12.6 (travis-ci), R 3.4.3 YES
-* Ubuntu 16.0            (local), R 3.4.3 
 * Ubuntu 14.04.5     (travis-ci), R 3.4.2 YES
 * Debian 4.9.51          (local), R 3.4.3 YES
 * Windows             (appveyor), R 3.4.3 YES
