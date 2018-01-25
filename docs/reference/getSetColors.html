@@ -201,22 +201,22 @@ of <code>RasterLayer</code>s in <code>x</code>.</p></td>
 <span class='fu'>getColors</span>(<span class='no'>ras</span>)</div><div class='output co'>#&gt; $layer
 #&gt; [1] "#FF0000FF" "#0000FFFF" "#00FF00FF"
 #&gt; </div><div class='input'>
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-8.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-15.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># Use function method</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'>setColors</span>(<span class='no'>ras</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='fu'>c</span>(<span class='st'>"red"</span>, <span class='st'>"blue"</span>, <span class='st'>"yellow"</span>))
 <span class='fu'>getColors</span>(<span class='no'>ras</span>)</div><div class='output co'>#&gt; $layer
 #&gt; [1] "#FF0000FF" "#0000FFFF" "#FFFF00FF"
 #&gt; </div><div class='input'>
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-9.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-16.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># Using the wrong number of colors, e.g., here 2 provided,</span>
 <span class='co'># for a raster with 3 values... causes interpolation, which may be surprising</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'>setColors</span>(<span class='no'>ras</span>, <span class='fu'>c</span>(<span class='st'>"red"</span>, <span class='st'>"blue"</span>))
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-10.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-17.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># Real number rasters - interpolation is used</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'>matrix</span>(<span class='fu'>runif</span>(<span class='fl'>9</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>3</span>)) <span class='kw'>%&gt;%</span>
   <span class='fu'>setColors</span>(<span class='fu'>c</span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>)) <span class='co'># interpolates when real numbers, gives warning</span>
 
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-11.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-18.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># Factor rasters, can be contiguous (numerically) or not, in this case not:</span>
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'>matrix</span>(<span class='fu'>sample</span>(<span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>6</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>9</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>3</span>))
 <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/factor'>levels</a></span>(<span class='no'>ras</span>) <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>ID</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>6</span>), <span class='kw'>Names</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"red"</span>, <span class='st'>"purple"</span>, <span class='st'>"yellow"</span>))
@@ -224,7 +224,7 @@ of <code>RasterLayer</code>s in <code>x</code>.</p></td>
 <span class='fu'>getColors</span>(<span class='no'>ras</span>)</div><div class='output co'>#&gt; $layer
 #&gt; [1] "red"    "purple" "yellow"
 #&gt; </div><div class='input'>
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-12.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-19.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># if a factor raster, and not enough labels are provided, then a warning</span>
 <span class='co'>#   will be given, and colors will be interpolated</span>
 <span class='co'>#   The level called purple is not purple, but interpolated betwen red and yellow</span>
@@ -232,9 +232,9 @@ of <code>RasterLayer</code>s in <code>x</code>.</p></td>
   <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'>setColors</span>(<span class='no'>ras</span>, <span class='fu'>c</span>(<span class='st'>"red"</span>, <span class='st'>"yellow"</span>))
   <span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
   <span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)
-})</div><div class='output co'>#&gt; <span class='message'>Number of colors not equal number of values: interpolating</span></div><div class='img'><img src='getSetColors-13.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+})</div><div class='output co'>#&gt; <span class='message'>Number of colors not equal number of values: interpolating</span></div><div class='img'><img src='getSetColors-20.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'># use RColorBrewer colors</span>
-<span class='fu'>setColors</span>(<span class='no'>ras</span>) <span class='kw'>&lt;-</span> <span class='st'>"Reds"</span></div><div class='output co'>#&gt; <span class='message'>Number of colors not equal number of values: interpolating</span></div><div class='input'><span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-14.png' alt='' width='700' height='432.632880098887' /></div></pre>
+<span class='fu'>setColors</span>(<span class='no'>ras</span>) <span class='kw'>&lt;-</span> <span class='st'>"Reds"</span></div><div class='output co'>#&gt; <span class='message'>Number of colors not equal number of values: interpolating</span></div><div class='input'><span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>ras</span>)</div><div class='img'><img src='getSetColors-21.png' alt='' width='700' height='432.632880098887' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
