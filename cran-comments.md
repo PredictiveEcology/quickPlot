@@ -1,59 +1,49 @@
-## Updated package
+## resubmission
 
-This update adds exported methods to allow extensions by other packages, and provides some additional bug fixes.
+This is a major update to our package.
 
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 14.04        (travis-ci), R 3.3.3
-* Windows              (appveyor), R 3.3.3
-* Windows 7               (local), R 3.3.3
+* Ubuntu 14.04.5      (travis-ci), R 3.3.3 YES
+* Windows              (appveyor), R 3.3.2 YES
+* Windows              (appveyor), R 3.3.3 YES
+* Windows 7               (local), R 3.3.3 YES
 
 ### Current R versions
-* macOS Sierra         (local), R 3.4.2
-* OS X El Capitan  (travis-ci), R 3.4.2
-* Ubuntu 14.04     (travis-ci), R 3.4.2
-* Ubuntu 16.04         (local), R 3.4.2
-* Windows           (appveyor), R 3.4.2
-* Windows        (win-builder), R 3.4.2
-* Windows 7            (local), R 3.4.2
+* macOS High Sierra      (local), R 3.4.3
+* OSX Sierra 10.12.6 (travis-ci), R 3.4.3 YES
+* Ubuntu 16.0            (local), R 3.4.3 
+* Ubuntu 14.04.5     (travis-ci), R 3.4.2 YES
+* Debian 4.9.51          (local), R 3.4.3 Running
+* Windows             (appveyor), R 3.4.3 YES
+* Windows          (win-builder), R 3.4.3 Running -- waiting for email
+* Windows 7              (local), R 3.4.3 YES
 
 ### Development R version
-* Debian:testing (rocker/r-devel), R 3.5.0 (2017-09-13 r73254)
-* Ubuntu 14.04        (travis-ci), R 3.5.0 (2017-10-04 r73462)
-* Ubuntu 16.04            (local), R 3.5.0 (2017-10-04 r73462)
-* Windows              (appveyor), R 3.5.0 (2017-10-03 r73455)
-* Windows           (win-builder), R 3.5.0 (2017-09-12 r73242)
+* Ubuntu 14.04        (travis-ci), R 3.5.0 (2018-01-24 r74157) YES
+* Windows                 (local), R 3.5.0 (2018-01-24 r74157) Running
+* Windows           (win-builder), R 3.5.0 (2018-01-24 r74157) Running -- waiting for email
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs
+There are no errors, warnings, or notes in any of the above.
 
-There were 2 NOTEs:
+There were 1 NOTE, which is not a new note for this package:
 
-1. There are multiple parts to this note:
+    Package suggested but not available for checking: 'fastshp'
 
-    a. This is a new package submission:
-    
-            Maintainer: 'Eliot McIntire <eliot.mcintire@canada.ca>'
+We provide instructions for the user to install the suggested `fastshp` package.
 
-    b. Some words were flagged as possibly mispelled, but they are false positives.
-     
-            Possibly mis-spelled words in DESCRIPTION: 
-              Modularity (3:53)
-              modularity (5:29)
+The `fastshp` package in Suggests is optionally installed from Rforge and not required to use the package. Instructions for installation are provided in the README and via a message to the user. We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
 
-    c. The `fastshp` package in Suggests is optionally installed from Rforge and not required to use the package. Instructions for installation are provided in the README and via a message to the user. We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
+        Suggests or Enhances not in mainstream repositories:
+          fastshp
+      
+        Availability using Additional_repositories specification:
+          fastshp   yes   http://rforge.net
 
-            Suggests or Enhances not in mainstream repositories:
-              fastshp
-          
-            Availability using Additional_repositories specification:
-              fastshp   yes   http://rforge.net
 
-2. As noted above, we provide instructions for the user to install the suggested `fastshp` package.
-
-        Package suggested but not available for checking: 'fastshp'
 
 ## Downstream dependencies
 
