@@ -15,14 +15,14 @@ This is a major update to our package.
 * OSX Sierra 10.12.6 (travis-ci), R 3.4.3 YES
 * Ubuntu 16.0            (local), R 3.4.3 
 * Ubuntu 14.04.5     (travis-ci), R 3.4.2 YES
-* Debian 4.9.51          (local), R 3.4.3 Running
+* Debian 4.9.51          (local), R 3.4.3 YES
 * Windows             (appveyor), R 3.4.3 YES
 * Windows          (win-builder), R 3.4.3 Running -- waiting for email
 * Windows 7              (local), R 3.4.3 YES
 
 ### Development R version
 * Ubuntu 14.04        (travis-ci), R 3.5.0 (2018-01-24 r74157) YES
-* Windows                 (local), R 3.5.0 (2018-01-24 r74157) Running
+* Windows                 (local), R 3.5.0 (2018-01-24 r74157) YES
 * Windows           (win-builder), R 3.5.0 (2018-01-24 r74157) Running -- waiting for email
 
 ## R CMD check results
