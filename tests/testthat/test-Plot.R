@@ -6,20 +6,13 @@ test_that("Plot 1 is not error-free", {
   library(raster)
   library(reproducible)
 
-  on.exit({
-    detach("package:igraph")
-    detach("package:raster")
-    detach("package:reproducible")
-    detach("package:sp")
-  }, add = TRUE) # nolint
-
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
 
   on.exit({
     setwd(cwd)
-    if (length(dev.list()) > 0) dev.off()
+    #if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
@@ -191,9 +184,9 @@ test_that("Unit tests for image content is not error-free", {
 
   skip_on_travis()
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot_imageContent") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -280,9 +273,9 @@ test_that("Unit tests for plotting colors", {
 
   skip_on_travis()
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot_colors") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -375,9 +368,9 @@ test_that("Unit tests for internal functions in Plot", {
 
   skip_on_travis()
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot_internal") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -457,15 +450,15 @@ test_that("Plot 2 is not error-free", {
 
   library(raster)
   library(visualTest)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot2") %>% checkPath(create = TRUE)
   cwd <- getwd()
   setwd(tmpdir)
 
   on.exit({
-    detach("package:raster")
-    detach("package:visualTest")
+    #detach("package:raster")
+    #detach("package:visualTest")
     setwd(cwd)
     if (length(dev.list()) > 0) dev.off()
     if (file.exists("Rplots.pdf")) file.remove("Rplots.pdf")
@@ -498,7 +491,7 @@ test_that("Plot 2 is not error-free", {
 
   skip("Remainder are visual tests ... difficult to assess - see verbal expectations")
 
-  dev(); on.exit(dev.off(), add = TRUE)
+  #dev(); on.exit(dev.off(), add = TRUE)
   clearPlot()
 
   # 128 < vals < 1806
@@ -628,8 +621,8 @@ test_that("setColors is not error-free", {
 
   skip_on_travis()
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_setColors") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -637,7 +630,7 @@ test_that("setColors is not error-free", {
 
   on.exit({
     setwd(cwd)
-    if (length(dev.list()) > 0) dev.off()
+    #if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
   set.seed(1234)
@@ -701,13 +694,13 @@ test_that("Plot with base is not error-free", {
   setwd(tmpdir)
 
   on.exit({
-    detach("package:igraph")
-    detach("package:ggplot2")
-    detach("package:raster")
-    detach("package:reproducible")
-    detach("package:visualTest")
+    #detach("package:igraph")
+    #detach("package:ggplot2")
+    #detach("package:raster")
+    #detach("package:reproducible")
+    #detach("package:visualTest")
     setwd(cwd)
-    if (length(dev.list()) > 0) dev.off()
+    #if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
@@ -900,9 +893,9 @@ test_that("rePlot doesn't work", {
   skip_if_not_installed("reproducible")
   skip_if_not_installed("visualTest")
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -910,7 +903,7 @@ test_that("rePlot doesn't work", {
 
   on.exit({
     setwd(cwd)
-    if (length(dev.list()) > 0) dev.off()
+    #if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
@@ -937,8 +930,8 @@ test_that("rePlot doesn't work", {
 test_that("Plot - going through package coverage", {
   skip_if_not_installed("reproducible")
 
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -946,7 +939,7 @@ test_that("Plot - going through package coverage", {
 
   on.exit({
     setwd(cwd)
-    if (length(dev.list()) > 0) dev.off()
+    #if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
@@ -955,9 +948,10 @@ test_that("Plot - going through package coverage", {
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
   expect_silent(Plot(ras, new = TRUE))
-  clearPlot()
+  clearPlot(force = TRUE)
 
-  #do.call(Plot, list(ras)) # nolint
+  # do.call version
+  expect_error(do.call(Plot, list(ras = ras)), "Currently,") # nolint
 })
 
 test_that("Plot lists", {
@@ -966,10 +960,10 @@ test_that("Plot lists", {
 
   skip_on_travis()
 
-  library(ggplot2); on.exit(detach("package:ggplot2"), add = TRUE)
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
-  library(visualTest); on.exit(detach("package:visualTest"), add = TRUE)
-  library(reproducible); on.exit(detach("package:reproducible"), add = TRUE)
+  library(ggplot2); #on.exit(detach("package:ggplot2"), add = TRUE)
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
+  library(reproducible); #on.exit(detach("package:reproducible"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -977,7 +971,7 @@ test_that("Plot lists", {
 
   on.exit({
     setwd(cwd)
-    if (length(dev.list()) > 0) dev.off()
+    #if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
@@ -1038,4 +1032,37 @@ test_that("Plot lists", {
                  Windows = "8773738D8C89F04E"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
+})
+
+
+test_that("Plot non complicated object names", {
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  
+  a <- list()
+  a$e <- new.env()
+  rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig2 <- rasOrig
+  a$e$p <- rasOrig 
+  a$e$s <- stack(rasOrig2, rasOrig)
+  expect_silent(Plot(a$e$p))
+  expect_silent(Plot(a$e[["p"]]))
+  expect_silent(Plot(a$e[["s"]]$layer.1))
+  expect_silent(Plot(a$e[["s"]]$layer.1[1:10], addTo = "secondPlot"))
+  
+  # add the same data as a different plot -- use a named list
+  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new=TRUE))
+  a$e[["s"]]$layer.1[2] <- maxValue(a$e[["s"]]$layer.1)
+  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new=TRUE))
+  
+})
+
+test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  
+  Plot <- function(x)
+  {
+    quickPlot::Plot(x)
+  }
+  
+  expect_silent(Plot(raster(matrix(1:100, 10, 10))))
 })

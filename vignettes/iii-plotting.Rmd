@@ -124,7 +124,7 @@ Plot(landscape, caribou, maps$DEM, spP, axes = TRUE,
 `Plot` can also handle gg objects as created with `qplot` or `ggplot`.
 These can be combined with spatial objects as well.
 
-```{r ggplot, eval=TRUE, echo=TRUE, cache=TRUE, fig.height=2}
+```{r ggplot, eval=TRUE, echo=TRUE, cache=FALSE, fig.height=2}
 library(ggplot2)
 
 ggObj <- qplot(stats::rnorm(1e3), binwidth = 0.1)
@@ -146,7 +146,7 @@ If no `addTo` is passed in, then it will give the default, `basePlot1`, name.
 
 If using `addTo`, and there are both x and y arguments, it will *add* points to the previous plot.
 
-```{r base-objects, eval=FALSE, echo=TRUE, cache=TRUE, fig.height=2}
+```{r base-objects, eval=FALSE, echo=TRUE, cache=FALSE, fig.height=2}
 baseObj <- rnorm(1e3)
 baseObj2 <- baseObj * 1.2 + rnorm(1e3)
 clearPlot()
@@ -440,7 +440,7 @@ This function can also be used to redraw everything after a window gets resized 
 Some plot arguments can be passed via `rePlot`, such as `visualSqueeze`, `axes`, but not all.
 Further functionality like this will likely be in a future update.K
 
-```{r rePlot, eval=FALSE, echo=TRUE, cache=TRUE}
+```{r rePlot, eval=FALSE, echo=TRUE, cache=FALSE}
 rePlot()
 rePlot(4)
 rePlot(visualSqueeze = 1, axes = FALSE)
@@ -454,7 +454,7 @@ Simply pass the object name as if it were a Plot object.
 Any data changes made to the objects contained within the plot, if they are in the `.GlobalEnv` or a `envir` will be reflected in the new plot, because the data are replotted from their original source.
 This provides the same behavior as a call to `rePlot()`.
 
-```{r Plot a .quickPlot object, eval=FALSE, echo=TRUE, cache=TRUE}
+```{r Plot a .quickPlot object, eval=FALSE, echo=TRUE, cache=FALSE}
 clearPlot()
 plots <- Plot(landscape)
 

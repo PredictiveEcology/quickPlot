@@ -3,3 +3,4 @@ url: http://quickplot.predictiveecology.org/
 template:
   params:
     bootswatch: flatly
+    ganalytics: UA-58633549-4

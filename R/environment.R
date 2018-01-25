@@ -19,9 +19,8 @@
 #' @name .getQuickPlot
 #' @rdname getQuickPlot
 #'
-setGeneric(".getQuickPlot", function(x, ...) {
-  standardGeneric(".getQuickPlot")
-})
+setGeneric(".getQuickPlot", function(x, ...)
+  standardGeneric(".getQuickPlot"))
 
 #' @rdname getQuickPlot
 setMethod(".getQuickPlot",
@@ -50,9 +49,9 @@ setMethod(".getQuickPlot",
 #' @rdname assignQuickPlot
 #'
 #' @author Alex Chubaty
-setGeneric(".assignQuickPlot", function(x, value, ...) {
+setGeneric(".assignQuickPlot", function(x, value, ...)
   standardGeneric(".assignQuickPlot")
-})
+)
 
 #' @rdname assignQuickPlot
 setMethod(".assignQuickPlot",
@@ -82,9 +81,9 @@ setMethod(".assignQuickPlot",
 #' @keywords internal
 #' @rdname existsQuickPlot
 #'
-setGeneric(".existsQuickPlot", function(x, ...) {
+setGeneric(".existsQuickPlot", function(x, ...)
   standardGeneric(".existsQuickPlot")
-})
+)
 
 #' @rdname existsQuickPlot
 setMethod(".existsQuickPlot",

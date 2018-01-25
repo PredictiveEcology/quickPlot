@@ -253,9 +253,9 @@ setMethod(
 setGeneric(
   ".makeColorMatrix",
    function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
-            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE) { # nolint
+            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE)  # nolint
      standardGeneric(".makeColorMatrix")
-})
+)
 
 #' @rdname makeColorMatrix
 setMethod(
@@ -271,7 +271,7 @@ setMethod(
     # on the raster, so it is possible that it is incorrect.
     if (!skipSample) {
       colorTable <- getColors(grobToPlot)[[1]]
-      if (!is(try(minValue(grobToPlot)), "try-error")) {
+      if (!inherits(try(minValue(grobToPlot)), "try-error")) {
         minz <- minValue(grobToPlot)
       }
       grobToPlot <- sampleRegular(
@@ -282,7 +282,11 @@ setMethod(
         cols <- colorTable
       }
     }
-    z <- grobToPlot[] # more general that getValues(grobToPlot)
+    if (inherits(grobToPlot, "Raster")) {
+      z <- getValues(grobToPlot) # more general that getValues(grobToPlot)
+    } else {
+      z <- grobToPlot[]
+    }
 
     # If minValue is defined, then use it, otherwise, calculate them.
     #  This is different than maxz because of the sampleRegular.

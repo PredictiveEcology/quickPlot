@@ -35,9 +35,7 @@ if (getRversion() >= "3.1.0") {
 #' numLayers(maps)
 #' numLayers(stck)
 #'
-setGeneric("numLayers", function(x) {
-  standardGeneric("numLayers")
-})
+setGeneric("numLayers", function(x) standardGeneric("numLayers"))
 
 #' @export
 #' @rdname numLayers
@@ -45,15 +43,13 @@ setMethod(
   "numLayers",
   signature = "list",
   definition = function(x) {
-    y <- sum(sapply(x, function(x) {
-      if (is(x, "RasterStack")) {
-        x <- numLayers(x)
+    sum(unlist(lapply(x, function(x) {
+      if (inherits(x, "RasterStack")) {
+        numLayers(x)
       } else {
-        x <- 1L
+        1L
       }
-      return(x)
-    }))
-    return(y)
+    })))
 })
 
 #' @rdname numLayers
@@ -181,9 +177,9 @@ setMethod(
   "layerNames",
   signature = ".quickPlot",
   definition = function(object) {
-    return(sapply(object@quickPlotGrobList, function(x) {
-      sapply(x, function(y) y@plotName)[[1]]
-    }))
+    return(unlist(lapply(object@quickPlotGrobList, function(x) {
+      unlist(lapply(x, function(y) y@plotName))[[1]]
+    })))
 })
 
 #' @export
@@ -274,9 +270,9 @@ setMethod(
   signature = c(plotObjects = "list", plotArgs = "list"),
   definition = function(plotObjects, plotArgs, whichQuickPlottables, ...) {
 
-    isSpatialObjects <- sapply(plotObjects, function(x) {
-      is(x, "spatialObjects")
-    })
+    isSpatialObjects <- unlist(lapply(plotObjects, function(x) {
+      inherits(x, "spatialObjects")
+    }))
 
     env <- list(...)$env
     suppliedNames <- names(plotObjects)
@@ -291,22 +287,23 @@ setMethod(
       })
     }
 
-    names(plotObjects) <- sapply(objs, function(x)
-      x$objs)
+    names(plotObjects) <- unlist(lapply(objs, function(x)
+      x$objs))
 
     if (!is.null(suppliedNames)) {
-      if (all(sapply(suppliedNames, nzchar, keepNA = TRUE))) {
+      if (all(unlist(lapply(suppliedNames, nzchar, keepNA = TRUE)))) {
         names(plotObjects)[!is.na(suppliedNames)] <- suppliedNames
       }
     }
-    numberLayers <- pmax(1, sapply(plotObjects, numLayers))
+    numberLayers <- pmax(1, unlist(lapply(plotObjects, numLayers)))
 
     lNamesPlotObj <- layerNames(plotObjects)
 
-    isQuickPlot <- sapply(plotObjects, function(x) is(x, ".quickPlot"))
+    isQuickPlot <- unlist(lapply(plotObjects, function(x) inherits(x, ".quickPlot")))
 
     # The second component will test for a 3 dimensional array
-    isStack <- sapply(plotObjects, function(x) is(x, "RasterStack") | isTRUE(dim(x)[3] > 1))
+    isStack <- unlist(lapply(plotObjects, function(x)
+      inherits(x, "RasterStack") | isTRUE(dim(x)[3] > 1)))
 
     # Stacks are like lists in that they are a single object, with many
     # layers.  Plot must treat these as any other layers, except that
@@ -332,7 +329,7 @@ setMethod(
     names(lN)[isQuickPlotLong] <- layerNames(plotObjects)[isQuickPlotLong]
 
     # Create long version of environments
-    lEnvs <- rep(sapply(objs, function(x) x$envs), numberLayers)
+    lEnvs <- rep(unlist(lapply(objs, function(x) x$envs)), numberLayers)
 
     plotArgs <- .makeList(plotArgs, length(lN))
 
@@ -457,7 +454,7 @@ setMethod(
       }
     }
 
-    p$gp <- if (is(p$gp, "gpar")) {
+    p$gp <- if (inherits(p$gp, "gpar")) {
       rep(list(p$gp), n)
     } else {
       if (is.list(p$gp)) {
@@ -465,7 +462,7 @@ setMethod(
       }
     }
 
-    p$gpText <- if (is(p$gpText, "gpar")) {
+    p$gpText <- if (inherits(p$gpText, "gpar")) {
       rep(list(p$gpText), n)
     } else {
       if (is.list(p$gpText)) {
@@ -473,7 +470,7 @@ setMethod(
       }
     }
 
-    p$gpAxis <- if (is(p$gpAxis, "gpar")) {
+    p$gpAxis <- if (inherits(p$gpAxis, "gpar")) {
       rep(list(p$gpAxis), n)
     } else {
       if (is.list(p$gpAxis)) {
@@ -808,7 +805,7 @@ setMethod(
     # if evaluating the parsed text is a character,
     # then this is likely then name we want to keep:
     isChar <- tryCatch(
-      is(eval(elems[[i]], envir = eminus1), "character"),
+      is.character(eval(elems[[i]], envir = eminus1)),
       error = function(x) FALSE
     )
     if (isChar) {
@@ -821,13 +818,13 @@ setMethod(
   deparsedTxt <- deparse(parseTxt)
   sframes <- sys.frames()
   envs <- append(.GlobalEnv, sframes) %>%
-    .[c(TRUE, sapply(sframes, function(x) {
+    .[c(TRUE, unlist(lapply(sframes, function(x) {
       exists(deparsedTxt, envir = x, inherits = FALSE)
-    }))] %>%
+    })))] %>%
     .[[length(.)]]
 
   inGlobal <- identical(envs, .GlobalEnv)
-  if (is(eval(parse(text = deparsedTxt), envir = envs), "environment")) {
+  if (is.environment(eval(parse(text = deparsedTxt), envir = envs))) {
     envs <- eval(parse(text = deparsedTxt), envir = envs)
   } else {
     if (!lastOneDone) elems[[i]] <- parseTxt
@@ -846,12 +843,12 @@ setMethod(
     .quickPlotEnv[[devCur]] <- .parseElems(tmp = tmp, elems = elems, envir = envs)
   }
 
-  if (sapply(elems[[1]], is.numeric)) {
-    return(list(objs = paste0(paste0(sapply(rev(elems), deparse),
+  if (unlist(lapply(elems[[1]], is.numeric))) {
+    return(list(objs = paste0(paste0(unlist(lapply(rev(elems), deparse)),
                                      collapse = "[["), "]]"),
                 envs = envs))
   }
-  return(list(objs = paste(sapply(rev(elems), deparse), collapse = "$"),
+  return(list(objs = paste(unlist(lapply(rev(elems), deparse, backtick = TRUE)), collapse = "$"),
               envs = envs))
 }
 
@@ -880,7 +877,7 @@ setMethod(
   ".parseElems",
   signature = "ANY",
   definition = function(tmp, elems, envir) {
-    eval(parse(text = paste(sapply(rev(elems), deparse), collapse = "$")), envir = envir)
+    eval(parse(text = paste(unlist(lapply(rev(elems), deparse)), collapse = "$")), envir = envir)
 })
 
 ################################################################################
@@ -911,9 +908,9 @@ setMethod(
                          argName = "") {
   scalls <- sys.calls()
   # Extract from the sys.calls only the function "calledFrom"
-  frameCalledFrom <- which(sapply(scalls, function(x) {
+  frameCalledFrom <- which(unlist(lapply(scalls, function(x) {
     grepl(x, pattern = paste0("^", calledFrom, "$"))[1]
-  }))
+  })))
   e <- sys.frame(frameCalledFrom[1])
   eminus1 <- sys.frame(frameCalledFrom - 1)
 
@@ -974,9 +971,9 @@ setMethod("gpar",
 #' @rdname Plot-internal
 #'
 setGeneric(".preparePlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-                                                 quickPlotGrobCounter, subPlots, cols) {
+                                                 quickPlotGrobCounter, subPlots, cols)
   standardGeneric(".preparePlotGrob")
-})
+)
 
 #' @aliases PlotHelpers
 #' @keywords internal
@@ -1151,7 +1148,7 @@ setMethod(
       sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
 
       # clear out all arguments that don't have meaning in plot.default
-      if (is(grobToPlot, "gg")) {
+      if (inherits(grobToPlot, "gg")) {
         print(grobToPlot, vp = subPlots)
         a <- try(seekViewport(subPlots, recording = FALSE))
       } else {
@@ -1180,10 +1177,10 @@ setMethod(
 
         isHist <- FALSE
         if (!is.null(grobToPlot$x)) {
-          if (is(grobToPlot$x, "histogram")) {
+          if (inherits(grobToPlot$x, "histogram")) {
             isHist <- TRUE
             sGrob@plotArgs$ylab <- if (is.null(sGrob@plotArgs$ylab)) "Frequency"
-          } else if (is(grobToPlot$x, "numeric")) {
+          } else if (is.numeric(grobToPlot$x)) {
             if (length(sGrob@plotArgs$axisLabels) == 1) {
               sGrob@plotArgs$ylab <- sGrob@plotArgs$xlab
               sGrob@plotArgs$xlab <- "Index"
@@ -1210,7 +1207,7 @@ setMethod(
         argsPlot1$plotFn <- NULL
 
         # The actuall plot calls for base plotting
-        if (is(grobToPlot, "igraph")) {
+        if (inherits(grobToPlot, "igraph")) {
           # this next is a work around that I can't understand
           if (names(dev.cur()) == "null device") {
             plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
@@ -1352,7 +1349,8 @@ setMethod(
   definition = function(sGrob, subPlots, legendRange,
                         grobToPlot, plotArgs, nColumns, whPlotObj) {
     seekViewport(paste0("outer", subPlots), recording = FALSE)
-    grid.rect(x = 0, width = unit(1 + is(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
+    grid.rect(x = 0,
+              width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
               gp = gpar(fill = "white", col = "white"), just = "left")
     plotArgsByPlot <- lapply(plotArgs, function(x) {
       if (is.list(x)) {
@@ -1392,13 +1390,13 @@ setMethod(
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, arr, newArr) {
 
-    if (!is(sGrob@plotArgs$gpText, "gpar")) {
+    if (!inherits(sGrob@plotArgs$gpText, "gpar")) {
       sGrob@plotArgs$gpText <- as(sGrob@plotArgs$gpText, "gpar")
     }
-    if (!is(sGrob@plotArgs$gpAxis, "gpar")) {
+    if (!inherits(sGrob@plotArgs$gpAxis, "gpar")) {
       sGrob@plotArgs$gpAxis <- as(sGrob@plotArgs$gpAxis, "gpar")
     }
-    if (!is(sGrob@plotArgs$gp, "gpar")) {
+    if (!inherits(sGrob@plotArgs$gp, "gpar")) {
       sGrob@plotArgs$gp <- as(sGrob@plotArgs$gp, "gpar")
     }
 
@@ -1465,7 +1463,7 @@ setMethod(
       }
     } else {
       if (takeFromPlotObj) {
-        if (!is(toPlot, "gg") & !is(toPlot, "igraph")) {
+        if (!inherits(toPlot, "gg") & !inherits(toPlot, "igraph")) {
           grobToPlot <- unlist(toPlot, recursive = FALSE)
         } else {
           grobToPlot <- toPlot
@@ -1566,13 +1564,13 @@ setMethod(
     newNames <- names(newSP@quickPlotGrobList)
     currNames <- names(curr$curr@quickPlotGrobList)
 
-    addToPlots <- sapply(newSP@quickPlotGrobList, function(x) {
+    addToPlots <- unlist(lapply(newSP@quickPlotGrobList, function(x) {
       !is.null(x[[1]]@plotArgs$addTo)
-    })
+    }))
 
-    addToPlotsNames <- sapply(newSP@quickPlotGrobList, function(x) {
+    addToPlotsNames <- unlist(lapply(newSP@quickPlotGrobList, function(x) {
       x[[1]]@plotArgs$addTo
-    }) %>% unlist() # nolint
+    })) %>% unlist() # nolint
 
     if (length(addToPlotsNames) == length(newNames)) {
       overplots <- integer(0)
@@ -1588,14 +1586,14 @@ setMethod(
     }
 
     whichParamsChanged <- lapply(newNames[overplots], function(x) {
-      sapply(names(newSP@quickPlotGrobList[[x]][[1]]@plotArgs), function(y) {
+      unlist(lapply(names(newSP@quickPlotGrobList[[x]][[1]]@plotArgs), function(y) {
         if (!is.null(newSP@quickPlotGrobList[[x]][[1]]@plotArgs[[y]])) {
           !identical(newSP@quickPlotGrobList[[x]][[1]]@plotArgs[[y]],
                      curr$curr@quickPlotGrobList[[x]][[1]]@plotArgs[[y]])
         } else {
           FALSE
         }
-      })
+      }))
     })
     names(whichParamsChanged) <- newNames[overplots]
 
@@ -1928,7 +1926,7 @@ setMethod(
       gp = gp,
       cl = "plotPoint"
     )
-    grid.draw(pntGrob)
+    grid.draw(pntGrob, recording = FALSE)
     return(invisible(pntGrob))
 })
 
@@ -1976,17 +1974,6 @@ setMethod(
     if (length(gpText) == 0)
       gpText <- gpar(col = "black", cex = 0.6)
 
-    rastGrob <- gTree(
-      grobToPlot = grobToPlot, pr = pr, col = col,
-      children = gList(
-        rasterGrob(
-          as.raster(grobToPlot),
-          interpolate = FALSE,
-          name = "raster"
-        )),
-      gp = gp, cl = "plotRast")
-    grid.draw(rastGrob)
-
     rastGrob2 <- gTree(
       grobToPlot = grobToPlot, pr = pr, col = col,
       children = gList(
@@ -2002,7 +1989,7 @@ setMethod(
           } else {
             colForLegend <- col[(maxcol):mincol]
           }
-          rasterGrob(#vp = vp[[1]][[2]][[paste0("outer",name)]],
+          rasterGrob(
             as.raster(colForLegend),
             x = 1.04, y = 0.5,
             height = 0.5, width = 0.03,
@@ -2048,9 +2035,9 @@ setMethod(
     )
 
     seekViewport(paste0("outer", name), recording = FALSE)
-    grid.draw(rastGrob2)
+    grid.draw(rastGrob2, recording = FALSE)
 
-    return(invisible(rastGrob))
+    return(invisible())
 })
 
 ################################################################################
@@ -2153,7 +2140,7 @@ setMethod(
     ),
     gp = gp,
     cl = "plotPoly")
-    grid.draw(polyGrob)
+    grid.draw(polyGrob, recording = FALSE)
     return(invisible(polyGrob))
 })
 
@@ -2240,7 +2227,7 @@ setMethod(
       cl = "plotLine")
     }
 
-    grid.draw(lineGrob)
+    grid.draw(lineGrob, recording = FALSE)
     return(invisible(lineGrob))
 })
 

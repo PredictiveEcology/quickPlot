@@ -9,7 +9,7 @@ test_that("Plotting types without visual checking works", {
   if (interactive()) {
     clearPlot()
 
-   expect_silent(Plot(sp1))
+    expect_silent(Plot(sp1))
     a <- .getQuickPlot(paste0("quickPlot", dev.cur()))
     expect_true(length(a$isBaseLayer) == 1)
     expect_true(length(a$curr@quickPlotGrobList) == 1)

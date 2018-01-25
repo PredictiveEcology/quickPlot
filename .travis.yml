@@ -22,6 +22,8 @@ matrix:
           - libproj-dev
     r_binary_packages:
       - covr
+    r_packages:
+      - devtools
     r_github_packages:
       - jimhester/lintr
     after_success:
@@ -35,8 +37,10 @@ matrix:
         packages:
           - libgdal1-dev
           - libproj-dev
+    r_packages:
+    - devtools
   - os: osx
-    osx_image: xcode8.2
+    osx_image: xcode9.2
     latex: false
     r_build_args: '--no-build-vignettes'
     r_check_args: '--as-cran --ignore-vignettes --no-examples'
