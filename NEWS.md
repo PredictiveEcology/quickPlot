@@ -1,8 +1,9 @@
 Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
-version 0.1.2.9000
+version 0.1.3
 ==================
 * minor bug fix for when quickPlot::Plot is called inside a custom function called "Plot"
+* reworked internal approach to determine object name and object environments
 
 version 0.1.2
 =============
