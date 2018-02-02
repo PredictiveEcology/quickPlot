@@ -983,6 +983,7 @@ setMethod(
   signature = c("griddedClasses", ".quickPlotGrob"),
   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                         quickPlotGrobCounter, subPlots, cols) {
+
     # Rasters may be zoomed into and subsampled and have unique legend
     #            if (sGrob@plotArgs$new)
     pR <- .prepareRaster(grobToPlot, sGrob@plotArgs$zoomExtent,
@@ -1265,7 +1266,9 @@ setMethod(
       if (is.null(legendText)) {
         if (is.null(sGrob@plotArgs$legendTxt)) {
           if (any(raster::is.factor(grobToPlot))) {
-            sGrob@plotArgs$legendTxt <- raster::levels(grobToPlot)[[1]]
+            if (all(grobToPlot[]%%1==0)) {
+              sGrob@plotArgs$legendTxt <- raster::levels(grobToPlot)[[1]]
+            }
           }
         }
       } else {

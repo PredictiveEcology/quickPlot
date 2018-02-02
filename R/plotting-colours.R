@@ -86,9 +86,11 @@ setReplaceMethod(
       return(object)
     }
     if (raster::is.factor(object)) {
-      if (n != NROW(object@data@attributes[[1]])) {
-        message("Number of colors not equal number of values: interpolating")
-        n <- NROW(object@data@attributes[[1]])
+      if (all(object[]%%1==0)) { # some factor rasters are actually real number -- makes no sense
+        if (n != NROW(object@data@attributes[[1]])) {
+          message("Number of colors not equal number of values: interpolating")
+          n <- NROW(object@data@attributes[[1]])
+        }
       }
     }
     rcolbrewInfo <- RColorBrewer::brewer.pal.info
@@ -101,10 +103,12 @@ setReplaceMethod(
       value <- RColorBrewer::brewer.pal(ntmp, value)
     }
     if (raster::is.factor(object)) {
-      if (n != NROW(object@data@attributes[[1]])) {
-        object@legend@colortable <- pal(n)
-      } else {
-        object@legend@colortable <- value
+      if (all(object[]%%1==0)) { # some factor rasters are actually real number -- makes no sense
+        if (n != NROW(object@data@attributes[[1]])) {
+          object@legend@colortable <- pal(n)
+        } else {
+          object@legend@colortable <- value
+        }
       }
     } else {
       pal <- colorRampPalette(value, alpha = TRUE, ...)
@@ -121,11 +125,22 @@ setReplaceMethod(
   "setColors",
   signature("RasterLayer", "missing", "character"),
   function(object, ..., value) {
-    if (!raster::is.factor(object)) {
+    isFac <- if (!raster::is.factor(object)) {
+      FALSE
+    } else {
+      if (all(object[]%%1==0)) { # some factor rasters are actually real number -- makes no sense
+        TRUE
+      } else {
+        FALSE
+      }
+    }
+
+    if (!isFac) {
       n <- round(maxValue(object) - minValue(object)) + 1
     } else {
       n <- length(value)
     }
+
     setColors(object, n = n) <- value
     if (!is.character(object@legend@colortable)) stop("setColors needs color character values")
     return(object)
@@ -265,7 +280,7 @@ setMethod(
   definition = function(grobToPlot, zoomExtent, maxpixels, legendRange,
                         cols, na.color, zero.color, skipSample = TRUE) { # nolint
     zoom <- zoomExtent
-    isFac <- any(raster::is.factor(grobToPlot))
+    isFac <- any(raster::is.factor(grobToPlot)) & all(grobToPlot[]%%1==0)
     # It is 5x faster to access the min and max from the Raster than to
     # calculate it, but it is also often wrong... it is only metadata
     # on the raster, so it is possible that it is incorrect.

@@ -256,7 +256,6 @@ The naming convention used is: \code{RasterStackName$layerName}, i.e,
 library(sp)
 library(raster)
 library(RColorBrewer)
-library(rgdal)
 
 files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
 maps <- lapply(files, raster)
