@@ -43,10 +43,10 @@
   legendText, vps, nonPlotArgs)
 
 .refreshGrob(sGrob, subPlots, legendRange, grobToPlot, plotArgs, nColumns,
-  whPlotObj)
+  nRows, whPlotObj)
 
 \S4method{.refreshGrob}{.quickPlotGrob}(sGrob, subPlots, legendRange,
-  grobToPlot, plotArgs, nColumns, whPlotObj)
+  grobToPlot, plotArgs, nColumns, nRows, whPlotObj)
 
 .updateGrobGPTextAxis(sGrob, arr, newArr)
 
@@ -111,6 +111,8 @@ the data bounds contained within the \code{grobToPlot}.}
 the specific grob types, e.g., rasterGrob, polygonGrob, etc.}
 
 \item{nColumns}{Numeric, length 1, indicating how many columns are in the device arrangement}
+
+\item{nRows}{Numeric, length 1, indicating how many rows are in the device arrangement}
 
 \item{whPlotObj}{Numeric. Length 1, indicating which of the currently objects passed into
 \code{Plot} is currently being plotted, i.e., a counter of sorts.}

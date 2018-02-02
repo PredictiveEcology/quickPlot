@@ -10,7 +10,7 @@
 Plot(..., new = FALSE, addTo = NULL, gp = gpar(), gpText = gpar(),
   gpAxis = gpar(), axes = FALSE, speedup = 1, size = 5, cols = NULL,
   col = NULL, zoomExtent = NULL, visualSqueeze = NULL, legend = TRUE,
-  legendRange = NULL, legendText = NULL, pch = 19, title = TRUE,
+  legendRange = NULL, legendText = NULL, pch = 19, title = NULL,
   na.color = "#FFFFFF00", zero.color = NULL, length = NULL, arr = NULL,
   plotFn = "plot")
 
@@ -18,7 +18,7 @@ Plot(..., new = FALSE, addTo = NULL, gp = gpar(), gpText = gpar(),
   gpText = gpar(), gpAxis = gpar(), axes = FALSE, speedup = 1,
   size = 5, cols = NULL, col = NULL, zoomExtent = NULL,
   visualSqueeze = NULL, legend = TRUE, legendRange = NULL,
-  legendText = NULL, pch = 19, title = TRUE, na.color = "#FFFFFF00",
+  legendText = NULL, pch = 19, title = NULL, na.color = "#FFFFFF00",
   zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot")
 
 rePlot(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ...)
@@ -101,7 +101,9 @@ this is mostly useful for discrete-valued rasters.}
 indicates whether to print the object name as the title
 above the plot. If a character string, it will print this
 above the plot. NOTE: the object name is used with \code{addTo},
-not the title.}
+not the title. Default NULL, which means print the object
+name as title, if no other already exists on the plot, in
+which case, keep the previous title.}
 
 \item{na.color}{Character string indicating the color for \code{NA} values.
 Default transparent.}
