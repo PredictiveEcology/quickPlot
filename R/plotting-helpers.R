@@ -983,6 +983,7 @@ setMethod(
   signature = c("griddedClasses", ".quickPlotGrob"),
   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                         quickPlotGrobCounter, subPlots, cols) {
+
     # Rasters may be zoomed into and subsampled and have unique legend
     #            if (sGrob@plotArgs$new)
     pR <- .prepareRaster(grobToPlot, sGrob@plotArgs$zoomExtent,
@@ -1265,7 +1266,9 @@ setMethod(
       if (is.null(legendText)) {
         if (is.null(sGrob@plotArgs$legendTxt)) {
           if (any(raster::is.factor(grobToPlot))) {
-            sGrob@plotArgs$legendTxt <- raster::levels(grobToPlot)[[1]]
+            if (all(grobToPlot[]%%1==0)) {
+              sGrob@plotArgs$legendTxt <- raster::levels(grobToPlot)[[1]]
+            }
           }
         }
       } else {
@@ -1310,7 +1313,8 @@ setMethod(
       }
     } #gg vs histogram vs spatialObject
     # print Title on plot
-    if (!identical(FALSE, sGrob@plotArgs$title) & (isBaseSubPlot & (isNewPlot | isReplot))) {
+    if (is.null(sGrob@plotArgs$title)) sGrob@plotArgs$title <- TRUE
+    if (!identical(FALSE, sGrob@plotArgs$title) | (isBaseSubPlot & (isNewPlot | isReplot))) {
       plotName <- if (isTRUE(sGrob@plotArgs$title)) sGrob@plotName else sGrob@plotArgs$title
       a <- try(seekViewport(paste0("outer", subPlots), recording = FALSE))
       suppressWarnings(grid.text(plotName, name = "title",
@@ -1325,6 +1329,7 @@ setMethod(
 })
 
 #' @param nColumns Numeric, length 1, indicating how many columns are in the device arrangement
+#' @param nRows Numeric, length 1, indicating how many rows are in the device arrangement
 #' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed into
 #'                  \code{Plot} is currently being plotted, i.e., a counter of sorts.
 #'
@@ -1336,7 +1341,7 @@ setMethod(
 #' @rdname Plot-internal
 #'
 setGeneric(".refreshGrob", function(sGrob, subPlots, legendRange,
-                                    grobToPlot, plotArgs, nColumns, whPlotObj) {
+                                    grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
   standardGeneric(".refreshGrob")
 })
 
@@ -1347,9 +1352,10 @@ setMethod(
   ".refreshGrob",
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, subPlots, legendRange,
-                        grobToPlot, plotArgs, nColumns, whPlotObj) {
+                        grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
     seekViewport(paste0("outer", subPlots), recording = FALSE)
-    grid.rect(x = 0,
+    needsNewTitle <- sGrob@plotArgs$new != FALSE
+    grid.rect(x = 0, height = unit(1 + needsNewTitle * inherits(grobToPlot, "Raster") * 0.20 / (nRows / 2), "npc"),
               width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
               gp = gpar(fill = "white", col = "white"), just = "left")
     plotArgsByPlot <- lapply(plotArgs, function(x) {
@@ -1586,7 +1592,8 @@ setMethod(
     }
 
     whichParamsChanged <- lapply(newNames[overplots], function(x) {
-      unlist(lapply(names(newSP@quickPlotGrobList[[x]][[1]]@plotArgs), function(y) {
+      plotArgsNames <- names(newSP@quickPlotGrobList[[x]][[1]]@plotArgs)
+      aa <- unlist(lapply(plotArgsNames, function(y) {
         if (!is.null(newSP@quickPlotGrobList[[x]][[1]]@plotArgs[[y]])) {
           !identical(newSP@quickPlotGrobList[[x]][[1]]@plotArgs[[y]],
                      curr$curr@quickPlotGrobList[[x]][[1]]@plotArgs[[y]])
@@ -1594,6 +1601,8 @@ setMethod(
           FALSE
         }
       }))
+      names(aa) <- plotArgsNames
+      aa
     })
     names(whichParamsChanged) <- newNames[overplots]
 

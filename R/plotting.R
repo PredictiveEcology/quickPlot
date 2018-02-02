@@ -204,7 +204,9 @@ if (getRversion() >= "3.1.0") {
 #'              indicates whether to print the object name as the title
 #'              above the plot. If a character string, it will print this
 #'              above the plot. NOTE: the object name is used with \code{addTo},
-#'              not the title.
+#'              not the title. Default NULL, which means print the object
+#'              name as title, if no other already exists on the plot, in
+#'              which case, keep the previous title.
 #'
 #' @param length Numeric. Optional length, in inches, of the arrow head.
 #'
@@ -252,7 +254,7 @@ setGeneric(
            gp = gpar(), gpText = gpar(), gpAxis = gpar(), axes = FALSE,
            speedup = 1, size = 5, cols = NULL, col = NULL, zoomExtent = NULL,
            visualSqueeze = NULL, legend = TRUE, legendRange = NULL,
-           legendText = NULL, pch = 19, title = TRUE, na.color = "#FFFFFF00", # nolint
+           legendText = NULL, pch = 19, title = NULL, na.color = "#FFFFFF00", # nolint
            zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot") { # nolint
     standardGeneric("Plot")
   })
@@ -608,6 +610,7 @@ setMethod(
             sGrob <- .refreshGrob(sGrob, subPlots, legendRange,
                                   grobToPlot, plotArgs = sGrob@plotArgs,
                                   nColumns = updated$curr@arr@columns,
+                                  nRows = updated$curr@arr@rows,
                                   whLayerFromPO)
             wipe <- TRUE # can't overplot a histogram
           } else {

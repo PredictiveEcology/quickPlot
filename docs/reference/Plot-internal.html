@@ -106,11 +106,11 @@
   <span class='no'>legendText</span>, <span class='no'>vps</span>, <span class='no'>nonPlotArgs</span>)
 
 <span class='fu'>.refreshGrob</span>(<span class='no'>sGrob</span>, <span class='no'>subPlots</span>, <span class='no'>legendRange</span>, <span class='no'>grobToPlot</span>, <span class='no'>plotArgs</span>, <span class='no'>nColumns</span>,
-  <span class='no'>whPlotObj</span>)
+  <span class='no'>nRows</span>, <span class='no'>whPlotObj</span>)
 
 <span class='co'># S4 method for .quickPlotGrob</span>
 <span class='fu'>.refreshGrob</span>(<span class='no'>sGrob</span>, <span class='no'>subPlots</span>, <span class='no'>legendRange</span>,
-  <span class='no'>grobToPlot</span>, <span class='no'>plotArgs</span>, <span class='no'>nColumns</span>, <span class='no'>whPlotObj</span>)
+  <span class='no'>grobToPlot</span>, <span class='no'>plotArgs</span>, <span class='no'>nColumns</span>, <span class='no'>nRows</span>, <span class='no'>whPlotObj</span>)
 
 <span class='fu'>.updateGrobGPTextAxis</span>(<span class='no'>sGrob</span>, <span class='no'>arr</span>, <span class='no'>newArr</span>)
 
@@ -172,6 +172,7 @@ but are passed along with <code>.quickPlottables</code>.</p></dd>
       <dd><p>Numeric vector giving values that, representing the lower
 and upper bounds of a legend (i.e., <code>1:10</code> or
 <code>c(1,10)</code> will give same result) that will override
+<<<<<<< HEAD
 the data bounds contained within the <code>grobToPlot</code>.</p></dd>
       <dt>plotArgs</dt>
       <dd><p>list. Any arguments that the the grid package can accept for
@@ -182,6 +183,29 @@ the specific grob types, e.g., rasterGrob, polygonGrob, etc.</p></dd>
       <dd><p>Numeric. Length 1, indicating which of the currently objects passed into
 <code>Plot</code> is currently being plotted, i.e., a counter of sorts.</p></dd>
     </dl>
+=======
+the data bounds contained within the <code>grobToPlot</code>.</p></td>
+    </tr>
+    <tr>
+      <th>plotArgs</th>
+      <td><p>list. Any arguments that the the grid package can accept for
+the specific grob types, e.g., rasterGrob, polygonGrob, etc.</p></td>
+    </tr>
+    <tr>
+      <th>nColumns</th>
+      <td><p>Numeric, length 1, indicating how many columns are in the device arrangement</p></td>
+    </tr>
+    <tr>
+      <th>nRows</th>
+      <td><p>Numeric, length 1, indicating how many rows are in the device arrangement</p></td>
+    </tr>
+    <tr>
+      <th>whPlotObj</th>
+      <td><p>Numeric. Length 1, indicating which of the currently objects passed into
+<code>Plot</code> is currently being plotted, i.e., a counter of sorts.</p></td>
+    </tr>
+    </table>
+>>>>>>> development
     
 
   </div>

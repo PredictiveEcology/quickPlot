@@ -106,7 +106,8 @@ trajectories of agents.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>sp</span>)
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>library</span>(<span class='no'>sp</span>)
 <span class='fu'>library</span>(<span class='no'>raster</span>)
 
 <span class='co'># Make 2 objects</span>
@@ -117,7 +118,13 @@ trajectories of agents.</p>
 
 <span class='no'>caribouTraj</span> <span class='kw'>&lt;-</span> <span class='fu'>makeLines</span>(<span class='no'>caribou1</span>, <span class='no'>caribou2</span>)
 
+<<<<<<< HEAD
 <span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>caribouTraj</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)</div><img src='makeLines-3.png' alt='' width='540' height='400' /><div class='input'>
+=======
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
+<span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>caribouTraj</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
+
+>>>>>>> development
 <span class='co'># or  to a previous Plot</span>
 <span class='no'>files</span> <span class='kw'>&lt;-</span> <span class='fu'>dir</span>(<span class='fu'>system.file</span>(<span class='st'>"maps"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"quickPlot"</span>), <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"tif"</span>)
 <span class='no'>maps</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='no'>files</span>, <span class='no'>raster</span>)
@@ -125,8 +132,17 @@ trajectories of agents.</p>
 
 <span class='no'>caribouTraj</span> <span class='kw'>&lt;-</span> <span class='fu'>makeLines</span>(<span class='no'>caribou1</span>, <span class='no'>caribou2</span>)
 
+<<<<<<< HEAD
 <span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>maps</span>$<span class='no'>DEM</span>)</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>caribouTraj</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"maps$DEM"</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)</div><img src='makeLines-7.png' alt='' width='540' height='400' /><div class='input'>
 <span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><img src='makeLines-9.png' alt='' width='540' height='400' /></pre>
+=======
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
+<span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>maps</span>$<span class='no'>DEM</span>)
+<span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>caribouTraj</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"maps$DEM"</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
+
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
+<span class='co'># }</span></pre>
+>>>>>>> development
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

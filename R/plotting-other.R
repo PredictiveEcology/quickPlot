@@ -196,7 +196,7 @@ clickValues <- function(n = 1) {
       }))
     }
   }
-  if (any(raster::is.factor(ras1))) {
+  if (any(raster::is.factor(ras1)) & all(ras1[]%%1==0)) {
     for (i in which(raster::is.factor(ras1)))
     coords$coords$value <- factorValues(ras1[[i]], coords$coords$value)
   }
