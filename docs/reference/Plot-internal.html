@@ -136,11 +136,11 @@
   <span class='no'>legendText</span>, <span class='no'>vps</span>, <span class='no'>nonPlotArgs</span>)
 
 <span class='fu'>.refreshGrob</span>(<span class='no'>sGrob</span>, <span class='no'>subPlots</span>, <span class='no'>legendRange</span>, <span class='no'>grobToPlot</span>, <span class='no'>plotArgs</span>, <span class='no'>nColumns</span>,
-  <span class='no'>whPlotObj</span>)
+  <span class='no'>nRows</span>, <span class='no'>whPlotObj</span>)
 
 <span class='co'># S4 method for .quickPlotGrob</span>
 <span class='fu'>.refreshGrob</span>(<span class='no'>sGrob</span>, <span class='no'>subPlots</span>, <span class='no'>legendRange</span>,
-  <span class='no'>grobToPlot</span>, <span class='no'>plotArgs</span>, <span class='no'>nColumns</span>, <span class='no'>whPlotObj</span>)
+  <span class='no'>grobToPlot</span>, <span class='no'>plotArgs</span>, <span class='no'>nColumns</span>, <span class='no'>nRows</span>, <span class='no'>whPlotObj</span>)
 
 <span class='fu'>.updateGrobGPTextAxis</span>(<span class='no'>sGrob</span>, <span class='no'>arr</span>, <span class='no'>newArr</span>)
 
@@ -252,6 +252,10 @@ the specific grob types, e.g., rasterGrob, polygonGrob, etc.</p></td>
     <tr>
       <th>nColumns</th>
       <td><p>Numeric, length 1, indicating how many columns are in the device arrangement</p></td>
+    </tr>
+    <tr>
+      <th>nRows</th>
+      <td><p>Numeric, length 1, indicating how many rows are in the device arrangement</p></td>
     </tr>
     <tr>
       <th>whPlotObj</th>

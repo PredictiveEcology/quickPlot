@@ -58,6 +58,24 @@ clearPlot()
 Plot(landscape, caribou, maps$DEM, spP, axes = TRUE,
      gp = gpar(cex = 0.5), visualSqueeze = 0.65)
 
+## ----ggplot, eval=TRUE, echo=TRUE, cache=FALSE, fig.height=2-------------
+library(ggplot2)
+
+ggObj <- qplot(stats::rnorm(1e3), binwidth = 0.1)
+clearPlot()
+Plot(caribou, axes = "L", new = TRUE) 
+Plot(ggObj) 
+
+## ----base-objects, eval=FALSE, echo=TRUE, cache=FALSE, fig.height=2------
+#  baseObj <- rnorm(1e3)
+#  baseObj2 <- baseObj * 1.2 + rnorm(1e3)
+#  clearPlot()
+#  Plot(baseObj, axes = "L", ylab = "Something meaningful")
+#  Plot(baseObj, baseObj2, addTo = "scatterplot", axes = TRUE)
+#  newPoints <- rnorm(10)
+#  newPoints2 <- newPoints * 1.2 + rnorm(10)
+#  Plot(newPoints, newPoints2, addTo = "scatterplot", col = "red")
+
 ## ----set_colours, eval=TRUE, echo=TRUE, fig.height=2---------------------
 library(RColorBrewer)
 
@@ -149,4 +167,25 @@ Plot(caribou)
 #  clearPlot()
 #  Plot(landscape)
 #  clickExtent() # click at two locations on the Plot device
+
+## ----rePlot, eval=FALSE, echo=TRUE, cache=FALSE--------------------------
+#  rePlot()
+#  rePlot(4)
+#  rePlot(visualSqueeze = 1, axes = FALSE)
+#  rePlot(visualSqueeze = 0.7, axes = FALSE, cols = "Reds")
+
+## ----Plot a .quickPlot object, eval=FALSE, echo=TRUE, cache=FALSE--------
+#  clearPlot()
+#  plots <- Plot(landscape)
+#  
+#  # change values
+#  landscape$forestCover[landscape$habitatQuality > 0.9] <- 0
+#  
+#  Plot(plots)
+#  # same as:
+#  rePlot()
+#  
+#  # but can be combined with other objects
+#  Plot(caribou, plots)
+#  Plot(caribou, plots, sl)
 
