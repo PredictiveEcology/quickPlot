@@ -65,6 +65,8 @@ test_that("setColors with an NA", {
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
 
   nLevels <- 6
+  ncol <- 3
+  nrow <- 4
   N <- ncol * nrow
   set.seed(24334)
   levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
