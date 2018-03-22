@@ -8,7 +8,11 @@
 \usage{
 thin(x, tolerance, returnMatrix, minCoordsToThin)
 
+<<<<<<< HEAD
 \method{thin}{SpatialPolygons}(x, tolerance = 1e-04, returnMatrix = FALSE,
+=======
+\method{thin}{SpatialPolygons}(x, tolerance = NULL, returnMatrix = FALSE,
+>>>>>>> development
   minCoordsToThin = 0)
 
 \method{thin}{default}(x, tolerance, returnMatrix, minCoordsToThin)
@@ -31,8 +35,14 @@ a SpatialPolygon)}
 \description{
 For visualizing, it is sometimes useful to remove points in Spatial* objects.
 This will change the geometry, so it is not recommended for computation. This
+<<<<<<< HEAD
 is similar to rgeos::gSimplify and st_simplify, but faster than both (see examples)
 for large shapefiles. \code{thin} will not attempt to preserve topology.
+=======
+is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
+for large shapefiles, particularly if \code{returnMatrix} is \code{TRUE}.
+\code{thin} will not attempt to preserve topology.
+>>>>>>> development
 It is strictly for making smaller polygons for the purpose (likely)
 of visualizing more quickly.
 }
@@ -76,6 +86,7 @@ crsObj <- CRS(paste0("+proj=tmerc +lat_0=0 +lon_0=-115 +k=0.9992 +x_0=500000 +y_
   crs(a) <- crsObj
 # end of making random polygon
 
+<<<<<<< HEAD
 plot(a)
 NROW(a@polygons[[1]]@Polygons[[1]]@coords)
 aThin <- thin(a, 200)
@@ -96,6 +107,30 @@ if (require("sf")) {
   NROW(aSF2@polygons[[1]]@Polygons[[1]]@coords) # fewer
   plot(aSF)
 }
+=======
+clearPlot()
+Plot(a)
+NROW(a@polygons[[1]]@Polygons[[1]]@coords)
+aThin <- thin(a, 200)
+NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
+Plot(aThin) # looks similar
+
+# compare -- if you have rgeos
+# if (require("rgeos")) {
+#   aSimplify <- gSimplify(a, tol = 200)
+#   NROW(aSimplify@polygons[[1]]@Polygons[[1]]@coords) # fewer
+#  Plot(aSimplify)
+# }
+
+# compare -- if you have sf
+# if (require("sf")) {
+#   aSF <- st_simplify(st_as_sf(a), dTolerance = 200)
+#   # convert to Spatial to see how many coordinates
+#   aSF2 <- as(aSF, "Spatial")
+#   NROW(aSF2@polygons[[1]]@Polygons[[1]]@coords) # fewer
+#   Plot(aSF)
+# }
+>>>>>>> development
 
 # thin is faster than rgeos::gSimplify and sf::st_simplify on large shapefiles
 \dontrun{ # this involves downloading a 9 MB file
@@ -114,6 +149,7 @@ if (require("sf")) {
   download.file(albertaEcozoneURL, destfile = zipFilename)
   unzip(zipFilename, junkpaths = TRUE)
   a <- raster::shapefile(albertaEcozoneFilename)
+<<<<<<< HEAD
   if (requireNamespace("sf")) {
     aSF <- st_as_sf(a)
   }
@@ -128,5 +164,26 @@ if (require("sf")) {
     gSimplify(a, 10   )               4020.349 4211.414 8881.535     6   b
     st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
   }
+=======
+
+  # compare -- if you have rgeos and sf package
+  # if (require("sf")) {
+  #   aSF <- st_as_sf(a)
+  # }
+  # if (require("rgeos") && require("sf")) {
+    # thin at 10m
+    microbenchmark::microbenchmark(times = 20
+                                   , thin(a, 10),
+                                   , thin(a, 10, returnMatrix = TRUE) # much faster
+   #                               , gSimplify(a, 10),
+   #                               , st_simplify(aSF, dTolerance = 10))
+                                  )
+   # Unit: milliseconds
+   #                              expr      min   median      max neval cld
+   # thin(a, 10)                        989.812 1266.393 1479.879     6  a
+   # gSimplify(a, 10   )               4020.349 4211.414 8881.535     6   b
+   # st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
+  #}
+>>>>>>> development
 }
 }

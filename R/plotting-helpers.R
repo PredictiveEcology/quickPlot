@@ -1,6 +1,6 @@
 ### deal with spurious data.table warnings
 if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("."))
+  utils::globalVariables(c(".", ".N"))
 }
 
 ################################################################################
@@ -2071,7 +2071,7 @@ setMethod(
 
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
-                  returnMatrix = TRUE, minCoordsToThin = 1e3)
+                             returnMatrix = TRUE, minCoordsToThin = 1e3)
 
     gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
     polyGrob <- gTree(children = gList(
@@ -2448,8 +2448,9 @@ sp2sl <- function(sp1, from) {
 #'
 #' For visualizing, it is sometimes useful to remove points in Spatial* objects.
 #' This will change the geometry, so it is not recommended for computation. This
-#' is similar to rgeos::gSimplify and st_simplify, but faster than both (see examples)
-#' for large shapefiles. \code{thin} will not attempt to preserve topology.
+#' is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
+#' for large shapefiles, particularly if \code{returnMatrix} is \code{TRUE}.
+#' \code{thin} will not attempt to preserve topology.
 #' It is strictly for making smaller polygons for the purpose (likely)
 #' of visualizing more quickly.
 #'
@@ -2464,8 +2465,9 @@ sp2sl <- function(sp1, from) {
 #'
 #' @inheritParams fastshp::thin
 #' @rdname thin
-#' @importFrom data.table set data.table
-#' @importFrom sp Polygon Polygons SpatialPolygons
+#' @importFrom data.table set data.table setDT
+#' @importFrom sp Polygon Polygons SpatialPolygons CRS
+#' @importFrom raster xmax xmin
 #' @export
 #' @examples
 #' library(raster)
@@ -2507,26 +2509,28 @@ sp2sl <- function(sp1, from) {
 #'   crs(a) <- crsObj
 #' # end of making random polygon
 #'
-#' plot(a)
+#' clearPlot()
+#' Plot(a)
 #' NROW(a@polygons[[1]]@Polygons[[1]]@coords)
 #' aThin <- thin(a, 200)
 #' NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#' plot(aThin) # looks similar
+#' Plot(aThin) # looks similar
 #'
-#' # compare
-#' if (require("rgeos")) {
-#'   aSimplify <- gSimplify(a, tol = 200)
-#'   NROW(aSimplify@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#'   plot(aSimplify)
-#' }
+#' # compare -- if you have rgeos
+#' # if (require("rgeos")) {
+#' #   aSimplify <- gSimplify(a, tol = 200)
+#' #   NROW(aSimplify@polygons[[1]]@Polygons[[1]]@coords) # fewer
+#' #  Plot(aSimplify)
+#' # }
 #'
-#' if (require("sf")) {
-#'   aSF <- st_simplify(st_as_sf(a), dTolerance = 200)
-#'   # convert to Spatial to see how many coordinates
-#'   aSF2 <- as(aSF, "Spatial")
-#'   NROW(aSF2@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#'   plot(aSF)
-#' }
+#' # compare -- if you have sf
+#' # if (require("sf")) {
+#' #   aSF <- st_simplify(st_as_sf(a), dTolerance = 200)
+#' #   # convert to Spatial to see how many coordinates
+#' #   aSF2 <- as(aSF, "Spatial")
+#' #   NROW(aSF2@polygons[[1]]@Polygons[[1]]@coords) # fewer
+#' #   Plot(aSF)
+#' # }
 #'
 #' # thin is faster than rgeos::gSimplify and sf::st_simplify on large shapefiles
 #' \dontrun{ # this involves downloading a 9 MB file
@@ -2545,20 +2549,25 @@ sp2sl <- function(sp1, from) {
 #'   download.file(albertaEcozoneURL, destfile = zipFilename)
 #'   unzip(zipFilename, junkpaths = TRUE)
 #'   a <- raster::shapefile(albertaEcozoneFilename)
-#'   if (requireNamespace("sf")) {
-#'     aSF <- st_as_sf(a)
-#'   }
-#'   if (require("rgeos") && require("sf")) {
+#'
+#'   # compare -- if you have rgeos and sf package
+#'   # if (require("sf")) {
+#'   #   aSF <- st_as_sf(a)
+#'   # }
+#'   # if (require("rgeos") && require("sf")) {
 #'     # thin at 10m
-#'     microbenchmark::microbenchmark(times = 6, thin(a, 10),
-#'                                    gSimplify(a, 10),
-#'                                    st_simplify(aSF, dTolerance = 10))
-#'     Unit: milliseconds
-#'                                  expr      min   median      max neval cld
-#'     thin(a, 10)                        989.812 1266.393 1479.879     6  a
-#'     gSimplify(a, 10   )               4020.349 4211.414 8881.535     6   b
-#'     st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
-#'   }
+#'     microbenchmark::microbenchmark(times = 20
+#'                                    , thin(a, 10),
+#'                                    , thin(a, 10, returnMatrix = TRUE) # much faster
+#'    #                               , gSimplify(a, 10),
+#'    #                               , st_simplify(aSF, dTolerance = 10))
+#'                                   )
+#'    # Unit: milliseconds
+#'    #                              expr      min   median      max neval cld
+#'    # thin(a, 10)                        989.812 1266.393 1479.879     6  a
+#'    # gSimplify(a, 10   )               4020.349 4211.414 8881.535     6   b
+#'    # st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
+#'   #}
 #' }
 thin <- function(x, tolerance, returnMatrix, minCoordsToThin) {
   UseMethod("thin")
@@ -2566,78 +2575,41 @@ thin <- function(x, tolerance, returnMatrix, minCoordsToThin) {
 
 #' @rdname thin
 #' @export
-thin.SpatialPolygons <- function(x, tolerance = 0.0001, returnMatrix = FALSE, minCoordsToThin = 0) {
+thin.SpatialPolygons <- function(x, tolerance = NULL, returnMatrix = FALSE, minCoordsToThin = 0) {
 
   # For speed of plotting
-  # xy <- lapply(1:length(x), function(i) {
-  #   lapply(x@polygons[[i]]@Polygons, function(j) {
-  #     j@coords
-  #   })
-  # })
-  #
-  # hole <- tryCatch(lapply(1:length(x), function(xx) {
-  #   lapply(x@polygons[[xx]]@Polygons, function(yy)
-  #     yy@hole)
-  # }) %>% unlist(), error = function(xx) FALSE)
-  # ord <- x@plotOrder
-  #
-  # ordInner <- lapply(1:length(x), function(xx) {
-  #   x@polygons[[xx]]@plotOrder
-  # })
-  #
-  # xyOrd.l <- lapply(ord, function(i) { # nolint
-  #   xy[[i]][ordInner[[i]]]
-  # })
-  #
-  # idLength <- lapply(xyOrd.l, function(i) {
-  #   lapply(i, length)
-  # }) %>%
-  #   unlist() %>%
-  #   `/`(., 2) %>%
-  #   data.table(V1 = .)
-  #
-  # numPolygons <- unlist(length(xyOrd.l))
-  # numPolygon <- unlist(lapply(xyOrd.l, length))
-  #
-  #
-  # xyOrd <- do.call(rbind, lapply(xyOrd.l, function(i) {
-  #   do.call(rbind, i)
-  # }))
-
   xyOrd <- .fortify(x, matchFortify = FALSE,
-                    simple = returnMatrix) # a list out, hole, idLength
+                    simple = returnMatrix) # a list: out, hole, idLength
 
+  if (is.null(tolerance)) {
+    tolerance <- (raster::xmax(x) - raster::xmin(x)) * 0.0001
+    message("tolerance set to ", tolerance)
+  }
   if (requireNamespace("fastshp")) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
-      thinned <- data.table(
-        thin = fastshp::thin(xyOrd[["out"]][, 1], xyOrd[["out"]][, 2],
+      thinRes <- fastshp::thin(xyOrd[["out"]][, 1], xyOrd[["out"]][, 2],
                              tolerance = tolerance)
-      )
 
-
+      xyOrd[["out"]] <- xyOrd[["out"]][thinRes, ]# thin line
+      xyOrdDT <- setDT(as.data.frame(xyOrd[["out"]]))
       if (returnMatrix) {
-        #thinned[, groups := rep(1:NROW(idLength), idLength$V1)]
-        thinned[, groups := xyOrd[["out"]][, "groups"]]
-        idLength <- thinned[, sum(thin), by = groups]
-        xyOrd[["out"]] <- xyOrd[["out"]][thinned$thin, ]
+        xyOrd[["idLength"]] <- xyOrdDT[,list(V1=.N),by=groups]
       } else {
+        # clean up a bit
+        set(xyOrdDT, , "order", NULL)
+        set(xyOrdDT, , "groups", NULL)
 
-        thinned[, Polygons := xyOrd[["out"]][, "Polygons"]]
-        thinned[, Polygon := xyOrd[["out"]][, "Polygon"]]
-
-        set(thinned, , "x", xyOrd[["out"]][,"x"])
-        set(thinned, , "y", xyOrd[["out"]][,"y"])
-
-        polyDT <- thinned[thin==TRUE]
-        polyList <- split(polyDT, polyDT$Polygons)
-        polyList2 <- lapply(polyList, function(xx) split(xx, xx$Polygon))
-
-        bb <- lapply(seq(polyList2), function(outerI) {
-          poly <- lapply(seq(polyList2[[outerI]]), function(innerI) {
-            Polygon(as.matrix(polyList2[[outerI]][[innerI]][, c("x", "y")]), hole = hole[innerI])
+        polyList <- split(xyOrdDT, by = c("Polygons", "Polygon"),
+                           flatten = FALSE, keep.by = FALSE)
+        bb <- lapply(seq(polyList), function(outerI) {
+          poly <- lapply(seq(polyList[[outerI]]), function(innerI) {
+            #Polygon(as.matrix(polyList[[outerI]][[innerI]][, c("x", "y")]),
+            Polygon(cbind(polyList[[outerI]][[innerI]]$x, polyList[[outerI]][[innerI]]$y),
+                    hole = unique(as.logical(polyList[[outerI]][[innerI]]$hole)))
           })
           Polygons(poly, ID = outerI)
         })
+
         xyOrd <- SpatialPolygons(bb, proj4string = CRS(proj4string(x)))
         return(xyOrd)
 
@@ -2660,7 +2632,8 @@ thin.SpatialPolygons <- function(x, tolerance = 0.0001, returnMatrix = FALSE, mi
       )
     }
   }
-  xyOrd <- list(xyOrd = xyOrd[["out"]], hole = xyOrd[["hole"]], idLength = idLength)
+  xyOrd <- list(xyOrd = xyOrd[["out"]], hole = xyOrd[["hole"]],
+                idLength = xyOrd[["idLength"]])
 }
 
 
@@ -2731,7 +2704,7 @@ thin.default <- function(x, tolerance, returnMatrix, minCoordsToThin) {
       out <- cbind(out, order = orders,
                    hole = holes, Polygons = Polygons, Polygon = Polygon)
     }
-    out <- list(out = out, hole = hole)
+    out <- list(out = out, hole = hole, idLength = idLength)
 
     return(out)
   }
