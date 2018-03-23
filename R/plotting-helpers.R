@@ -2071,7 +2071,7 @@ setMethod(
 
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
-                             returnMatrix = TRUE, minCoordsToThin = 1e3)
+                             returnDataFrame = TRUE, minCoordsToThin = 1e3)
 
     gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
     polyGrob <- gTree(children = gList(
@@ -2449,13 +2449,13 @@ sp2sl <- function(sp1, from) {
 #' For visualizing, it is sometimes useful to remove points in Spatial* objects.
 #' This will change the geometry, so it is not recommended for computation. This
 #' is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
-#' for large shapefiles, particularly if \code{returnMatrix} is \code{TRUE}.
+#' for large shapefiles, particularly if \code{returnDataFrame} is \code{TRUE}.
 #' \code{thin} will not attempt to preserve topology.
 #' It is strictly for making smaller polygons for the purpose (likely)
 #' of visualizing more quickly.
 #'
 #' @param x A Spatial* object
-#' @param returnMatrix If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
+#' @param returnDataFrame If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
 #'        idLength. If \code{FALSE}, the default, it will return a \code{SpatialPolygons}
 #'        object
 #' @param minCoordsToThin If the number of coordinates is smaller than this number,
@@ -2465,7 +2465,7 @@ sp2sl <- function(sp1, from) {
 #'
 #' @inheritParams fastshp::thin
 #' @rdname thin
-#' @importFrom data.table set data.table setDT
+#' @importFrom data.table set data.table as.data.table
 #' @importFrom sp Polygon Polygons SpatialPolygons CRS
 #' @importFrom raster xmax xmin
 #' @export
@@ -2478,7 +2478,7 @@ sp2sl <- function(sp1, from) {
 #' crsObj <- CRS(paste0("+proj=tmerc +lat_0=0 +lon_0=-115 +k=0.9992 +x_0=500000 +y_0=0 ",
 #'                      "+datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"))
 #'
-#' # make a random polygon -- code adapted from SpaDES.tools::randomPolygon package
+#' # make a random polygon -- code adapted from SpaDES.tools::randomPolygon package:
 #'   areaM2 <- 1000 * 1e4 * 1.304 # rescale so mean area is close to hectares
 #'   b <- spTransform(b, crsObj)
 #'
@@ -2558,7 +2558,7 @@ sp2sl <- function(sp1, from) {
 #'     # thin at 10m
 #'     microbenchmark::microbenchmark(times = 20
 #'                                    , thin(a, 10),
-#'                                    , thin(a, 10, returnMatrix = TRUE) # much faster
+#'                                    , thin(a, 10, returnDataFrame = TRUE) # much faster
 #'    #                               , gSimplify(a, 10),
 #'    #                               , st_simplify(aSF, dTolerance = 10))
 #'                                   )
@@ -2569,37 +2569,36 @@ sp2sl <- function(sp1, from) {
 #'    # st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
 #'   #}
 #' }
-thin <- function(x, tolerance, returnMatrix, minCoordsToThin) {
+thin <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
   UseMethod("thin")
 }
 
 #' @rdname thin
 #' @export
-thin.SpatialPolygons <- function(x, tolerance = NULL, returnMatrix = FALSE, minCoordsToThin = 0) {
+thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0) {
 
   # For speed of plotting
   xyOrd <- .fortify(x, matchFortify = FALSE,
-                    simple = returnMatrix) # a list: out, hole, idLength
-
+                    simple = returnDataFrame) # a list: out, hole, idLength
   if (is.null(tolerance)) {
     tolerance <- (raster::xmax(x) - raster::xmin(x)) * 0.0001
     message("tolerance set to ", tolerance)
   }
   if (requireNamespace("fastshp")) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
-      thinRes <- fastshp::thin(xyOrd[["out"]][, 1], xyOrd[["out"]][, 2],
+      thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
                              tolerance = tolerance)
 
       xyOrd[["out"]] <- xyOrd[["out"]][thinRes, ]# thin line
-      xyOrdDT <- setDT(as.data.frame(xyOrd[["out"]]))
-      if (returnMatrix) {
-        xyOrd[["idLength"]] <- xyOrdDT[,list(V1=.N),by=groups]
+      if (returnDataFrame) {
+        xyOrd[["idLength"]] <- xyOrd[["out"]][,list(V1=.N),by=groups]
       } else {
         # clean up a bit
-        set(xyOrdDT, , "order", NULL)
-        set(xyOrdDT, , "groups", NULL)
+        set(xyOrd[["out"]], , "order", NULL)
+        set(xyOrd[["out"]], , "groups", NULL)
 
-        polyList <- split(xyOrdDT, by = c("Polygons", "Polygon"),
+
+        polyList <- split(xyOrd[["out"]], by = c("Polygons", "Polygon"),
                            flatten = FALSE, keep.by = FALSE)
         bb <- lapply(seq(polyList), function(outerI) {
           poly <- lapply(seq(polyList[[outerI]]), function(innerI) {
@@ -2639,7 +2638,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnMatrix = FALSE, minC
 
 #' @rdname thin
 #' @export
-thin.default <- function(x, tolerance, returnMatrix, minCoordsToThin) {
+thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
   message("No method for that class of object exists. See methods('thin') to see current methods")
 }
 
@@ -2707,8 +2706,8 @@ thin.default <- function(x, tolerance, returnMatrix, minCoordsToThin) {
   } else {
     out <- cbind(x = xyOrd[,1], y = xyOrd[,2], groups = groups)
     if (!simple) {
-      out <- cbind(out, order = orders,
-                   hole = holes, Polygons = as.numeric(Polygons), Polygon = Polygon)
+      out <- data.table(out, order = orders,
+                   hole = holes, Polygons = Polygons, Polygon = Polygon)
     }
     out <- list(out = out, hole = hole, idLength = idLength)
 

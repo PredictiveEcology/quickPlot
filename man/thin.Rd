@@ -6,12 +6,12 @@
 \alias{thin.default}
 \title{Thin a polygon using fastshp::thin}
 \usage{
-thin(x, tolerance, returnMatrix, minCoordsToThin)
+thin(x, tolerance, returnDataFrame, minCoordsToThin)
 
-\method{thin}{SpatialPolygons}(x, tolerance = NULL, returnMatrix = FALSE,
+\method{thin}{SpatialPolygons}(x, tolerance = NULL, returnDataFrame = FALSE,
   minCoordsToThin = 0)
 
-\method{thin}{default}(x, tolerance, returnMatrix, minCoordsToThin)
+\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin)
 }
 \arguments{
 \item{x}{A Spatial* object}
@@ -19,7 +19,7 @@ thin(x, tolerance, returnMatrix, minCoordsToThin)
 \item{tolerance}{maximum allowable distance for a point to be
     removed}
 
-\item{returnMatrix}{If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
+\item{returnDataFrame}{If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
 idLength. If \code{FALSE}, the default, it will return a \code{SpatialPolygons}
 object}
 
@@ -32,7 +32,7 @@ a SpatialPolygon)}
 For visualizing, it is sometimes useful to remove points in Spatial* objects.
 This will change the geometry, so it is not recommended for computation. This
 is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
-for large shapefiles, particularly if \code{returnMatrix} is \code{TRUE}.
+for large shapefiles, particularly if \code{returnDataFrame} is \code{TRUE}.
 \code{thin} will not attempt to preserve topology.
 It is strictly for making smaller polygons for the purpose (likely)
 of visualizing more quickly.
@@ -46,7 +46,7 @@ crs(b) <- sp::CRS("+init=epsg:4326")
 crsObj <- CRS(paste0("+proj=tmerc +lat_0=0 +lon_0=-115 +k=0.9992 +x_0=500000 +y_0=0 ",
                      "+datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"))
 
-# make a random polygon -- code adapted from SpaDES.tools::randomPolygon package
+# make a random polygon -- code adapted from SpaDES.tools::randomPolygon package:
   areaM2 <- 1000 * 1e4 * 1.304 # rescale so mean area is close to hectares
   b <- spTransform(b, crsObj)
 
@@ -126,7 +126,7 @@ Plot(aThin) # looks similar
     # thin at 10m
     microbenchmark::microbenchmark(times = 20
                                    , thin(a, 10),
-                                   , thin(a, 10, returnMatrix = TRUE) # much faster
+                                   , thin(a, 10, returnDataFrame = TRUE) # much faster
    #                               , gSimplify(a, 10),
    #                               , st_simplify(aSF, dTolerance = 10))
                                   )
