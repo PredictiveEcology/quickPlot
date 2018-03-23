@@ -109,7 +109,7 @@ Plot(aThin) # looks similar
                            "Natural_Regions_Subregions_of_Alberta.shp.xml",
                            "Natural_Regions_Subregions_of_Alberta.shx",
                            "natural_regions_subregions_of_alberta.zip",
-                           "nsr2005_final_letter.jpg", "nsr2005_final_letter.pdf"))
+                           "nsr2005_final_letter.jpg", "nsr2005_final_letter.pdf")
   albertaEcozoneURL <- paste0("https://www.albertaparks.ca/media/429607/",
                               "natural_regions_subregions_of_alberta.zip")
   albertaEcozoneFilename <- "Natural_Regions_Subregions_of_Alberta.shp"

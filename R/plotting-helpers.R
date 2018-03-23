@@ -2541,7 +2541,7 @@ sp2sl <- function(sp1, from) {
 #'                            "Natural_Regions_Subregions_of_Alberta.shp.xml",
 #'                            "Natural_Regions_Subregions_of_Alberta.shx",
 #'                            "natural_regions_subregions_of_alberta.zip",
-#'                            "nsr2005_final_letter.jpg", "nsr2005_final_letter.pdf"))
+#'                            "nsr2005_final_letter.jpg", "nsr2005_final_letter.pdf")
 #'   albertaEcozoneURL <- paste0("https://www.albertaparks.ca/media/429607/",
 #'                               "natural_regions_subregions_of_alberta.zip")
 #'   albertaEcozoneFilename <- "Natural_Regions_Subregions_of_Alberta.shp"
@@ -2663,6 +2663,11 @@ thin.default <- function(x, tolerance, returnMatrix, minCoordsToThin) {
   })), error = function(xx) FALSE)
   ord <- x@plotOrder
 
+  IDs <- tryCatch(unlist(lapply(1:length(x), function(xx) {
+    x@polygons[[xx]]@ID
+  })), error = function(xx) FALSE)
+
+
   ordInner <- lapply(1:length(x), function(xx) {
     x@polygons[[xx]]@plotOrder
   })
@@ -2686,7 +2691,8 @@ thin.default <- function(x, tolerance, returnMatrix, minCoordsToThin) {
 
   groups <- rep(1:NROW(idLength), idLength$V1)
   if (!simple | matchFortify) {
-    Polygons <- rep(rep(seq(numPolygons), numPolygon), idLength$V1)
+    # Polygons <- rep(rep(seq(numPolygons), numPolygon), idLength$V1) # sequential numbering
+    Polygons <- rep(rep(IDs, numPolygon), idLength$V1) # actual ID labelling
     Polygon <- rep(unlist(lapply(numPolygon, seq)), idLength$V1)
     holes <- rep(hole, idLength$V1)
     orders <- unlist(lapply(idLength$V1, seq))
@@ -2695,14 +2701,14 @@ thin.default <- function(x, tolerance, returnMatrix, minCoordsToThin) {
   if (matchFortify) {
     if (!simple) message("for matchFortify = TRUE, simple is set to FALSE")
     return(data.frame(lat = xyOrd[,1], long = xyOrd[,2], order = orders,
-                      hole = holes, id = Polygons - 1, piece = Polygon,
+                      hole = holes, id = Polygons, piece = Polygon,
                       #group = paste0(as.character(Polygons), ".", as.character(Polygon)))) # the actual fortify
                       group = groups))
   } else {
     out <- cbind(x = xyOrd[,1], y = xyOrd[,2], groups = groups)
     if (!simple) {
       out <- cbind(out, order = orders,
-                   hole = holes, Polygons = Polygons, Polygon = Polygon)
+                   hole = holes, Polygons = as.numeric(Polygons), Polygon = Polygon)
     }
     out <- list(out = out, hole = hole, idLength = idLength)
 
