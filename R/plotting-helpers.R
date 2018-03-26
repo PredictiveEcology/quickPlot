@@ -2466,7 +2466,7 @@ sp2sl <- function(sp1, from) {
 #' @inheritParams fastshp::thin
 #' @rdname thin
 #' @importFrom data.table set data.table as.data.table
-#' @importFrom sp Polygon Polygons SpatialPolygons CRS
+#' @importFrom sp Polygon Polygons SpatialPolygons CRS SpatialPolygonsDataFrame
 #' @importFrom raster xmax xmin
 #' @export
 #' @examples
@@ -2610,6 +2610,8 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
         })
 
         xyOrd <- SpatialPolygons(bb, proj4string = CRS(proj4string(x)))
+        if (is(x, "SpatialPolygonsDataFrame"))
+          xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = x@data)
         return(xyOrd)
 
       }
