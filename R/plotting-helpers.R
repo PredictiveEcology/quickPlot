@@ -2600,7 +2600,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
 
         polyList <- split(xyOrd[["out"]], by = c("Polygons", "Polygon"),
                            flatten = FALSE, keep.by = FALSE)
-        bb <- lapply(seq(polyList), function(outerI) {
+        bb <- lapply(unique(xyOrd$out$Polygons), function(outerI) {
           poly <- lapply(seq(polyList[[outerI]]), function(innerI) {
             #Polygon(as.matrix(polyList[[outerI]][[innerI]][, c("x", "y")]),
             Polygon(cbind(polyList[[outerI]][[innerI]]$x, polyList[[outerI]][[innerI]]$y),
