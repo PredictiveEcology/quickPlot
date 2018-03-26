@@ -2076,7 +2076,7 @@ setMethod(
     gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
     polyGrob <- gTree(children = gList(
       polygonGrob(
-        x = xyOrd[["xyOrd"]][, 1], y = xyOrd[["xyOrd"]][, 2],
+        x = xyOrd[["xyOrd"]]$x, y = xyOrd[["xyOrd"]]$y,
         id.lengths = xyOrd[["idLength"]]$V1,
         gp = gp, default.units = "native"
       )
@@ -2650,6 +2650,7 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #'
 #' @rdname fortify
 #' @name fortify
+#' @importFrom data.table setDT set
 #' @keywords internal
 .fortify <- function(x, matchFortify = TRUE, simple = FALSE) {
   ord <- x@plotOrder
@@ -2706,10 +2707,12 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
                       #group = paste0(as.character(Polygons), ".", as.character(Polygon)))) # the actual fortify
                       group = groups))
   } else {
-    out <- cbind(x = xyOrd[,1], y = xyOrd[,2], groups = groups)
+    out <- setDT(data.frame(x = xyOrd[,1], y = xyOrd[,2], groups = groups))
     if (!simple) {
-      out <- data.table(out, order = orders,
-                   hole = holes, Polygons = Polygons, Polygon = Polygon)
+      set(out, , "order", orders)
+      set(out, , "hole", holes)
+      set(out, , "Polygons", Polygons)
+      set(out, , "Polygon", Polygon)
     }
     out <- list(out = out, hole = hole, idLength = idLength)
 
