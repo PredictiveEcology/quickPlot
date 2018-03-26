@@ -2650,24 +2650,24 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #' @name fortify
 #' @keywords internal
 .fortify <- function(x, matchFortify = TRUE, simple = FALSE) {
-  xy <- lapply(1:length(x), function(i) {
+  ord <- x@plotOrder
+  xy <- lapply(ord, function(i) {
     lapply(x@polygons[[i]]@Polygons, function(j) {
       j@coords
     })
   })
 
-  hole <- tryCatch(unlist(lapply(1:length(x), function(xx) {
+  hole <- tryCatch(unlist(lapply(ord, function(xx) {
     lapply(x@polygons[[xx]]@Polygons, function(yy)
       yy@hole)
   })), error = function(xx) FALSE)
-  ord <- x@plotOrder
 
-  IDs <- tryCatch(unlist(lapply(1:length(x), function(xx) {
+  IDs <- tryCatch(unlist(lapply(ord, function(xx) {
     x@polygons[[xx]]@ID
   })), error = function(xx) FALSE)
 
 
-  ordInner <- lapply(1:length(x), function(xx) {
+  ordInner <- lapply(ord, function(xx) {
     x@polygons[[xx]]@plotOrder
   })
 
