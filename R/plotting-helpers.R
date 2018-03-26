@@ -2076,7 +2076,7 @@ setMethod(
     gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
     polyGrob <- gTree(children = gList(
       polygonGrob(
-        x = xyOrd[["xyOrd"]][, 1], y = xyOrd[["xyOrd"]][, 2],
+        x = xyOrd[["xyOrd"]]$x, y = xyOrd[["xyOrd"]]$y,
         id.lengths = xyOrd[["idLength"]]$V1,
         gp = gp, default.units = "native"
       )
@@ -2466,7 +2466,7 @@ sp2sl <- function(sp1, from) {
 #' @inheritParams fastshp::thin
 #' @rdname thin
 #' @importFrom data.table set data.table as.data.table
-#' @importFrom sp Polygon Polygons SpatialPolygons CRS
+#' @importFrom sp Polygon Polygons SpatialPolygons CRS SpatialPolygonsDataFrame
 #' @importFrom raster xmax xmin
 #' @export
 #' @examples
@@ -2600,7 +2600,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
 
         polyList <- split(xyOrd[["out"]], by = c("Polygons", "Polygon"),
                            flatten = FALSE, keep.by = FALSE)
-        bb <- lapply(seq(polyList), function(outerI) {
+        bb <- lapply(unique(xyOrd$out$Polygons), function(outerI) {
           poly <- lapply(seq(polyList[[outerI]]), function(innerI) {
             #Polygon(as.matrix(polyList[[outerI]][[innerI]][, c("x", "y")]),
             Polygon(cbind(polyList[[outerI]][[innerI]]$x, polyList[[outerI]][[innerI]]$y),
@@ -2610,6 +2610,8 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
         })
 
         xyOrd <- SpatialPolygons(bb, proj4string = CRS(proj4string(x)))
+        if (is(x, "SpatialPolygonsDataFrame"))
+          xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = x@data)
         return(xyOrd)
 
       }
@@ -2648,26 +2650,27 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #'
 #' @rdname fortify
 #' @name fortify
+#' @importFrom data.table setDT set
 #' @keywords internal
 .fortify <- function(x, matchFortify = TRUE, simple = FALSE) {
-  xy <- lapply(1:length(x), function(i) {
+  ord <- x@plotOrder
+  xy <- lapply(ord, function(i) {
     lapply(x@polygons[[i]]@Polygons, function(j) {
       j@coords
     })
   })
 
-  hole <- tryCatch(unlist(lapply(1:length(x), function(xx) {
+  hole <- tryCatch(unlist(lapply(ord, function(xx) {
     lapply(x@polygons[[xx]]@Polygons, function(yy)
       yy@hole)
   })), error = function(xx) FALSE)
-  ord <- x@plotOrder
 
-  IDs <- tryCatch(unlist(lapply(1:length(x), function(xx) {
+  IDs <- tryCatch(unlist(lapply(ord, function(xx) {
     x@polygons[[xx]]@ID
   })), error = function(xx) FALSE)
 
 
-  ordInner <- lapply(1:length(x), function(xx) {
+  ordInner <- lapply(ord, function(xx) {
     x@polygons[[xx]]@plotOrder
   })
 
@@ -2704,10 +2707,12 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
                       #group = paste0(as.character(Polygons), ".", as.character(Polygon)))) # the actual fortify
                       group = groups))
   } else {
-    out <- cbind(x = xyOrd[,1], y = xyOrd[,2], groups = groups)
+    out <- setDT(data.frame(x = xyOrd[,1], y = xyOrd[,2], groups = groups))
     if (!simple) {
-      out <- data.table(out, order = orders,
-                   hole = holes, Polygons = Polygons, Polygon = Polygon)
+      set(out, , "order", orders)
+      set(out, , "hole", holes)
+      set(out, , "Polygons", Polygons)
+      set(out, , "Polygon", Polygon)
     }
     out <- list(out = out, hole = hole, idLength = idLength)
 
