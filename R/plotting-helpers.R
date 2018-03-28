@@ -2587,7 +2587,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
   if (requireNamespace("fastshp")) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
       thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
-                             tolerance = tolerance)
+                             tolerance = tolerance, id = xyOrd[["out"]]$groups)
 
       xyOrd[["out"]] <- xyOrd[["out"]][thinRes, ]# thin line
       if (returnDataFrame) {
@@ -2654,27 +2654,28 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #' @keywords internal
 .fortify <- function(x, matchFortify = TRUE, simple = FALSE) {
   ord <- x@plotOrder
-  xy <- lapply(ord, function(i) {
+  ordSeq <- seq(ord)
+  xy <- lapply(ordSeq, function(i) {
     lapply(x@polygons[[i]]@Polygons, function(j) {
       j@coords
     })
   })
 
-  hole <- tryCatch(unlist(lapply(ord, function(xx) {
+  hole <- tryCatch(unlist(lapply(ordSeq, function(xx) {
     lapply(x@polygons[[xx]]@Polygons, function(yy)
       yy@hole)
   })), error = function(xx) FALSE)
 
-  IDs <- tryCatch(unlist(lapply(ord, function(xx) {
+  IDs <- tryCatch(unlist(lapply(ordSeq, function(xx) {
     x@polygons[[xx]]@ID
   })), error = function(xx) FALSE)
 
 
-  ordInner <- lapply(ord, function(xx) {
+  ordInner <- lapply(ordSeq, function(xx) {
     x@polygons[[xx]]@plotOrder
   })
 
-  xyOrd.l <- lapply(ord, function(i) { # nolint
+  xyOrd.l <- lapply(ordSeq, function(i) { # nolint
     xy[[i]][ordInner[[i]]]
   })
 
