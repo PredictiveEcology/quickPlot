@@ -2589,7 +2589,12 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
       thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
                              tolerance = tolerance, id = xyOrd[["out"]]$groups)
 
-      xyOrd[["out"]] <- xyOrd[["out"]][thinRes, ]# thin line
+      set(xyOrd[["out"]], , "thinRes", thinRes)
+      xyOrd[["out"]][, keepAll := sum(thinRes) < 4, by = groups]
+
+      xyOrd[["out"]] <- xyOrd[["out"]][thinRes | keepAll]
+
+      #xyOrd[["out"]] <- xyOrd[["out"]][thinRes, ]# thin line
       if (returnDataFrame) {
         xyOrd[["idLength"]] <- xyOrd[["out"]][,list(V1=.N),by=groups]
       } else {
