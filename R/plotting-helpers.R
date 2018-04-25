@@ -1266,7 +1266,7 @@ setMethod(
       if (is.null(legendText)) {
         if (is.null(sGrob@plotArgs$legendTxt)) {
           if (any(raster::is.factor(grobToPlot))) {
-            if (all(grobToPlot[]%%1==0)) {
+            if (all(na.omit(grobToPlot[]%%1)==0)) {
               sGrob@plotArgs$legendTxt <- raster::levels(grobToPlot)[[1]]
             }
           }
