@@ -58,3 +58,22 @@ test_that("Plotting types without visual checking works", {
     expect_true(length(a$curr@quickPlotGrobList$r1) == 2)
   }
 })
+
+
+
+test_that("setColors with an NA", {
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+
+  nLevels <- 6
+  ncol <- 3
+  nrow <- 4
+  N <- ncol * nrow
+  set.seed(24334)
+  levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
+  ras <- raster(matrix(sample(levs, size = N, replace = TRUE),
+                       ncol = ncol, nrow = nrow))
+  ras[1] <- NA
+  levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
+  expect_silent(ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow")))
+
+})# test non contiguous factor raster
