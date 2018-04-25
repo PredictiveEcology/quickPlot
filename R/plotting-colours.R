@@ -86,7 +86,7 @@ setReplaceMethod(
       return(object)
     }
     if (raster::is.factor(object)) {
-      if (all(object[]%%1==0)) { # some factor rasters are actually real number -- makes no sense
+      if (all(na.omit(object[])%%1==0)) { # some factor rasters are actually real number -- makes no sense
         if (n != NROW(object@data@attributes[[1]])) {
           message("Number of colors not equal number of values: interpolating")
           n <- NROW(object@data@attributes[[1]])
@@ -103,7 +103,7 @@ setReplaceMethod(
       value <- RColorBrewer::brewer.pal(ntmp, value)
     }
     if (raster::is.factor(object)) {
-      if (all(object[]%%1==0)) { # some factor rasters are actually real number -- makes no sense
+      if (all(na.omit(object[])%%1==0)) { # some factor rasters are actually real number -- makes no sense
         if (n != NROW(object@data@attributes[[1]])) {
           object@legend@colortable <- pal(n)
         } else {
@@ -128,7 +128,7 @@ setReplaceMethod(
     isFac <- if (!raster::is.factor(object)) {
       FALSE
     } else {
-      if (all(object[]%%1==0)) { # some factor rasters are actually real number -- makes no sense
+      if (all(na.omit(object[])%%1==0)) { # some factor rasters are actually real number -- makes no sense
         TRUE
       } else {
         FALSE
