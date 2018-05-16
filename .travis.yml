@@ -23,6 +23,7 @@ matrix:
     r_binary_packages:
       - covr
     r_packages:
+      - curl
       - devtools
       - ggplot2
     r_github_packages:
