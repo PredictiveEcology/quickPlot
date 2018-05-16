@@ -24,6 +24,7 @@ matrix:
       - covr
     r_packages:
       - devtools
+      - ggplot2
     r_github_packages:
       - jimhester/lintr
     after_success:
