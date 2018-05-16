@@ -20,9 +20,8 @@ matrix:
         packages:
           - libgdal1-dev
           - libproj-dev
-    r_binary_packages:
-      - covr
     r_packages:
+      - covr
       - curl
       - devtools
       - ggplot2
