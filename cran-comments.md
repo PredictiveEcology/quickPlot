@@ -52,3 +52,8 @@ The `fastshp` package in Suggests is optionally installed from Rforge and not re
 I have run R CMD check on downstream dependencies and all have passed, except as noted below.
 
 Summary at https://github.com/PredictiveEcology/quickPlot/blob/master/revdep/README.md.
+
+* `SpaDES.core` produce an error due to a non-CRAN package in Suggests, but passes once that dependency is installed.
+ 
+* `SpaDES` shows a warning due to `DISPLAY` not being set in the headless session.
+  Three other warnings regarding replaced imports are caused by having depracated and moved these functions from `SpaDES.tools` to `reproducible`.
