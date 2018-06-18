@@ -1,6 +1,6 @@
-## resubmission
+## Updated release
 
-This is a minor update to our package.
+This is a minor update to our package to fix a plotting bug.
 
 ## Test environments
 

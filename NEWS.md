@@ -1,7 +1,11 @@
 Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
+version 0.1.4
+=============
+* bug fix plotting with NAs (#14, @CeresBarros)
+
 version 0.1.3
-==================
+=============
 * new function, `thin`, which is similar to rgeos::gSimplify, but uses fastshp::thin, and can get much faster speeds, 
   used internally for plotting, but also available as a function to user
 * minor bug fix for when quickPlot::Plot is called inside a custom function called "Plot"
