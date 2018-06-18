@@ -1,10 +1,12 @@
 test_that("Plot 1 is not error-free", {
   skip_if_not_installed("reproducible")
+  skip_if_not_installed("fastshp")
 
   library(igraph)
   library(sp)
   library(raster)
   library(reproducible)
+  library(fastshp)
 
   tmpdir <- file.path(tempdir(), "test_Plot1") %>% checkPath(create = TRUE)
   cwd <- getwd()
@@ -89,9 +91,7 @@ test_that("Plot 1 is not error-free", {
   Srs1 <- sp::Polygons(list(Sr1), "s1")
   Srs2 <- sp::Polygons(list(Sr2), "s2")
   SpP87 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
-  if (suppressWarnings(require(fastshp))) {
-    expect_silent(Plot(SpP87, new = TRUE))
-  }
+  expect_silent(Plot(SpP87, new = TRUE))
 
   # test SpatialLines
   l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
@@ -103,9 +103,8 @@ test_that("Plot 1 is not error-free", {
   S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
   S2 <- sp::Lines(list(Sl2), ID = "b")
   Sl87654 <- sp::SpatialLines(list(S1, S2))
-  if (suppressWarnings(require(fastshp))) {
-    expect_silent(Plot(Sl87654))
-  }
+  expect_silent(Plot(Sl87654))
+
   # Test polygon with > 1e3 points to test the speedup parameter
   r <- 1
   N <- 1000
@@ -123,11 +122,9 @@ test_that("Plot 1 is not error-free", {
   S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
   S2 <- sp::Lines(list(Sl2), ID = "b")
   Sl87654 <- sp::SpatialLines(list(S1, S2))
-  if (suppressWarnings(require(fastshp))) {
-    expect_silent(Plot(Sl87654, new = TRUE))
-    # test addTo
-    expect_silent(Plot(SpP87654, addTo = "landscape87654$habitatQuality87654"))
-  }
+  expect_silent(Plot(Sl87654, new = TRUE))
+  # test addTo
+  expect_silent(Plot(SpP87654, addTo = "landscape87654$habitatQuality87654"))
 
   # test various arguments
   clearPlot()
@@ -150,9 +147,8 @@ test_that("Plot 1 is not error-free", {
   caribou87 <- sp::SpatialPoints(
     coords = cbind(x = stats::runif(1.1e3, 0, 10), y = stats::runif(1e1, 0, 10))
   )
-  if (suppressWarnings(require(fastshp))) {
-    expect_silent(Plot(caribou87, speedup = 10, new = TRUE))
-  }
+  expect_silent(Plot(caribou87, speedup = 10, new = TRUE))
+
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
   hist87654 <- hist(stats::rnorm(1e3), plot = FALSE)
@@ -1037,32 +1033,32 @@ test_that("Plot lists", {
 
 test_that("Plot non complicated object names", {
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
-  
+
   a <- list()
   a$e <- new.env()
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   rasOrig2 <- rasOrig
-  a$e$p <- rasOrig 
+  a$e$p <- rasOrig
   a$e$s <- stack(rasOrig2, rasOrig)
   expect_silent(Plot(a$e$p))
   expect_silent(Plot(a$e[["p"]]))
   expect_silent(Plot(a$e[["s"]]$layer.1))
   expect_silent(Plot(a$e[["s"]]$layer.1[1:10], addTo = "secondPlot"))
-  
+
   # add the same data as a different plot -- use a named list
   expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new=TRUE))
   a$e[["s"]]$layer.1[2] <- maxValue(a$e[["s"]]$layer.1)
   expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new=TRUE))
-  
+
 })
 
 test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
-  
+
   Plot <- function(x)
   {
     quickPlot::Plot(x)
   }
-  
+
   expect_silent(Plot(raster(matrix(1:100, 10, 10))))
 })
