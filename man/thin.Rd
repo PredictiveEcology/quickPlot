@@ -16,9 +16,6 @@ thin(x, tolerance, returnDataFrame, minCoordsToThin)
 \arguments{
 \item{x}{A Spatial* object}
 
-\item{tolerance}{maximum allowable distance for a point to be
-    removed}
-
 \item{returnDataFrame}{If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
 idLength. If \code{FALSE}, the default, it will return a \code{SpatialPolygons}
 object}

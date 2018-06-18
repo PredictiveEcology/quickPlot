@@ -2535,7 +2535,8 @@ sp2sl <- function(sp1, from) {
 #' # }
 #'
 #' # thin is faster than rgeos::gSimplify and sf::st_simplify on large shapefiles
-#' \dontrun{ # this involves downloading a 9 MB file
+#' \dontrun{
+#'   # this involves downloading a 9 MB file
 #'   setwd(tempdir())
 #'   albertaEcozoneFiles <- c("Natural_Regions_Subregions_of_Alberta.dbf",
 #'                            "Natural_Regions_Subregions_of_Alberta.lyr",
