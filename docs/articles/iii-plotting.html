@@ -8,23 +8,23 @@
 <title>03 Plotting with <code>quickPlot</code> • quickPlot</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="03 Plotting with &lt;code&gt;quickPlot&lt;/code&gt;">
+<meta property="og:description" content="">
+<meta name="twitter:card" content="summary">
+<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Google analytics --><script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-58633549-4"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-58633549-4', 'auto');
-  ga('send', 'pageview');
-
+  gtag('config', 'UA-58633549-4');
 </script>
 </head>
 <body>
-    <div class="container template-vignette">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -33,8 +33,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">quickPlot</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">quickPlot</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.4</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
@@ -59,7 +63,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -79,18 +83,21 @@
 
       
       </header><div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>03 Plotting with <code>quickPlot</code>
 </h1>
                         <h4 class="author">Eliot J. B. McIntire</h4>
             
-            <h4 class="date">February 01 2018</h4>
-          </div>
+            <h4 class="date">June 18 2018</h4>
+      
+      <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/quickPlot/blob/master/vignettes/iii-plotting.Rmd"><code>vignettes/iii-plotting.Rmd</code></a></small>
+      <div class="hidden name"><code>iii-plotting.Rmd</code></div>
+
+    </div>
 
     
     
-<div class="contents">
 <div id="plotting-in-quickplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#plotting-in-quickplot" class="anchor"></a>Plotting in <code>quickPlot</code>
@@ -109,18 +116,18 @@ files &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span cl
 <span class="st">  </span><span class="kw">dir</span>(., <span class="dt">full.names =</span> <span class="ot">TRUE</span>, <span class="dt">pattern =</span> <span class="st">"tif"</span>)
 filelist &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">file =</span> files[<span class="op">-</span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">5</span>) ], <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
 <span class="kw">print</span>(filelist)</code></pre></div>
-<pre><code>##                                                           file
-## 1            C:/Eliot/R/win-library/3.4/quickPlot/maps/DEM.tif
-## 2    C:/Eliot/R/win-library/3.4/quickPlot/maps/forestCover.tif
-## 3 C:/Eliot/R/win-library/3.4/quickPlot/maps/habitatQuality.tif</code></pre>
+<pre><code>##                                                              file
+## 1            /usr/local/lib/R/site-library/quickPlot/maps/DEM.tif
+## 2    /usr/local/lib/R/site-library/quickPlot/maps/forestCover.tif
+## 3 /usr/local/lib/R/site-library/quickPlot/maps/habitatQuality.tif</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Load files to memory (using rasterToMemory), assign to a simList we call maps </span>
-maps &lt;-<span class="st"> </span><span class="kw">lapply</span>(filelist<span class="op">$</span>file, <span class="cf">function</span>(x) <span class="kw">raster</span>(x))
-<span class="kw">names</span>(maps) &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">basename</span>(filelist<span class="op">$</span>file), <span class="cf">function</span>(x) {
-  <span class="kw">strsplit</span>(x, <span class="dt">split =</span> <span class="st">"</span><span class="ch">\\</span><span class="st">."</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]
+maps &lt;-<span class="st"> </span><span class="kw">lapply</span>(filelist<span class="op">$</span>file, <span class="cf">function</span>(x) <span class="kw"><a href="http://www.rdocumentation.org/packages/raster/topics/raster">raster</a></span>(x))
+<span class="kw"><a href="http://www.rdocumentation.org/packages/raster/topics/names">names</a></span>(maps) &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">basename</span>(filelist<span class="op">$</span>file), <span class="cf">function</span>(x) {
+  <span class="kw"><a href="http://www.rdocumentation.org/packages/data.table/topics/tstrsplit">strsplit</a></span>(x, <span class="dt">split =</span> <span class="st">"</span><span class="ch">\\</span><span class="st">."</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]
 })
 
 <span class="co"># put into a single stack object in the simulation environment for ease of use below</span>
-landscape &lt;-<span class="st"> </span><span class="kw">stack</span>(maps<span class="op">$</span>DEM, maps<span class="op">$</span>forestCover, maps<span class="op">$</span>habitatQuality)</code></pre></div>
+landscape &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/raster/topics/stack">stack</a></span>(maps<span class="op">$</span>DEM, maps<span class="op">$</span>forestCover, maps<span class="op">$</span>habitatQuality)</code></pre></div>
 </div>
 <div id="the-plot-function" class="section level1">
 <h1 class="hasAnchor">
@@ -131,13 +138,13 @@ landscape &lt;-<span class="st"> </span><span class="kw">stack</span>(maps<span 
 <a href="#spatial-layer-types" class="anchor"></a>Spatial layer types</h2>
 <p>Specifically, it currently can plot <code>RasterLayer</code>, <code>RasterStack</code>, <code>SpatialPoints*</code>, <code>SpatialPolygons*</code>, and <code>SpatialLines*</code> spatial objects. Because <code>Plot</code> uses the <code>grid</code> graphics system, changing plot parameters is done with the <code>gp=gpar()</code> designation. See <code><a href="../reference/grid-functions.html">?gpar</a></code> for options.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, <span class="dt">new =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/first_plot-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/first_plot-1.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># make a SpatialPoints object</span>
-caribou &lt;-<span class="st"> </span><span class="kw">SpatialPoints</span>(<span class="dt">coords =</span> <span class="kw">cbind</span>(<span class="dt">x =</span> stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="fl">1e2</span>, <span class="op">-</span><span class="dv">50</span>, <span class="dv">50</span>),
-                                        <span class="dt">y =</span> stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="fl">1e2</span>, <span class="op">-</span><span class="dv">50</span>, <span class="dv">50</span>)))
+caribou &lt;-<span class="st"> </span><span class="kw">SpatialPoints</span>(<span class="dt">coords =</span> <span class="kw">cbind</span>(<span class="dt">x =</span> stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="fl">1e2</span>, <span class="dv">-50</span>, <span class="dv">50</span>),
+                                        <span class="dt">y =</span> stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="fl">1e2</span>, <span class="dv">-50</span>, <span class="dv">50</span>)))
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou)
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, <span class="dt">addTo =</span> <span class="st">"landscape$habitatQuality"</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/first_plot-2.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/first_plot-2.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># from SpatialPolygons help file</span>
 sr1 &lt;-<span class="st"> </span><span class="kw">Polygon</span>(<span class="kw">cbind</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>), <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">2</span>)) <span class="op">*</span><span class="st"> </span><span class="dv">20</span> <span class="op">-</span><span class="st"> </span><span class="dv">50</span>)
 sr2 &lt;-<span class="st"> </span><span class="kw">Polygon</span>(<span class="kw">cbind</span>(<span class="kw">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">5</span>), <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">2</span>)) <span class="op">*</span><span class="st"> </span><span class="dv">20</span> <span class="op">-</span><span class="st"> </span><span class="dv">50</span>)
@@ -145,12 +152,13 @@ sr2 &lt;-<span class="st"> </span><span class="kw">Polygon</span>(<span class="k
 srs1 &lt;-<span class="st"> </span><span class="kw">Polygons</span>(<span class="kw">list</span>(sr1), <span class="st">"s1"</span>)
 srs2 &lt;-<span class="st"> </span><span class="kw">Polygons</span>(<span class="kw">list</span>(sr2), <span class="st">"s2"</span>)
 spP &lt;-<span class="st"> </span><span class="kw">SpatialPolygons</span>(<span class="kw">list</span>(srs1, srs2), <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)
-<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP)
-<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP, <span class="dt">addTo =</span> <span class="st">"landscape$habitatQuality"</span>, <span class="dt">gp =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">lwd =</span> <span class="dv">2</span>))
+<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP)</code></pre></div>
+<pre><code>## Loading required namespace: fastshp</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP, <span class="dt">addTo =</span> <span class="st">"landscape$habitatQuality"</span>, <span class="dt">gp =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">lwd =</span> <span class="dv">2</span>))
 
 <span class="co"># from SpatialLines help file</span>
 l1 &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">2</span>, <span class="dv">30</span>), <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">2</span>, <span class="dv">2</span>))
-l1a &lt;-<span class="st"> </span><span class="kw">cbind</span>(l1[, <span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>.<span class="dv">05</span>, l1[, <span class="dv">2</span>] <span class="op">+</span><span class="st"> </span>.<span class="dv">05</span>)
+l1a &lt;-<span class="st"> </span><span class="kw">cbind</span>(l1[, <span class="dv">1</span>] <span class="op">+</span><span class="st"> </span><span class="fl">.05</span>, l1[, <span class="dv">2</span>] <span class="op">+</span><span class="st"> </span><span class="fl">.05</span>)
 l2 &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">20</span>, <span class="dv">3</span>), <span class="kw">c</span>(<span class="dv">10</span>, <span class="fl">1.5</span>, <span class="dv">1</span>))
 sl1 &lt;-<span class="st"> </span><span class="kw">Line</span>(l1)
 sl1a &lt;-<span class="st"> </span><span class="kw">Line</span>(l1a)
@@ -159,12 +167,12 @@ s1 &lt;-<span class="st"> </span><span class="kw">Lines</span>(<span class="kw">
 s2 &lt;-<span class="st"> </span><span class="kw">Lines</span>(<span class="kw">list</span>(sl2), <span class="dt">ID =</span> <span class="st">"b"</span>)
 sl &lt;-<span class="st"> </span><span class="kw">SpatialLines</span>(<span class="kw">list</span>(s1, s2))
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(sl, <span class="dt">gp =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">col =</span> <span class="kw">c</span>(<span class="st">"red"</span>, <span class="st">"blue"</span>), <span class="dt">lwd =</span> <span class="dv">2</span>), <span class="dt">addTo =</span> <span class="st">"landscape$DEM"</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/first_plot-3.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/first_plot-3.png" width="700"></p>
 <p>Any combination of <code>RasterStack</code>, <code>RasterLayer</code>, <code>SpatialPoints*</code>, and <code>SpatialPolygons*</code> objects can be plotted from a single invocation of <code>Plot</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, spP, <span class="dt">axes =</span> <span class="ot">TRUE</span>,
      <span class="dt">gp =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">cex =</span> <span class="fl">0.5</span>), <span class="dt">visualSqueeze =</span> <span class="fl">0.65</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/mixing_layer_types-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/mixing_layer_types-1.png" width="700"></p>
 </div>
 <div id="other-object-types" class="section level2">
 <h2 class="hasAnchor">
@@ -175,12 +183,12 @@ sl &lt;-<span class="st"> </span><span class="kw">SpatialLines</span>(<span clas
 <p><code>Plot</code> can also handle gg objects as created with <code>qplot</code> or <code>ggplot</code>. These can be combined with spatial objects as well.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 
-ggObj &lt;-<span class="st"> </span><span class="kw">qplot</span>(stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="fl">1e3</span>), <span class="dt">binwidth =</span> <span class="fl">0.1</span>)
+ggObj &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/qplot">qplot</a></span>(stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="fl">1e3</span>), <span class="dt">binwidth =</span> <span class="fl">0.1</span>)
 <span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, <span class="dt">axes =</span> <span class="st">"L"</span>, <span class="dt">new =</span> <span class="ot">TRUE</span>) </code></pre></div>
-<p><img src="iii-plotting_files/figure-html/ggplot-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/ggplot-1.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/Plot.html">Plot</a></span>(ggObj) </code></pre></div>
-<p><img src="iii-plotting_files/figure-html/ggplot-2.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/ggplot-2.png" width="700"></p>
 </div>
 <div id="base-plotting" class="section level3">
 <h3 class="hasAnchor">
@@ -205,7 +213,7 @@ newPoints2 &lt;-<span class="st"> </span>newPoints <span class="op">*</span><spa
 <div id="colours" class="section level2">
 <h2 class="hasAnchor">
 <a href="#colours" class="anchor"></a>Colours</h2>
-<p>We likely won’t want the default colours for every map. There are two ways to change the colour of a map: by adding a <code>colortable</code> to a <code>Raster*</code> object (<em>e.g.</em>, using the <code>setColors</code> function in <code>quickPlot</code>), or using the <code>cols</code> argument of the <code>Plot</code> function. Adding a <code>colortable</code> to a <code>Raster*</code> will be more persistent (<em>i.e.</em>, it will stay with the same colour table even if the device is wiped clean or a new device is created. Every <code>RasterLayer</code> can have a <code>colortable</code>, which gives the mapping of raster values to colours. If not already set in the file (many <code>.tif</code> files and other formats already have their <code>colortable</code> set), we can use <code>setColors(Raster*)</code> with a named list of colours, if a <code>RasterStack</code>, or just a vector of colours if only a single <code>RasterLayer</code>. These can be easily built with the <code>RColorBrewer</code> package, with the function <code>brewer.pal()</code>, <code>colorRampPalette()</code>, <code>heat.colors()</code>, or just a character vector of colours that will be interpolated. Note that overplotting (accomplished with <code>addTo=</code>) will not overplot the legend; in general, overplotting should be used for cases where the maps are compatible with the underlying map layer. See overplotting below.</p>
+<p>We likely won’t want the default colours for every map. There are two ways to change the colour of a map: by adding a <code>colortable</code> to a <code>Raster*</code> object (<em>e.g.</em>, using the <code>setColors</code> function in <code>quickPlot</code>), or using the <code>cols</code> argument of the <code>Plot</code> function. Adding a <code>colortable</code> to a <code>Raster*</code> will be more persistent (<em>i.e.</em>, it will stay with the same colour table even if the device is wiped clean or a new device is created. Every <code>RasterLayer</code> can have a <code>colortable</code>, which gives the mapping of raster values to colours. If not already set in the file (many <code>.tif</code> files and other formats already have their <code>colortable</code> set), we can use <code>setColors(Raster*)</code> with a named list of colours, if a <code>RasterStack</code>, or just a vector of colours if only a single <code>RasterLayer</code>. These can be easily built with the <code>RColorBrewer</code> package, with the function <code><a href="http://www.rdocumentation.org/packages/RColorBrewer/topics/ColorBrewer">brewer.pal()</a></code>, <code>colorRampPalette()</code>, <code>heat.colors()</code>, or just a character vector of colours that will be interpolated. Note that overplotting (accomplished with <code>addTo=</code>) will not overplot the legend; in general, overplotting should be used for cases where the maps are compatible with the underlying map layer. See overplotting below.</p>
 <p><code>zero.color</code> is an optional string indicating the colour for zero values, when zero is the minimum value, otherwise, it is treated as any other colour. The default is <code>NULL</code>. Use <code>"white"</code> or another colour if this default is not desired.</p>
 <p><code>na.color</code> is an optional string indicating the colour for <code>NA</code> values. The default is transparent. Use <code>"white"</code> or another colour if this default is not desired. See text about <code>na.color</code> below after raster values have changed.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RColorBrewer)
@@ -217,11 +225,11 @@ newPoints2 &lt;-<span class="st"> </span>newPoints <span class="op">*</span><spa
 mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
   <span class="dt">DEM =</span> <span class="kw">topo.colors</span>(<span class="dv">50</span>),
   <span class="dt">forestCover =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">"blue"</span>, <span class="st">"orange"</span>, <span class="st">"purple"</span>, <span class="st">"red"</span>))(<span class="dv">50</span>),
-  <span class="dt">habitatQuality =</span> <span class="kw">brewer.pal</span>(<span class="dv">9</span>, <span class="st">"Spectral"</span>)
+  <span class="dt">habitatQuality =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/RColorBrewer/topics/ColorBrewer">brewer.pal</a></span>(<span class="dv">9</span>, <span class="st">"Spectral"</span>)
 )
 <span class="kw"><a href="../reference/getSetColors.html">setColors</a></span>(landscape, <span class="dt">n =</span> <span class="dv">50</span>) &lt;-<span class="st"> </span>mapColours
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, <span class="dt">new =</span> <span class="ot">TRUE</span>) <span class="co"># oh, how pretty!</span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/set_colours-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/set_colours-1.png" width="700"></p>
 </div>
 <div id="plot-arguments" class="section level2">
 <h2 class="hasAnchor">
@@ -233,12 +241,12 @@ mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
 <p>These parameters will specify plot parameters that are available with <code><a href="../reference/grid-functions.html">gpar()</a></code>. <code>gp</code> will adjust plot parameters, <code>gpText</code> will adjust the title and legend text only, <code>gpAxis</code> will adjust the axes only. <code>size</code> adjusts point size in a <code>SpatialPoints</code> object. Multiple entries can be used, but they must be passed as list elements and they will be matched to the <code>...</code> items to plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, <span class="dt">gpAxis =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">cex =</span> <span class="fl">0.4</span>), <span class="dt">size =</span> <span class="dv">1</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-1.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM, <span class="dt">gpText =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">cex =</span> <span class="fl">0.4</span>))</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-2.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-2.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM, caribou, <span class="dt">gpText =</span> <span class="kw">list</span>(<span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">cex =</span> <span class="dv">2</span>), <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">cex =</span> <span class="fl">0.1</span>)), <span class="dt">new =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-3.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-3.png" width="700"></p>
 </div>
 <div id="visualsqueeze" class="section level3">
 <h3 class="hasAnchor">
@@ -248,10 +256,10 @@ mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># x axis gets cut off in pdf and html</span>
 <span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/visualSqueeze-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/visualSqueeze-1.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM, <span class="dt">visualSqueeze =</span> <span class="fl">0.6</span>, <span class="dt">new =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/visualSqueeze-2.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/visualSqueeze-2.png" width="700"></p>
 <p>A key reason why the legends or axes are cut off sometimes is because there is a minimum threshold for font size for readability. So, either <code>visualSqueeze</code> can be set or making a larger device will usually also solve these problems.</p>
 </div>
 <div id="legend-and-legendrange" class="section level3">
@@ -261,15 +269,15 @@ mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
 <p><code>legend</code> is a logical indicating whether a legend should automatically be added (the default). <code>legendRange</code> will allow overriding of the default automatic legend creation. This is useful in situations where, say, an version of a raster at the initial stage of a simulation does not cover the range of the eventual values of that raster. Since the default is to automatically scale the legend to the values contained in the raster at the first time it is drawn, the legend will not cover the whole necessary range. Adding <code>legendRange = 0:20</code>, where <code>0:20</code> covers the expected range of all stages of that raster, will work.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM, <span class="dt">legendRange =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">500</span>), <span class="dt">new =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/legendRange-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/legendRange-1.png" width="700"></p>
 </div>
 <div id="zoomextent" class="section level3">
 <h3 class="hasAnchor">
 <a href="#zoomextent" class="anchor"></a><code>zoomExtent</code>
 </h3>
 <p>A plot can be made with a custom zoom. This can either be done by cropping the object, or by doing a <code>Plot</code> call, passing an extent object via <code>zoomExtent</code>. A common way of using this would be to initially <code>Plot</code> an object, then use <code>clickExtent</code>, assigning the new extent to an object. Then call <code><a href="../reference/Plot.html">Plot(obj, zoomExtent=newZoom)</a></code>. This new zoom will persist with rearrangements.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM, <span class="dt">zoomExtent =</span> <span class="kw">extent</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">10</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">20</span>)), <span class="dt">new =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/zoomExtent-1.png" width="672"></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM, <span class="dt">zoomExtent =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/raster/topics/extent">extent</a></span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">-1</span>, <span class="dv">20</span>)), <span class="dt">new =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p><img src="iii-plotting_files/figure-html/zoomExtent-1.png" width="700"></p>
 </div>
 <div id="length" class="section level3">
 <h3 class="hasAnchor">
@@ -279,7 +287,7 @@ mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(maps<span class="op">$</span>DEM)
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(sl, <span class="dt">addTo =</span> <span class="st">"maps$DEM"</span>, <span class="dt">length =</span> <span class="fl">0.2</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/arrows-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/arrows-1.png" width="700"></p>
 </div>
 </div>
 </div>
@@ -295,7 +303,7 @@ mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape)
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, <span class="dt">new =</span> <span class="kw">list</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>, <span class="ot">TRUE</span>), <span class="dt">axes =</span> <span class="st">"L"</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/new-as-list-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/new-as-list-1.png" width="700"></p>
 </div>
 <div id="calling-plot-again-and-again" class="section level2">
 <h2 class="hasAnchor">
@@ -307,10 +315,10 @@ mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
 <p>The <code>Plot</code> function simply adds the new plot in the available empty space.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/simple_add-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/simple_add-1.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># can add a new plot to the plotting window</span>
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, <span class="dt">new =</span> <span class="ot">FALSE</span>, <span class="dt">axes =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/simple_add-2.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/simple_add-2.png" width="700"></p>
 </div>
 <div id="if-there-is-not-a-blank-spot-for-a-new-plot" class="section level3">
 <h3 class="hasAnchor">
@@ -318,10 +326,10 @@ mapColours &lt;-<span class="st"> </span><span class="kw">list</span>(
 <p>The <code>Plot</code> function creates a new arrangement, keeping the pre-existing order of plots, and adding the new plots afterwards. The plots will all be a little bit smaller (assuming the device has not changed size), and they will be in different locations on the device.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-1.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># can add a new plot to the plotting window</span>
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, <span class="dt">new =</span> <span class="ot">FALSE</span>, <span class="dt">axes =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-2.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-2.png" width="700"></p>
 </div>
 <div id="a-pre-existing-name-to-a-device" class="section level3">
 <h3 class="hasAnchor">
@@ -335,7 +343,7 @@ landscape<span class="op">$</span>forestCover[] =<span class="st"> </span>((land
 <span class="co"># note: zeros are treated as no colour by default.</span>
 <span class="co"># if this is not the correct behavior, can use `zero.color`</span>
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, <span class="dt">new =</span> <span class="ot">FALSE</span>, <span class="dt">zero.color =</span> <span class="st">"blue"</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add_with_same_name-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/add_with_same_name-1.png" width="700"></p>
 </div>
 </div>
 </div>
@@ -352,11 +360,11 @@ landscape<span class="op">$</span>forestCover[] =<span class="st"> </span>((land
 <p>In the example here, the speedup actually slows down plotting because the rasters are already very small. This would not be the case when the original Raster had <code>1e8</code> pixels.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##    0.72    0.00    0.73</code></pre>
+##   0.918   0.000   0.919</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">speedup =</span> <span class="dv">10</span>, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/speedup-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/speedup-1.png" width="700"></p>
 <pre><code>##    user  system elapsed 
-##    0.90    0.00    0.91</code></pre>
+##   1.179   0.000   1.181</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># can add a new plot to the plotting window</span></code></pre></div>
 </div>
 </div>
@@ -368,7 +376,7 @@ landscape<span class="op">$</span>forestCover[] =<span class="st"> </span>((land
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape)
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, <span class="dt">addTo =</span> <span class="st">"landscape$DEM"</span>, <span class="dt">size =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/add-1.png" width="700"></p>
 </div>
 <div id="clearing-plot" class="section level1">
 <h1 class="hasAnchor">
@@ -376,7 +384,7 @@ landscape<span class="op">$</span>forestCover[] =<span class="st"> </span>((land
 <p>A device and all the meta-data associated with that device can be cleared with <code>clearPlot</code> function. Sometimes, the plot state can be “illegal” because it was interrupted during a previous plotting attempt. This function can be used to clear the device and all the associated metadata manually. Use “force = TRUE” to close the device, and reopen it, which is a sure-fire way to clear everything.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou)</code></pre></div>
-<p><img src="iii-plotting_files/figure-html/clearPlot-1.png" width="672"></p>
+<p><img src="iii-plotting_files/figure-html/clearPlot-1.png" width="700"></p>
 </div>
 <div id="plotting-in-rstudio" class="section level1">
 <h1 class="hasAnchor">
@@ -434,7 +442,6 @@ landscape<span class="op">$</span>forestCover[landscape<span class="op">$</span>
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, plots)
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, plots, sl)</code></pre></div>
 </div>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -490,6 +497,8 @@ landscape<span class="op">$</span>forestCover[landscape<span class="op">$</span>
 
       </footer>
 </div>
+
+  
 
   </body>
 </html>

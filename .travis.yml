@@ -9,33 +9,69 @@ matrix:
     r: 3.3.0
     addons:
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
-          - libgdal1-dev
-          - libproj-dev
+        - libgdal1-dev
+        - libgeos-dev
+        - libglpk-dev
+        - libnlopt-dev
+        - libproj-dev
+        - libudunits2-dev
+    before_install:
+    - export DISPLAY=:99.0
+    - sh -e /etc/init.d/xvfb start
   - os: linux
     dist: trusty
     r: 3.4.0
     addons:
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
-          - libgdal1-dev
-          - libproj-dev
+        - libgdal1-dev
+        - libgeos-dev
+        - libglpk-dev
+        - libnlopt-dev
+        - libproj-dev
+        - libudunits2-dev
+    before_install:
+    - export DISPLAY=:99.0
+    - sh -e /etc/init.d/xvfb start
   - os: linux
     dist: trusty
     r: oldrel
     addons:
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
-          - libgdal1-dev
-          - libproj-dev
+        - libgdal1-dev
+        - libgeos-dev
+        - libglpk-dev
+        - libnlopt-dev
+        - libproj-dev
+        - libudunits2-dev
+    before_install:
+    - export DISPLAY=:99.0
+    - sh -e /etc/init.d/xvfb start
   - os: linux
     dist: trusty
     r: release
     addons:
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
-          - libgdal1-dev
-          - libproj-dev
+        - libgdal1-dev
+        - libgeos-dev
+        - libglpk-dev
+        - libnlopt-dev
+        - libproj-dev
+        - libudunits2-dev
+    before_install:
+    - export DISPLAY=:99.0
+    - sh -e /etc/init.d/xvfb start
     r_packages:
       - covr
       - curl
@@ -51,9 +87,18 @@ matrix:
     r: devel
     addons:
       apt:
+        sources:
+        - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
         packages:
-          - libgdal1-dev
-          - libproj-dev
+        - libgdal1-dev
+        - libgeos-dev
+        - libglpk-dev
+        - libnlopt-dev
+        - libproj-dev
+        - libudunits2-dev
+    before_install:
+    - export DISPLAY=:99.0
+    - sh -e /etc/init.d/xvfb start
     r_packages:
     - devtools
   - os: osx
@@ -70,7 +115,3 @@ notifications:
   email:
     on_success: change
     on_failure: change
-branches:
-  only:
-    - master
-    - development

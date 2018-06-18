@@ -5,23 +5,29 @@ This is a minor update to our package.
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 14.04.5      (travis-ci), R 3.3.3
-* Windows              (appveyor), R 3.3.2
-* Windows              (appveyor), R 3.3.3
-* Windows 7               (local), R 3.3.3
+* Ubuntu 14.04        (travis-ci), R 3.1.0
+* Ubuntu 14.04        (travis-ci), R 3.2.0
+* Ubuntu 14.04        (travis-ci), R 3.3.0
+* Ubuntu 14.04        (travis-ci), R 3.4.0
+* Windows              (appveyor), R 3.1.0
+* Windows              (appveyor), R 3.2.0
+* Windows              (appveyor), R 3.3.0
+* Windows              (appveyor), R 3.4.0
 
 ### Current R versions
-* OSX Sierra 10.12.6 (travis-ci), R 3.4.3
-* Ubuntu 14.04.5     (travis-ci), R 3.4.2
-* Debian 4.9.51          (local), R 3.4.3
-* Windows             (appveyor), R 3.4.3
-* Windows          (win-builder), R 3.4.3
-* Windows 7              (local), R 3.4.3
+* macOS High Sierra    (local), R 3.5.0
+* OS X El Capitan  (travis-ci), R 3.5.0
+* Ubuntu 14.04     (travis-ci), R 3.5.0
+* Ubuntu 18.04         (local), R 3.5.0
+* Windows           (appveyor), R 3.5.0
+* Windows        (win-builder), R 3.5.0
+* Windows 7            (local), R 3.5.0
 
 ### Development R version
-* Ubuntu 14.04        (travis-ci), R 3.5.0 (2018-01-24 r74157)
-* Windows                 (local), R 3.5.0 (2018-01-24 r74157)
-* Windows           (win-builder), R 3.5.0 (2018-01-24 r74157)
+* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-15 r74903)
+* Ubuntu 18.04         (local), R 3.6.0 (2018-06-15 r74903)
+* Windows           (appveyor), R 3.6.0 (2018-06-11 r74889)
+* Windows        (win-builder), R 3.6.0 (2018-06-15 r74904)
 
 ## R CMD check results
 
@@ -39,15 +45,10 @@ The `fastshp` package in Suggests is optionally installed from Rforge and not re
           fastshp
       
         Availability using Additional_repositories specification:
-          fastshp   yes   http://rforge.net
-
-
+          fastshp   yes   https://rforge.net
 
 ## Downstream dependencies
 
-There are several 3 downstream dependencies of this package. I am a co-developer of these 3 packages. These packages are about to be updated with CRAN. We checked against current CRAN versions of all 3 and current development versions of all 3. There were 2 failed tests on SpaDES.core on CRAN and 2 failed tests currently on the development version. These have been noted, are easy to change. Changes to those packages will be will be submitted soon (within 2 weeks) to CRAN.
+I have run R CMD check on downstream dependencies and all have passed, except as noted below.
 
-- `SpaDES` (Imports)
-- `SpaDES.addins` (Imports)
-- `SpaDES.core` (Depends)
-
+Summary at https://github.com/PredictiveEcology/quickPlot/blob/master/revdep/README.md.

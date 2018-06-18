@@ -37,11 +37,6 @@ environment:
   - R_VERSION: 3.3.0
     RTOOLS_VERSION: 33
 
-branches:
-  only:
-  - master
-  - development
-
 clone_depth: 5
 
 build_script:
