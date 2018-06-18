@@ -2512,7 +2512,9 @@ sp2sl <- function(sp1, from) {
 #' clearPlot()
 #' Plot(a)
 #' NROW(a@polygons[[1]]@Polygons[[1]]@coords)
-#' aThin <- thin(a, 200)
+#' if (require(fastshp)) {
+#'   aThin <- thin(a, 200)
+#' }
 #' NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
 #' Plot(aThin) # looks similar
 #'
@@ -2618,11 +2620,9 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
         if (is(x, "SpatialPolygonsDataFrame"))
           xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = x@data)
         return(xyOrd)
-
       }
     }
   } else {
-
     message(
       paste(
         "To speed up Polygons plotting using Plot install the fastshp package:\n",
@@ -2641,7 +2641,6 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
   xyOrd <- list(xyOrd = xyOrd[["out"]], hole = xyOrd[["hole"]],
                 idLength = xyOrd[["idLength"]])
 }
-
 
 #' @rdname thin
 #' @export

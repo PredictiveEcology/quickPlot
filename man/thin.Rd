@@ -80,7 +80,9 @@ crsObj <- CRS(paste0("+proj=tmerc +lat_0=0 +lon_0=-115 +k=0.9992 +x_0=500000 +y_
 clearPlot()
 Plot(a)
 NROW(a@polygons[[1]]@Polygons[[1]]@coords)
-aThin <- thin(a, 200)
+if (require(fastshp)) {
+  aThin <- thin(a, 200)
+}
 NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
 Plot(aThin) # looks similar
 
