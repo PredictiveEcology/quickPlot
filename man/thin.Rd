@@ -81,10 +81,10 @@ clearPlot()
 Plot(a)
 NROW(a@polygons[[1]]@Polygons[[1]]@coords)
 if (require(fastshp)) {
-  aThin <- thin(a, 200)
-}
+  quickPlot::aThin <- thin(a, 200)
 NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
 Plot(aThin) # looks similar
+}
 
 # compare -- if you have rgeos
 # if (require("rgeos")) {

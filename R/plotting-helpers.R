@@ -2513,10 +2513,10 @@ sp2sl <- function(sp1, from) {
 #' Plot(a)
 #' NROW(a@polygons[[1]]@Polygons[[1]]@coords)
 #' if (require(fastshp)) {
-#'   aThin <- thin(a, 200)
-#' }
+#'   quickPlot::aThin <- thin(a, 200)
 #' NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
 #' Plot(aThin) # looks similar
+#' }
 #'
 #' # compare -- if you have rgeos
 #' # if (require("rgeos")) {
@@ -2575,10 +2575,9 @@ thin <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
   UseMethod("thin")
 }
 
-#' @rdname thin
 #' @export
+#' @rdname thin
 thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0) {
-
   # For speed of plotting
   xyOrd <- .fortify(x, matchFortify = FALSE,
                     simple = returnDataFrame) # a list: out, hole, idLength
@@ -2598,12 +2597,11 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
 
       #xyOrd[["out"]] <- xyOrd[["out"]][thinRes, ]# thin line
       if (returnDataFrame) {
-        xyOrd[["idLength"]] <- xyOrd[["out"]][,list(V1=.N),by=groups]
+        xyOrd[["idLength"]] <- xyOrd[["out"]][, list(V1 = .N), by = groups]
       } else {
         # clean up a bit
         set(xyOrd[["out"]], , "order", NULL)
         set(xyOrd[["out"]], , "groups", NULL)
-
 
         polyList <- split(xyOrd[["out"]], by = c("Polygons", "Polygon"),
                            flatten = FALSE, keep.by = FALSE)
@@ -2642,8 +2640,8 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
                 idLength = xyOrd[["idLength"]])
 }
 
-#' @rdname thin
 #' @export
+#' @rdname thin
 thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
   message("No method for that class of object exists. See methods('thin') to see current methods")
 }
@@ -2674,7 +2672,6 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
     x@polygons[[xx]]@ID
   })), error = function(xx) FALSE)
 
-
   ordInner <- lapply(ordSeq, function(xx) {
     x@polygons[[xx]]@plotOrder
   })
@@ -2687,10 +2684,8 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
     lapply(i, length)
   })) / 2)
 
-
   numPolygons <- unlist(length(xyOrd.l))
   numPolygon <- unlist(lapply(xyOrd.l, length))
-
 
   xyOrd <- do.call(rbind, lapply(xyOrd.l, function(i) {
     do.call(rbind, i)
