@@ -2514,15 +2514,15 @@ sp2sl <- function(sp1, from) {
 #' NROW(a@polygons[[1]]@Polygons[[1]]@coords)
 #' if (require(fastshp)) {
 #'   aThin <- quickPlot::thin(a, 200)
-#' NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#' Plot(aThin) # looks similar
+#'   NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
+#'   Plot(aThin) # looks similar
 #' }
 #'
 #' # compare -- if you have rgeos
 #' # if (require("rgeos")) {
 #' #   aSimplify <- gSimplify(a, tol = 200)
 #' #   NROW(aSimplify@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#' #  Plot(aSimplify)
+#' #   Plot(aSimplify)
 #' # }
 #'
 #' # compare -- if you have sf
