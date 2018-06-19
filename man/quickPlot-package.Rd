@@ -29,7 +29,11 @@ Useful links:
 
 Authors:
 \itemize{
+<<<<<<< Updated upstream
   \item Eliot J B McIntire \email{eliot.mcintire@canada.ca}
+=======
+  \item Alex M Chubaty \email{alex.chubaty@gmail.com}
+>>>>>>> Stashed changes
 }
 
 Other contributors:

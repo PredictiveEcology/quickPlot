@@ -2071,18 +2071,13 @@ setMethod(
 
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
-                             returnDataFrame = TRUE, minCoordsToThin = 1e3)
+                             returnDataFrame = TRUE, minCoordsToThin = 1e3, ...)
 
-    gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
-    polyGrob <- gTree(children = gList(
-      polygonGrob(
-        x = xyOrd[["xyOrd"]]$x, y = xyOrd[["xyOrd"]]$y,
-        id.lengths = xyOrd[["idLength"]]$V1,
-        gp = gp, default.units = "native"
-      )
-    ),
-    gp = gp,
-    cl = "plotPoly")
+    dc <- dev.cur()
+
+    arr <- try(.getQuickPlot(paste0("quickPlot", dc)))
+
+    polyGrob <- .createPolygonGrob(gp = gp, xyOrd = xyOrd)
     grid.draw(polyGrob, recording = FALSE)
     return(invisible(polyGrob))
 })
@@ -2572,16 +2567,18 @@ sp2sl <- function(sp1, from) {
 #'    # st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
 #'   #}
 #' }
-thin <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
+thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   UseMethod("thin")
 }
 
 #' @export
 #' @rdname thin
-thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0) {
+thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0,
+                                 maxNumPolygons = 3e3) {
+
   # For speed of plotting
   xyOrd <- .fortify(x, matchFortify = FALSE,
-                    simple = returnDataFrame) # a list: out, hole, idLength
+                    simple = returnDataFrame, maxNumPolygons) # a list: out, hole, idLength
   if (is.null(tolerance)) {
     tolerance <- (raster::xmax(x) - raster::xmin(x)) * 0.0001
     message("tolerance set to ", tolerance)
@@ -2615,9 +2612,18 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
           Polygons(poly, ID = outerI)
         })
 
+        names1 <- unique(xyOrd$out$Polygons)
         xyOrd <- SpatialPolygons(bb, proj4string = CRS(proj4string(x)))
-        if (is(x, "SpatialPolygonsDataFrame"))
-          xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = x@data)
+        if (is(x, "SpatialPolygonsDataFrame")) {
+          if (length(x) > maxNumPolygons) {
+            dat <- x@data[as.numeric(names1) + 1,]
+            #row.names(dat) <- as.character(seq_len(length(xyOrd)))
+          } else {
+            dat <- x@data
+          }
+          xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = dat)
+        }
+
         return(xyOrd)
       }
     }
@@ -2655,30 +2661,36 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #' @name fortify
 #' @importFrom data.table setDT set
 #' @keywords internal
-.fortify <- function(x, matchFortify = TRUE, simple = FALSE) {
+.fortify <- function(x, matchFortify = TRUE, simple = FALSE, maxNumPolygons = 3e3) {
   ord <- x@plotOrder
+  if (length(ord) > maxNumPolygons) {
+    polygonSeq <- .polygonSeq(length(ord), maxNumPolygons)
+    # max maxNumPolygons polygons can be visible in a plot window
+    ord <- ord[polygonSeq]
+  }
   ordSeq <- seq(ord)
+
   xy <- lapply(ordSeq, function(i) {
-    lapply(x@polygons[[i]]@Polygons, function(j) {
+    lapply(x@polygons[[ord[i]]]@Polygons, function(j) {
       j@coords
     })
   })
 
   hole <- tryCatch(unlist(lapply(ordSeq, function(xx) {
-    lapply(x@polygons[[xx]]@Polygons, function(yy)
+    lapply(x@polygons[[ord[xx]]]@Polygons, function(yy)
       yy@hole)
   })), error = function(xx) FALSE)
 
   IDs <- tryCatch(unlist(lapply(ordSeq, function(xx) {
-    x@polygons[[xx]]@ID
+    x@polygons[[ord[xx]]]@ID
   })), error = function(xx) FALSE)
 
   ordInner <- lapply(ordSeq, function(xx) {
-    x@polygons[[xx]]@plotOrder
+    x@polygons[[ord[xx]]]@plotOrder
   })
 
   xyOrd.l <- lapply(ordSeq, function(i) { # nolint
-    xy[[i]][ordInner[[i]]]
+    xy[[ordSeq[i]]][ordInner[[ordSeq[i]]]]
   })
 
   idLength <- data.table(V1 = unlist(lapply(xyOrd.l, function(i) {
@@ -2719,4 +2731,22 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 
     return(out)
   }
+}
+
+.polygonSeq <- function(polygonLength, maxNumPolygons) {
+  round(seq(1, polygonLength, length.out = maxNumPolygons))
+}
+
+.createPolygonGrob <- function(gp, xyOrd) {
+  gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
+  polyGrob <- gTree(children = gList(
+    polygonGrob(
+      x = xyOrd[["xyOrd"]]$x, y = xyOrd[["xyOrd"]]$y,
+      id.lengths = xyOrd[["idLength"]]$V1,
+      gp = gp, default.units = "native"
+    )
+  ),
+  gp = gp,
+  cl = "plotPoly")
+
 }

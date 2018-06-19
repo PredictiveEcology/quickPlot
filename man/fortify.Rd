@@ -5,7 +5,7 @@
 \alias{.fortify}
 \title{Fortify - i.e,. convert an artibrary object to a data.frame-like object}
 \usage{
-.fortify(x, matchFortify = TRUE, simple = FALSE)
+.fortify(x, matchFortify = TRUE, simple = FALSE, maxNumPolygons = 10000)
 }
 \description{
 This only deals with SpatialPolygons.

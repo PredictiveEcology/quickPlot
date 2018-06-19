@@ -177,6 +177,9 @@ setMethod("clearPlot",
 #'   Plot(landscape)
 #'   e <- clickExtent() # click at two locations on the Plot device
 #'   print(e)
+#'
+#'   # repeated zooming to try various places on the original device
+#'   for(i in 1:4) clickExtent() # click at two locations on the Plot device
 #' }
 #'
 clickValues <- function(n = 1) {
@@ -213,27 +216,72 @@ clickValues <- function(n = 1) {
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
 #'
+#' @details
+#' \code{clickExtent} will open a new plotting device when used. This plotting
+#' device will be re-used for all subsequent zooming attempts for each
+#' given plot. This means that there can be quick, repeated zooming from the
+#' original plot device.  See example.
+#'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
   corners <- clickCoordinates(2)
   zoom <- extent(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
 
   if (plot.it) {
-    devActive <- dev.cur()
-    if (is.null(devNum)) {
-      newPlot()
-    } else {
-      dev(devNum)
-    }
 
     objLay <- strsplit(corners$map, "\\$")
     objNames <- unique(unlist(lapply(objLay, function(x) x[1])))
     layNames <- unique(unlist(lapply(objLay, function(x) x[2])))
-    if (!is.na(layNames)) {
-      Plot(eval(parse(text = objNames), envir = corners$envir[[1]])[[layNames]],
-           zoomExtent = zoom, new = TRUE)
+
+    devActive <- dev.cur()
+    if (is.null(devNum)) {
+      objsInQuickPlotEnv <- ls(.quickPlotEnv)
+      alreadyZoomed <- grep("Dev", objsInQuickPlotEnv, value = TRUE)
+
+      if (length(alreadyZoomed)) {
+        dev(as.numeric(gsub(alreadyZoomed, pattern = "Dev", replacement = "")))
+      } else {
+        newPlot()
+      }
+
     } else {
+      dev(devNum)
+    }
+
+    if (!is.na(layNames)) {
+      objNameZoom <- paste0(objNames, "_", layNames, "_Zoom")
+      obj <- list()
+      obj[[objNameZoom]] <- eval(parse(text = objNames), envir = corners$envir[[1]])[[layNames]]
+      obj[[objNameZoom]] <- raster::crop(obj[[objNameZoom]], zoom)
+      Plot(obj, title = objNameZoom, new = TRUE)
+    } else {
+      objNameZoom <- paste0(objNames, "_Zoom")
       clearPlot()
-      Plot(get(objNames, envir = corners$envir[[1]]), zoomExtent = zoom)
+      obj <- list()
+      theObj <- get(objNames, envir = corners$envir[[1]])
+      if (is(theObj, "SpatialPolygons")) {
+        if (length(theObj) > 3e3) {
+          theObj1 <- thin(theObj, maxNumPolygons = 3e3, returnDataFrame = TRUE)
+        }
+        ext <- extent(zoom)
+        extPolygon <- as(ext, "SpatialPolygons")
+        toDelete <- theObj1$xyOrd$x <= ext@xmin | theObj1$xyOrd$x >= ext@xmax |
+          theObj1$xyOrd$y <= ext@ymin | theObj1$xyOrd$y >= ext@ymax
+
+        Plot(extPolygon, title = objNameZoom)
+        groups <- rep(theObj1$idLength$groups, theObj1$idLength$V1)
+        aaa <- data.table(groups, toDelete, theObj1$xyOrd)
+        bbb <- aaa[, sum(!toDelete), by = groups]
+        bbb3 <- which(bbb$V1 > 0)
+        idLength <- bbb[bbb3,]
+        bbb2 <- aaa[!toDelete,]
+
+        bbbList <- list(xyOrd = bbb2, hole = theObj1$hole[bbb3], idLength = idLength)
+
+        polyGrob <- .createPolygonGrob(gp = gpar(), xyOrd = bbbList)
+        seekViewport("extPolygon")
+        grid.draw(polyGrob, recording = FALSE)
+
+      }
     }
 
     dev(devActive)
@@ -306,11 +354,19 @@ clickCoordinates <- function(n = 1) {
     #  as origin... so, require 1-
     yInt <- findInterval(as.numeric(strsplit(as.character(gloc$y), "npc")[[1]]),
                          c(0, cumsum(heightNpcs)))
-    if (!(xInt %in% grepNpcsW) & !(yInt %in% grepNpcsH)) {
+    if (!(xInt %in% grepNpcsW) || !(yInt %in% grepNpcsH)) {
       stop("No plot at those coordinates")
     }
     column <-  which(xInt == grepNpcsW)
     row <- which((yInt == grepNpcsH)[length(grepNpcsH):1]) # nolint
+
+    if (length(row) == 0) { # above the plot
+      row <- if (yInt > grepNpcsH) length(grepNpcsH) else 1
+    }
+    if (length(column) == 0) { # above the plot
+      column <- if (xInt > grepNpcsW) length(grepNpcsW) else 1
+    }
+
     map <- column + (row - 1) * arr$curr@arr@columns
 
     maxLayX <- cumsum(widthNpcs)[xInt]
