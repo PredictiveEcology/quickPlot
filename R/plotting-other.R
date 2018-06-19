@@ -232,13 +232,16 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
     objNames <- unique(unlist(lapply(objLay, function(x) x[1])))
     layNames <- unique(unlist(lapply(objLay, function(x) x[2])))
 
+    browser()
     devActive <- dev.cur()
     if (is.null(devNum)) {
       objsInQuickPlotEnv <- ls(.quickPlotEnv)
-      alreadyZoomed <- grep("Dev", objsInQuickPlotEnv, value = TRUE)
+      alreadyZoomed <- lapply(objsInQuickPlotEnv, function(x) {
+        grepl(pattern = "extPolygon", names(.quickPlotEnv[[x]]$curr@arr))
+      })
 
-      if (length(alreadyZoomed)) {
-        dev(as.numeric(gsub(alreadyZoomed, pattern = "Dev", replacement = "")))
+      if (sum(unlist(alreadyZoomed))) {
+        dev(as.numeric(gsub(objsInQuickPlotEnv[unlist(alreadyZoomed)], pattern = "quickPlot", replacement = "")))
       } else {
         newPlot()
       }
@@ -259,27 +262,52 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
       obj <- list()
       theObj <- get(objNames, envir = corners$envir[[1]])
       if (is(theObj, "SpatialPolygons")) {
-        if (length(theObj) > 3e3) {
-          theObj1 <- thin(theObj, maxNumPolygons = 3e3, returnDataFrame = TRUE)
-        }
         ext <- extent(zoom)
         extPolygon <- as(ext, "SpatialPolygons")
-        toDelete <- theObj1$xyOrd$x <= ext@xmin | theObj1$xyOrd$x >= ext@xmax |
-          theObj1$xyOrd$y <= ext@ymin | theObj1$xyOrd$y >= ext@ymax
+        crs(extPolygon) <- crs(theObj)
+        Plot(extPolygon, title = objNameZoom, gp = gpar(col = "white"), new = TRUE)
 
-        Plot(extPolygon, title = objNameZoom)
-        groups <- rep(theObj1$idLength$groups, theObj1$idLength$V1)
-        aaa <- data.table(groups, toDelete, theObj1$xyOrd)
-        bbb <- aaa[, sum(!toDelete), by = groups]
-        bbb3 <- which(bbb$V1 > 0)
-        idLength <- bbb[bbb3,]
-        bbb2 <- aaa[!toDelete,]
+        if (length(theObj) > getOption("quickPlot.maxNumPolygons", 3e3)) {
+          fullArea <- rgeos::gArea(as(extent(theObj), "SpatialPolygons"))
+          zoomArea <- rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
+          numPolys <- length(theObj)
+          ratio <- fullArea/zoomArea
+          if (numPolys/ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
+            polySeq <- .polygonSeq(theObj, maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
+            theObj <- theObj[polySeq,]
+          }
+          # zoomSP <- as(zoom, "SpatialPolygons")
+          # crs(zoomSP) <- crs(theObj)
+          a <- rgeos::gIntersects(theObj, extPolygon, byid = TRUE)
+          theObj <- theObj[a[1,],]
+          #theObj <- raster::intersect(theObj, zoomSP)
 
-        bbbList <- list(xyOrd = bbb2, hole = theObj1$hole[bbb3], idLength = idLength)
+        }
+        Plot(theObj, addTo = "extPolygon", title = "")
+          #
+          # theObj1 <- if (numPolys/ratio > getOption("quickPlot.maxNumPolygons", 3e3)) {
+          #   thin(theObj, maxNumPolygons = 3e3, returnDataFrame = TRUE)
+          # } else {
+          #   .fortify(theObj, matchFortify = FALSE, simple = TRUE, maxNumPolygons = length(theObj))
+          #   #theObj
+          # }
+        #}
 
-        polyGrob <- .createPolygonGrob(gp = gpar(), xyOrd = bbbList)
-        seekViewport("extPolygon")
-        grid.draw(polyGrob, recording = FALSE)
+        # toDelete <- theObj1$xyOrd$x <= ext@xmin | theObj1$xyOrd$x >= ext@xmax |
+        #   theObj1$xyOrd$y <= ext@ymin | theObj1$xyOrd$y >= ext@ymax
+        #
+        # groups <- rep(theObj1$idLength$groups, theObj1$idLength$V1)
+        # aaa <- data.table(groups, toDelete, theObj1$xyOrd)
+        # bbb <- aaa[, sum(!toDelete), by = groups]
+        # bbb3 <- which(bbb$V1 > 0)
+        # idLength <- bbb[bbb3,]
+        # bbb2 <- aaa[!toDelete,]
+        #
+        # bbbList <- list(xyOrd = bbb2, hole = theObj1$hole[bbb3], idLength = idLength)
+        #
+        # polyGrob <- .createPolygonGrob(gp = gpar(), xyOrd = bbbList)
+        # seekViewport("extPolygon")
+        # grid.draw(polyGrob, recording = FALSE)
 
       }
     }

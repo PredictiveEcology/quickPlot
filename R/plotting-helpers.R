@@ -2073,10 +2073,6 @@ setMethod(
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
                              returnDataFrame = TRUE, minCoordsToThin = 1e3, ...)
 
-    dc <- dev.cur()
-
-    arr <- try(.getQuickPlot(paste0("quickPlot", dc)))
-
     polyGrob <- .createPolygonGrob(gp = gp, xyOrd = xyOrd)
     grid.draw(polyGrob, recording = FALSE)
     return(invisible(polyGrob))
@@ -2574,7 +2570,7 @@ thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 #' @export
 #' @rdname thin
 thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0,
-                                 maxNumPolygons = 3e3) {
+                                 maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
 
   # For speed of plotting
   xyOrd <- .fortify(x, matchFortify = FALSE,
@@ -2661,12 +2657,18 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #' @name fortify
 #' @importFrom data.table setDT set
 #' @keywords internal
-.fortify <- function(x, matchFortify = TRUE, simple = FALSE, maxNumPolygons = 3e3) {
+.fortify <- function(x, matchFortify = TRUE, simple = FALSE, maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
   ord <- x@plotOrder
   if (length(ord) > maxNumPolygons) {
-    polygonSeq <- .polygonSeq(length(ord), maxNumPolygons)
+
+    polygonSeq <- .polygonSeq(x, maxNumPolygons) #if (is.numeric(x@data$Shape_Area)) {
+      #which(x@data$Shape_Area>(sort(x@data$Shape_Area, decreasing = TRUE)[3000]))
+    #} else {
+    #  (length(ord), maxNumPolygons)
+    #}
     # max maxNumPolygons polygons can be visible in a plot window
     ord <- ord[polygonSeq]
+    message("Showing only ", maxNumPolygons, " polygons. See options('reproducuble.maxNumPolygons')")
   }
   ordSeq <- seq(ord)
 
@@ -2733,8 +2735,13 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
   }
 }
 
-.polygonSeq <- function(polygonLength, maxNumPolygons) {
-  round(seq(1, polygonLength, length.out = maxNumPolygons))
+.polygonSeq <- function(polygon, maxNumPolygons) {
+  if (is.numeric(polygon@data$Shape_Area)) {
+    which(polygon@data$Shape_Area>(sort(polygon@data$Shape_Area, decreasing = TRUE)[maxNumPolygons]))
+  } else {
+    round(seq(1, length(polygon), length.out = maxNumPolygons))
+  }
+
 }
 
 .createPolygonGrob <- function(gp, xyOrd) {

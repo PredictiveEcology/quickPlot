@@ -15,7 +15,24 @@ test_that("clickExtent works", {
   Plot(shpEcozone)
 
 
+  crop_raster_gdal=function(srcfile, dstfile,shapefile) {
+    require(gdalUtils)
+    gdalwarp(srcfile=srcfile, dstfile=dstfile,cutline=shapefile, dstalpha=T,of = "GTiff", crop_to_cutline=T, overwrite=T)
+
+  }
   # 1st error -- click just outside of polygon
   clickExtent()
+
+  library(reproducible)
+  cacheRepo <- file.path(dirname(tempdir()), "reproducibleCache")
+  checkPath(cacheRepo, create = TRUE)
+  b <- Cache(reproducible::prepInputs, cacheRepo = cacheRepo, showSimilar = TRUE, cacheId = "74b33a4fb9ba7b537c017e8d0ec3e6e6",
+             targetFile = "EC_borealdisturbance_polygonal_2008_2010_FINAL_ALBERS.shp",
+             url = "http://www.ec.gc.ca/data_donnees/STB-DGST/003/Boreal-ecosystem-anthropogenic-disturbance-vector-data-2008-2010.zip")
+
+
+  dev()
+  Plot(b)
+
 
 })
