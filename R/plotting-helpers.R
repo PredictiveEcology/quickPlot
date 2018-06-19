@@ -1795,7 +1795,7 @@ setMethod(
 #' plotting down.
 #'
 #' The suggested package \code{fastshp} can be installed with:
-#' \code{install.packages("fastshp", repos = "http://rforge.net", type = "source")}.
+#' \code{install.packages("fastshp", repos = "https://rforge.net", type = "source")}.
 #'
 #' NOTE: you may get errors relating to not having installed the software tools
 #' required for building R packages on your system.
@@ -1909,7 +1909,7 @@ setMethod(
           message(
             paste(
               "To speed up Polygons plotting using Plot install the fastshp package:\n",
-              "install.packages(\"fastshp\", repos=\"http://rforge.net\", type=\"source\")."
+              "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")."
             )
           )
           if (Sys.info()[["sysname"]] == "Windows") {
@@ -2125,7 +2125,7 @@ setMethod(
           message(
             paste(
               "To speed up Lines plotting using Plot, install the fastshp package:\n",
-              "install.packages(\"fastshp\", repos=\"http://rforge.net\", type=\"source\")"
+              "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")"
             )
           )
           if (Sys.info()[["sysname"]] == "Windows") {
@@ -2433,33 +2433,33 @@ sp2sl <- function(sp1, from) {
   SpatialLines(l)
 }
 
-
-
-#' Thin a polygon using fastshp::thin
+#' Thin a polygon using \code{fastshp::thin}
 #'
 #' For visualizing, it is sometimes useful to remove points in Spatial* objects.
-#' This will change the geometry, so it is not recommended for computation. This
-#' is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
-#' for large shapefiles, particularly if \code{returnDataFrame} is \code{TRUE}.
-#' \code{thin} will not attempt to preserve topology.
+#' This will change the geometry, so it is not recommended for computation.
+#' This is similar to \code{rgeos::gSimplify} and \code{sf::st_simplify},
+#' but faster than both (see examples) for large shapefiles, particularly if
+#' \code{returnDataFrame} is \code{TRUE}.
+#' \emph{\code{thin} will not attempt to preserve topology.}
 #' It is strictly for making smaller polygons for the purpose (likely)
 #' of visualizing more quickly.
 #'
 #' @param x A Spatial* object
-#' @param returnDataFrame If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
-#'        idLength. If \code{FALSE}, the default, it will return a \code{SpatialPolygons}
-#'        object
+#' @param tolerance Maximum allowable distance for a point to be removed.
+#' @param returnDataFrame If \code{TRUE}, this will return a list of 3 elements,
+#'        \code{xyOrd}, \code{hole}, and \code{idLength}.
+#'        If \code{FALSE} (default), it will return a \code{SpatialPolygons} object.
 #' @param minCoordsToThin If the number of coordinates is smaller than this number,
 #'        then thin will just pass through, though it will take the time required to
 #'        calculate how many points there are (which is not NROW(coordinates(x)) for
 #'        a SpatialPolygon)
 #'
-#' @inheritParams fastshp::thin
-#' @rdname thin
-#' @importFrom data.table set data.table as.data.table
-#' @importFrom sp Polygon Polygons SpatialPolygons CRS SpatialPolygonsDataFrame
-#' @importFrom raster xmax xmin
 #' @export
+#' @importFrom data.table as.data.table data.table set
+#' @importFrom raster xmax xmin
+#' @importFrom sp CRS Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
+#' @rdname thin
+#'
 #' @examples
 #' library(raster)
 #'
@@ -2627,7 +2627,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
     message(
       paste(
         "To speed up Polygons plotting using Plot install the fastshp package:\n",
-        "install.packages(\"fastshp\", repos=\"http://rforge.net\", type=\"source\")."
+        "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")."
       )
     )
     if (Sys.info()[["sysname"]] == "Windows") {
