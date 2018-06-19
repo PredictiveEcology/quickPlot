@@ -13,7 +13,7 @@ independently of one another.
 }
 \note{
 The suggested package \pkg{fastshp} can be installed with
-\code{install.packages("fastshp", repos = "http://rforge.net", type = "source")}.
+\code{install.packages("fastshp", repos = "https://rforge.net", type = "source")}.
 }
 \seealso{
 Useful links:

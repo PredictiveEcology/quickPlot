@@ -1795,7 +1795,7 @@ setMethod(
 #' plotting down.
 #'
 #' The suggested package \code{fastshp} can be installed with:
-#' \code{install.packages("fastshp", repos = "http://rforge.net", type = "source")}.
+#' \code{install.packages("fastshp", repos = "https://rforge.net", type = "source")}.
 #'
 #' NOTE: you may get errors relating to not having installed the software tools
 #' required for building R packages on your system.
@@ -1909,7 +1909,7 @@ setMethod(
           message(
             paste(
               "To speed up Polygons plotting using Plot install the fastshp package:\n",
-              "install.packages(\"fastshp\", repos=\"http://rforge.net\", type=\"source\")."
+              "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")."
             )
           )
           if (Sys.info()[["sysname"]] == "Windows") {
@@ -2134,7 +2134,7 @@ setMethod(
           message(
             paste(
               "To speed up Lines plotting using Plot, install the fastshp package:\n",
-              "install.packages(\"fastshp\", repos=\"http://rforge.net\", type=\"source\")"
+              "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")"
             )
           )
           if (Sys.info()[["sysname"]] == "Windows") {
@@ -2625,7 +2625,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
     message(
       paste(
         "To speed up Polygons plotting using Plot install the fastshp package:\n",
-        "install.packages(\"fastshp\", repos=\"http://rforge.net\", type=\"source\")."
+        "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")."
       )
     )
     if (Sys.info()[["sysname"]] == "Windows") {
