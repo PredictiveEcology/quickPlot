@@ -25,15 +25,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alex M Chubaty \email{alex.chubaty@gmail.com}
+\strong{Maintainer}: Eliot J B McIntire \email{eliot.mcintire@canada.ca}
 
 Authors:
 \itemize{
-<<<<<<< Updated upstream
-  \item Eliot J B McIntire \email{eliot.mcintire@canada.ca}
-=======
   \item Alex M Chubaty \email{alex.chubaty@gmail.com}
->>>>>>> Stashed changes
 }
 
 Other contributors:

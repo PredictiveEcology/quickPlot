@@ -6,10 +6,11 @@
 \alias{thin.default}
 \title{Thin a polygon using \code{fastshp::thin}}
 \usage{
-thin(x, tolerance, returnDataFrame, minCoordsToThin)
+thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 
 \method{thin}{SpatialPolygons}(x, tolerance = NULL, returnDataFrame = FALSE,
-  minCoordsToThin = 0)
+  minCoordsToThin = 0,
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000))
 
 \method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin)
 }

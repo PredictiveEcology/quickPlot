@@ -213,6 +213,7 @@ clickValues <- function(n = 1) {
 #'
 #' @export
 #' @importFrom grDevices dev.cur
+#' @importFrom raster crs<- crs
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
 #'
