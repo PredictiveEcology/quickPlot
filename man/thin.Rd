@@ -4,7 +4,7 @@
 \alias{thin}
 \alias{thin.SpatialPolygons}
 \alias{thin.default}
-\title{Thin a polygon using fastshp::thin}
+\title{Thin a polygon using \code{fastshp::thin}}
 \usage{
 thin(x, tolerance, returnDataFrame, minCoordsToThin)
 
@@ -16,9 +16,11 @@ thin(x, tolerance, returnDataFrame, minCoordsToThin)
 \arguments{
 \item{x}{A Spatial* object}
 
-\item{returnDataFrame}{If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
-idLength. If \code{FALSE}, the default, it will return a \code{SpatialPolygons}
-object}
+\item{tolerance}{Maximum allowable distance for a point to be removed.}
+
+\item{returnDataFrame}{If \code{TRUE}, this will return a list of 3 elements,
+\code{xyOrd}, \code{hole}, and \code{idLength}.
+If \code{FALSE} (default), it will return a \code{SpatialPolygons} object.}
 
 \item{minCoordsToThin}{If the number of coordinates is smaller than this number,
 then thin will just pass through, though it will take the time required to
@@ -27,10 +29,11 @@ a SpatialPolygon)}
 }
 \description{
 For visualizing, it is sometimes useful to remove points in Spatial* objects.
-This will change the geometry, so it is not recommended for computation. This
-is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
-for large shapefiles, particularly if \code{returnDataFrame} is \code{TRUE}.
-\code{thin} will not attempt to preserve topology.
+This will change the geometry, so it is not recommended for computation.
+This is similar to \code{rgeos::gSimplify} and \code{sf::st_simplify},
+but faster than both (see examples) for large shapefiles, particularly if
+\code{returnDataFrame} is \code{TRUE}.
+\emph{\code{thin} will not attempt to preserve topology.}
 It is strictly for making smaller polygons for the purpose (likely)
 of visualizing more quickly.
 }
@@ -100,7 +103,8 @@ if (require(fastshp)) {
 # }
 
 # thin is faster than rgeos::gSimplify and sf::st_simplify on large shapefiles
-\dontrun{ # this involves downloading a 9 MB file
+\dontrun{
+  # this involves downloading a 9 MB file
   setwd(tempdir())
   albertaEcozoneFiles <- c("Natural_Regions_Subregions_of_Alberta.dbf",
                            "Natural_Regions_Subregions_of_Alberta.lyr",
