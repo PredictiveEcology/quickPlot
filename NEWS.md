@@ -2,7 +2,7 @@ Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
 version 0.1.4
 =============
-* bug fix plotting with NAs (#14, @CeresBarros)
+* fix bug related to plotting with NAs (#14, @CeresBarros)
 
 version 0.1.3
 =============
