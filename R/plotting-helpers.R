@@ -2069,6 +2069,13 @@ setMethod(
           xmax(extent(grobToPlot)) - xmin(extent(grobToPlot))) / 2.4e4
     }
 
+    if (is.null(gp$fill)) {
+      gp$fill <-
+        rep(RColorBrewer::brewer.pal(8, "Set2"), length.out = length(grobToPlot))
+
+    }
+
+
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
                              returnDataFrame = TRUE, minCoordsToThin = 1e3, ...)
