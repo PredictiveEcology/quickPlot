@@ -6,12 +6,13 @@
 \alias{thin.default}
 \title{Thin a polygon using \code{fastshp::thin}}
 \usage{
-thin(x, tolerance, returnDataFrame, minCoordsToThin)
+thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 
 \method{thin}{SpatialPolygons}(x, tolerance = NULL, returnDataFrame = FALSE,
-  minCoordsToThin = 0)
+  minCoordsToThin = 0,
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000), ...)
 
-\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin)
+\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 }
 \arguments{
 \item{x}{A Spatial* object}
@@ -26,6 +27,13 @@ If \code{FALSE} (default), it will return a \code{SpatialPolygons} object.}
 then thin will just pass through, though it will take the time required to
 calculate how many points there are (which is not NROW(coordinates(x)) for
 a SpatialPolygon)}
+
+\item{...}{Passed to methods (e.g., \code{maxNumPolygons})}
+
+\item{maxNumPolygons}{For speed, \code{thin} can also simply remove some of the
+polygons. This is likely only a reasonable thing to do if there are
+a lot of polygons being plotted in a small space. Current default is
+taken from \code{options('quickPlot.maxNumPolygons')}, with a message.}
 }
 \description{
 For visualizing, it is sometimes useful to remove points in Spatial* objects.

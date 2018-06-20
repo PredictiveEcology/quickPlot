@@ -1062,3 +1062,13 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
 
   expect_silent(Plot(raster(matrix(1:100, 10, 10))))
 })
+
+test_that("LARGE polygons plot fast enoug", {
+  skip("This is for manual testing only")
+  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(reproducible)
+  a <- Cache(shapefile,
+             "C:\\Eliot\\data\\Boreal-ecosystem-anthropogenic-disturbance-vector-data-2008-2010\\EC_borealdisturbance_polygonal_2008_2010_FINAL_ALBERS.shp")
+
+  expect_silent(Plot(raster(matrix(1:100, 10, 10))))
+})

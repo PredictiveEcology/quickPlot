@@ -55,6 +55,10 @@ returned by this function may be slightly off (<0.5 pixel width).
 clicked on and passes this plot name and the clicked coordinates to \code{.clickCoord}.
 
 \code{.clickCoord} is intended for internal use and is called by other functions here.
+
+\code{clickExtent} will place the new, zoomed in plot over top of the existing
+object. To recover original full object, double click anywhere during an
+active \code{clickExtent}. See example.
 }
 \examples{
 \dontrun{
@@ -77,6 +81,9 @@ clicked on and passes this plot name and the clicked coordinates to \code{.click
   Plot(landscape)
   e <- clickExtent() # click at two locations on the Plot device
   print(e)
+
+  # repeated zooming to try various places on the original device
+  for(i in 1:4) clickExtent() # click at two locations on the Plot device
 }
 
 }

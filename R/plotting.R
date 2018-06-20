@@ -309,11 +309,12 @@ setMethod(
     }
     # Determine where the objects are located
     #  We need to know exactly where they are, so that they can be replotted later, if needed
-    whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
+    #whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
     dotObjs <- dots
+    whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
 
-    for (fr in whFrame) {
-      plotFrame <- sys.frame(fr)
+    for (fr in rev(whFrame)) {
+      plotFrame <- sys.frame(fr - 1)
       plotArgs <- tryCatch(mget(names(formals("Plot")), plotFrame), error = function(x) TRUE)
       if (isTRUE(plotArgs)) {
         conti <- TRUE
@@ -471,21 +472,6 @@ setMethod(
         currQuickPlots$curr@arr@layout$visualSqueeze
       } else {
         visualSqueeze
-      }
-
-      if (FALSE) {
-
-        #checkTracemem -- incomplete -- to compare differently named, but identical objects
-        #  e.g., sim$a and sim@.envir$a
-        ob <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x)
-          lapply(x, function(y) y@objName)))
-        en <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x)
-          lapply(x, function(y) y@envir)))
-        lapply(seq_along(ob), function(n) {
-          lapply(seq_along(objNames), function(x) {
-            identical(tracemem(eval(parse(text = ob[n]), envir = en[n])),
-                      tracemem(eval(parse(text = objNames[[x]]), objFrame)))})})
-
       }
 
       updated <- .updateQuickPlot(newQuickPlots, currQuickPlots)

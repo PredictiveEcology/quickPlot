@@ -353,6 +353,7 @@ setMethod(
       } else {
         quickPlotGrobList[[lN[x]]] <- new(".quickPlotGrob")
         quickPlotGrobList[[lN[x]]]@plotArgs <- lapply(plotArgs, function(y) y[[x]])
+        quickPlotGrobList[[lN[x]]]@plotArgs$zoomExtent <- plotArgs$zoomExtent[[x]]
         quickPlotGrobList[[lN[x]]]@plotArgs$gpText <- plotArgs$gpText[x]
         quickPlotGrobList[[lN[x]]]@plotArgs$gpAxis <- plotArgs$gpAxis[x]
         quickPlotGrobList[[lN[x]]]@plotArgs$gp <- plotArgs$gp[x]
@@ -998,13 +999,46 @@ setMethod(
     return(zMat)
 })
 
+#' @importFrom rgeos gIntersects gArea
 setMethod(
   ".preparePlotGrob",
   signature = c("Spatial", ".quickPlotGrob"),
   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                         quickPlotGrobCounter, subPlots, cols) {
-    if (!is.null(sGrob@plotArgs$zoomExtent)) {
-      grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+
+    if (!is.null(sGrob@plotArgs$zoomExtent) &&
+        !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
+        #!identical(arr@extents[[subPlots]], sGrob@plotArgs$zoomExtent)) {
+      useCrop <- FALSE
+      if (!useCrop) {
+        zoom <- sGrob@plotArgs$zoomExtent
+        extPolygon <- as(zoom, "SpatialPolygons")
+        crs(extPolygon) <- crs(grobToPlot)
+        extPolygon <- list(extPolygon)
+        names(extPolygon) <- sGrob@plotName
+
+        fullArea <-
+          rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
+        zoomArea <-
+          rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
+        numPolys <- length(grobToPlot)
+        ratio <- fullArea / zoomArea
+        if (numPolys / ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
+          polySeq <-
+            .polygonSeq(grobToPlot,
+                        maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
+          .showingOnlyMessage(numShowing = getOption("quickPlot.maxNumPolygons", 3e3),
+                              totalAvailable = length(grobToPlot))
+          grobToPlot <- grobToPlot[polySeq,]
+
+        }
+        message("Cropping to new extent")
+        a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
+        grobToPlot <- grobToPlot[a[1,],]
+      } else {
+        grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+      }
+
     }
 
     # This handles SpatialPointsDataFrames with column "color"
@@ -2069,20 +2103,18 @@ setMethod(
           xmax(extent(grobToPlot)) - xmin(extent(grobToPlot))) / 2.4e4
     }
 
+    if (is.null(gp$fill)) {
+      gp$fill <-
+        rep(RColorBrewer::brewer.pal(8, "Set2"), length.out = length(grobToPlot))
+
+    }
+
+
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
-                             returnDataFrame = TRUE, minCoordsToThin = 1e3)
+                             returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
 
-    gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
-    polyGrob <- gTree(children = gList(
-      polygonGrob(
-        x = xyOrd[["xyOrd"]]$x, y = xyOrd[["xyOrd"]]$y,
-        id.lengths = xyOrd[["idLength"]]$V1,
-        gp = gp, default.units = "native"
-      )
-    ),
-    gp = gp,
-    cl = "plotPoly")
+    polyGrob <- .createPolygonGrob(gp = gp, xyOrd = xyOrd)
     grid.draw(polyGrob, recording = FALSE)
     return(invisible(polyGrob))
 })
@@ -2462,6 +2494,11 @@ sp2sl <- function(sp1, from) {
 #'        then thin will just pass through, though it will take the time required to
 #'        calculate how many points there are (which is not NROW(coordinates(x)) for
 #'        a SpatialPolygon)
+#' @param ... Passed to methods (e.g., \code{maxNumPolygons})
+#' @param maxNumPolygons For speed, \code{thin} can also simply remove some of the
+#'        polygons. This is likely only a reasonable thing to do if there are
+#'        a lot of polygons being plotted in a small space. Current default is
+#'        taken from \code{options('quickPlot.maxNumPolygons')}, with a message.
 #'
 #' @export
 #' @importFrom data.table as.data.table data.table set
@@ -2572,22 +2609,25 @@ sp2sl <- function(sp1, from) {
 #'    # st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
 #'   #}
 #' }
-thin <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
+thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   UseMethod("thin")
 }
 
 #' @export
 #' @rdname thin
-thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0) {
+thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0,
+                                 maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...) {
+
   # For speed of plotting
   xyOrd <- .fortify(x, matchFortify = FALSE,
-                    simple = returnDataFrame) # a list: out, hole, idLength
+                    simple = returnDataFrame, maxNumPolygons) # a list: out, hole, idLength
   if (is.null(tolerance)) {
     tolerance <- (raster::xmax(x) - raster::xmin(x)) * 0.0001
     message("tolerance set to ", tolerance)
   }
   if (requireNamespace("fastshp")) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
+      message("Some polygons have been simplified")
       thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
                              tolerance = tolerance, id = xyOrd[["out"]]$groups)
 
@@ -2615,9 +2655,18 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
           Polygons(poly, ID = outerI)
         })
 
+        names1 <- unique(xyOrd$out$Polygons)
         xyOrd <- SpatialPolygons(bb, proj4string = CRS(proj4string(x)))
-        if (is(x, "SpatialPolygonsDataFrame"))
-          xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = x@data)
+        if (is(x, "SpatialPolygonsDataFrame")) {
+          if (length(x) > maxNumPolygons) {
+            dat <- x@data[as.numeric(names1) + 1,]
+            #row.names(dat) <- as.character(seq_len(length(xyOrd)))
+          } else {
+            dat <- x@data
+          }
+          xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = dat)
+        }
+
         return(xyOrd)
       }
     }
@@ -2643,7 +2692,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
 
 #' @export
 #' @rdname thin
-thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
+thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   message("No method for that class of object exists. See methods('thin') to see current methods")
 }
 
@@ -2655,30 +2704,39 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #' @name fortify
 #' @importFrom data.table setDT set
 #' @keywords internal
-.fortify <- function(x, matchFortify = TRUE, simple = FALSE) {
+.fortify <- function(x, matchFortify = TRUE, simple = FALSE,
+                     maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
   ord <- x@plotOrder
+  if (length(ord) > maxNumPolygons) {
+
+    polygonSeq <- .polygonSeq(x, maxNumPolygons) #if (is.numeric(x@data$Shape_Area)) {
+    ord <- ord[polygonSeq]
+    .showingOnlyMessage(numShowing = maxNumPolygons,
+                        totalAvailable = length(x@plotOrder))
+  }
   ordSeq <- seq(ord)
+
   xy <- lapply(ordSeq, function(i) {
-    lapply(x@polygons[[i]]@Polygons, function(j) {
+    lapply(x@polygons[[ord[i]]]@Polygons, function(j) {
       j@coords
     })
   })
 
   hole <- tryCatch(unlist(lapply(ordSeq, function(xx) {
-    lapply(x@polygons[[xx]]@Polygons, function(yy)
+    lapply(x@polygons[[ord[xx]]]@Polygons, function(yy)
       yy@hole)
   })), error = function(xx) FALSE)
 
   IDs <- tryCatch(unlist(lapply(ordSeq, function(xx) {
-    x@polygons[[xx]]@ID
+    x@polygons[[ord[xx]]]@ID
   })), error = function(xx) FALSE)
 
   ordInner <- lapply(ordSeq, function(xx) {
-    x@polygons[[xx]]@plotOrder
+    x@polygons[[ord[xx]]]@plotOrder
   })
 
   xyOrd.l <- lapply(ordSeq, function(i) { # nolint
-    xy[[i]][ordInner[[i]]]
+    xy[[ordSeq[i]]][ordInner[[ordSeq[i]]]]
   })
 
   idLength <- data.table(V1 = unlist(lapply(xyOrd.l, function(i) {
@@ -2719,4 +2777,33 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 
     return(out)
   }
+}
+
+.polygonSeq <- function(polygon, maxNumPolygons) {
+  if (is.numeric(polygon@data$Shape_Area)) {
+    which(polygon@data$Shape_Area>(sort(polygon@data$Shape_Area, decreasing = TRUE)[maxNumPolygons]))
+  } else {
+    round(seq(1, length(polygon), length.out = maxNumPolygons))
+  }
+
+}
+
+.createPolygonGrob <- function(gp, xyOrd) {
+  gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
+  polyGrob <- gTree(children = gList(
+    polygonGrob(
+      x = xyOrd[["xyOrd"]]$x, y = xyOrd[["xyOrd"]]$y,
+      id.lengths = xyOrd[["idLength"]]$V1,
+      gp = gp, default.units = "native"
+    )
+  ),
+  gp = gp,
+  cl = "plotPoly")
+
+}
+
+.showingOnlyMessage <- function(numShowing, totalAvailable) {
+  message("Showing only ", numShowing, " of ",
+          totalAvailable," polygons in this view. See options('reproducuble.maxNumPolygons')")
+
 }
