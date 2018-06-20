@@ -309,11 +309,12 @@ setMethod(
     }
     # Determine where the objects are located
     #  We need to know exactly where they are, so that they can be replotted later, if needed
-    whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
+    #whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
     dotObjs <- dots
+    whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
 
-    for (fr in whFrame) {
-      plotFrame <- sys.frame(fr)
+    for (fr in rev(whFrame)) {
+      plotFrame <- sys.frame(fr - 1)
       plotArgs <- tryCatch(mget(names(formals("Plot")), plotFrame), error = function(x) TRUE)
       if (isTRUE(plotArgs)) {
         conti <- TRUE
