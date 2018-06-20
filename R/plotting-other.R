@@ -214,14 +214,14 @@ clickValues <- function(n = 1) {
 #' @export
 #' @importFrom grDevices dev.cur
 #' @importFrom raster crs<- crs
+#' @importFrom fpCompare %==%
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
 #'
 #' @details
-#' \code{clickExtent} will open a new plotting device when used. This plotting
-#' device will be re-used for all subsequent zooming attempts for each
-#' given plot. This means that there can be quick, repeated zooming from the
-#' original plot device.  See example.
+#' \code{clickExtent} will place the new, zoomed in plot over top of the existing
+#' object. To recover original full object, double click anywhere during an
+#' active \code{clickExtent}. See example.
 #'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
   corners <- clickCoordinates(2)
@@ -233,64 +233,30 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
     objNames <- unique(unlist(lapply(objLay, function(x) x[1])))
     layNames <- unique(unlist(lapply(objLay, function(x) x[2])))
 
-    browser()
     devActive <- dev.cur()
-    if (is.null(devNum)) {
-      objsInQuickPlotEnv <- ls(.quickPlotEnv)
-      alreadyZoomed <- lapply(objsInQuickPlotEnv, function(x) {
-        grepl(pattern = "extPolygon", names(.quickPlotEnv[[x]]$curr@arr))
-      })
-
-      if (sum(unlist(alreadyZoomed))) {
-        dev(as.numeric(gsub(objsInQuickPlotEnv[unlist(alreadyZoomed)], pattern = "quickPlot", replacement = "")))
-      } else {
-        newPlot()
-      }
-
-    } else {
+    if (!(is.null(devNum))) {
       dev(devNum)
     }
 
+    obj <- list()
     if (!is.na(layNames)) {
-      objNameZoom <- paste0(objNames, "_", layNames, "_Zoom")
-      obj <- list()
-      obj[[objNameZoom]] <- eval(parse(text = objNames), envir = corners$envir[[1]])[[layNames]]
-      obj[[objNameZoom]] <- raster::crop(obj[[objNameZoom]], zoom)
-      Plot(obj, title = objNameZoom, new = TRUE)
+      theObj <- eval(parse(text = objNames), envir = corners$envir[[1]])[[layNames]]
+      theName <- paste0(objNames, "$", layNames)
     } else {
-      objNameZoom <- paste0(objNames, "_Zoom")
-      clearPlot()
-      obj <- list()
       theObj <- get(objNames, envir = corners$envir[[1]])
-      if (is(theObj, "SpatialPolygons")) {
-        ext <- extent(zoom)
-        extPolygon <- as(ext, "SpatialPolygons")
-        crs(extPolygon) <- crs(theObj)
-        Plot(extPolygon, title = objNameZoom, gp = gpar(col = "white"), new = TRUE)
-
-        if (length(theObj) > getOption("quickPlot.maxNumPolygons", 3e3)) {
-          fullArea <- rgeos::gArea(as(extent(theObj), "SpatialPolygons"))
-          zoomArea <- rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
-          numPolys <- length(theObj)
-          ratio <- fullArea/zoomArea
-          if (numPolys/ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
-            polySeq <- .polygonSeq(theObj, maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
-            theObj <- theObj[polySeq,]
-          }
-          # zoomSP <- as(zoom, "SpatialPolygons")
-          # crs(zoomSP) <- crs(theObj)
-          a <- rgeos::gIntersects(theObj, extPolygon, byid = TRUE)
-          theObj <- theObj[a[1,],]
-          #theObj <- raster::intersect(theObj, zoomSP)
-
-        }
-        Plot(theObj, addTo = "extPolygon", title = "")
-
-
-      }
+      theName <- objNames
+    }
+    theObj <- list(theObj)
+    names(theObj) <- objNames
+    if (sum(corners$coords[1,] - corners$coords[2,]) %==% 0) {
+      Plot(theObj, addTo = theName, title = theName, new = TRUE, zoomExtent = extent(theObj[[1]]))
+    } else {
+      Plot(theObj, addTo = theName, title = theName, zoomExtent = zoom, new = TRUE)
     }
 
-    dev(devActive)
+    if (!(is.null(devNum))) {
+      dev(devActive)
+    }
     return(invisible(zoom))
   } else {
     return(zoom)
