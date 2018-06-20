@@ -1,12 +1,16 @@
 test_that("all exported functions have examples", {
-  fns <- ls("package:quickPlot")
-  omit <- which(fns == c("dev", "dev.useRSGD", "gpar"))
-  sapply(fns[-omit], function(x) {
-    expect_warning(example(x, package = "quickPlot", character.only = TRUE,
-                           echo = FALSE), NA)
-  })
-})
 
-test_that("check all examples", {
-  test_examples(path = "../../man")
+  exFiles <- normalizePath(dir("../../man", full.names = TRUE))
+  # use for loop as it keeps control at top level
+  owd <- getwd()
+  tmpdir <- file.path(tempdir(), "test_Examples")
+  dir.create(tmpdir)
+  setwd(tmpdir)
+  on.exit({
+    unlink(tmpdir, recursive = TRUE)
+    setwd(owd)}
+    , add = TRUE)
+  for (file in exFiles) {
+    test_example(file)
+  }
 })
