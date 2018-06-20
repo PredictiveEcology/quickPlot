@@ -919,7 +919,6 @@ test_that("rePlot doesn't work", {
 })
 
 test_that("Plot - going through package coverage", {
-
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot1")

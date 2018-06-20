@@ -3,7 +3,6 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(".", ".N", "keepAll"))
 }
 
-################################################################################
 #' Find the number of layers in a Spatial Object
 #'
 #' There are already methods for \code{Raster*} in the raster package.
@@ -88,7 +87,6 @@ setMethod(
     return(1L)
 })
 
-################################################################################
 #' Extract the layer names of Spatial Objects
 #'
 #' There are already methods for \code{Raster*} objects. This adds methods for
@@ -191,7 +189,6 @@ setMethod(
     return("")
 })
 
-################################################################################
 #' Assess whether a list of extents are all equal
 #'
 #' @param extents list of extents objects
@@ -233,7 +230,6 @@ setMethod(
     )
 })
 
-################################################################################
 #' Make a \code{.quickPlot} class object
 #'
 #' Builds a \code{.quickPlot} object from a list of objects.
@@ -397,7 +393,6 @@ setMethod(
     return(newPlots)
 })
 
-################################################################################
 #' Convert \code{plotArgs} to list of lists
 #'
 #' Internal function. Take the inputs as plotArgs to the Plot function, and make
@@ -639,7 +634,6 @@ setMethod(
     return(p)
 })
 
-################################################################################
 #' Make \code{SpatialLines} object from two \code{SpatialPoints} objects
 #'
 #' The primary conceived usage of this is to draw arrows following the
@@ -679,7 +673,6 @@ setMethod(
     }), proj4string = crs(from)) # nolint
 })
 
-################################################################################
 #' Parse arguments and find environments
 #'
 #' Internal function used within objectNames.
@@ -853,7 +846,6 @@ setMethod(
               envs = envs))
 }
 
-################################################################################
 #' Parsing of elements
 #'
 #' This is a generic definition that can be extended according to class. Intended
@@ -949,7 +941,6 @@ setMethod("gpar",
             return(grid::gpar(...))
 })
 
-################################################################################
 #' Internal functions used by Plot
 #'
 #' Extract colors, legends and other things from object, and convert to a plotGrob
@@ -1048,8 +1039,7 @@ setMethod(
     zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
                  cols = sGrob@plotArgs$cols, real = FALSE)
     return(zMat)
-  })
-
+})
 
 setMethod(
   ".preparePlotGrob",
@@ -1061,7 +1051,7 @@ setMethod(
 
     list(z = grobToPlot, minz = 0, maxz = 0,
          cols = sGrob@plotArgs$cols, real = FALSE)
-  })
+})
 
 setMethod(
   ".preparePlotGrob",
@@ -1076,8 +1066,6 @@ setMethod(
   return(zMat)
 })
 
-
-################################################################################
 #' @param whPlotFrame Numeric. Which plot within the quickPlotGrobPlots object.
 #'
 #' @include plotting-classes.R
@@ -1413,7 +1401,6 @@ setMethod(
     return(sGrob)
 })
 
-
 #' @include plotting-classes.R
 #' @aliases PlotHelpers
 #' @keywords internal
@@ -1457,7 +1444,6 @@ setMethod(
     return(sGrob)
 })
 
-################################################################################
 #' Identify where to get the grob from
 #'
 #' Internal function.
@@ -1515,7 +1501,6 @@ setMethod(
     return(grobToPlot)
 })
 
-################################################################################
 #' Prepare raster for plotting
 #'
 #' Internal function. Takes a raster .quickPlotGrob, and converts zoomExtent into
@@ -1573,8 +1558,6 @@ setMethod(
               legendRange = legendRange, zoom = zoom))
 }
 
-
-################################################################################
 #' Merge two quickPlot objects
 #'
 #' Merges two \code{.quickPlot} objects
@@ -1724,9 +1707,8 @@ setMethod(
         lapply(x, function(y) TRUE)
       })
     ))
-  })
+})
 
-################################################################################
 #' Determine optimal plotting arrangement of plot objects
 #'
 #' Internal function. Assesses the device geometry, the map geometry, and the
@@ -1810,8 +1792,6 @@ setMethod(
     return(out)
 })
 
-
-################################################################################
 #' Plot spatial grobs (using \pkg{grid} package)
 #'
 #' Internal function. Plot a raster Grob, a points Grob, polygon Grob.
@@ -1882,6 +1862,8 @@ setMethod(
 #' @param ...     Additional arguments. None currently implemented.
 #'
 #' @author Eliot McIntire
+#' @export
+#' @exportMethod .plotGrob
 #' @importFrom data.table ':=' data.table
 #' @importFrom grDevices as.raster
 #' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
@@ -1889,8 +1871,6 @@ setMethod(
 #' @importFrom raster extent pointDistance xmin xmax ymin ymax
 #' @keywords internal
 #' @rdname plotGrob
-#' @export
-#' @exportMethod .plotGrob
 #'
 setGeneric(
   ".plotGrob",
@@ -1900,7 +1880,6 @@ setGeneric(
   standardGeneric(".plotGrob")
 })
 
-############## SpatialPoints - thin
 #' @rdname plotGrob
 #' @importFrom grid pointsGrob
 setMethod(
@@ -2083,7 +2062,6 @@ setMethod(
     return(invisible())
 })
 
-################################################################################
 #' @rdname plotGrob
 #' @importFrom grid polygonGrob
 setMethod(
@@ -2104,11 +2082,8 @@ setMethod(
     }
 
     if (is.null(gp$fill)) {
-      gp$fill <-
-        rep(RColorBrewer::brewer.pal(8, "Set2"), length.out = length(grobToPlot))
-
+      gp$fill <- rep(RColorBrewer::brewer.pal(8, "Set2"), length.out = length(grobToPlot))
     }
-
 
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
@@ -2206,7 +2181,6 @@ setMethod(
     return(invisible(lineGrob))
 })
 
-################################################################################
 #' Make an optimal layout of plots
 #'
 #' Internal function. Using the size of the current device, and number and
@@ -2227,11 +2201,11 @@ setMethod(
 #'              written above plots and should be included as part of layout
 #'               calculation. Default is \code{TRUE}.
 #'
-#' @include plotting-classes.R
+#' @author Eliot McIntire
 #' @importFrom grid unit unit.c
+#' @include plotting-classes.R
 #' @keywords internal
 #' @rdname makeLayout
-#' @author Eliot McIntire
 #'
 .makeLayout <- function(arr, visualSqueeze,
                         legend = TRUE, axes = TRUE, title = TRUE) {
@@ -2272,7 +2246,6 @@ setMethod(
               visualSqueeze = visualSqueeze))
 }
 
-################################################################################
 #' Make viewports
 #'
 #' Given a set of extents, and a layout for these extents, this function will
@@ -2295,7 +2268,6 @@ setMethod(
 #' @rdname makeViewports
 #'
 .makeViewports <- function(sPlot, newArr = FALSE) {
-
   arr <- sPlot@arr
   sgl <- sPlot@quickPlotGrobList
 
@@ -2318,7 +2290,6 @@ setMethod(
           # for non spatial objects
           extent(c(xmin = 0, xmax = 2, ymin = 0, ymax = 2))
         }
-
       }
     }))
   }))
