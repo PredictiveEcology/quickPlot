@@ -2616,7 +2616,7 @@ thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 #' @export
 #' @rdname thin
 thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0,
-                                 maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
+                                 maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...) {
 
   # For speed of plotting
   xyOrd <- .fortify(x, matchFortify = FALSE,
