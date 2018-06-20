@@ -56,10 +56,9 @@ clicked on and passes this plot name and the clicked coordinates to \code{.click
 
 \code{.clickCoord} is intended for internal use and is called by other functions here.
 
-\code{clickExtent} will open a new plotting device when used. This plotting
-device will be re-used for all subsequent zooming attempts for each
-given plot. This means that there can be quick, repeated zooming from the
-original plot device.  See example.
+\code{clickExtent} will place the new, zoomed in plot over top of the existing
+object. To recover original full object, double click anywhere during an
+active \code{clickExtent}. See example.
 }
 \examples{
 \dontrun{

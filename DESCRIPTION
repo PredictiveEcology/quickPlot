@@ -23,6 +23,7 @@ Depends:
     R (>= 3.3.0)
 Imports:
     data.table (>= 1.10.4),
+    fpCompare,
     ggplot2,
     grDevices,
     grid,
@@ -32,6 +33,7 @@ Imports:
     raster,
     RColorBrewer,
     rgdal,
+    rgeos,
     sp,
     stats
 Suggests:
