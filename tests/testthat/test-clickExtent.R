@@ -20,7 +20,7 @@ test_that("clickExtent works", {
   b <- download.file(destfile =  theFile,
                        url = "http://www.ec.gc.ca/data_donnees/STB-DGST/003/Boreal-ecosystem-anthropogenic-disturbance-vector-data-2008-2010.zip")
   unzip(zipfile = theFile, exdir = dirname(tempdir()))
-  bb <- raster::shapefile(file.path(dirname(tempdir()), "EC_borealdisturbance_polygonal_2008_2010_FINAL_ALBERS.shp"))
+  bb <- raster::shapefile(file.path(cacheRepo, "EC_borealdisturbance_polygonal_2008_2010_FINAL_ALBERS.shp"))
 
   dev(); clearPlot();
   Plot(bb);

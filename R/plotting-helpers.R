@@ -2804,6 +2804,6 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 
 .showingOnlyMessage <- function(numShowing, totalAvailable) {
   message("Showing only ", numShowing, " of ",
-          totalAvailable," polygons in this view. See options('reproducuble.maxNumPolygons')")
+          totalAvailable," polygons in this view. See options('quickPlot.maxNumPolygons')")
 
 }
