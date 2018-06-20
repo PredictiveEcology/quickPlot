@@ -12,7 +12,7 @@ thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
   minCoordsToThin = 0,
   maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000))
 
-\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin)
+\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 }
 \arguments{
 \item{x}{A Spatial* object}
