@@ -999,13 +999,46 @@ setMethod(
     return(zMat)
 })
 
+#' @importFrom rgeos gIntersects gArea
 setMethod(
   ".preparePlotGrob",
   signature = c("Spatial", ".quickPlotGrob"),
   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                         quickPlotGrobCounter, subPlots, cols) {
-    if (!is.null(sGrob@plotArgs$zoomExtent)) {
-      grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+
+    if (!is.null(sGrob@plotArgs$zoomExtent) &&
+        !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
+        #!identical(arr@extents[[subPlots]], sGrob@plotArgs$zoomExtent)) {
+      useCrop <- FALSE
+      if (!useCrop) {
+        zoom <- sGrob@plotArgs$zoomExtent
+        extPolygon <- as(zoom, "SpatialPolygons")
+        crs(extPolygon) <- crs(grobToPlot)
+        extPolygon <- list(extPolygon)
+        names(extPolygon) <- sGrob@plotName
+
+        fullArea <-
+          rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
+        zoomArea <-
+          rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
+        numPolys <- length(grobToPlot)
+        ratio <- fullArea / zoomArea
+        if (numPolys / ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
+          polySeq <-
+            .polygonSeq(grobToPlot,
+                        maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
+          .showingOnlyMessage(numShowing = getOption("quickPlot.maxNumPolygons", 3e3),
+                              totalAvailable = length(grobToPlot))
+          grobToPlot <- grobToPlot[polySeq,]
+
+        }
+        message("Cropping to new extent")
+        a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
+        grobToPlot <- grobToPlot[a[1,],]
+      } else {
+        grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+      }
+
     }
 
     # This handles SpatialPointsDataFrames with column "color"
