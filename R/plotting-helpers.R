@@ -2692,7 +2692,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
 
 #' @export
 #' @rdname thin
-thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
+thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   message("No method for that class of object exists. See methods('thin') to see current methods")
 }
 
