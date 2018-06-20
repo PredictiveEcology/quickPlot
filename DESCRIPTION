@@ -41,7 +41,6 @@ Suggests:
     fastshp,
     hunspell,
     knitr,
-    reproducible,
     rmarkdown,
     testthat (>= 1.0.2)
 Remotes:

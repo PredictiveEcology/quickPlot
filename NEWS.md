@@ -2,10 +2,11 @@ Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
 version 0.1.4
 =============
+* much faster for `SpatialPolygons`
 * `clickExtent` now more interactive with new examples
+* remove dependency on `reproducible`
 * `SpatialPolygons` get a fill colour by default if not passed in by user
 * fix bug related to plotting with NAs (#14, @CeresBarros)
-* much faster for `SpatialPolygons`
 * bug fixes
 * new options("quickPlot.maxNumPolygons"), used for plotting of large `SpatialPolygons` objects
  
