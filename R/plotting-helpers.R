@@ -2079,7 +2079,7 @@ setMethod(
 
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
-                             returnDataFrame = TRUE, minCoordsToThin = 1e3, ...)
+                             returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
 
     polyGrob <- .createPolygonGrob(gp = gp, xyOrd = xyOrd)
     grid.draw(polyGrob, recording = FALSE)
@@ -2461,6 +2461,11 @@ sp2sl <- function(sp1, from) {
 #'        then thin will just pass through, though it will take the time required to
 #'        calculate how many points there are (which is not NROW(coordinates(x)) for
 #'        a SpatialPolygon)
+#' @param ... Passed to methods (e.g., \code{maxNumPolygons})
+#' @param maxNumPolygons For speed, \code{thin} can also simply remove some of the
+#'        polygons. This is likely only a reasonable thing to do if there are
+#'        a lot of polygons being plotted in a small space. Current default is
+#'        taken from \code{options('quickPlot.maxNumPolygons')}, with a message.
 #'
 #' @export
 #' @importFrom data.table as.data.table data.table set
@@ -2589,6 +2594,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
   }
   if (requireNamespace("fastshp")) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
+      message("Some polygons have been simplified")
       thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
                              tolerance = tolerance, id = xyOrd[["out"]]$groups)
 
@@ -2665,13 +2671,15 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
 #' @name fortify
 #' @importFrom data.table setDT set
 #' @keywords internal
-.fortify <- function(x, matchFortify = TRUE, simple = FALSE, maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
+.fortify <- function(x, matchFortify = TRUE, simple = FALSE,
+                     maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
   ord <- x@plotOrder
   if (length(ord) > maxNumPolygons) {
 
     polygonSeq <- .polygonSeq(x, maxNumPolygons) #if (is.numeric(x@data$Shape_Area)) {
     ord <- ord[polygonSeq]
-    message("Showing only ", maxNumPolygons, " polygons. See options('reproducuble.maxNumPolygons')")
+    .showingOnlyMessage(numShowing = maxNumPolygons,
+                        totalAvailable = length(x@plotOrder))
   }
   ordSeq <- seq(ord)
 
@@ -2758,5 +2766,11 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
   ),
   gp = gp,
   cl = "plotPoly")
+
+}
+
+.showingOnlyMessage <- function(numShowing, totalAvailable) {
+  message("Showing only ", numShowing, " of ",
+          totalAvailable," polygons in this view. See options('reproducuble.maxNumPolygons')")
 
 }
