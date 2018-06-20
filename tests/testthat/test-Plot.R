@@ -930,7 +930,6 @@ test_that("Plot - going through package coverage", {
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
-  a <- dev.cur()
   set.seed(123)
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig

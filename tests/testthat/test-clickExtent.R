@@ -1,5 +1,6 @@
 test_that("clickExtent works", {
-  skip("This must be run manually")
+  skip_if_not(interactive(), message = "clickExtent tests must be run manually.")
+
   library(sp)
   library(raster)
   ow <- setwd(tempdir())
@@ -17,14 +18,12 @@ test_that("clickExtent works", {
   cacheRepo <- file.path(dirname(tempdir()), "testClickExtent")
   dir.create(cacheRepo)
   theFile <- "Boreal-ecosystem-anthropogenic-disturbance-vector-data-2008-2010.zip"
-  b <- download.file(destfile =  theFile,
-                       url = "http://www.ec.gc.ca/data_donnees/STB-DGST/003/Boreal-ecosystem-anthropogenic-disturbance-vector-data-2008-2010.zip")
+  theUrl <- paste0("http://www.ec.gc.ca/data_donnees/STB-DGST/003/", theFile)
+  b <- download.file(destfile = file.path(tempdir(), theFile), url = theUrl)
   unzip(zipfile = theFile, exdir = dirname(tempdir()))
-  bb <- raster::shapefile(file.path(dirname(tempdir()), "EC_borealdisturbance_polygonal_2008_2010_FINAL_ALBERS.shp"))
+  bb <- raster::shapefile(file.path(dirname(tempdir()), "EC_borealdisturbance_polygonal_2008_2010_FINAL_ALBERS.shp")) #nolint
 
   dev(); clearPlot();
   Plot(bb);
   for (i in 1:5) clickExtent()
-
-
 })
