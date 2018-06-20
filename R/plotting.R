@@ -303,26 +303,48 @@ setMethod(
       isList <- FALSE
     }
 
-    if (any(isDoCall)) {
-      stop("Currently, Plot can not be called within a do.call. ",
-           "Try passing a named list of objects to Plot instead.")
-    }
     # Determine where the objects are located
     #  We need to know exactly where they are, so that they can be replotted later, if needed
     #whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
-    dotObjs <- dots
+    if (any(isDoCall)) {
+      doCallCall <- as.list(match.call(do.call, call = scalls[isDoCall][[1]]))
+      argNames <- names(doCallCall$args[-1]) # don't need "list()"
+      nonDots <- match.arg(several.ok = TRUE, arg = argNames, choices = formalArgs(Plot))
+      nonDotsWh <- match(nonDots, argNames)
+      plotArgs <- as.list(doCallCall$args)[nonDots]
+      plotFrame <- sys.frame(which(isDoCall) - 1)
+      dotNames <- setdiff(argNames, nonDots)
+      noName <- !nzchar(dotNames)
+      #dotObjs <- mget(dotNames[!noName], envir = plotFrame, inherits = TRUE)
+      if (isTRUE(any(noName))) {
+        dotObjs2 <- as.list(doCallCall$args)[-1][-nonDotsWh]
+        dotNames <- as.character(dotObjs2)
+      }
+      dotObjs <- mget(dotNames, envir = plotFrame, inherits = TRUE)
+
+      #stop("Currently, Plot can not be called within a do.call. ",
+      #     "Try passing a named list of objects to Plot instead.")
+    } else {
+      dotObjs <- dots
+    }
     whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
 
     for (fr in rev(whFrame)) {
       plotFrame <- sys.frame(fr - 1)
-      plotArgs <- tryCatch(mget(names(formals("Plot")), plotFrame), error = function(x) TRUE)
+      plotArgs <-
+        tryCatch(
+          mget(names(formals("Plot")), plotFrame),
+          error = function(x)
+            TRUE
+        )
       if (isTRUE(plotArgs)) {
         conti <- TRUE
       } else {
         plotArgs <- plotArgs[-1]
         conti <- FALSE
       }
-      if (!conti) break
+      if (!conti)
+        break
     }
 
     # if user uses col instead of cols
@@ -429,18 +451,24 @@ setMethod(
     if (any(whichQuickPlottables)) {
       # perhaps push objects into an environment, if they are only in the list
       if (isList) {
-        assign(paste0("Dev", dev.cur()), new.env(hash = FALSE, parent = .quickPlotEnv),
+        assign(paste0("Dev", dev.cur()),
+               new.env(hash = FALSE, parent = .quickPlotEnv),
                envir = .quickPlotEnv)
-        objFrame <- get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
+        objFrame <-
+          get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
         dots$env <- list2env(dots, envir = objFrame)
 
       } else {
-        objNames <- lapply(substitute(placeholderFunction(...))[-1],
-                           deparse, backtick = TRUE)
+        if (any(isDoCall)) {
+          objNames <- names(dotObjs)
+        } else {
+          objNames <- lapply(substitute(placeholderFunction(...))[-1],
+                             deparse, backtick = TRUE)
+        }
         objFrame <- whereInStack(objNames[[1]])
         names(plotObjs)[whichQuickPlottables] <- objNames
-      }
 
+      }
     }
 
     nonPlotArgs <- dotObjs[!whichQuickPlottables]

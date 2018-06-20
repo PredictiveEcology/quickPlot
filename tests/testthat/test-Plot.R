@@ -947,7 +947,7 @@ test_that("Plot - going through package coverage", {
   clearPlot(force = TRUE)
 
   # do.call version
-  expect_error(do.call(Plot, list(ras = ras)), "Currently,") # nolint
+  #expect_error(do.call(Plot, list(ras = ras)), "Currently,") # nolint
 })
 
 test_that("Plot lists", {
