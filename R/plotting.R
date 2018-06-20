@@ -231,12 +231,12 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom gridBase gridFIG
 #' @importFrom ggplot2 ggplot
-#' @importFrom raster crop is.factor
-#' @importFrom grid upViewport pushViewport
-#' @importFrom grid grid.rect grid.xaxis grid.yaxis current.parent gpar
 #' @importFrom grDevices dev.cur dev.size
+#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar
+#' @importFrom grid upViewport pushViewport
+#' @importFrom gridBase gridFIG
+#' @importFrom raster crop is.factor
 #' @include environment.R
 #' @include plotting-classes.R
 #' @include plotting-colours.R
@@ -257,7 +257,7 @@ setGeneric(
            legendText = NULL, pch = 19, title = NULL, na.color = "#FFFFFF00", # nolint
            zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot") { # nolint
     standardGeneric("Plot")
-  })
+})
 
 #' @rdname Plot
 #' @export

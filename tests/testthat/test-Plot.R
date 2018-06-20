@@ -318,7 +318,7 @@ test_that("Unit tests for plotting colors", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "B93964CAC2C6939B",
-    Linux = "B9386492C6C69B9B",
+    Linux = "B938649AC2C69B9B",
     Windows = "B9386C9AC6C6939A"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -335,7 +335,7 @@ test_that("Unit tests for plotting colors", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "BF6AC491C0663B66",
-    Linux = "BF6AC091C06E3B66",
+    Linux = "BF6AC491C06E3B26",
     Windows = "BF6AC091C06E3B65"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -392,7 +392,7 @@ test_that("Unit tests for internal functions in Plot", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "AF8FD07080307F75",
-    Linux = "AF8FD074C0302F75",
+    Linux = "AF8FD07080307F75",
     Windows = "AFCFD074C0302F74"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -411,13 +411,12 @@ test_that("Unit tests for internal functions in Plot", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "A0CB77708A30DF74",
-    Linux = "A0CF75708A30DF74",
+    Linux = "A0CB77708A30DF74",
     Windows = "A0CF75708A30DF74"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   #######################################
-
   # Test legendRange in Plot
   set.seed(1234)
   ras <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -431,7 +430,7 @@ test_that("Unit tests for internal functions in Plot", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
     Darwin = "AF99D0E4C0653F64",
-    Linux = "A499776499649B66",
+    Linux = "AF9BD0E481253F68",
     Windows = "AF99D066C1273F60"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -612,7 +611,6 @@ test_that("Plot 2 is not error-free", {
 test_that("setColors is not error-free", {
   skip("Apparently color palettes are not universal")
 
-
   skip_on_travis()
 
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
@@ -711,7 +709,7 @@ test_that("Plot with base is not error-free", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "B04CC39C93D3CE36",
-                 Linux = "A699666699669966",
+                 Linux = "B14CC39C93D3CE86",
                  Windows = "B0CCC39893D3CE36"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -844,7 +842,7 @@ test_that("Plot with base is not error-free", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "BC16C3CE96E1C364",
-                 Linux = "BC1EC3CC96E1C364",
+                 Linux = "BC16E3CC96E1C165",
                  Windows = "9D96C3CE94E1E168"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -865,7 +863,7 @@ test_that("Plot with base is not error-free", {
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
                  Darwin = "B14CC39A93B1CE96",
-                 Linux = "A14CC39A93B3CE96",
+                 Linux = "A54CC39A93B3CE86",
                  Windows = "A44CC39A93B3CE96"
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
@@ -919,7 +917,6 @@ test_that("rePlot doesn't work", {
 })
 
 test_that("Plot - going through package coverage", {
-
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
@@ -933,7 +930,6 @@ test_that("Plot - going through package coverage", {
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
-  a <- dev.cur()
   set.seed(123)
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
@@ -991,39 +987,40 @@ test_that("Plot lists", {
   )
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
 
-  set.seed(123)
-  a$SpP <- SpP
-  png(file = "test.png", width = 400, height = 300)
-  clearPlot()
-  Plot(a)
-  dev.off()
+  if (requireNamespace("fastshp", quietly = TRUE)) {
+    set.seed(123)
+    a$SpP <- SpP
+    png(file = "test.png", width = 400, height = 300)
+    clearPlot()
+    Plot(a)
+    dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "B756C8A6C8C85657",
-                 Linux = "B75788AAC8C85657",
-                 Windows = "B755A8AEC8C85353"
-  )
-  expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
+    #dput(getFingerprint(file = "test.png"))  # nolint
+    orig <- switch(Sys.info()["sysname"],
+                   Darwin = "B756C8A6C8C85657",
+                   Linux = "B75788AAC8C85657",
+                   Windows = "B755A8AEC8C85353"
+    )
+    expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
-  set.seed(123)
-  gg <- qplot(1:10, sample(1:10))
-  gg1 <- qplot(1:10, sample(1:10))
-  b <- list(gg = gg, gg1 = gg1)
-  png(file = "test.png", width = 400, height = 300)
-  clearPlot()
-  Plot(a, b)
-  dev.off()
+    set.seed(123)
+    gg <- qplot(1:10, sample(1:10))
+    gg1 <- qplot(1:10, sample(1:10))
+    b <- list(gg = gg, gg1 = gg1)
+    png(file = "test.png", width = 400, height = 300)
+    clearPlot()
+    Plot(a, b)
+    dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "8F627399CC8CF05A",
-                 Linux = "877273AD8C8DF04A",
-                 Windows = "8773738D8C89F04E"
-  )
-  expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
+    #dput(getFingerprint(file = "test.png"))  # nolint
+    orig <- switch(Sys.info()["sysname"],
+                   Darwin = "8F627399CC8CF05A",
+                   Linux = "877273AD8C8DF04A",
+                   Windows = "8773738D8C89F04E"
+    )
+    expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
+  }
 })
-
 
 test_that("Plot non complicated object names", {
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
@@ -1040,20 +1037,17 @@ test_that("Plot non complicated object names", {
   expect_silent(Plot(a$e[["s"]]$layer.1[1:10], addTo = "secondPlot"))
 
   # add the same data as a different plot -- use a named list
-  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new=TRUE))
+  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new = TRUE))
   a$e[["s"]]$layer.1[2] <- maxValue(a$e[["s"]]$layer.1)
-  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new=TRUE))
-
+  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new = TRUE))
 })
 
 test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
 
-  Plot <- function(x)
-  {
+  Plot <- function(x) {
     quickPlot::Plot(x)
   }
 
   expect_silent(Plot(raster(matrix(1:100, 10, 10))))
 })
-
