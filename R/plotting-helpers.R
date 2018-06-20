@@ -2596,7 +2596,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
     tolerance <- (raster::xmax(x) - raster::xmin(x)) * 0.0001
     message("tolerance set to ", tolerance)
   }
-  if (requireNamespace("fastshp")) {
+  if (requireNamespace("fastshp", quietly = TRUE)) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
       message("Some polygons have been simplified")
       thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
