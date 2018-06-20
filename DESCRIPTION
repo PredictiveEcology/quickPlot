@@ -32,7 +32,6 @@ Imports:
     methods,
     raster,
     RColorBrewer,
-    rgdal,
     rgeos,
     sp,
     stats
