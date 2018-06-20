@@ -285,30 +285,7 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
 
         }
         Plot(theObj, addTo = "extPolygon", title = "")
-          #
-          # theObj1 <- if (numPolys/ratio > getOption("quickPlot.maxNumPolygons", 3e3)) {
-          #   thin(theObj, maxNumPolygons = 3e3, returnDataFrame = TRUE)
-          # } else {
-          #   .fortify(theObj, matchFortify = FALSE, simple = TRUE, maxNumPolygons = length(theObj))
-          #   #theObj
-          # }
-        #}
 
-        # toDelete <- theObj1$xyOrd$x <= ext@xmin | theObj1$xyOrd$x >= ext@xmax |
-        #   theObj1$xyOrd$y <= ext@ymin | theObj1$xyOrd$y >= ext@ymax
-        #
-        # groups <- rep(theObj1$idLength$groups, theObj1$idLength$V1)
-        # aaa <- data.table(groups, toDelete, theObj1$xyOrd)
-        # bbb <- aaa[, sum(!toDelete), by = groups]
-        # bbb3 <- which(bbb$V1 > 0)
-        # idLength <- bbb[bbb3,]
-        # bbb2 <- aaa[!toDelete,]
-        #
-        # bbbList <- list(xyOrd = bbb2, hole = theObj1$hole[bbb3], idLength = idLength)
-        #
-        # polyGrob <- .createPolygonGrob(gp = gpar(), xyOrd = bbbList)
-        # seekViewport("extPolygon")
-        # grid.draw(polyGrob, recording = FALSE)
 
       }
     }

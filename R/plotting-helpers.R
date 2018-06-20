@@ -2669,11 +2669,6 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin) {
   if (length(ord) > maxNumPolygons) {
 
     polygonSeq <- .polygonSeq(x, maxNumPolygons) #if (is.numeric(x@data$Shape_Area)) {
-      #which(x@data$Shape_Area>(sort(x@data$Shape_Area, decreasing = TRUE)[3000]))
-    #} else {
-    #  (length(ord), maxNumPolygons)
-    #}
-    # max maxNumPolygons polygons can be visible in a plot window
     ord <- ord[polygonSeq]
     message("Showing only ", maxNumPolygons, " polygons. See options('reproducuble.maxNumPolygons')")
   }

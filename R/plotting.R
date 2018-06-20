@@ -474,21 +474,6 @@ setMethod(
         visualSqueeze
       }
 
-      if (FALSE) {
-
-        #checkTracemem -- incomplete -- to compare differently named, but identical objects
-        #  e.g., sim$a and sim@.envir$a
-        ob <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x)
-          lapply(x, function(y) y@objName)))
-        en <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x)
-          lapply(x, function(y) y@envir)))
-        lapply(seq_along(ob), function(n) {
-          lapply(seq_along(objNames), function(x) {
-            identical(tracemem(eval(parse(text = ob[n]), envir = en[n])),
-                      tracemem(eval(parse(text = objNames[[x]]), objFrame)))})})
-
-      }
-
       updated <- .updateQuickPlot(newQuickPlots, currQuickPlots)
 
       # Do all the plots fit into the device?
