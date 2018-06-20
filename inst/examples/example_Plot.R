@@ -1,5 +1,6 @@
 library(sp)
 library(raster)
+requireNamespace("rgdal") # required for raster loading
 library(RColorBrewer)
 
 files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")

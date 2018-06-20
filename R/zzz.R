@@ -2,10 +2,13 @@
   opts <- options()
   opts.quickPlot <- list( # nolint
     quickPlot.tolerance = .Machine$double.eps ^ 0.5,
-    quickPlot.maxNumPolygons = 3e4
+    quickPlot.maxNumPolygons = 1e4
   )
   toset <- !(names(opts.quickPlot) %in% names(opts))
   if (any(toset)) options(opts.quickPlot[toset])
 
   invisible()
 }
+
+#' @import rgdal
+NULL
