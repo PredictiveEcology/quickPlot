@@ -353,6 +353,7 @@ setMethod(
       } else {
         quickPlotGrobList[[lN[x]]] <- new(".quickPlotGrob")
         quickPlotGrobList[[lN[x]]]@plotArgs <- lapply(plotArgs, function(y) y[[x]])
+        quickPlotGrobList[[lN[x]]]@plotArgs$zoomExtent <- plotArgs$zoomExtent[[x]]
         quickPlotGrobList[[lN[x]]]@plotArgs$gpText <- plotArgs$gpText[x]
         quickPlotGrobList[[lN[x]]]@plotArgs$gpAxis <- plotArgs$gpAxis[x]
         quickPlotGrobList[[lN[x]]]@plotArgs$gp <- plotArgs$gp[x]
