@@ -319,6 +319,7 @@ setMethod(
       if (isTRUE(any(noName))) {
         dotObjs2 <- as.list(doCallCall$args)[-1][-nonDotsWh]
         dotNames <- as.character(dotObjs2)
+        if (is.null(title)) plotArgs$title <- ifelse(nzchar(names(dotObjs2)), names(dotObjs2), dotNames)
       }
       dotObjs <- mget(dotNames, envir = plotFrame, inherits = TRUE)
 
@@ -331,20 +332,26 @@ setMethod(
 
     for (fr in rev(whFrame)) {
       plotFrame <- sys.frame(fr - 1)
-      plotArgs <-
+      plotArgsTmp <-
         tryCatch(
           mget(names(formals("Plot")), plotFrame),
           error = function(x)
             TRUE
         )
-      if (isTRUE(plotArgs)) {
+      if (isTRUE(plotArgsTmp)) {
         conti <- TRUE
       } else {
-        plotArgs <- plotArgs[-1]
+        plotArgsTmp <- plotArgsTmp[-1]
         conti <- FALSE
       }
-      if (!conti)
+      if (!conti) {
+        if (exists("plotArgs", inherits = FALSE)) {
+          plotArgsTmp[names(plotArgs)] <- plotArgs
+        }
+        plotArgs <- plotArgsTmp
         break
+      }
+
     }
 
     # if user uses col instead of cols
