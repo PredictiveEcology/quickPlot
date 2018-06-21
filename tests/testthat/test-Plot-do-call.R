@@ -10,13 +10,11 @@ test_that("clickExtent works", {
   shpEcozone <- SpatialPolygons(list(Srs1), 1L)
   crs(shpEcozone) <- "+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
-
   r <- raster(extent(0,10,0,10), res = 1, vals = 1:100)
 
   a <- do.call(Plot, list(shpEcozone = shpEcozone, new = TRUE, speedup = 3))
   b <- Plot(shpEcozone, new = TRUE, speedup = 3)
   expect_true(identical(a, b))
-
 
   a <- do.call(Plot, list(r = r, shpEcozone = shpEcozone, new = TRUE, speedup = 3))
   b <- Plot(shpEcozone, r, new = TRUE, speedup = 3)
@@ -29,5 +27,4 @@ test_that("clickExtent works", {
   a <- do.call(Plot, list(r, shpEcozone, new = TRUE, speedup = 3))
   b <- Plot(shpEcozone, r, new = TRUE, speedup = 3)
   expect_true(identical(a, b))
-
 })
