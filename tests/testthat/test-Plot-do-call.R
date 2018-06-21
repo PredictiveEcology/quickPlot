@@ -30,4 +30,16 @@ test_that("clickExtent works", {
   b <- Plot(shpEcozone, r, new = TRUE, speedup = 3)
   expect_true(identical(a, b))
 
+
+  # doesn't use name in a named list -- r1 is called r
+  clearPlot()
+  a <- do.call(Plot, list(r1 = r, shpEcozone, new = TRUE, speedup = 3))
+  r2 <- r
+  r2[5] <- 100
+  Plot(r2, addTo = "r", title = "")
+  aa <- rePlot()
+  expect_true(identical(names(aa@quickPlotGrobList$r), c("r", "r2")))
+  expect_true(identical(names(aa@quickPlotGrobList), c("r", "shpEcozone")))
+
+
 })
