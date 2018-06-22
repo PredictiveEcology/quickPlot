@@ -6,19 +6,18 @@
 |:--------|:----------------------------|
 |version  |R version 3.4.4 (2018-03-15) |
 |system   |x86_64, linux-gnu            |
-|ui       |X11                          |
+|ui       |RStudio (1.1.453)            |
 |language |en_CA:en                     |
 |collate  |en_CA.UTF-8                  |
 |tz       |America/Edmonton             |
-|date     |2018-06-19                   |
+|date     |2018-06-22                   |
 
 ## Packages
 
-|package      |*  |version |date       |source                                          |
-|:------------|:--|:-------|:----------|:-----------------------------------------------|
-|fastshp      |   |0.1-2   |2018-06-19 |Github (s-u/fastshp@3e0eb83)                    |
-|quickPlot    |   |0.1.4   |2018-06-19 |Github (PredictiveEcology/quickPlot@aafd205)    |
-|reproducible |   |0.2.0   |2018-06-19 |Github (PredictiveEcology/reproducible@e2bb94f) |
+|package   |*  |version |date       |source                                       |
+|:---------|:--|:-------|:----------|:--------------------------------------------|
+|fastshp   |   |0.1-2   |2018-06-22 |Github (s-u/fastshp@3e0eb83)                 |
+|quickPlot |*  |0.1.4   |2018-06-22 |Github (PredictiveEcology/quickPlot@3107660) |
 
 # Check results
 
