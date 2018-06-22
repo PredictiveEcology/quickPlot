@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Thin a polygon using fastshp::thin — thin • quickPlot</title>
+<title>Thin a polygon using <code>fastshp::thin</code> — thin • quickPlot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,12 +30,13 @@
 
 
 
-<meta property="og:title" content="Thin a polygon using fastshp::thin — thin" />
+<meta property="og:title" content="Thin a polygon using <code>fastshp::thin</code> — thin" />
 
 <meta property="og:description" content="For visualizing, it is sometimes useful to remove points in Spatial* objects.
-This will change the geometry, so it is not recommended for computation. This
-is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
-for large shapefiles, particularly if returnDataFrame is TRUE.
+This will change the geometry, so it is not recommended for computation.
+This is similar to rgeos::gSimplify and sf::st_simplify,
+but faster than both (see examples) for large shapefiles, particularly if
+returnDataFrame is TRUE.
 thin will not attempt to preserve topology.
 It is strictly for making smaller polygons for the purpose (likely)
 of visualizing more quickly." />
@@ -128,7 +129,7 @@ of visualizing more quickly." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Thin a polygon using fastshp::thin</h1>
+    <h1>Thin a polygon using <code>fastshp::thin</code></h1>
     <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/quickPlot/blob/master/R/plotting-helpers.R'><code>R/plotting-helpers.R</code></a></small>
     <div class="hidden name"><code>thin.Rd</code></div>
     </div>
@@ -136,23 +137,25 @@ of visualizing more quickly." />
     <div class="ref-description">
     
     <p>For visualizing, it is sometimes useful to remove points in Spatial* objects.
-This will change the geometry, so it is not recommended for computation. This
-is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
-for large shapefiles, particularly if <code>returnDataFrame</code> is <code>TRUE</code>.
-<code>thin</code> will not attempt to preserve topology.
+This will change the geometry, so it is not recommended for computation.
+This is similar to <code><a href='http://www.rdocumentation.org/packages/rgeos/topics/topo-unary-gSimplify'>rgeos::gSimplify</a></code> and <code><a href='http://www.rdocumentation.org/packages/sf/topics/geos_unary'>sf::st_simplify</a></code>,
+but faster than both (see examples) for large shapefiles, particularly if
+<code>returnDataFrame</code> is <code>TRUE</code>.
+<em><code>thin</code> will not attempt to preserve topology.</em>
 It is strictly for making smaller polygons for the purpose (likely)
 of visualizing more quickly.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>thin</span>(<span class='no'>x</span>, <span class='no'>tolerance</span>, <span class='no'>returnDataFrame</span>, <span class='no'>minCoordsToThin</span>)
+    <pre class="usage"><span class='fu'>thin</span>(<span class='no'>x</span>, <span class='no'>tolerance</span>, <span class='no'>returnDataFrame</span>, <span class='no'>minCoordsToThin</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for SpatialPolygons</span>
 <span class='fu'>thin</span>(<span class='no'>x</span>, <span class='kw'>tolerance</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>returnDataFrame</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>minCoordsToThin</span> <span class='kw'>=</span> <span class='fl'>0</span>)
+  <span class='kw'>minCoordsToThin</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>maxNumPolygons</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"quickPlot.maxNumPolygons"</span>, <span class='fl'>3000</span>), <span class='no'>...</span>)
 
 <span class='co'># S3 method for default</span>
-<span class='fu'>thin</span>(<span class='no'>x</span>, <span class='no'>tolerance</span>, <span class='no'>returnDataFrame</span>, <span class='no'>minCoordsToThin</span>)</pre>
+<span class='fu'>thin</span>(<span class='no'>x</span>, <span class='no'>tolerance</span>, <span class='no'>returnDataFrame</span>, <span class='no'>minCoordsToThin</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -163,14 +166,13 @@ of visualizing more quickly.</p>
     </tr>
     <tr>
       <th>tolerance</th>
-      <td><p>maximum allowable distance for a point to be
-    removed</p></td>
+      <td><p>Maximum allowable distance for a point to be removed.</p></td>
     </tr>
     <tr>
       <th>returnDataFrame</th>
-      <td><p>If <code>TRUE</code>, this will return a list of 3 elements, xyOrd, hole,
-idLength. If <code>FALSE</code>, the default, it will return a <code>SpatialPolygons</code>
-object</p></td>
+      <td><p>If <code>TRUE</code>, this will return a list of 3 elements,
+<code>xyOrd</code>, <code>hole</code>, and <code>idLength</code>.
+If <code>FALSE</code> (default), it will return a <code>SpatialPolygons</code> object.</p></td>
     </tr>
     <tr>
       <th>minCoordsToThin</th>
@@ -178,6 +180,17 @@ object</p></td>
 then thin will just pass through, though it will take the time required to
 calculate how many points there are (which is not NROW(coordinates(x)) for
 a SpatialPolygon)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Passed to methods (e.g., <code>maxNumPolygons</code>)</p></td>
+    </tr>
+    <tr>
+      <th>maxNumPolygons</th>
+      <td><p>For speed, <code>thin</code> can also simply remove some of the
+polygons. This is likely only a reasonable thing to do if there are
+a lot of polygons being plotted in a small space. Current default is
+taken from <code>options('quickPlot.maxNumPolygons')</code>, with a message.</p></td>
     </tr>
     </table>
     
@@ -222,13 +235,19 @@ a SpatialPolygon)</p></td>
   <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/projection'>crs</a></span>(<span class='no'>a</span>) <span class='kw'>&lt;-</span> <span class='no'>crsObj</span>
 <span class='co'># end of making random polygon</span>
 
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>a</span>)</div><div class='img'><img src='thin-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>NROW</span>(<span class='no'>a</span>@<span class='kw'>polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>Polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>coords</span>)</div><div class='output co'>#&gt; [1] 41</div><div class='input'><span class='no'>aThin</span> <span class='kw'>&lt;-</span> <span class='fu'>thin</span>(<span class='no'>a</span>, <span class='fl'>200</span>)
-<span class='fu'>NROW</span>(<span class='no'>aThin</span>@<span class='kw'>polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>Polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>coords</span>) <span class='co'># fewer</span></div><div class='output co'>#&gt; [1] 9</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>aThin</span>) <span class='co'># looks similar</span></div><div class='img'><img src='thin-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>a</span>)</div><div class='img'><img src='thin-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>NROW</span>(<span class='no'>a</span>@<span class='kw'>polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>Polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>coords</span>)</div><div class='output co'>#&gt; [1] 41</div><div class='input'><span class='kw'>if</span> (<span class='fu'>require</span>(<span class='no'>fastshp</span>)) {
+  <span class='no'>aThin</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>quickPlot</span><span class='kw ns'>::</span><span class='fu'><a href='http://quickplot.predictiveecology.org//reference/thin.html'>thin</a></span>(<span class='no'>a</span>, <span class='fl'>200</span>)
+  <span class='fu'>NROW</span>(<span class='no'>aThin</span>@<span class='kw'>polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>Polygons</span><span class='kw'>[[</span><span class='fl'>1</span>]]@<span class='kw'>coords</span>) <span class='co'># fewer</span>
+  <span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>aThin</span>) <span class='co'># looks similar</span>
+}</div><div class='output co'>#&gt; <span class='message'>Loading required package: fastshp</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘fastshp’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:quickPlot’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    thin</span></div><div class='output co'>#&gt; <span class='message'>Some polygons have been simplified</span></div><div class='img'><img src='thin-2.png' alt='' width='700' height='433' /></div><div class='input'>
 # compare -- if you have rgeos
 # if (require("rgeos")) {
 #   aSimplify <- gSimplify(a, tol = 200)
 #   NROW(aSimplify@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#  Plot(aSimplify)
+#   Plot(aSimplify)
 # }
 
 # compare -- if you have sf
@@ -242,7 +261,7 @@ a SpatialPolygon)</p></td>
 
 # thin is faster than rgeos::gSimplify and sf::st_simplify on large shapefiles
 </div><span class='co'># NOT RUN {</span>
- <span class='co'># this involves downloading a 9 MB file</span>
+  <span class='co'># this involves downloading a 9 MB file</span>
   <span class='fu'>setwd</span>(<span class='fu'>tempdir</span>())
   <span class='no'>albertaEcozoneFiles</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"Natural_Regions_Subregions_of_Alberta.dbf"</span>,
                            <span class='st'>"Natural_Regions_Subregions_of_Alberta.lyr"</span>,

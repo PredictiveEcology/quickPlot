@@ -195,6 +195,9 @@ returned by this function may be slightly off (&lt;0.5 pixel width).</p>
 <p><code>clickCoordinates</code> is the workhorse function that determines which plot has been
 clicked on and passes this plot name and the clicked coordinates to <code>.clickCoord</code>.</p>
 <p><code>.clickCoord</code> is intended for internal use and is called by other functions here.</p>
+<p><code>clickExtent</code> will place the new, zoomed in plot over top of the existing
+object. To recover original full object, double click anywhere during an
+active <code>clickExtent</code>. See example.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -218,6 +221,9 @@ clicked on and passes this plot name and the clicked coordinates to <code>.click
   <span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>landscape</span>)
   <span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>clickExtent</span>() <span class='co'># click at two locations on the Plot device</span>
   <span class='fu'>print</span>(<span class='no'>e</span>)
+
+  <span class='co'># repeated zooming to try various places on the original device</span>
+  <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>4</span>) <span class='fu'>clickExtent</span>() <span class='co'># click at two locations on the Plot device</span>
 <span class='co'># }</span><div class='input'>
 </div></pre>
   </div>

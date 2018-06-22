@@ -89,7 +89,7 @@
 </h1>
                         <h4 class="author">Eliot J. B. McIntire</h4>
             
-            <h4 class="date">June 18 2018</h4>
+            <h4 class="date">June 22 2018</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/quickPlot/blob/master/vignettes/iii-plotting.Rmd"><code>vignettes/iii-plotting.Rmd</code></a></small>
       <div class="hidden name"><code>iii-plotting.Rmd</code></div>
@@ -152,9 +152,8 @@ sr2 &lt;-<span class="st"> </span><span class="kw">Polygon</span>(<span class="k
 srs1 &lt;-<span class="st"> </span><span class="kw">Polygons</span>(<span class="kw">list</span>(sr1), <span class="st">"s1"</span>)
 srs2 &lt;-<span class="st"> </span><span class="kw">Polygons</span>(<span class="kw">list</span>(sr2), <span class="st">"s2"</span>)
 spP &lt;-<span class="st"> </span><span class="kw">SpatialPolygons</span>(<span class="kw">list</span>(srs1, srs2), <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)
-<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP)</code></pre></div>
-<pre><code>## Loading required namespace: fastshp</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP, <span class="dt">addTo =</span> <span class="st">"landscape$habitatQuality"</span>, <span class="dt">gp =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">lwd =</span> <span class="dv">2</span>))
+<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP)
+<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(spP, <span class="dt">addTo =</span> <span class="st">"landscape$habitatQuality"</span>, <span class="dt">gp =</span> <span class="kw"><a href="../reference/grid-functions.html">gpar</a></span>(<span class="dt">lwd =</span> <span class="dv">2</span>))
 
 <span class="co"># from SpatialLines help file</span>
 l1 &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">2</span>, <span class="dv">30</span>), <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">2</span>, <span class="dv">2</span>))
@@ -360,11 +359,11 @@ landscape<span class="op">$</span>forestCover[] =<span class="st"> </span>((land
 <p>In the example here, the speedup actually slows down plotting because the rasters are already very small. This would not be the case when the original Raster had <code>1e8</code> pixels.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.913   0.008   0.923</code></pre>
+##   1.018   0.000   1.020</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">speedup =</span> <span class="dv">10</span>, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
 <p><img src="iii-plotting_files/figure-html/speedup-1.png" width="700"></p>
 <pre><code>##    user  system elapsed 
-##   1.177   0.000   1.178</code></pre>
+##   1.294   0.000   1.296</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># can add a new plot to the plotting window</span></code></pre></div>
 </div>
 </div>
