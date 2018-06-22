@@ -933,7 +933,13 @@ test_that("Plot - going through package coverage", {
   set.seed(123)
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
-  expect_silent(Plot(ras, new = TRUE))
+
+  if (requireNamespace("fastshp", quietly = TRUE)) {
+    expect_silent(Plot(ras, new = TRUE))
+  } else {
+    expect_message(Plot(ras, new = TRUE)) ## message about fastshp not being installed
+  }
+
   clearPlot(force = TRUE)
 
   # do.call version

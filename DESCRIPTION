@@ -9,7 +9,7 @@ URL:
     http://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
 Version: 0.1.4
-Date: 2018-06-21
+Date: 2018-06-22
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut", "cre")),
