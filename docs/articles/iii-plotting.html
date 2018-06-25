@@ -359,11 +359,11 @@ landscape<span class="op">$</span>forestCover[] =<span class="st"> </span>((land
 <p>In the example here, the speedup actually slows down plotting because the rasters are already very small. This would not be the case when the original Raster had <code>1e8</code> pixels.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   1.047   0.000   1.048</code></pre>
+##   1.121   0.000   1.122</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">speedup =</span> <span class="dv">10</span>, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
 <p><img src="iii-plotting_files/figure-html/speedup-1.png" width="700"></p>
 <pre><code>##    user  system elapsed 
-##   1.462   0.000   1.463</code></pre>
+##   1.391   0.000   1.392</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># can add a new plot to the plotting window</span></code></pre></div>
 </div>
 </div>
