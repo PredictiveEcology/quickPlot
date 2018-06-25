@@ -3,7 +3,7 @@
 \name{fortify}
 \alias{fortify}
 \alias{.fortify}
-\title{Fortify - i.e,. convert an artibrary object to a data.frame-like object}
+\title{Fortify - i.e,. convert an arbitrary object to a data.frame-like object}
 \usage{
 .fortify(x, matchFortify = TRUE, simple = FALSE,
   maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000))

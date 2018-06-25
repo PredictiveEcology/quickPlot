@@ -2667,7 +2667,7 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   message("No method for that class of object exists. See methods('thin') to see current methods")
 }
 
-#' Fortify - i.e,. convert an artibrary object to a data.frame-like object
+#' Fortify - i.e,. convert an arbitrary object to a data.frame-like object
 #'
 #' This only deals with SpatialPolygons.
 #'
