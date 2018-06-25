@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>All news • quickPlot</title>
+<title>Changelog • quickPlot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,22 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Changelog" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -34,16 +43,14 @@
 <![endif]-->
 
 
-<!-- Google analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-58633549-4"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-58633549-4', 'auto');
-  ga('send', 'pageview');
-
+  gtag('config', 'UA-58633549-4');
 </script>
 
   </head>
@@ -59,8 +66,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">quickPlot</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">quickPlot</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.4</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -85,7 +96,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -97,6 +108,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -104,25 +116,45 @@
       
       </header>
 
-      <div class="row">
-
-  <div class="col-md-9">
+<div class="row">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Change log <small>All releases</small></h1>
+      <h1>Changelog <small></small></h1>
+      <small>Source: <a href='https://github.com/PredictiveEcology/quickPlot/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="contents">
-    <div id="version-0-1-3" class="section level1">
-<h1 class="hasAnchor">
-<a href="#version-0-1-3" class="anchor"></a>version 0.1.3</h1>
+    <div id="version-0-1-4" class="section level1">
+<h1 class="page-header">
+<a href="#version-0-1-4" class="anchor"></a>version 0.1.4<small> Unreleased </small>
+</h1>
 <ul>
+<li>much faster for <code>SpatialPolygons</code>
+</li>
+<li>
+<code>clickExtent</code> now more interactive with new examples</li>
+<li>remove dependency on <code>reproducible</code>
+</li>
+<li>
+<code>SpatialPolygons</code> get a fill colour by default if not passed in by user</li>
+<li>fix bug related to plotting with NAs (<a href='https://github.com/PredictiveEcology/quickPlot/issues/14'>#14</a>, <a href='http://github.com/CeresBarros'>@CeresBarros</a>)</li>
+<li>bug fixes</li>
+<li>new options(“quickPlot.maxNumPolygons”), used for plotting of large <code>SpatialPolygons</code> objects</li>
+</ul>
+</div>
+    <div id="version-0-1-3" class="section level1">
+<h1 class="page-header">
+<a href="#version-0-1-3" class="anchor"></a>version 0.1.3<small> 2018-01-25 </small>
+</h1>
+<ul>
+<li>new function, <code>thin</code>, which is similar to rgeos::gSimplify, but uses fastshp::thin, and can get much faster speeds, used internally for plotting, but also available as a function to user</li>
 <li>minor bug fix for when quickPlot::Plot is called inside a custom function called “Plot”</li>
 <li>reworked internal approach to determine object name and object environments</li>
 </ul>
 </div>
     <div id="version-0-1-2" class="section level1">
-<h1 class="hasAnchor">
-<a href="#version-0-1-2" class="anchor"></a>version 0.1.2</h1>
+<h1 class="page-header">
+<a href="#version-0-1-2" class="anchor"></a>version 0.1.2<small> 2017-10-05 </small>
+</h1>
 <ul>
 <li>Small tweaks that allow methods to be built by other packages (<em>e.g.</em>, <a href="https://github.com/PredictiveEcology/NetLogoR">PredictiveEcology/NetLogoR</a>)</li>
 <li>new functions
@@ -135,27 +167,29 @@
 </ul>
 </div>
     <div id="version-0-1-1" class="section level1">
-<h1 class="hasAnchor">
-<a href="#version-0-1-1" class="anchor"></a>version 0.1.1</h1>
+<h1 class="page-header">
+<a href="#version-0-1-1" class="anchor"></a>version 0.1.1<small> 2017-08-03 </small>
+</h1>
 <ul>
 <li>add more examples to non-internal functions and <em>do</em> run them (per CRAN)</li>
 <li>added checks in the tests to ensure all exported functions have examples</li>
 </ul>
 </div>
     <div id="version-0-1-0" class="section level1">
-<h1 class="hasAnchor">
-<a href="#version-0-1-0" class="anchor"></a>version 0.1.0</h1>
+<h1 class="page-header">
+<a href="#version-0-1-0" class="anchor"></a>version 0.1.0<small> Unreleased </small>
+</h1>
 <ul>
 <li>A new package, which takes all primary plotting out of the <code>SpaDES</code> package.</li>
 </ul>
 </div>
-    </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#version-0-1-4">0.1.4</a></li>
         <li><a href="#version-0-1-3">0.1.3</a></li>
         <li><a href="#version-0-1-2">0.1.2</a></li>
         <li><a href="#version-0-1-1">0.1.1</a></li>
@@ -178,5 +212,8 @@
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

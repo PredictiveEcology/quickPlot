@@ -18,13 +18,22 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Function reference" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -34,16 +43,14 @@
 <![endif]-->
 
 
-<!-- Google analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-58633549-4"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-58633549-4', 'auto');
-  ga('send', 'pageview');
-
+  gtag('config', 'UA-58633549-4');
 </script>
 
   </head>
@@ -59,8 +66,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">quickPlot</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">quickPlot</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.4</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -85,7 +96,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -97,6 +108,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -104,160 +116,162 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
-      <h1>
-        Reference
-        <small>version&nbsp;0.1.3.9000</small>
-      </h1>
+      <h1>Reference</h1>
     </div>
 
-    <div class="contents">
-      <table class="ref-index">
+    <table class="ref-index">
 
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
+    <colgroup>
+      
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
 
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="clearPlot.html">clearPlot</a></code> </p>
-          </td>
-          <td><p>Clear plotting device</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="dev.html">dev</a></code> </p>
-          </td>
-          <td><p>Specify where to plot</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="divergentColors.html">divergentColors</a></code> </p>
-          </td>
-          <td><p>Divergent colour palette</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="equalExtent.html">equalExtent</a></code> </p>
-          </td>
-          <td><p>Assess whether a list of extents are all equal</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="getSetColors.html">getColors</a></code> <code><a href="getSetColors.html">setColors<-</a></code> <code><a href="getSetColors.html">setColors</a></code> </p>
-          </td>
-          <td><p>Get and set colours for plotting <code>Raster*</code> objects</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="grid-functions.html">gpar</a></code> </p>
-          </td>
-          <td><p>Importing some grid functions</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="griddedClasses-class.html">griddedClasses-class</a></code> </p>
-          </td>
-          <td><p>The <code>griddedClasses</code> class</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="hasBbox.html">.hasBbox</a></code> </p>
-          </td>
-          <td><p>Test whether class has bbox method</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="layerNames.html">layerNames</a></code> </p>
-          </td>
-          <td><p>Extract the layer names of Spatial Objects</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="makeLines.html">makeLines</a></code> </p>
-          </td>
-          <td><p>Make <code>SpatialLines</code> object from two <code>SpatialPoints</code> objects</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="newPlot.html">newPlot</a></code> <code><a href="newPlot.html">dev.useRSGD</a></code> </p>
-          </td>
-          <td><p>Open a new plotting window</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="numLayers.html">numLayers</a></code> </p>
-          </td>
-          <td><p>Find the number of layers in a Spatial Object</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="parseElems.html">.parseElems</a></code> </p>
-          </td>
-          <td><p>Parsing of elements</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="Plot.html">Plot</a></code> <code><a href="Plot.html">rePlot</a></code> </p>
-          </td>
-          <td><p><code>Plot</code>: Fast, optimally arranged, multipanel plotting</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="quickPlot-classes.html">quickPlotClasses</a></code> </p>
-          </td>
-          <td><p><code>quickPlot</code> classes</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="quickPlot-package.html">quickPlot-package</a></code> </p>
-          </td>
-          <td><p>The <code>quickPlot</code> package</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="quickPlotObjects-class.html">.quickPlotObjects-class</a></code> </p>
-          </td>
-          <td><p>The <code>.quickPlotObjects</code> class</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="sample-maps.html">sample-maps</a></code> </p>
-          </td>
-          <td><p>Dummy maps included with <code>quickPlot</code></p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="sp2sl.html">sp2sl</a></code> </p>
-          </td>
-          <td><p>Convert pairs of coordinates to SpatialLines</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="spatialObjects-class.html">spatialObjects-class</a></code> </p>
-          </td>
-          <td><p>The <code>spatialObjects</code> class</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="whereInStack.html">whereInStack</a></code> </p>
-          </td>
-          <td><p>Find the environment in the call stack that contains an object by name</p></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="Plot.html">Plot()</a></code> <code><a href="Plot.html">rePlot()</a></code> </p>
+        </td>
+        <td><p><code>Plot</code>: Fast, optimally arranged, multipanel plotting</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="clearPlot.html">clearPlot()</a></code> </p>
+        </td>
+        <td><p>Clear plotting device</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dev.html">dev()</a></code> </p>
+        </td>
+        <td><p>Specify where to plot</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="divergentColors.html">divergentColors()</a></code> </p>
+        </td>
+        <td><p>Divergent colour palette</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="equalExtent.html">equalExtent()</a></code> </p>
+        </td>
+        <td><p>Assess whether a list of extents are all equal</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getSetColors.html">getColors()</a></code> <code><a href="getSetColors.html">`setColors<-`()</a></code> <code><a href="getSetColors.html">setColors()</a></code> </p>
+        </td>
+        <td><p>Get and set colours for plotting <code>Raster*</code> objects</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="grid-functions.html">gpar()</a></code> </p>
+        </td>
+        <td><p>Importing some grid functions</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="griddedClasses-class.html">griddedClasses-class</a></code> </p>
+        </td>
+        <td><p>The <code>griddedClasses</code> class</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hasBbox.html">.hasBbox()</a></code> </p>
+        </td>
+        <td><p>Test whether class has bbox method</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="layerNames.html">layerNames()</a></code> </p>
+        </td>
+        <td><p>Extract the layer names of Spatial Objects</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="makeLines.html">makeLines()</a></code> </p>
+        </td>
+        <td><p>Make <code>SpatialLines</code> object from two <code>SpatialPoints</code> objects</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="newPlot.html">newPlot()</a></code> <code><a href="newPlot.html">dev.useRSGD()</a></code> </p>
+        </td>
+        <td><p>Open a new plotting window</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="numLayers.html">numLayers()</a></code> </p>
+        </td>
+        <td><p>Find the number of layers in a Spatial Object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="parseElems.html">.parseElems()</a></code> </p>
+        </td>
+        <td><p>Parsing of elements</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="quickPlot-classes.html">quickPlotClasses</a></code> </p>
+        </td>
+        <td><p><code>quickPlot</code> classes</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="quickPlot-package.html">quickPlot-package</a></code> </p>
+        </td>
+        <td><p>The <code>quickPlot</code> package</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="quickPlotObjects-class.html">.quickPlotObjects-class</a></code> </p>
+        </td>
+        <td><p>The <code>.quickPlotObjects</code> class</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sample-maps.html">sample-maps</a></code> </p>
+        </td>
+        <td><p>Dummy maps included with <code>quickPlot</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sp2sl.html">sp2sl()</a></code> </p>
+        </td>
+        <td><p>Convert pairs of coordinates to SpatialLines</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="spatialObjects-class.html">spatialObjects-class</a></code> </p>
+        </td>
+        <td><p>The <code>spatialObjects</code> class</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="thin.html">thin()</a></code> </p>
+        </td>
+        <td><p>Thin a polygon using <code>fastshp::thin</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="whereInStack.html">whereInStack()</a></code> </p>
+        </td>
+        <td><p>Find the environment in the call stack that contains an object by name</p></td>
+      </tr>
+    </tbody>
+    </table>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -280,5 +294,8 @@
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

@@ -4,36 +4,44 @@
 \alias{thin}
 \alias{thin.SpatialPolygons}
 \alias{thin.default}
-\title{Thin a polygon using fastshp::thin}
+\title{Thin a polygon using \code{fastshp::thin}}
 \usage{
-thin(x, tolerance, returnDataFrame, minCoordsToThin)
+thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 
 \method{thin}{SpatialPolygons}(x, tolerance = NULL, returnDataFrame = FALSE,
-  minCoordsToThin = 0)
+  minCoordsToThin = 0,
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000), ...)
 
-\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin)
+\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 }
 \arguments{
 \item{x}{A Spatial* object}
 
-\item{tolerance}{maximum allowable distance for a point to be
-    removed}
+\item{tolerance}{Maximum allowable distance for a point to be removed.}
 
-\item{returnDataFrame}{If \code{TRUE}, this will return a list of 3 elements, xyOrd, hole,
-idLength. If \code{FALSE}, the default, it will return a \code{SpatialPolygons}
-object}
+\item{returnDataFrame}{If \code{TRUE}, this will return a list of 3 elements,
+\code{xyOrd}, \code{hole}, and \code{idLength}.
+If \code{FALSE} (default), it will return a \code{SpatialPolygons} object.}
 
 \item{minCoordsToThin}{If the number of coordinates is smaller than this number,
 then thin will just pass through, though it will take the time required to
 calculate how many points there are (which is not NROW(coordinates(x)) for
 a SpatialPolygon)}
+
+\item{...}{Passed to methods (e.g., \code{maxNumPolygons})}
+
+\item{maxNumPolygons}{For speed, \code{thin} can also simply remove some of the
+polygons. This is likely only a reasonable thing to do if there are
+a lot of polygons being plotted in a small space. Current default is
+taken from \code{options('quickPlot.maxNumPolygons')}, with a message.}
 }
 \description{
 For visualizing, it is sometimes useful to remove points in Spatial* objects.
-This will change the geometry, so it is not recommended for computation. This
-is similar to rgeos::gSimplify and sf::st_simplify, but faster than both (see examples)
-for large shapefiles, particularly if \code{returnDataFrame} is \code{TRUE}.
-\code{thin} will not attempt to preserve topology.
+This will change the geometry, so it is not recommended for computation.
+This is similar to \code{rgeos::gSimplify} and \code{sf::st_simplify},
+but faster than both (see examples) for large shapefiles, particularly if
+\code{returnDataFrame} is \code{TRUE}.
+\emph{\code{thin} will not attempt to preserve topology.}
 It is strictly for making smaller polygons for the purpose (likely)
 of visualizing more quickly.
 }
@@ -80,15 +88,17 @@ crsObj <- CRS(paste0("+proj=tmerc +lat_0=0 +lon_0=-115 +k=0.9992 +x_0=500000 +y_
 clearPlot()
 Plot(a)
 NROW(a@polygons[[1]]@Polygons[[1]]@coords)
-aThin <- thin(a, 200)
-NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
-Plot(aThin) # looks similar
+if (require(fastshp)) {
+  aThin <- quickPlot::thin(a, 200)
+  NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
+  Plot(aThin) # looks similar
+}
 
 # compare -- if you have rgeos
 # if (require("rgeos")) {
 #   aSimplify <- gSimplify(a, tol = 200)
 #   NROW(aSimplify@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#  Plot(aSimplify)
+#   Plot(aSimplify)
 # }
 
 # compare -- if you have sf
@@ -101,7 +111,8 @@ Plot(aThin) # looks similar
 # }
 
 # thin is faster than rgeos::gSimplify and sf::st_simplify on large shapefiles
-\dontrun{ # this involves downloading a 9 MB file
+\dontrun{
+  # this involves downloading a 9 MB file
   setwd(tempdir())
   albertaEcozoneFiles <- c("Natural_Regions_Subregions_of_Alberta.dbf",
                            "Natural_Regions_Subregions_of_Alberta.lyr",

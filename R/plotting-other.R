@@ -177,6 +177,9 @@ setMethod("clearPlot",
 #'   Plot(landscape)
 #'   e <- clickExtent() # click at two locations on the Plot device
 #'   print(e)
+#'
+#'   # repeated zooming to try various places on the original device
+#'   for(i in 1:4) clickExtent() # click at two locations on the Plot device
 #' }
 #'
 clickValues <- function(n = 1) {
@@ -210,33 +213,50 @@ clickValues <- function(n = 1) {
 #'
 #' @export
 #' @importFrom grDevices dev.cur
+#' @importFrom raster crs<- crs
+#' @importFrom fpCompare %==%
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
+#'
+#' @details
+#' \code{clickExtent} will place the new, zoomed in plot over top of the existing
+#' object. To recover original full object, double click anywhere during an
+#' active \code{clickExtent}. See example.
 #'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
   corners <- clickCoordinates(2)
   zoom <- extent(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
 
   if (plot.it) {
-    devActive <- dev.cur()
-    if (is.null(devNum)) {
-      newPlot()
-    } else {
-      dev(devNum)
-    }
 
     objLay <- strsplit(corners$map, "\\$")
     objNames <- unique(unlist(lapply(objLay, function(x) x[1])))
     layNames <- unique(unlist(lapply(objLay, function(x) x[2])))
-    if (!is.na(layNames)) {
-      Plot(eval(parse(text = objNames), envir = corners$envir[[1]])[[layNames]],
-           zoomExtent = zoom, new = TRUE)
-    } else {
-      clearPlot()
-      Plot(get(objNames, envir = corners$envir[[1]]), zoomExtent = zoom)
+
+    devActive <- dev.cur()
+    if (!(is.null(devNum))) {
+      dev(devNum)
     }
 
-    dev(devActive)
+    obj <- list()
+    if (!is.na(layNames)) {
+      theObj <- eval(parse(text = objNames), envir = corners$envir[[1]])[[layNames]]
+      theName <- paste0(objNames, "$", layNames)
+    } else {
+      theObj <- get(objNames, envir = corners$envir[[1]])
+      theName <- objNames
+    }
+    theObj <- list(theObj)
+    names(theObj) <- objNames
+    if (sum(corners$coords[1,] - corners$coords[2,]) %==% 0) {
+      Plot(theObj, addTo = theName, title = theName, new = TRUE, zoomExtent = extent(theObj[[1]]))
+    } else {
+      Plot(theObj, addTo = theName, title = theName, zoomExtent = zoom, new = TRUE)
+    }
+
+    if (!(is.null(devNum))) {
+      dev(devActive)
+    }
     return(invisible(zoom))
   } else {
     return(zoom)
@@ -306,11 +326,19 @@ clickCoordinates <- function(n = 1) {
     #  as origin... so, require 1-
     yInt <- findInterval(as.numeric(strsplit(as.character(gloc$y), "npc")[[1]]),
                          c(0, cumsum(heightNpcs)))
-    if (!(xInt %in% grepNpcsW) & !(yInt %in% grepNpcsH)) {
+    if (!(xInt %in% grepNpcsW) || !(yInt %in% grepNpcsH)) {
       stop("No plot at those coordinates")
     }
     column <-  which(xInt == grepNpcsW)
     row <- which((yInt == grepNpcsH)[length(grepNpcsH):1]) # nolint
+
+    if (length(row) == 0) { # above the plot
+      row <- if (yInt > grepNpcsH) length(grepNpcsH) else 1
+    }
+    if (length(column) == 0) { # above the plot
+      column <- if (xInt > grepNpcsW) length(grepNpcsW) else 1
+    }
+
     map <- column + (row - 1) * arr$curr@arr@columns
 
     maxLayX <- cumsum(widthNpcs)[xInt]

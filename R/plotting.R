@@ -231,12 +231,12 @@ if (getRversion() >= "3.1.0") {
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom gridBase gridFIG
 #' @importFrom ggplot2 ggplot
-#' @importFrom raster crop is.factor
-#' @importFrom grid upViewport pushViewport
-#' @importFrom grid grid.rect grid.xaxis grid.yaxis current.parent gpar
 #' @importFrom grDevices dev.cur dev.size
+#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar
+#' @importFrom grid upViewport pushViewport
+#' @importFrom gridBase gridFIG
+#' @importFrom raster crop is.factor
 #' @include environment.R
 #' @include plotting-classes.R
 #' @include plotting-colours.R
@@ -257,7 +257,7 @@ setGeneric(
            legendText = NULL, pch = 19, title = NULL, na.color = "#FFFFFF00", # nolint
            zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot") { # nolint
     standardGeneric("Plot")
-  })
+})
 
 #' @rdname Plot
 #' @export
@@ -287,7 +287,7 @@ setMethod(
     # This testthat is a work around:
     # A test_that call can be very long, with many function calls, including Plot and do.call,
     # even if they don't have anything to do with each other
-    isDoCall <- grepl("^do.call", scalls) & grepl("Plot", scalls) & !grepl("test_that", scalls)
+    isDoCall <- grepl("^do.call", scalls) & grepl("\\<Plot\\>", scalls) & !grepl("test_that", scalls)
 
     dots <- list(...)
     if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") &
@@ -303,25 +303,55 @@ setMethod(
       isList <- FALSE
     }
 
-    if (any(isDoCall)) {
-      stop("Currently, Plot can not be called within a do.call. ",
-           "Try passing a named list of objects to Plot instead.")
-    }
     # Determine where the objects are located
     #  We need to know exactly where they are, so that they can be replotted later, if needed
-    whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
-    dotObjs <- dots
+    #whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
+    if (any(isDoCall)) {
+      doCallCall <- as.list(match.call(do.call, call = scalls[isDoCall][[1]]))
+      argNames <- names(doCallCall$args[-1]) # don't need "list()"
+      nonDots <- match.arg(several.ok = TRUE, arg = argNames, choices = formalArgs(Plot))
+      nonDotsWh <- match(nonDots, argNames)
+      plotArgs <- as.list(doCallCall$args)[nonDots]
+      plotFrame <- sys.frame(which(isDoCall) - 1)
+      dotNames <- setdiff(argNames, nonDots)
+      noName <- !nzchar(dotNames)
+      #dotObjs <- mget(dotNames[!noName], envir = plotFrame, inherits = TRUE)
+      if (isTRUE(any(noName))) {
+        dotObjs2 <- as.list(doCallCall$args)[-1][-nonDotsWh]
+        dotNames <- as.character(dotObjs2)
+        if (is.null(title)) plotArgs$title <- ifelse(nzchar(names(dotObjs2)), names(dotObjs2), dotNames)
+      }
+      dotObjs <- mget(dotNames, envir = plotFrame, inherits = TRUE)
 
-    for (fr in whFrame) {
-      plotFrame <- sys.frame(fr)
-      plotArgs <- tryCatch(mget(names(formals("Plot")), plotFrame), error = function(x) TRUE)
-      if (isTRUE(plotArgs)) {
+      #stop("Currently, Plot can not be called within a do.call. ",
+      #     "Try passing a named list of objects to Plot instead.")
+    } else {
+      dotObjs <- dots
+    }
+    whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
+
+    for (fr in rev(whFrame)) {
+      plotFrame <- sys.frame(fr - 1)
+      plotArgsTmp <-
+        tryCatch(
+          mget(names(formals("Plot")), plotFrame),
+          error = function(x)
+            TRUE
+        )
+      if (isTRUE(plotArgsTmp)) {
         conti <- TRUE
       } else {
-        plotArgs <- plotArgs[-1]
+        plotArgsTmp <- plotArgsTmp[-1]
         conti <- FALSE
       }
-      if (!conti) break
+      if (!conti) {
+        if (exists("plotArgs", inherits = FALSE)) {
+          plotArgsTmp[names(plotArgs)] <- plotArgs
+        }
+        plotArgs <- plotArgsTmp
+        break
+      }
+
     }
 
     # if user uses col instead of cols
@@ -428,18 +458,24 @@ setMethod(
     if (any(whichQuickPlottables)) {
       # perhaps push objects into an environment, if they are only in the list
       if (isList) {
-        assign(paste0("Dev", dev.cur()), new.env(hash = FALSE, parent = .quickPlotEnv),
+        assign(paste0("Dev", dev.cur()),
+               new.env(hash = FALSE, parent = .quickPlotEnv),
                envir = .quickPlotEnv)
-        objFrame <- get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
+        objFrame <-
+          get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
         dots$env <- list2env(dots, envir = objFrame)
 
       } else {
-        objNames <- lapply(substitute(placeholderFunction(...))[-1],
-                           deparse, backtick = TRUE)
+        if (any(isDoCall)) {
+          objNames <- names(dotObjs)
+        } else {
+          objNames <- lapply(substitute(placeholderFunction(...))[-1],
+                             deparse, backtick = TRUE)
+        }
         objFrame <- whereInStack(objNames[[1]])
         names(plotObjs)[whichQuickPlottables] <- objNames
-      }
 
+      }
     }
 
     nonPlotArgs <- dotObjs[!whichQuickPlottables]
@@ -471,21 +507,6 @@ setMethod(
         currQuickPlots$curr@arr@layout$visualSqueeze
       } else {
         visualSqueeze
-      }
-
-      if (FALSE) {
-
-        #checkTracemem -- incomplete -- to compare differently named, but identical objects
-        #  e.g., sim$a and sim@.envir$a
-        ob <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x)
-          lapply(x, function(y) y@objName)))
-        en <- unlist(lapply(currQuickPlots$curr@quickPlotGrobList, function(x)
-          lapply(x, function(y) y@envir)))
-        lapply(seq_along(ob), function(n) {
-          lapply(seq_along(objNames), function(x) {
-            identical(tracemem(eval(parse(text = ob[n]), envir = en[n])),
-                      tracemem(eval(parse(text = objNames[[x]]), objFrame)))})})
-
       }
 
       updated <- .updateQuickPlot(newQuickPlots, currQuickPlots)

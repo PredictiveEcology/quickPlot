@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title><code>Plot</code>: Fast, optimally arranged, multipanel plotting � Plot • quickPlot</title>
+<title><code>Plot</code>: Fast, optimally arranged, multipanel plotting — Plot • quickPlot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,37 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="<code>Plot</code>: Fast, optimally arranged, multipanel plotting — Plot" />
+
+<meta property="og:description" content="This can take objects of type Raster*, SpatialPoints*,
+SpatialPolygons*, and any combination of those.
+These can be provided as individual objects, or a named list.
+If a named list, the names either represent a different original object in the
+calling environment and that will be used, or if the names don't exist in the
+calling environment, then they will be copied to .quickPlotEnv for reuse later.
+It can also handle ggplot2 objects or base::histogram objects
+created via call to exHist &amp;lt;- hist(1:10, plot = FALSE). It can also take
+arguments as if it were a call to plot. In this latter
+case, the user should be explicit about naming the plot area using addTo.
+Customization of the ggplot2 elements can be done as a normal
+ggplot2 plot, then added with Plot(ggplotObject).
+Re-plot to a specific device" />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -34,16 +58,14 @@
 <![endif]-->
 
 
-<!-- Google analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-58633549-4"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-58633549-4', 'auto');
-  ga('send', 'pageview');
-
+  gtag('config', 'UA-58633549-4');
 </script>
 
   </head>
@@ -59,8 +81,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">quickPlot</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">quickPlot</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.4</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -85,7 +111,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -97,6 +123,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -104,12 +131,15 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1><code>Plot</code>: Fast, optimally arranged, multipanel plotting</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/quickPlot/blob/master/R/plotting.R'><code>R/plotting.R</code></a></small>
+    <div class="hidden name"><code>Plot.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>This can take objects of type <code>Raster*</code>, <code>SpatialPoints*</code>,
 <code>SpatialPolygons*</code>, and any combination of those.
@@ -125,6 +155,7 @@ Customization of the <code>ggplot2</code> elements can be done as a normal
 <code>ggplot2</code> plot, then added with <code>Plot(ggplotObject)</code>.</p>
 <p>Re-plot to a specific device</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>Plot</span>(<span class='no'>...</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>gp</span> <span class='kw'>=</span> <span class='fu'><a href='grid-functions.html'>gpar</a></span>(), <span class='kw'>gpText</span> <span class='kw'>=</span> <span class='fu'><a href='grid-functions.html'>gpar</a></span>(),
   <span class='kw'>gpAxis</span> <span class='kw'>=</span> <span class='fu'><a href='grid-functions.html'>gpar</a></span>(), <span class='kw'>axes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>speedup</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -143,7 +174,7 @@ Customization of the <code>ggplot2</code> elements can be done as a normal
 
 <span class='fu'>rePlot</span>(<span class='kw'>toDev</span> <span class='kw'>=</span> <span class='fu'>dev.cur</span>(), <span class='kw'>fromDev</span> <span class='kw'>=</span> <span class='fu'>dev.cur</span>(), <span class='kw'>clearFirst</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -359,16 +390,16 @@ subsequent time it is replotted (via a forced rearrangement), then it will take
 the object *as it exists*, not as it existed. Third, if passing a named list
 of objects, Plot will either create a link to objects with those names in the
 calling environment (e.g., .GlobalEnv) or, if they do not exist, then Plot
-will make a copy in the hidden .quickPlotEnv for later reuse.
-    <code>cols</code> is a vector of colours that can be understood directly, or by
+will make a copy in the hidden .quickPlotEnv for later reuse.</p>
+<p><code>cols</code> is a vector of colours that can be understood directly, or by
 <code>colorRampePalette</code>, such as <code>c("orange", "blue")</code>, will give a
 colour range from orange to blue, interploated.
 If a list, it will be used, in order, for each item to be plotted.
 It will be recycled if it is shorter than the objects to be plotted.
 Note that when this approach to setting colours is used, any overplotting
 will revert to the <code>colortable</code> slot of the object, or the default
-for rasters, which is <code>terrain.color()</code>
-    <code>cols</code> can also accept <code>RColorBrewer</code> colors by keyword if it is
+for rasters, which is <code>terrain.color()</code></p>
+<p><code>cols</code> can also accept <code>RColorBrewer</code> colors by keyword if it is
 character vector of length 1. i.e., this cannot be used to set many objects by keyword in
 the same Plot call. Default <code>terrain.color()</code>. See Details.</p>
 <p>Some coloring will be automatic. If the object being plotted is a Raster, then
@@ -386,8 +417,8 @@ the current color scheme. If a second or subsequent call to <code>Plot</code> is
 made with the same object but with different colours (e.g., with <code>cols</code>),
 the legend will not update. This behaviour is made with the decision that the
 original layer takes precedence and all subsequent plots to that same frame
-are overplots only.
-    <code>speedup</code> is not a precise number because it is faster to plot an
+are overplots only.</p>
+<p><code>speedup</code> is not a precise number because it is faster to plot an
 non-resampled raster if the new resampling is close to the original number of
 pixels.
 At the moment, for rasters, this is set to 1/3 of the original pixels.
@@ -408,15 +439,15 @@ The naming convention used is: <code>RasterStackName$layerName</code>, i.e,
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='clearPlot.html'>clearPlot</a></code>, <code><a href='grid-functions.html'>gpar</a></code>, <code><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></code>,
+    <div class='dont-index'><p><code><a href='clearPlot.html'>clearPlot</a></code>, <code><a href='grid-functions.html'>gpar</a></code>, <code><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></code>,
 <code>par</code>, <code><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPolygons'>SpatialPolygons</a></code>, <code>grid.polyline</code>,
-<code>ggplot</code>, <code><a href='dev.html'>dev</a></code></p>
+<code>ggplot</code>, <code><a href='dev.html'>dev</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>library</span>(<span class='no'>sp</span>)
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>sp</span>)
 <span class='fu'>library</span>(<span class='no'>raster</span>)
+<span class='fu'>requireNamespace</span>(<span class='st'>"rgdal"</span>) <span class='co'># required for raster loading</span>
 <span class='fu'>library</span>(<span class='no'>RColorBrewer</span>)
 
 <span class='no'>files</span> <span class='kw'>&lt;-</span> <span class='fu'>dir</span>(<span class='fu'>system.file</span>(<span class='st'>"maps"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"quickPlot"</span>), <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"tif"</span>)
@@ -447,20 +478,17 @@ The naming convention used is: <code>RasterStackName$layerName</code>, i.e,
 
 <span class='co'># needs to have a data.frame with ID as first column - see ?raster::ratify</span>
 <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/factor'>levels</a></span>(<span class='no'>ras</span>) <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>ID</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>4</span>, <span class='kw'>Name</span> <span class='kw'>=</span> <span class='fu'>paste0</span>(<span class='st'>"Level"</span>, <span class='fl'>1</span>:<span class='fl'>4</span>))
-<span class='fu'>Plot</span>(<span class='no'>ras</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>ras</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='input'>
 <span class='co'># Arbitrary values for factors, including zero and not all levels represented in raster</span>
 <span class='no'>levs</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>0</span>:<span class='fl'>5</span>, <span class='fl'>7</span>:<span class='fl'>12</span>)
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>3</span>, <span class='fl'>0</span>, <span class='fl'>2</span>), <span class='kw'>vals</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>8</span>, <span class='fl'>9</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/factor'>levels</a></span>(<span class='no'>ras</span>) <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>ID</span> <span class='kw'>=</span> <span class='no'>levs</span>, <span class='kw'>Name</span> <span class='kw'>=</span> <span class='no'>LETTERS</span>[<span class='fu'>c</span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fl'>8</span>:<span class='fl'>16</span>)])
-<span class='fu'>Plot</span>(<span class='no'>ras</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>ras</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='input'>
 <span class='co'># Arbitrary values for factors, including zero and not all levels represented in raster</span>
 <span class='no'>levs</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>0</span>:<span class='fl'>5</span>, <span class='fl'>7</span>:<span class='fl'>23</span>)
 <span class='no'>ras</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/extent'>extent</a></span>(<span class='fl'>0</span>, <span class='fl'>3</span>, <span class='fl'>0</span>, <span class='fl'>2</span>), <span class='kw'>vals</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>8</span>, <span class='fl'>9</span>), <span class='kw'>res</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/factor'>levels</a></span>(<span class='no'>ras</span>) <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>ID</span> <span class='kw'>=</span> <span class='no'>levs</span>, <span class='kw'>Name</span> <span class='kw'>=</span> <span class='no'>LETTERS</span>[<span class='fl'>1</span>:<span class='fl'>23</span>])
-<span class='fu'>Plot</span>(<span class='no'>ras</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>ras</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='Plot-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># SpatialPolygons</span>
 <span class='no'>sr1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sp</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPolygons'>Polygon</a></span>(<span class='fu'>cbind</span>(<span class='fu'>c</span>(<span class='fl'>2</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'>c</span>(<span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>4</span>, <span class='fl'>2</span>)) * <span class='fl'>20</span> - <span class='fl'>50</span>)
 <span class='no'>sr2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sp</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPolygons'>Polygon</a></span>(<span class='fu'>cbind</span>(<span class='fu'>c</span>(<span class='fl'>5</span>, <span class='fl'>4</span>, <span class='fl'>2</span>, <span class='fl'>5</span>), <span class='fu'>c</span>(<span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>2</span>, <span class='fl'>2</span>)) * <span class='fl'>20</span> - <span class='fl'>50</span>)
@@ -468,41 +496,24 @@ The naming convention used is: <code>RasterStackName$layerName</code>, i.e,
 <span class='no'>srs2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sp</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPolygons'>Polygons</a></span>(<span class='fu'>list</span>(<span class='no'>sr2</span>), <span class='st'>"s2"</span>)
 <span class='no'>spP</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sp</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/sp/topics/SpatialPolygons'>SpatialPolygons</a></span>(<span class='fu'>list</span>(<span class='no'>srs1</span>, <span class='no'>srs2</span>), <span class='fl'>1</span>:<span class='fl'>2</span>)
 
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
-<span class='fu'>Plot</span>(<span class='no'>ras</span>)
-
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
-<span class='fu'>Plot</span>(<span class='no'>landscape</span>)
-
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>ras</span>)</div><div class='img'><img src='Plot-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>landscape</span>)</div><div class='input'>
 <span class='co'># Can overplot, using addTo</span>
-<span class='fu'>Plot</span>(<span class='no'>caribou</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"landscape$forestAge"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>caribou</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"landscape$forestAge"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='input'>
 <span class='co'># can add a plot to the plotting window</span>
-<span class='fu'>Plot</span>(<span class='no'>caribou</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>caribou</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='Plot-3.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Can add two maps with same name, if one is in a stack; they are given</span>
 <span class='co'>#  unique names based on object name</span>
-<span class='fu'>Plot</span>(<span class='no'>landscape</span>, <span class='no'>caribou</span>, <span class='no'>maps</span>$<span class='no'>DEM</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>landscape</span>, <span class='no'>caribou</span>, <span class='no'>maps</span>$<span class='no'>DEM</span>)</div><div class='input'>
 <span class='co'># can mix stacks, rasters, SpatialPoint*</span>
-<span class='fu'>Plot</span>(<span class='no'>landscape</span>, <span class='no'>habitatQuality2</span>, <span class='no'>caribou</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>landscape</span>, <span class='no'>habitatQuality2</span>, <span class='no'>caribou</span>)</div><div class='input'>
 <span class='co'># can mix stacks, rasters, SpatialPoint*, and SpatialPolygons*</span>
-<span class='fu'>Plot</span>(<span class='no'>landscape</span>, <span class='no'>caribou</span>)
-<span class='fu'>Plot</span>(<span class='no'>habitatQuality2</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='fu'>Plot</span>(<span class='no'>spP</span>)
-<span class='fu'>Plot</span>(<span class='no'>spP</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"landscape$forestCover"</span>, <span class='kw'>gp</span> <span class='kw'>=</span> <span class='fu'><a href='grid-functions.html'>gpar</a></span>(<span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>2</span>))
-
+<span class='fu'>Plot</span>(<span class='no'>landscape</span>, <span class='no'>caribou</span>)</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>habitatQuality2</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>spP</span>)</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>spP</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"landscape$forestCover"</span>, <span class='kw'>gp</span> <span class='kw'>=</span> <span class='fu'><a href='grid-functions.html'>gpar</a></span>(<span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='input'>
 <span class='co'># provide arrangement, NumRow, NumCol</span>
-<span class='fu'>Plot</span>(<span class='no'>spP</span>, <span class='kw'>arr</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>4</span>), <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
+<span class='fu'>Plot</span>(<span class='no'>spP</span>, <span class='kw'>arr</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>4</span>), <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='Plot-4.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># example base plot</span>
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
-<span class='fu'>Plot</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"test"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='co'># if there is no "test" then it will make it</span>
-<span class='fu'>Plot</span>(<span class='fl'>4</span>, <span class='fl'>5</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>22</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"test"</span>)
-<span class='no'>obj1</span> <span class='kw'>&lt;-</span> <span class='fu'>rnorm</span>(<span class='fl'>1e2</span>)
-<span class='fu'>Plot</span>(<span class='no'>obj1</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='st'>"L"</span>)
-
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'>Plot</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"test"</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='co'># if there is no "test" then it will make it</span></div><div class='input'><span class='fu'>Plot</span>(<span class='fl'>4</span>, <span class='fl'>5</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>22</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"blue"</span>, <span class='kw'>addTo</span> <span class='kw'>=</span> <span class='st'>"test"</span>)</div><div class='img'><img src='Plot-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='no'>obj1</span> <span class='kw'>&lt;-</span> <span class='fu'>rnorm</span>(<span class='fl'>1e2</span>)
+<span class='fu'>Plot</span>(<span class='no'>obj1</span>, <span class='kw'>axes</span> <span class='kw'>=</span> <span class='st'>"L"</span>)</div><div class='img'><img src='Plot-6.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Can plot named lists of objects (but not base objects yet)</span>
 <span class='no'>ras1</span> <span class='kw'>&lt;-</span> <span class='no'>ras2</span> <span class='kw'>&lt;-</span> <span class='no'>ras</span>
 <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>()
@@ -510,12 +521,9 @@ The naming convention used is: <code>RasterStackName$layerName</code>, i.e,
   <span class='no'>a</span><span class='kw'>[[</span><span class='fu'>paste0</span>(<span class='st'>"ras"</span>, <span class='no'>i</span>)]] <span class='kw'>&lt;-</span> <span class='fu'>get</span>(<span class='fu'>paste0</span>(<span class='st'>"ras"</span>, <span class='no'>i</span>))
 }
 <span class='no'>a</span>$<span class='no'>spP</span> <span class='kw'>&lt;-</span> <span class='no'>spP</span>
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
-<span class='fu'>Plot</span>(<span class='no'>a</span>)
-
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='input'><span class='fu'>Plot</span>(<span class='no'>a</span>)</div><div class='img'><img src='Plot-7.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># clean up</span>
-<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()
-<span class='co'># }</span></pre>
+<span class='fu'><a href='clearPlot.html'>clearPlot</a></span>()</div><div class='img'><img src='Plot-8.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -550,5 +558,8 @@ Eliot McIntire
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

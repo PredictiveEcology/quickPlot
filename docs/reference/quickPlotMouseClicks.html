@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mouse interactions with Plots � clickValues • quickPlot</title>
+<title>Mouse interactions with Plots — clickValues • quickPlot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,29 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Mouse interactions with Plots — clickValues" />
+
+<meta property="og:description" content="These functions use grid.locator. The primary two user-level functions are
+clickValues and clickExtent. These functions automatically select
+the correct viewport (i.e., map) where the mouse clicks occurred so the user
+does not have to manually specify which map is being clicked on.
+This works for Raster*, SpatialPoints*, and SpatialPolygons* objects." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -34,16 +50,14 @@
 <![endif]-->
 
 
-<!-- Google analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-58633549-4"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-58633549-4', 'auto');
-  ga('send', 'pageview');
-
+  gtag('config', 'UA-58633549-4');
 </script>
 
   </head>
@@ -59,8 +73,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">quickPlot</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">quickPlot</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.4</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -85,7 +103,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -97,6 +115,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -104,12 +123,15 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Mouse interactions with Plots</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/quickPlot/blob/master/R/plotting-other.R'><code>R/plotting-other.R</code></a></small>
+    <div class="hidden name"><code>quickPlotMouseClicks.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>These functions use <code>grid.locator</code>. The primary two user-level functions are
 <code>clickValues</code> and <code>clickExtent</code>. These functions automatically select
@@ -117,6 +139,7 @@ the correct viewport (i.e., map) where the mouse clicks occurred so the user
 does not have to manually specify which map is being clicked on.
 This works for <code>Raster*</code>, <code>SpatialPoints*</code>, and <code>SpatialPolygons*</code> objects.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>clickValues</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 
@@ -126,7 +149,7 @@ This works for <code>Raster*</code>, <code>SpatialPoints*</code>, and <code>Spat
 
 <span class='fu'>.clickCoord</span>(<span class='no'>X</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>gl</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -167,11 +190,14 @@ grid.layout was clicked and makes all appropriate calculations to determine the 
 on the raster(s) at that or those location(s). It should be noted that when zooming in
 to rasters, plotting of rasters will only allow for complete pixels to be plotted, even
 if the extent is not perfectly in line with pixel edges. As a result, when values
-returned by this function may be slightly off (&lt;0.5 pixel width).
-    <code>clickExtent</code> is for drawing an extent with two mouse clicks on a given Plotted map.
-    <code>clickCoordinates</code> is the workhorse function that determines which plot has been
-clicked on and passes this plot name and the clicked coordinates to <code>.clickCoord</code>.
-    <code>.clickCoord</code> is intended for internal use and is called by other functions here.</p>
+returned by this function may be slightly off (&lt;0.5 pixel width).</p>
+<p><code>clickExtent</code> is for drawing an extent with two mouse clicks on a given Plotted map.</p>
+<p><code>clickCoordinates</code> is the workhorse function that determines which plot has been
+clicked on and passes this plot name and the clicked coordinates to <code>.clickCoord</code>.</p>
+<p><code>.clickCoord</code> is intended for internal use and is called by other functions here.</p>
+<p><code>clickExtent</code> will place the new, zoomed in plot over top of the existing
+object. To recover original full object, double click anywhere during an
+active <code>clickExtent</code>. See example.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -195,9 +221,11 @@ clicked on and passes this plot name and the clicked coordinates to <code>.click
   <span class='fu'><a href='Plot.html'>Plot</a></span>(<span class='no'>landscape</span>)
   <span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>clickExtent</span>() <span class='co'># click at two locations on the Plot device</span>
   <span class='fu'>print</span>(<span class='no'>e</span>)
-<span class='co'># }</span># NOT RUN {
-# }
-</pre>
+
+  <span class='co'># repeated zooming to try various places on the original device</span>
+  <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>4</span>) <span class='fu'>clickExtent</span>() <span class='co'># click at two locations on the Plot device</span>
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -230,5 +258,8 @@ Eliot McIntire
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
