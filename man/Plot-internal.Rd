@@ -5,30 +5,22 @@
 \alias{.preparePlotGrob}
 \alias{PlotHelpers}
 \alias{.preparePlotGrob,griddedClasses,.quickPlotGrob-method}
-\alias{PlotHelpers}
 \alias{.xyAxes}
-\alias{PlotHelpers}
 \alias{.xyAxes,.quickPlotGrob,.arrangement-method}
-\alias{PlotHelpers}
 \alias{.Plot}
-\alias{PlotHelpers}
 \alias{.Plot,.quickPlotGrob-method}
-\alias{PlotHelpers}
 \alias{.refreshGrob}
-\alias{PlotHelpers}
 \alias{.refreshGrob,.quickPlotGrob-method}
-\alias{PlotHelpers}
 \alias{.updateGrobGPTextAxis}
-\alias{PlotHelpers}
 \alias{.updateGrobGPTextAxis,.quickPlotGrob-method}
-\alias{PlotHelpers}
 \title{Internal functions used by Plot}
 \usage{
 .preparePlotGrob(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
   quickPlotGrobCounter, subPlots, cols)
 
-\S4method{.preparePlotGrob}{griddedClasses,.quickPlotGrob}(grobToPlot, sGrob,
-  takeFromPlotObj, arr, newArr, quickPlotGrobCounter, subPlots, cols)
+\S4method{.preparePlotGrob}{griddedClasses,.quickPlotGrob}(grobToPlot,
+  sGrob, takeFromPlotObj, arr, newArr, quickPlotGrobCounter, subPlots,
+  cols)
 
 .xyAxes(sGrob, arr, whPlotFrame)
 
@@ -38,9 +30,9 @@
   isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText, vps,
   nonPlotArgs)
 
-\S4method{.Plot}{.quickPlotGrob}(sGrob, grobToPlot, subPlots, quickSubPlots,
-  quickPlotGrobCounter, isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes,
-  legendText, vps, nonPlotArgs)
+\S4method{.Plot}{.quickPlotGrob}(sGrob, grobToPlot, subPlots,
+  quickSubPlots, quickPlotGrobCounter, isBaseSubPlot, isNewPlot, isReplot,
+  zMat, wipe, xyAxes, legendText, vps, nonPlotArgs)
 
 .refreshGrob(sGrob, subPlots, legendRange, grobToPlot, plotArgs, nColumns,
   nRows, whPlotObj)

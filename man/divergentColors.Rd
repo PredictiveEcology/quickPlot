@@ -5,13 +5,13 @@
 \alias{divergentColors}
 \alias{divergentColours}
 \alias{divergentColors,character,character,numeric,numeric-method}
-\alias{divergentColours}
 \title{Divergent colour palette}
 \usage{
-divergentColors(start.color, end.color, min.value, max.value, mid.value = 0,
-  mid.color = "white")
+divergentColors(start.color, end.color, min.value, max.value,
+  mid.value = 0, mid.color = "white")
 
-\S4method{divergentColors}{character,character,numeric,numeric}(start.color,
+
+  \S4method{divergentColors}{character,character,numeric,numeric}(start.color,
   end.color, min.value, max.value, mid.value = 0, mid.color = "white")
 }
 \arguments{

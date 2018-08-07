@@ -8,20 +8,22 @@
 \title{\code{Plot}: Fast, optimally arranged, multipanel plotting}
 \usage{
 Plot(..., new = FALSE, addTo = NULL, gp = gpar(), gpText = gpar(),
-  gpAxis = gpar(), axes = FALSE, speedup = 1, size = 5, cols = NULL,
-  col = NULL, zoomExtent = NULL, visualSqueeze = NULL, legend = TRUE,
-  legendRange = NULL, legendText = NULL, pch = 19, title = NULL,
-  na.color = "#FFFFFF00", zero.color = NULL, length = NULL, arr = NULL,
-  plotFn = "plot")
+  gpAxis = gpar(), axes = FALSE, speedup = 1, size = 5,
+  cols = NULL, col = NULL, zoomExtent = NULL, visualSqueeze = NULL,
+  legend = TRUE, legendRange = NULL, legendText = NULL, pch = 19,
+  title = NULL, na.color = "#FFFFFF00", zero.color = NULL,
+  length = NULL, arr = NULL, plotFn = "plot")
 
 \S4method{Plot}{ANY}(..., new = FALSE, addTo = NULL, gp = gpar(),
   gpText = gpar(), gpAxis = gpar(), axes = FALSE, speedup = 1,
   size = 5, cols = NULL, col = NULL, zoomExtent = NULL,
   visualSqueeze = NULL, legend = TRUE, legendRange = NULL,
-  legendText = NULL, pch = 19, title = NULL, na.color = "#FFFFFF00",
-  zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot")
+  legendText = NULL, pch = 19, title = NULL,
+  na.color = "#FFFFFF00", zero.color = NULL, length = NULL,
+  arr = NULL, plotFn = "plot")
 
-rePlot(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ...)
+rePlot(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE,
+  ...)
 }
 \arguments{
 \item{...}{A combination of \code{spatialObjects} or non-spatial objects.
@@ -151,8 +153,6 @@ arguments as if it were a call to \code{plot}. In this latter
 case, the user should be explicit about naming the plot area using \code{addTo}.
 Customization of the \code{ggplot2} elements can be done as a normal
 \code{ggplot2} plot, then added with \code{Plot(ggplotObject)}.
-
-Re-plot to a specific device
 }
 \details{
 \strong{NOTE:} Plot uses the \pkg{grid} package; therefore, it is NOT compatible

@@ -9,30 +9,30 @@
 \alias{.plotGrob,SpatialLines-method}
 \title{Plot spatial grobs (using \pkg{grid} package)}
 \usage{
-.plotGrob(grobToPlot, col = NULL, real = FALSE, size = unit(5, "points"),
-  minv, maxv, legend = TRUE, legendText = NULL, length = NULL,
-  gp = gpar(), gpText = gpar(), pch = 19, speedup = 1,
-  name = character(), vp = list(), ...)
+.plotGrob(grobToPlot, col = NULL, real = FALSE, size = unit(5,
+  "points"), minv, maxv, legend = TRUE, legendText = NULL,
+  length = NULL, gp = gpar(), gpText = gpar(), pch = 19,
+  speedup = 1, name = character(), vp = list(), ...)
 
-\S4method{.plotGrob}{SpatialPoints}(grobToPlot, col = NULL, real = FALSE,
-  size = unit(5, "points"), minv, maxv, legend = TRUE, legendText = NULL,
-  length = NULL, gp = gpar(), gpText = gpar(), pch = 19, speedup = 1,
-  name = character(), vp = list(), ...)
+\S4method{.plotGrob}{SpatialPoints}(grobToPlot, col = NULL,
+  real = FALSE, size = unit(5, "points"), minv, maxv, legend = TRUE,
+  legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
+  pch = 19, speedup = 1, name = character(), vp = list(), ...)
 
 \S4method{.plotGrob}{matrix}(grobToPlot, col = NULL, real = FALSE,
-  size = unit(5, "points"), minv, maxv, legend = TRUE, legendText = NULL,
-  length = NULL, gp = gpar(), gpText = gpar(), pch = 19, speedup = 1,
-  name = character(), vp = list(), ...)
+  size = unit(5, "points"), minv, maxv, legend = TRUE,
+  legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
+  pch = 19, speedup = 1, name = character(), vp = list(), ...)
 
-\S4method{.plotGrob}{SpatialPolygons}(grobToPlot, col = NULL, real = FALSE,
-  size = unit(5, "points"), minv, maxv, legend = TRUE, legendText = NULL,
-  length = NULL, gp = gpar(), gpText = gpar(), pch = 19, speedup = 1,
-  name = character(), vp = list(), ...)
+\S4method{.plotGrob}{SpatialPolygons}(grobToPlot, col = NULL,
+  real = FALSE, size = unit(5, "points"), minv, maxv, legend = TRUE,
+  legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
+  pch = 19, speedup = 1, name = character(), vp = list(), ...)
 
-\S4method{.plotGrob}{SpatialLines}(grobToPlot, col = NULL, real = FALSE,
-  size = unit(5, "points"), minv, maxv, legend = TRUE, legendText = NULL,
-  length = NULL, gp = gpar(), gpText = gpar(), pch = 19, speedup = 1,
-  name = character(), vp = list(), ...)
+\S4method{.plotGrob}{SpatialLines}(grobToPlot, col = NULL,
+  real = FALSE, size = unit(5, "points"), minv, maxv, legend = TRUE,
+  legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
+  pch = 19, speedup = 1, name = character(), vp = list(), ...)
 }
 \arguments{
 \item{grobToPlot}{\code{Raster*}, \code{SpatialLines*},
