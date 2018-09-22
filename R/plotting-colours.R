@@ -509,7 +509,11 @@ setMethod(
     if (isFac & !is.null(colTable)) {
       # changed from max to length to accommodate zeros or factors not starting at 1
       cols <- rep(na.color, length(factorValues))
-      cols[seq_along(facLevs$ID) - min(factorValues) + 1] <- colTable
+      resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
+      if (length(colTable) == length(resequence))
+        cols[resequence] <- colTable
+      else
+        cols[resequence] <- colTable[resequence]
     }
     if (length(whichZeroLegend)) {
       cols[whichZeroLegend] <- zero.color
