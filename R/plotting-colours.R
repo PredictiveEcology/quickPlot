@@ -375,7 +375,13 @@ setMethod(
             if (length(factorValues) == length(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {
-              colTable[c(1, 1 + factorValues)] # CHANGE HERE
+              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (length(colTable) - 1)) {
+                # The case where the IDs are numeric representations
+                colTable[factorValues + 1]
+              } else {
+                colTable[c(1, 1 + factorValues)] # CHANGE HERE
+              }
+
             }
           } else {
             colTable
@@ -509,7 +515,11 @@ setMethod(
     if (isFac & !is.null(colTable)) {
       # changed from max to length to accommodate zeros or factors not starting at 1
       cols <- rep(na.color, length(factorValues))
-      cols[seq_along(facLevs$ID) - min(factorValues) + 1] <- colTable
+      resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
+      if (length(colTable) == length(resequence))
+        cols[resequence] <- colTable
+      else
+        cols[resequence] <- colTable[resequence]
     }
     if (length(whichZeroLegend)) {
       cols[whichZeroLegend] <- zero.color
