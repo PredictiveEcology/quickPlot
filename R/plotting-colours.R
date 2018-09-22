@@ -375,7 +375,13 @@ setMethod(
             if (length(factorValues) == length(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {
-              colTable[c(1, 1 + factorValues)] # CHANGE HERE
+              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (length(colTable) - 1)) {
+                # The case where the IDs are numeric representations
+                colTable[factorValues + 1]
+              } else {
+                colTable[c(1, 1 + factorValues)] # CHANGE HERE
+              }
+
             }
           } else {
             colTable
