@@ -281,7 +281,10 @@ setMethod(
                         cols, na.color, zero.color, skipSample = TRUE) { # nolint
     zoom <- zoomExtent
 
-    isFac <- any(raster::is.factor(grobToPlot)) & all(na.omit(grobToPlot[]%%1)==0)
+    isFac <- FALSE
+    if (any(raster::is.factor(grobToPlot)))
+      if (all(na.omit(grobToPlot[]%%1)==0))
+        isFac <- TRUE
     # It is 5x faster to access the min and max from the Raster than to
     # calculate it, but it is also often wrong... it is only metadata
     # on the raster, so it is possible that it is incorrect.
