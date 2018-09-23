@@ -476,8 +476,10 @@ dev <- function(x, ...) {
 #' }
 #'
 newPlot <- function(noRStudioGD = TRUE, ...) {
-  if (isRstudioServer())
+  if (isRstudioServer()) {
     noRStudioGD <- FALSE
+    message("Using Rstudio server; not opening a new window")
+  }
 
   dev.new(noRStudioGD = noRStudioGD, ...)
 }
