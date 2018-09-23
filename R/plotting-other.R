@@ -476,7 +476,10 @@ dev <- function(x, ...) {
 #' }
 #'
 newPlot <- function(noRStudioGD = TRUE, ...) {
-  dev.new(noRStudioGD = TRUE, ...)
+  if (isRstudioServer())
+    noRStudioGD <- FALSE
+
+  dev.new(noRStudioGD = noRStudioGD, ...)
 }
 
 #' @export
@@ -494,6 +497,24 @@ dev.useRSGD <- function(useRSGD = FALSE) { # nolint
   }
 }
 
+
+#' Determine if current session is RStudio Server
+#' @export
+#'
+#' @examples
+#' isRstudioServer() # returns FALSE or TRUE
+isRstudioServer <- function() {
+  isRstudioServer <- FALSE
+
+  if (isTRUE("tools:rstudio" %in% search())) { # runing in Rstudio
+    rsAPIFn <- get(".rs.api.versionInfo", as.environment("tools:rstudio"))
+    versionInfo <- rsAPIFn()
+    if (!is.null(versionInfo)) {
+      isRstudioServer <- identical("server", versionInfo$mode)
+    }
+  }
+ isRstudioServer
+}
 #' Default plotting parameters
 #'
 #' @keywords internal

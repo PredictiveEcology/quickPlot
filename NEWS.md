@@ -3,6 +3,7 @@ Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 version 0.1.4
 =============
 * much faster for `SpatialPolygons`
+* new function `isRstudioServer` 
 * `clickExtent` now more interactive with new examples
 * remove dependency on `reproducible`
 * `SpatialPolygons` get a fill colour by default if not passed in by user
