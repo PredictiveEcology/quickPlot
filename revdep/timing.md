@@ -2,10 +2,10 @@
 
 |   |package      |version | check_time|
 |:--|:------------|:-------|----------:|
-|1  |NetLogoR     |0.3.3   |      277.1|
-|5  |SpaDES.tools |0.2.0   |      227.5|
-|2  |reproducible |0.2.0   |        220|
-|4  |SpaDES       |2.0.2   |      219.3|
-|3  |SpaDES.core  |0.1.1   |         12|
+|3  |SpaDES.core  |0.2.2   |      375.7|
+|1  |NetLogoR     |0.3.3   |      301.7|
+|5  |SpaDES.tools |0.3.0   |      272.2|
+|2  |reproducible |0.2.3   |      256.9|
+|4  |SpaDES       |2.0.2   |      193.3|
 
 

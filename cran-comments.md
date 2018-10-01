@@ -53,7 +53,6 @@ I have run R CMD check on downstream dependencies and all have passed, except as
 
 Summary at https://github.com/PredictiveEcology/quickPlot/blob/master/revdep/README.md.
 
-* `SpaDES.core` produce an error due to a non-CRAN package in Suggests, but passes once that dependency is installed.
+* `SpaDES.core` produce a warning about a vignette that can't be built. That is to due a different dependency (`reproducible`), which is being updated by us in a CRAN submission shortly.
  
-* `SpaDES` shows a warning due to `DISPLAY` not being set in the headless session.
-  Three other warnings regarding replaced imports are caused by having depracated and moved these functions from `SpaDES.tools` to `reproducible`.
+* `SpaDES` shows a warning about a cross reference to cover::shine that is missing. That is unrelated to `quickPlot`. We are the maintainers of `SpaDES` and have corrected that missing cross reference, to be submitted soon to CRAN.
