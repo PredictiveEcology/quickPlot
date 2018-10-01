@@ -260,6 +260,7 @@ setMethod(
 #' @importFrom grDevices colorRampPalette terrain.colors
 #' @importFrom raster minValue getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
+#' @importFrom utils tail head
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @include plotting-classes.R
 #' @keywords internal
