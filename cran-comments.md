@@ -1,6 +1,6 @@
 ## Updated release
 
-This is a minor update to our package to fix a plotting bug.
+This is a minor update with a key new function. This update, however, is required in revdep packages.
 
 ## Test environments
 
@@ -31,9 +31,9 @@ This is a minor update to our package to fix a plotting bug.
 
 ## R CMD check results
 
-There are no errors, warnings, or notes in any of the above.
+There are no errors, or warningsin any of the above.
 
-There were 1 NOTE, which is not a new note for this package:
+There are 2 NOTEs, which are not new notes for this package:
 
     Package suggested but not available for checking: 'fastshp'
 
