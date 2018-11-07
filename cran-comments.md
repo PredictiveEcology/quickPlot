@@ -52,3 +52,5 @@ The `fastshp` package in Suggests is optionally installed from Rforge and not re
 I have run R CMD check on downstream dependencies and all have passed, except as noted below.
 
 Summary at https://github.com/PredictiveEcology/quickPlot/blob/master/revdep/README.md.
+
+Packages `SpaDES.core` and `reproducible` produced ERRORs, which are fixed in forthcoming releases, to be submitted to CRAN shortly.

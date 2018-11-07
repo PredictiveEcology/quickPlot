@@ -5,86 +5,88 @@
 |setting  |value                        |
 |:--------|:----------------------------|
 |version  |R version 3.5.1 (2018-07-02) |
-|system   |x86_64, mingw32              |
-|ui       |RStudio (1.1.383)            |
+|system   |x86_64, darwin15.6.0         |
+|ui       |RStudio (1.1.419)            |
 |language |(EN)                         |
-|collate  |English_Canada.1252          |
-|tz       |America/Los_Angeles          |
-|date     |2018-10-01                   |
+|collate  |en_CA.UTF-8                  |
+|tz       |America/Edmonton             |
+|date     |2018-11-06                   |
 
 ## Packages
 
-|package      |*  |version |date       |source                                      |
-|:------------|:--|:-------|:----------|:-------------------------------------------|
-|covr         |   |3.2.0   |2018-09-21 |CRAN (R 3.5.1)                              |
-|data.table   |   |1.11.6  |2018-09-19 |CRAN (R 3.5.1)                              |
-|fpCompare    |   |0.2.2   |2018-06-12 |CRAN (R 3.5.1)                              |
-|ggplot2      |   |3.0.0   |2018-07-03 |CRAN (R 3.5.1)                              |
-|gridBase     |   |0.4-7   |2014-02-24 |CRAN (R 3.5.1)                              |
-|hunspell     |   |2.9     |2017-12-16 |CRAN (R 3.5.1)                              |
-|igraph       |   |1.2.2   |2018-07-27 |CRAN (R 3.5.1)                              |
-|knitr        |   |1.20    |2018-02-20 |CRAN (R 3.5.1)                              |
-|quickPlot    |   |0.1.5   |2018-10-01 |local (PredictiveEcology/quickPlot@62ed514) |
-|raster       |   |2.6-7   |2017-11-13 |CRAN (R 3.5.1)                              |
-|RColorBrewer |   |1.1-2   |2014-12-07 |CRAN (R 3.5.0)                              |
-|rgdal        |   |1.3-4   |2018-08-03 |CRAN (R 3.5.1)                              |
-|rgeos        |   |0.3-28  |2018-06-08 |CRAN (R 3.5.1)                              |
-|rmarkdown    |   |1.10    |2018-06-11 |CRAN (R 3.5.1)                              |
-|sp           |   |1.3-1   |2018-06-05 |CRAN (R 3.5.1)                              |
-|testthat     |   |2.0.0   |2017-12-13 |CRAN (R 3.5.1)                              |
+|package   |*  |version |date       |source                                       |
+|:---------|:--|:-------|:----------|:--------------------------------------------|
+|quickPlot |*  |0.1.6   |2018-11-07 |Github (PredictiveEcology/quickPlot@5c08464) |
 
 # Check results
 
 2 packages with problems
 
-|package     |version | errors| warnings| notes|
-|:-----------|:-------|------:|--------:|-----:|
-|SpaDES.core |0.2.2   |      0|        1|     0|
-|SpaDES      |2.0.2   |      0|        1|     0|
+|package      |version | errors| warnings| notes|
+|:------------|:-------|------:|--------:|-----:|
+|reproducible |0.2.3   |      1|        0|     0|
+|SpaDES.core  |0.2.2   |      1|        1|     0|
+
+## reproducible (0.2.3)
+Maintainer: Eliot J B McIntire <eliot.mcintire@canada.ca>  
+Bug reports: https://github.com/PredictiveEcology/reproducible/issues
+
+1 error  | 0 warnings | 0 notes
+
+```
+checking tests ... ERROR
+  Running ‘test-all.R’ [24s/21s]
+Running the tests in ‘tests/test-all.R’ failed.
+Last 13 lines of output:
+  1      readRDS          Hashing 0.0007071495  secs
+  2      readRDS  Running readRDS 0.0004718304  secs
+  3      readRDS   Saving to repo 0.0972189903  secs
+  4      readRDS Whole Cache call 0.1204190254  secs
+  [31m──[39m [31m1. Failure: fastMask produces correct results (@test-gis[39m
+  `newStack1` not equal to `newStack2`.
+  Attributes: < Component "layers": Component 1: Attributes: < Component 3: Attributes: < Component 13: 'is.NA' value mismatch: 25 in current 27 in target > > >
+  Attributes: < Component "layers": Component 2: Attributes: < Component 3: Attributes: < Component 13: 'is.NA' value mismatch: 25 in current 27 in target > > >
+  
+  ══ testthat results  ══════════════════════════════════════
+  OK: 169 SKIPPED: 12 FAILED: 1
+  1. Failure: fastMask produces correct results (@test-gis.R#22) 
+  
+  Error: testthat unit tests failed
+  Execution halted
+```
 
 ## SpaDES.core (0.2.2)
 Maintainer: Alex M Chubaty <alex.chubaty@gmail.com>  
 Bug reports: https://github.com/PredictiveEcology/SpaDES.core/issues
 
-0 errors | 1 warning  | 0 notes
+1 error  | 1 warning  | 0 notes
 
 ```
+checking tests ... ERROR
+  Running ‘test-all.R’ [101s/104s]
+Running the tests in ‘tests/test-all.R’ failed.
+Last 13 lines of output:
+  [39m[34m  Using cached copy of .inputObjects event in test module. Adding to memoised copy.
+  [39m[34m  Using memoised copy of .inputObjects event in test module
+  [39m[34m  Using cached copy of .inputObjects event in test module. Adding to memoised copy.
+  [39m[31m──[39m [31m1. Failure: test objSize (@test-cache.R#333) [39m [31m──────────[39m
+  length(os) == 4 isn't true.
+  
+  [34m  Using cached copy of .inputObjects event in child6 module. Adding to memoised copy.
+  [39m══ testthat results  ══════════════════════════════════════
+  OK: 310 SKIPPED: 35 FAILED: 1
+  1. Failure: test objSize (@test-cache.R#333) 
+  
+  Error: testthat unit tests failed
+  In addition: Warning message:
+  In fun(libname, pkgname) : couldn't connect to display ""
+  Execution halted
+
 checking Rd cross-references ... WARNING
 Missing link or links in documentation object 'moduleCoverage.Rd':
-  '[covr]{shine}'
+  ‘[covr]{shine}’
 
 See section 'Cross-references' in the 'Writing R Extensions' manual.
 
-```
-
-## SpaDES (2.0.2)
-Maintainer: Alex M Chubaty <alex.chubaty@gmail.com>  
-Bug reports: https://github.com/PredictiveEcology/SpaDES/issues
-
-0 errors | 1 warning  | 0 notes
-
-```
-checking re-building of vignette outputs ... WARNING
-Error in re-building vignettes:
-  ...
-loading quickPlot        0.1.5
-loading SpaDES.core      0.2.2
-loading SpaDES.tools     0.3.0
-loading SpaDES.addins    0.1.1
-
-Default paths for SpaDES directories set to:
-  cachePath:  D:\temp\RtmpoRv0Fm/SpaDES/cache
-... 8 lines ...
-randomLandscapes: defineParameter: '.useCache' is not of specified type 'logical'.
-randomLandscapes: module code appears clean
-C:/Temp/RtmpIHDcor/RLIBS_20847b6b3a6e/SpaDES.core/sampleModules/fireSpread/fireSpread.R
-fireSpread: module code: landscape, testStats are declared in inputObjects, but no default(s) are provided in .inputObjects
-fireSpread: inputObjects: DEM, Fires are used from sim inside doEvent.fireSpread, but are not declared in inputObjects
-###### Module Code Checking ########
-Quitting from lines 66-68 (iii-cache.Rmd) 
-Error: processing vignette 'iii-cache.Rmd' failed with diagnostics:
-Could not connect to database:
-unable to open database file
-Execution halted
 ```
 
