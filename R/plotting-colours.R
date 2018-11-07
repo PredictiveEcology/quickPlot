@@ -250,7 +250,7 @@ setMethod(
 #'                     Otherwise, it is treated as any other color.
 #'                     Default transparent.
 #'                     Use \code{NULL} if zero should be the value given to it
-#'                     by the colortable associated with the Raster.
+#'                     by the \code{colortable} associated with the raster.
 #'
 #' @param skipSample   Logical. If no downsampling is necessary, skip.
 #'                     Default \code{TRUE}.

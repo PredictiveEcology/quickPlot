@@ -45,6 +45,7 @@ Suggests:
     rmarkdown,
     testthat (>= 1.0.2)
 Encoding: UTF-8
+Language: en-CA
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
