@@ -8,13 +8,13 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
 URL:
     http://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 0.1.4
-Date: 2018-06-22
+Version: 0.1.6
+Date: 2018-11-06
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
-    role = c("aut", "cre")),
+    role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
     person("Alex M", "Chubaty", email = "alex.chubaty@gmail.com",
-    role = c("aut")),
+    role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
     person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
     role = "cph")
     )
@@ -22,6 +22,7 @@ Additional_repositories: https://rforge.net
 Depends:
     R (>= 3.3.0)
 Imports:
+    backports,
     data.table (>= 1.10.4),
     fpCompare,
     ggplot2,
@@ -43,14 +44,12 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 1.0.2)
-Remotes:
-    s-u/fastshp,
-    MangoTheCat/visualTest
+Encoding: UTF-8
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
 ByteCompile: yes
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0.9000
 Collate: 
     'environment.R'
     'plotting-classes.R'

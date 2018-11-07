@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find the number of layers in a Spatial Object — numLayers • quickPlot</title>
+<title>Determine if current session is RStudio Server — isRstudioServer • quickPlot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,12 +30,9 @@
 
 
 
-<meta property="og:title" content="Find the number of layers in a Spatial Object — numLayers" />
+<meta property="og:title" content="Determine if current session is RStudio Server — isRstudioServer" />
 
-<meta property="og:description" content="There are already methods for Raster* in the raster package.
-Adding methods for list, SpatialPolygons, SpatialLines,
-and SpatialPoints, gg, histogram, igraph.
-These latter classes return 1." />
+<meta property="og:description" content="Determine if current session is RStudio Server" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -125,79 +122,29 @@ These latter classes return 1." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find the number of layers in a Spatial Object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/quickPlot/blob/master/R/plotting-helpers.R'><code>R/plotting-helpers.R</code></a></small>
-    <div class="hidden name"><code>numLayers.Rd</code></div>
+    <h1>Determine if current session is RStudio Server</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PredictiveEcology/quickPlot/blob/master/R/plotting-other.R'><code>R/plotting-other.R</code></a></small>
+    <div class="hidden name"><code>isRstudioServer.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>There are already methods for <code>Raster*</code> in the raster package.
-Adding methods for <code>list</code>, <code>SpatialPolygons</code>, <code>SpatialLines</code>,
-and <code>SpatialPoints</code>, <code>gg</code>, <code>histogram</code>, <code>igraph</code>.
-These latter classes return <code>1</code>.</p>
+    <p>Determine if current session is RStudio Server</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>numLayers</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for list</span>
-<span class='fu'>numLayers</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for .quickPlot</span>
-<span class='fu'>numLayers</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for Raster</span>
-<span class='fu'>numLayers</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for Spatial</span>
-<span class='fu'>numLayers</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for ANY</span>
-<span class='fu'>numLayers</span>(<span class='no'>x</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>A <code>.quickPlotObjects</code> object or list of these.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>The number of layers in the object.</p>
-    
+    <pre class="usage"><span class='fu'>isRstudioServer</span>()</pre>
+        
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>igraph</span>)
-<span class='fu'>library</span>(<span class='no'>raster</span>)
-
-<span class='no'>files</span> <span class='kw'>&lt;-</span> <span class='fu'>system.file</span>(<span class='st'>"maps"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"quickPlot"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>dir</span>(<span class='no'>.</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"tif"</span>)
-<span class='no'>maps</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='no'>files</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/raster'>raster</a></span>(<span class='no'>x</span>))
-<span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/names'>names</a></span>(<span class='no'>maps</span>) <span class='kw'>&lt;-</span> <span class='fu'>sapply</span>(<span class='fu'>basename</span>(<span class='no'>files</span>), <span class='kw'>function</span>(<span class='no'>x</span>) {
-  <span class='fu'>strsplit</span>(<span class='no'>x</span>, <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"\\."</span>)<span class='kw'>[[</span><span class='fl'>1</span>]][<span class='fl'>1</span>]
-})
-<span class='no'>stck</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/raster/topics/stack'>stack</a></span>(<span class='no'>maps</span>)
-
-<span class='fu'>numLayers</span>(<span class='no'>maps</span>)</div><div class='output co'>#&gt; [1] 5</div><div class='input'><span class='fu'>numLayers</span>(<span class='no'>stck</span>)</div><div class='output co'>#&gt; [1] 5</div><div class='input'>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>isRstudioServer</span>() <span class='co'># returns FALSE or TRUE</span></div><div class='output co'>#&gt; [1] FALSE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-      
+            
       <li><a href="#examples">Examples</a></li>
     </ul>
-
-    <h2>Author</h2>
-    
-Eliot McIntire
 
   </div>
 </div>

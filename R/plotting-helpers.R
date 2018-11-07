@@ -818,11 +818,16 @@ setMethod(
     .[[length(.)]]
 
   inGlobal <- identical(envs, .GlobalEnv)
-  if (is.environment(eval(parse(text = deparsedTxt), envir = envs))) {
-    envs <- eval(parse(text = deparsedTxt), envir = envs)
+  possEnv <- eval(parse(text = deparsedTxt), envir = envs)
+  if (is.environment(possEnv)) {
+    notPoss <- tryCatch(get(deparse(rev(elems)[[1]]), envir = possEnv), error = function(x) FALSE)
+    if (!isFALSE(notPoss))
+      envs <- possEnv
   } else {
     if (!lastOneDone) elems[[i]] <- parseTxt
   }
+
+
   if (exists("callEnv", inherits = FALSE)) {
     envs <- callEnv
   }

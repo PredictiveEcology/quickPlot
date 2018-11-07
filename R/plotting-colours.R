@@ -260,6 +260,7 @@ setMethod(
 #' @importFrom grDevices colorRampPalette terrain.colors
 #' @importFrom raster minValue getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
+#' @importFrom utils tail head
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @include plotting-classes.R
 #' @keywords internal
@@ -281,7 +282,10 @@ setMethod(
                         cols, na.color, zero.color, skipSample = TRUE) { # nolint
     zoom <- zoomExtent
 
-    isFac <- any(raster::is.factor(grobToPlot)) & all(na.omit(grobToPlot[]%%1)==0)
+    isFac <- FALSE
+    if (any(raster::is.factor(grobToPlot)))
+      if (all(na.omit(grobToPlot[]%%1)==0))
+        isFac <- TRUE
     # It is 5x faster to access the min and max from the Raster than to
     # calculate it, but it is also often wrong... it is only metadata
     # on the raster, so it is possible that it is incorrect.
@@ -372,7 +376,13 @@ setMethod(
             if (length(factorValues) == length(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {
-              colTable[c(1, 1 + factorValues)] # CHANGE HERE
+              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (length(colTable) - 1)) {
+                # The case where the IDs are numeric representations
+                colTable[factorValues + 1]
+              } else {
+                colTable[c(1, 1 + factorValues)] # CHANGE HERE
+              }
+
             }
           } else {
             colTable
@@ -506,7 +516,11 @@ setMethod(
     if (isFac & !is.null(colTable)) {
       # changed from max to length to accommodate zeros or factors not starting at 1
       cols <- rep(na.color, length(factorValues))
-      cols[seq_along(facLevs$ID) - min(factorValues) + 1] <- colTable
+      resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
+      if (length(colTable) == length(resequence))
+        cols[resequence] <- colTable
+      else
+        cols[resequence] <- colTable[resequence]
     }
     if (length(whichZeroLegend)) {
       cols[whichZeroLegend] <- zero.color

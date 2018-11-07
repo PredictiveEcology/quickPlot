@@ -11,15 +11,15 @@
 \usage{
 clearPlot(dev = dev.cur(), removeData = TRUE, force = FALSE)
 
-\S4method{clearPlot}{numeric,logical}(dev = dev.cur(), removeData = TRUE,
-  force = FALSE)
+\S4method{clearPlot}{numeric,logical}(dev = dev.cur(),
+  removeData = TRUE, force = FALSE)
 
 \S4method{clearPlot}{numeric,missing}(dev, force)
 
 \S4method{clearPlot}{missing,logical}(removeData, force)
 
-\S4method{clearPlot}{missing,missing}(dev = dev.cur(), removeData = TRUE,
-  force = FALSE)
+\S4method{clearPlot}{missing,missing}(dev = dev.cur(),
+  removeData = TRUE, force = FALSE)
 }
 \arguments{
 \item{dev}{Numeric. Device number to clear.}

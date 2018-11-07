@@ -28,9 +28,11 @@ getColors(object)
 
 setColors(object, ..., n) <- value
 
-\S4method{setColors}{RasterLayer,numeric,character}(object, ..., n) <- value
+\S4method{setColors}{RasterLayer,numeric,character}(object, ...,
+  n) <- value
 
-\S4method{setColors}{RasterLayer,missing,character}(object, ..., n) <- value
+\S4method{setColors}{RasterLayer,missing,character}(object, ...,
+  n) <- value
 
 \S4method{setColors}{RasterStack,numeric,list}(object, ..., n) <- value
 

@@ -7,12 +7,13 @@
 \alias{.makeColorMatrix,griddedClasses,Extent,numeric-method}
 \title{Convert Raster to color matrix usable by raster function for plotting}
 \usage{
-.makeColorMatrix(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
-  na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE)
+.makeColorMatrix(grobToPlot, zoomExtent, maxpixels, legendRange,
+  cols = NULL, na.color = "#FFFFFF00", zero.color = NULL,
+  skipSample = TRUE)
 
 \S4method{.makeColorMatrix}{griddedClasses,Extent,numeric}(grobToPlot,
-  zoomExtent, maxpixels, legendRange, cols = NULL, na.color = "#FFFFFF00",
-  zero.color = NULL, skipSample = TRUE)
+  zoomExtent, maxpixels, legendRange, cols = NULL,
+  na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE)
 }
 \arguments{
 \item{grobToPlot}{A \code{SpatialObject}.}
