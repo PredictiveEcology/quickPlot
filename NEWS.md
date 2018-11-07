@@ -1,9 +1,8 @@
 Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
-
-version 0.1.5.9000
+version 0.1.6
 =============
-
+* bugfixes
 
 version 0.1.5
 =============
@@ -18,7 +17,6 @@ version 0.1.4
 * fix bug related to plotting with NAs (#14, @CeresBarros)
 * bug fixes
 * new options("quickPlot.maxNumPolygons"), used for plotting of large `SpatialPolygons` objects
- 
 
 version 0.1.3
 =============

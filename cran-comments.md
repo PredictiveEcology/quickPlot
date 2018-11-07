@@ -15,19 +15,19 @@ This is a minor update with a key new function. This update, however, is require
 * Windows              (appveyor), R 3.4.0
 
 ### Current R versions
-* macOS High Sierra    (local), R 3.5.0
-* OS X El Capitan  (travis-ci), R 3.5.0
-* Ubuntu 14.04     (travis-ci), R 3.5.0
-* Ubuntu 18.04         (local), R 3.5.0
-* Windows           (appveyor), R 3.5.0
-* Windows        (win-builder), R 3.5.0
-* Windows 7            (local), R 3.5.0
+* macOS High Sierra   (travis-ci), R 3.5.0
+* macOS Mojave            (local), R 3.5.1
+* Ubuntu 14.04        (travis-ci), R 3.5.1
+* Ubuntu 18.04            (local), R 3.5.1
+* Windows              (appveyor), R 3.5.1
+* Windows           (win-builder), R 3.5.1
+* Windows 7               (local), R 3.5.1
 
 ### Development R version
-* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-06-20 r74923)
-* Ubuntu 18.04         (local), R 3.6.0 (2018-06-15 r74903)
-* Windows           (appveyor), R 3.6.0 (2018-06-21 r74927)
-* Windows        (win-builder), R 3.6.0 (2018-06-20 r74924)
+* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-11-06 r75545)
+* Ubuntu 18.04         (local), R 3.6.0 (2018-11-06 r75553)
+* Windows           (appveyor), R 3.6.0 (2018-11-02 r75540)
+* Windows        (win-builder), R 3.6.0 (2018-10-30 r75516)
 
 ## R CMD check results
 
@@ -52,7 +52,3 @@ The `fastshp` package in Suggests is optionally installed from Rforge and not re
 I have run R CMD check on downstream dependencies and all have passed, except as noted below.
 
 Summary at https://github.com/PredictiveEcology/quickPlot/blob/master/revdep/README.md.
-
-* `SpaDES.core` produce a warning about a vignette that can't be built. That is to due a different dependency (`reproducible`), which is being updated by us in a CRAN submission shortly.
- 
-* `SpaDES` shows a warning about a cross reference to cover::shine that is missing. That is unrelated to `quickPlot`. We are the maintainers of `SpaDES` and have corrected that missing cross reference, to be submitted soon to CRAN.
