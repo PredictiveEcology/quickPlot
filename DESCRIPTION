@@ -48,6 +48,7 @@ Remotes:
     s-u/fastshp,
     MangoTheCat/visualTest
 Encoding: UTF-8
+Language: en-CA
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
