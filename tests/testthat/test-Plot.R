@@ -813,7 +813,7 @@ test_that("Plot with base is not error-free", {
 
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
-                 Darwin = "F3B5264A8C0FF04B",
+                 Darwin = "F3B4274A8C0FF059",
                  Linux = "F3B5264A8C0FF04B",
                  Windows = "F3B4264A8C8FF04B"
   )
@@ -841,7 +841,7 @@ test_that("Plot with base is not error-free", {
 
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
-                 Darwin = "BC16C3CE96E1C364",
+                 Darwin = "BC16C3CA96E1C365",
                  Linux = "BC16E3CC96E1C165",
                  Windows = "9D96C3CE94E1E168"
   )
@@ -862,7 +862,7 @@ test_that("Plot with base is not error-free", {
 
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
-                 Darwin = "B14CC39A93B1CE96",
+                 Darwin = "B44CC39A93B1CE96",
                  Linux = "A54CC39A93B3CE86",
                  Windows = "A44CC39A93B3CE96"
   )
@@ -987,7 +987,7 @@ test_that("Plot lists", {
 
   #dput(getFingerprint(file = "test.png"))  # nolint
   orig <- switch(Sys.info()["sysname"],
-                 Darwin = "AD3CD238D2C7C34A",
+                 Darwin = "AD3CC238D2C7C36A",
                  Linux = "AD3CD238D2C7C26A",
                  Windows = "AD3DD26CD287C609"
   )
@@ -1003,7 +1003,7 @@ test_that("Plot lists", {
 
     #dput(getFingerprint(file = "test.png"))  # nolint
     orig <- switch(Sys.info()["sysname"],
-                   Darwin = "B756C8A6C8C85657",
+                   Darwin = "B74AC8A5C8B5155B",
                    Linux = "B75788AAC8C85657",
                    Windows = "B755A8AEC8C85353"
     )
@@ -1020,7 +1020,7 @@ test_that("Plot lists", {
 
     #dput(getFingerprint(file = "test.png"))  # nolint
     orig <- switch(Sys.info()["sysname"],
-                   Darwin = "8F627399CC8CF05A",
+                   Darwin = "A762D989649DD8CC",
                    Linux = "877273AD8C8DF04A",
                    Windows = "8773738D8C89F04E"
     )
