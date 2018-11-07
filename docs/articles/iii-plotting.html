@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">quickPlot</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.4</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.6</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
 </h1>
                         <h4 class="author">Eliot J. B. McIntire</h4>
             
-            <h4 class="date">June 22 2018</h4>
+            <h4 class="date">November 06 2018</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/quickPlot/blob/master/vignettes/iii-plotting.Rmd"><code>vignettes/iii-plotting.Rmd</code></a></small>
       <div class="hidden name"><code>iii-plotting.Rmd</code></div>
@@ -182,7 +182,7 @@ sl &lt;-<span class="st"> </span><span class="kw">SpatialLines</span>(<span clas
 <p><code>Plot</code> can also handle gg objects as created with <code>qplot</code> or <code>ggplot</code>. These can be combined with spatial objects as well.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 
-ggObj &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/qplot">qplot</a></span>(stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="fl">1e3</span>), <span class="dt">binwidth =</span> <span class="fl">0.1</span>)
+ggObj &lt;-<span class="st"> </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/qplot.html">qplot</a></span>(stats<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="fl">1e3</span>), <span class="dt">binwidth =</span> <span class="fl">0.1</span>)
 <span class="kw"><a href="../reference/clearPlot.html">clearPlot</a></span>()
 <span class="kw"><a href="../reference/Plot.html">Plot</a></span>(caribou, <span class="dt">axes =</span> <span class="st">"L"</span>, <span class="dt">new =</span> <span class="ot">TRUE</span>) </code></pre></div>
 <p><img src="iii-plotting_files/figure-html/ggplot-1.png" width="700"></p>
@@ -359,11 +359,11 @@ landscape<span class="op">$</span>forestCover[] =<span class="st"> </span>((land
 <p>In the example here, the speedup actually slows down plotting because the rasters are already very small. This would not be the case when the original Raster had <code>1e8</code> pixels.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   1.018   0.000   1.020</code></pre>
+##   0.501   0.000   0.501</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/Plot.html">Plot</a></span>(landscape, caribou, maps<span class="op">$</span>DEM, <span class="dt">speedup =</span> <span class="dv">10</span>, <span class="dt">new =</span> <span class="ot">TRUE</span>))</code></pre></div>
 <p><img src="iii-plotting_files/figure-html/speedup-1.png" width="700"></p>
 <pre><code>##    user  system elapsed 
-##   1.294   0.000   1.296</code></pre>
+##   0.689   0.007   0.696</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># can add a new plot to the plotting window</span></code></pre></div>
 </div>
 </div>
