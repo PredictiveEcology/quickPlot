@@ -203,7 +203,7 @@ calling environment (e.g., .GlobalEnv) or, if they do not exist, then Plot
 will make a copy in the hidden .quickPlotEnv for later reuse.
 
 \code{cols} is a vector of colours that can be understood directly, or by
-\code{\link[grdevices]{colorRampPalette}}, such as \code{c("orange", "blue")},
+\code{\link[grDevices]{colorRampPalette}}, such as \code{c("orange", "blue")},
 will give a colour range from orange to blue, interpolated.
 If a list, it will be used, in order, for each item to be plotted.
 It will be recycled if it is shorter than the objects to be plotted.
