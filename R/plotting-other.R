@@ -52,6 +52,11 @@ setMethod(
       )
 
       suppressWarnings(
+        try(rm(list = paste0("objsDev", dev), envir = .quickPlotEnv))
+      )
+
+
+      suppressWarnings(
         try(rm(list = ls(.quickPlotEnv[[paste0("dev", dev)]]),
                envir = .quickPlotEnv[[paste0("dev", dev)]]), silent = TRUE)
       )

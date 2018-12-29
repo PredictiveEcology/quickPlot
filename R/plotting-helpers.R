@@ -291,6 +291,30 @@ setMethod(
         names(plotObjects)[!is.na(suppliedNames)] <- suppliedNames
       }
     }
+
+    # Make pointer to object in a new environment associated with the current device
+    #  This is a major change as of Dec 27, 2018 because it turns out that R
+    #  copies every object in an environment, when that environment is attached to an object,
+    #   i.e., it is not JUST an environment name, it is the WHOLE environment that gets
+    #   attached. So, now, make a
+    globalObjEnvName <- paste0("objsDev", dev.cur())
+    if (!exists(globalObjEnvName, .quickPlotEnv))
+      .quickPlotEnv[[globalObjEnvName]] <- new.env(parent = emptyenv())
+
+    objs <- lapply(seq(plotObjects), function(x) {
+      # make a new environment for each object, if it wasn't already created previously for same
+      #  named object in this device
+      if (!isTRUE(is.environment(.quickPlotEnv[[globalObjEnvName]][[objs[[x]]$objs]]))) {
+        assign(objs[[x]]$objs, new.env(parent = emptyenv()), envir = .quickPlotEnv[[globalObjEnvName]])
+      }
+      # make or update the pointer to this environment
+      objs[[x]]$envs <- .quickPlotEnv[[globalObjEnvName]][[objs[[x]]$objs]]
+      # copy the object to the new environment -- this will be fast here
+      #  This will overwrite the object if it is there from a previous plotting with same name
+      .quickPlotEnv[[globalObjEnvName]][[objs[[x]]$objs]][[objs[[x]]$objs]] <- plotObjects[[x]]
+      return(objs[[x]])
+    })
+
     numberLayers <- pmax(1, unlist(lapply(plotObjects, numLayers)))
 
     lNamesPlotObj <- layerNames(plotObjects)
@@ -358,7 +382,8 @@ setMethod(
         quickPlotGrobList[[lN[x]]]@envir <- lEnvs[[x]]
         quickPlotGrobList[[lN[x]]]@layerName <- lNamesPlotObj[x]
         quickPlotGrobList[[lN[x]]]@objClass <- class(
-          eval(parse(text = objectNamesLong[x]), lEnvs[[x]])
+          get(objectNamesLong[x], lEnvs[[x]])
+          #eval(parse(text = objectNamesLong[x]), lEnvs[[x]])
         )
         quickPlotGrobList[[lN[x]]]@isSpatialObjects <- isSpatialObjects[x]
       }
@@ -1489,8 +1514,8 @@ setMethod(
       if (takeFromPlotObj) {
           grobToPlot <- unlist(toPlot, recursive = FALSE)[[sGrob@layerName]]
       } else {
-          grobToPlot <- eval(parse(text = sGrob@objName),
-                           sGrob@envir)[[sGrob@layerName]]
+        grobToPlot <- get(sGrob@objName, sGrob@envir)[[sGrob@layerName]]
+        #grobToPlot <- eval(parse(text = sGrob@objName), sGrob@envir)[[sGrob@layerName]]
       }
     } else {
       if (takeFromPlotObj) {
@@ -1500,7 +1525,8 @@ setMethod(
           grobToPlot <- toPlot
         }
       } else {
-        grobToPlot <- eval(parse(text = sGrob@objName), sGrob@envir)
+        #grobToPlot <- eval(parse(text = sGrob@objName), sGrob@envir)
+        grobToPlot <- get(sGrob@objName, sGrob@envir)
       }
     }
     return(grobToPlot)
@@ -2283,10 +2309,12 @@ setMethod(
         if (!is.null(x[[1]]@plotArgs$zoomExtent)) {
           x[[1]]@plotArgs$zoomExtent
         } else {
-          extent(eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir))
+          extent(get(x[[1]]@objName, envir = x[[1]]@envir))
+          # extent(eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir))
         }
       } else {
-        obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
+        obj <- get(x[[1]]@objName, envir = x[[1]]@envir)
+        # obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
         # if the object has an extent method
         if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
           # list has an extent method, but too general
@@ -2402,7 +2430,8 @@ setMethod(
   }
   if (hasBbox) {
     # for spatial objects
-    apply(bbox(eval(parse(text = objName), envir = objEnv)), 1, function(y) {
+    apply(bbox(get(objName, envir = objEnv)), 1, function(y) {
+    # apply(bbox(eval(parse(text = objName), envir = objEnv)), 1, function(y) {
       diff(range(y))
     })
   } else {

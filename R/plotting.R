@@ -270,7 +270,6 @@ setMethod(
                         zero.color, length, arr, plotFn) { # nolint
     # Section 1 - extract object names, and determine which ones need plotting,
     # which ones need replotting etc.
-
     news <- unlist(lapply(new, function(x) x))
     # this covers the case where R thinks that there is nothing, but
     #  there may in fact be something.
@@ -524,7 +523,7 @@ setMethod(
         updated$isReplot <- lapply(updated$isReplot, function(x) {
           sapply(x, function(y) TRUE)
         })
-        clearPlot(removeData = FALSE)
+        clearPlot(removeData = FALSE) # THis is a replotting event, so don't remove the data
       }
     } else if (all(isQuickPlot)) {
       currQuickPlots <- .makeQuickPlot()
@@ -609,7 +608,8 @@ setMethod(
           # if whPlotObj is length 0, it means that the object is being taken from sGrob@envir
           if (length(whPlotObj) == 0 | !layerFromPlotObj) {
             grobToPlot <-
-              eval(parse(text = sGrob@objName), sGrob@envir)
+              get(sGrob@objName, sGrob@envir)
+              #eval(parse(text = sGrob@objName), sGrob@envir)
             layerFromPlotObj <- FALSE
           } else {
             grobToPlot <- plotObjs[[whPlotObj]]

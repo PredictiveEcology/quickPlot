@@ -1,7 +1,14 @@
 Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
+version 0.1.6.9000
+=============
+
+* A memory leak was found; environments where the original data were stored were attached to the `.quickPlotEnv` when `Plot` was called; this was done to minimize copying. However, this has the effect of bringing with it the whole environment, not just the object, so it was larger than necessary. This environment was then not properly removed/deleted when new plots were overlaid, so the memory use would keep escalating. This has been solved by explicitly making a new environment for each plot, setting this environment as the data location, assigning the data to this location. While superficially this would appear to be like making a copy of the data, it is just making a pointer, until the original object changes. At that point, the use likely wants the `Plot` to update anyway. RAM use is now under control, and does not escalate. 
+
+
 version 0.1.6
 =============
+
 * bugfixes
 
 version 0.1.5
