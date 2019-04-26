@@ -433,6 +433,12 @@ dev <- function(x, ...) {
       }
     }
   }
+  if (identical(getOption("device"), "RStudioGD")) {
+    if (.Platform$OS.type == "unix" && !isRstudioServer()) {
+      message("setting graphics device away from Rstudio device. To return to Rstudio device: dev.useRSGD(TRUE)")
+      dev.useRSGD(FALSE)
+    }
+  }
   if (is.null(dev.list())) newPlot(...)
   if (.Platform$OS.type != "unix") {
     while (dev.set(x) < x) newPlot(...)
@@ -479,6 +485,7 @@ newPlot <- function(noRStudioGD = TRUE, ...) {
   if (isRstudioServer()) {
     noRStudioGD <- FALSE
     message("Using Rstudio server; not opening a new window")
+    dev.useRSGD(TRUE)
   }
 
   dev.new(noRStudioGD = noRStudioGD, ...)
