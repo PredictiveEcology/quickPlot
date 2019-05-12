@@ -420,6 +420,13 @@ clickCoordinates <- function(n = 1) {
 #'
 dev <- function(x, ...) {
   if (missing(x)) {
+    xMissing <- TRUE
+  } else if (is.infinite(x)) {
+    xMissing <- TRUE
+  } else {
+    xMissing <- FALSE
+  }
+  if (xMissing) {
     if (is.null(dev.list())) {
       x <- 2L
     } else {
@@ -439,10 +446,14 @@ dev <- function(x, ...) {
       dev.useRSGD(FALSE)
     }
   }
-  if (is.null(dev.list())) newPlot(...)
-  if (.Platform$OS.type != "unix") {
+
+  if (is.null(dev.list())) {
+    newPlot(...)
+  } else {
     while (dev.set(x) < x) newPlot(...)
   }
+  #if (.Platform$OS.type != "unix") {
+  #}
   return(invisible(dev.cur()))
 }
 
