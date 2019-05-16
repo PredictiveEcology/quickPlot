@@ -431,11 +431,11 @@ dev <- function(x, ...) {
       x <- 2L
     } else {
       if (any(names(dev.list()) == "RStudioGD")) {
-        x <- min(max(dev.list()) + 1,
+        x <- min(min(dev.list()) + 1,
                  which(names(dev.list()) == "RStudioGD") + 3L)
         dev(x)
       } else {
-        x <- max(dev.list())
+        x <- min(dev.list())
         dev(x)
       }
     }
