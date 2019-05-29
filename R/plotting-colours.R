@@ -86,7 +86,9 @@ setReplaceMethod(
       return(object)
     }
     if (raster::is.factor(object)) {
-      isInteger <- isTRUE(all.equal(object[], as.integer(object[])))
+      a <- object[];
+      a <- a[!is.na(a)]
+      isInteger <- !any(a != as.integer(a))
       # isInteger <- all(na.omit(object[])%%1==0)
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
         if (n != NROW(object@data@attributes[[1]])) {
