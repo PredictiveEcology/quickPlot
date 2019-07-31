@@ -517,16 +517,15 @@ dev.useRSGD <- function(useRSGD = FALSE) { # nolint
   }
 }
 
-
 #' Determine if current session is RStudio Server
-#' @export
 #'
+#' @export
 #' @examples
 #' isRstudioServer() # returns FALSE or TRUE
 isRstudioServer <- function() {
   isRstudioServer <- FALSE
 
-  if (isTRUE("tools:rstudio" %in% search())) { # runing in Rstudio
+  if (isTRUE("tools:rstudio" %in% search())) { ## running in Rstudio
     rsAPIFn <- get(".rs.api.versionInfo", as.environment("tools:rstudio"))
     versionInfo <- rsAPIFn()
     if (!is.null(versionInfo)) {
@@ -535,6 +534,7 @@ isRstudioServer <- function() {
   }
   isRstudioServer
 }
+
 #' Default plotting parameters
 #'
 #' @keywords internal
