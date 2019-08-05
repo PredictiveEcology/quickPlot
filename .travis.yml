@@ -7,7 +7,7 @@ env:
 matrix:
   include:
   - os: linux
-    dist: trusty
+    dist: xenial
     r: oldrel
     addons:
       apt:
@@ -20,12 +20,10 @@ matrix:
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
+    services:
+      - xvfb
   - os: linux
-    dist: trusty
+    dist: xenial
     r: release
     addons:
       apt:
@@ -38,10 +36,8 @@ matrix:
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
+    services:
+      - xvfb
     r_packages:
         - covr
         - curl
@@ -53,7 +49,7 @@ matrix:
       - Rscript -e 'covr::coveralls(type = "all", quiet = FALSE)'
       - Rscript -e 'lintr::lint_package()'
   - os: linux
-    dist: trusty
+    dist: xenial
     r: devel
     addons:
       apt:
@@ -66,10 +62,8 @@ matrix:
           - libnlopt-dev
           - libproj-dev
           - libudunits2-dev
-    before_script:
-      - "export DISPLAY=:99.0"
-      - "sh -e /etc/init.d/xvfb start"
-      - sleep 3 # give xvfb some time to start
+    services:
+      - xvfb
     r_packages:
       - devtools
   - os: osx
