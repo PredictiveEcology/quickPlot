@@ -22,6 +22,8 @@ matrix:
           - libudunits2-dev
     services:
       - xvfb
+    before_script:
+      - Rscript -e 'install.packages("fastshp", repos = "https://rforge.net", type = "source")'
   - os: linux
     dist: xenial
     r: release
@@ -45,6 +47,8 @@ matrix:
         - ggplot2
     r_github_packages:
       - jimhester/lintr
+    before_script:
+      - Rscript -e 'install.packages("fastshp", repos = "https://rforge.net", type = "source")'
     after_success:
       - Rscript -e 'covr::coveralls(type = "all", quiet = FALSE)'
       - Rscript -e 'lintr::lint_package()'
@@ -64,6 +68,8 @@ matrix:
           - libudunits2-dev
     services:
       - xvfb
+    before_script:
+      - Rscript -e 'install.packages("fastshp", repos = "https://rforge.net", type = "source")'
     r_packages:
       - devtools
   - os: osx
@@ -72,7 +78,8 @@ matrix:
     r_build_args: '--no-build-vignettes'
     r_check_args: '--as-cran --ignore-vignettes --no-examples'
     before_script:
-    - Rscript -e "install.packages(c('rgdal', 'rgeos'), type = 'source')"
+      - Rscript -e "install.packages(c('rgdal', 'rgeos'), type = 'source')"
+      - Rscript -e 'install.packages("fastshp", repos = "https://rforge.net", type = "source")'
 r_build_args: " "
 r_check_args: "--as-cran"
 warnings_are_errors: true
