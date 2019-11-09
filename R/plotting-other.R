@@ -48,7 +48,7 @@ setMethod(
         try(rm(list = paste0("basePlots_", dev), envir = .quickPlotEnv))
       )
       suppressWarnings(
-          try(rm(list = paste0("Dev", dev), envir = .quickPlotEnv))
+        try(rm(list = paste0("Dev", dev), envir = .quickPlotEnv))
       )
 
       suppressWarnings(
@@ -81,7 +81,7 @@ setMethod("clearPlot",
           signature = c("numeric", "missing", "ANY"),
           definition = function(dev, force) {
             clearPlot(dev, removeData = TRUE, force = force)
-})
+          })
 
 #' @export
 #' @rdname clearPlot
@@ -89,7 +89,7 @@ setMethod("clearPlot",
           signature = c("missing", "logical", "ANY"),
           definition =  function(removeData, force) {
             clearPlot(dev = dev.cur(), removeData = removeData, force = force)
-})
+          })
 
 #' @export
 #' @rdname clearPlot
@@ -97,7 +97,7 @@ setMethod("clearPlot",
           signature = c("missing", "missing"),
           definition =  function(dev, removeData, force) {
             clearPlot(dev.cur(), removeData = TRUE, force = force)
-})
+          })
 
 ################################################################################
 #' Convert \code{grid.locator} units
@@ -201,7 +201,7 @@ clickValues <- function(n = 1) {
   }
   if (any(raster::is.factor(ras1)) & all(ras1[]%%1==0)) {
     for (i in which(raster::is.factor(ras1)))
-    coords$coords$value <- factorValues(ras1[[i]], coords$coords$value)
+      coords$coords$value <- factorValues(ras1[[i]], coords$coords$value)
   }
   return(coords$coords)
 }
@@ -420,23 +420,40 @@ clickCoordinates <- function(n = 1) {
 #'
 dev <- function(x, ...) {
   if (missing(x)) {
+    xMissing <- TRUE
+  } else if (is.infinite(x)) {
+    xMissing <- TRUE
+  } else {
+    xMissing <- FALSE
+  }
+  if (xMissing) {
     if (is.null(dev.list())) {
       x <- 2L
     } else {
       if (any(names(dev.list()) == "RStudioGD")) {
-        x <- min(max(dev.list()) + 1,
+        x <- min(min(dev.list()) + 1,
                  which(names(dev.list()) == "RStudioGD") + 3L)
         dev(x)
       } else {
-        x <- max(dev.list())
+        x <- min(dev.list())
         dev(x)
       }
     }
   }
-  if (is.null(dev.list())) newPlot(...)
-  if (.Platform$OS.type != "unix") {
+  if (identical(getOption("device"), "RStudioGD")) {
+    if (.Platform$OS.type == "unix" && !isRstudioServer()) {
+      message("setting graphics device away from Rstudio device. To return to Rstudio device: dev.useRSGD(TRUE)")
+      dev.useRSGD(FALSE)
+    }
+  }
+
+  if (is.null(dev.list())) {
+    newPlot(...)
+  } else {
     while (dev.set(x) < x) newPlot(...)
   }
+  #if (.Platform$OS.type != "unix") {
+  #}
   return(invisible(dev.cur()))
 }
 
@@ -479,6 +496,7 @@ newPlot <- function(noRStudioGD = TRUE, ...) {
   if (isRstudioServer()) {
     noRStudioGD <- FALSE
     message("Using Rstudio server; not opening a new window")
+    dev.useRSGD(TRUE)
   }
 
   dev.new(noRStudioGD = noRStudioGD, ...)
@@ -495,28 +513,28 @@ dev.useRSGD <- function(useRSGD = FALSE) { # nolint
     else if (Sys.info()["sysname"] == "Windows")
       options(device = "windows")
     else (Sys.info()["sysname"] == "Linux")
-      options(device = "x11")
+    options(device = "x11")
   }
 }
 
-
 #' Determine if current session is RStudio Server
-#' @export
 #'
+#' @export
 #' @examples
 #' isRstudioServer() # returns FALSE or TRUE
 isRstudioServer <- function() {
   isRstudioServer <- FALSE
 
-  if (isTRUE("tools:rstudio" %in% search())) { # runing in Rstudio
+  if (isTRUE("tools:rstudio" %in% search())) { ## running in Rstudio
     rsAPIFn <- get(".rs.api.versionInfo", as.environment("tools:rstudio"))
     versionInfo <- rsAPIFn()
     if (!is.null(versionInfo)) {
       isRstudioServer <- identical("server", versionInfo$mode)
     }
   }
- isRstudioServer
+  isRstudioServer
 }
+
 #' Default plotting parameters
 #'
 #' @keywords internal
@@ -532,20 +550,20 @@ assign(
                  col.sub = "black", crt = 0, err = 0L, family = "", fg = "black",
                  fig = c(0.5, 0.9866, 0.0233, 0.875),
                  fin = c(5.00285625, 2.155865625),
-                font = 1L, font.axis = 1L, font.lab = 1L, font.main = 2L,
-                font.sub = 1L, lab = c(5L, 5L, 7L), las = 0L, lend = "round",
-                lheight = 1, ljoin = "round", lmitre = 10, lty = "solid",
-                lwd = 1, mai = c(1.02, 0.82, 0.82, 0.42),
-                mar = c(5.1, 4.1, 4.1, 2.1), mex = 1, mfcol = c(1L, 1L),
-                mfg = c(1L, 1L, 1L, 1L), mfrow = c(1L, 1L), mgp = c(3, 1, 0),
-                mkh = 0.001, new = FALSE,
-                oma = c(0, 0, 0, 0), omd = c(0, 1, 0, 1), omi = c(0, 0, 0, 0),
-                pch = 1L, pin = c(3.6020565, 1.293519375),
-                plt = c(0.23, 0.95, 0.3, 0.9), ps = 12L, pty = "m",
-                smo = 1, srt = 0, tck = NA_real_,
-                tcl = -0.5, usr = c(0.64, 10.36, -1.74682466270393, 0.852684557824307
-                ), xaxp = c(2, 10, 4), xaxs = "r", xaxt = "s", xpd = FALSE,
-                yaxp = c(-1.5, 0.5, 4), yaxs = "r", yaxt = "s", ylbias = 0.2),
+                 font = 1L, font.axis = 1L, font.lab = 1L, font.main = 2L,
+                 font.sub = 1L, lab = c(5L, 5L, 7L), las = 0L, lend = "round",
+                 lheight = 1, ljoin = "round", lmitre = 10, lty = "solid",
+                 lwd = 1, mai = c(1.02, 0.82, 0.82, 0.42),
+                 mar = c(5.1, 4.1, 4.1, 2.1), mex = 1, mfcol = c(1L, 1L),
+                 mfg = c(1L, 1L, 1L, 1L), mfrow = c(1L, 1L), mgp = c(3, 1, 0),
+                 mkh = 0.001, new = FALSE,
+                 oma = c(0, 0, 0, 0), omd = c(0, 1, 0, 1), omi = c(0, 0, 0, 0),
+                 pch = 1L, pin = c(3.6020565, 1.293519375),
+                 plt = c(0.23, 0.95, 0.3, 0.9), ps = 12L, pty = "m",
+                 smo = 1, srt = 0, tck = NA_real_,
+                 tcl = -0.5, usr = c(0.64, 10.36, -1.74682466270393, 0.852684557824307
+                 ), xaxp = c(2, 10, 4), xaxs = "r", xaxt = "s", xpd = FALSE,
+                 yaxp = c(-1.5, 0.5, 4), yaxs = "r", yaxt = "s", ylbias = 0.2),
             .Names = c("xlog", "ylog", "adj", "ann", "ask", "bg", "bty", "cex", "cex.axis",
                        "cex.lab", "cex.main", "cex.sub", "col", "col.axis", "col.lab",
                        "col.main", "col.sub", "crt", "err", "family", "fg", "fig", "fin",
@@ -555,4 +573,4 @@ assign(
                        "omd", "omi", "pch", "pin", "plt", "ps", "pty", "smo", "srt",
                        "tck", "tcl", "usr", "xaxp", "xaxs", "xaxt", "xpd", "yaxp", "yaxs",
                        "yaxt", "ylbias")
-))
+  ))
