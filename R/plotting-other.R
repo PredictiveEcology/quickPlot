@@ -430,9 +430,12 @@ dev <- function(x, ...) {
     if (is.null(dev.list())) {
       x <- 2L
     } else {
-      if (any(names(dev.list()) == "RStudioGD")) {
-        x <- min(min(dev.list()) + 1,
-                 which(names(dev.list()) == "RStudioGD") + 3L)
+      namesDevList <- names(dev.list())
+      isRstudioDev <- namesDevList == "RStudioGD"
+      hasAPngForStudio <- (identical(namesDevList[min(length(namesDevList), which(isRstudioDev) + 1)], "png"))
+      if (any(isRstudioDev)) {
+        x <- min(min(dev.list()) + 1 + hasAPngForStudio,
+                 which(isRstudioDev) + 3L)
         dev(x)
       } else {
         x <- min(dev.list())
