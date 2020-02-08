@@ -1,5 +1,9 @@
 Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 
+version 0.1.7
+=============
+* bugfixes including `dev` on windows
+
 version 0.1.6
 =============
 * bugfixes including `dev` on linux alikes
