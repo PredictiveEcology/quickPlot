@@ -4,8 +4,15 @@
 \alias{.prepareRaster}
 \title{Prepare raster for plotting}
 \usage{
-.prepareRaster(grobToPlot, zoomExtent, legendRange, takeFromPlotObj, arr,
-  speedup, newArr)
+.prepareRaster(
+  grobToPlot,
+  zoomExtent,
+  legendRange,
+  takeFromPlotObj,
+  arr,
+  speedup,
+  newArr
+)
 }
 \arguments{
 \item{grobToPlot}{.quickPlotGrob}

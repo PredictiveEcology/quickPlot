@@ -5,8 +5,12 @@
 \alias{.fortify}
 \title{Fortify - i.e,. convert an arbitrary object to a data.frame-like object}
 \usage{
-.fortify(x, matchFortify = TRUE, simple = FALSE,
-  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000))
+.fortify(
+  x,
+  matchFortify = TRUE,
+  simple = FALSE,
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000)
+)
 }
 \description{
 This only deals with SpatialPolygons.

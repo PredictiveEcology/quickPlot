@@ -8,9 +8,14 @@
 \usage{
 thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 
-\method{thin}{SpatialPolygons}(x, tolerance = NULL,
-  returnDataFrame = FALSE, minCoordsToThin = 0,
-  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000), ...)
+\method{thin}{SpatialPolygons}(
+  x,
+  tolerance = NULL,
+  returnDataFrame = FALSE,
+  minCoordsToThin = 0,
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000),
+  ...
+)
 
 \method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 }

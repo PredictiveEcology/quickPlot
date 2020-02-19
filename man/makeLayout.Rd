@@ -4,8 +4,7 @@
 \alias{.makeLayout}
 \title{Make an optimal layout of plots}
 \usage{
-.makeLayout(arr, visualSqueeze, legend = TRUE, axes = TRUE,
-  title = TRUE)
+.makeLayout(arr, visualSqueeze, legend = TRUE, axes = TRUE, title = TRUE)
 }
 \arguments{
 \item{arr}{an object of class \code{.arrangement}.}
