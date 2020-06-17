@@ -9,7 +9,7 @@ URL:
     http://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
 Version: 0.1.6.9001
-Date: 2020-02-07
+Date: 2020-06-17
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
@@ -19,7 +19,7 @@ Authors@R: c(
     role = "cph")
     )
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.3)
 Imports:
     backports,
     data.table (>= 1.10.4),

@@ -1,11 +1,7 @@
-### deal with spurious data.table warnings
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("groups", "thin", "whGrobNamesi",
-                           "xmax", "xmin", "ymax", "ymin"))
-}
+utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax", "ymin"))
 
 ################################################################################
-#' \code{Plot}: Fast, optimally arranged, multipanel plotting
+#' \code{Plot}: Fast, optimally arranged, multi-panel plotting
 #'
 #' This can take objects of type \code{Raster*}, \code{SpatialPoints*},
 #' \code{SpatialPolygons*}, and any combination of those.
@@ -152,8 +148,7 @@ if (getRversion() >= "3.1.0") {
 #' @param gpAxis A \code{gpar} object for the axes.
 #'               Default \code{gpar(col = "black")}.
 #'
-#' @param axes Logical or \code{"L"}, representing the left and bottom axes,
-#'             over all plots.
+#' @param axes Logical or \code{"L"}, representing the left and bottom axes, over all plots.
 #'
 #' @param speedup Numeric. The factor by which the number of pixels is divided
 #'                by to plot rasters. See Details.
