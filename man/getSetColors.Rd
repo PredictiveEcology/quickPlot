@@ -123,11 +123,10 @@ clearPlot()
 Plot(ras)
 }
 \seealso{
-\code{\link{setColors<-}},
-         \code{\link[RColorBrewer]{brewer.pal}}
+\code{\link{setColors<-}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}}
 
-\code{\link[RColorBrewer]{brewer.pal}},
-         \code{\link[grDevices]{colorRampPalette}}.
+\code{\link[RColorBrewer:ColorBrewer]{brewer.pal}},
+         \code{\link[grDevices:colorRamp]{colorRampPalette}}.
 }
 \author{
 Alex Chubaty

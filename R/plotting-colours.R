@@ -10,8 +10,7 @@
 #' @export
 #' @rdname getSetColors
 #'
-#' @seealso \code{\link{setColors<-}},
-#'          \code{\link[RColorBrewer]{brewer.pal}}
+#' @seealso \code{\link{setColors<-}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}}
 #'
 #' @example inst/examples/example_setColors.R
 #'
@@ -66,8 +65,8 @@ setMethod("getColors",
 #' @importFrom RColorBrewer brewer.pal brewer.pal.info
 #' @rdname getSetColors
 #'
-#' @seealso \code{\link[RColorBrewer]{brewer.pal}},
-#'          \code{\link[grDevices]{colorRampPalette}}.
+#' @seealso \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}},
+#'          \code{\link[grDevices:colorRamp]{colorRampPalette}}.
 #'
 setGeneric("setColors<-",
            function(object, ..., n, value) {

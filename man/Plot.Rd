@@ -159,7 +159,7 @@ Default NULL, meaning
 let Plot function do it automatically.}
 
 \item{plotFn}{An optional function name to do the plotting internally, e.g.,
-"barplot" to get a \code{barplot()} call. Default "plot".}
+"barplot" to get a barplot() call. Default "plot".}
 
 \item{toDev}{Numeric. Which device should the new rePlot be plotted to.
 Default is current device.}
@@ -241,7 +241,7 @@ will make a copy in the hidden .quickPlotEnv for later reuse.
 
 
 \code{cols} is a vector of colours that can be understood directly, or by
-\code{\link[grDevices]{colorRampPalette}}, such as \code{c("orange", "blue")},
+\code{\link[grDevices:colorRamp]{colorRampPalette}}, such as \code{c("orange", "blue")},
 will give a colour range from orange to blue, interpolated.
 If a list, it will be used, in order, for each item to be plotted.
 It will be recycled if it is shorter than the objects to be plotted.

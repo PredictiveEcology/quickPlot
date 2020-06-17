@@ -69,7 +69,7 @@ if (getRversion() >= "3.1.0") {
 #'
 #'
 #' \code{cols} is a vector of colours that can be understood directly, or by
-#' \code{\link[grDevices]{colorRampPalette}}, such as \code{c("orange", "blue")},
+#' \code{\link[grDevices:colorRamp]{colorRampPalette}}, such as \code{c("orange", "blue")},
 #' will give a colour range from orange to blue, interpolated.
 #' If a list, it will be used, in order, for each item to be plotted.
 #' It will be recycled if it is shorter than the objects to be plotted.
@@ -218,7 +218,7 @@ if (getRversion() >= "3.1.0") {
 #'            let Plot function do it automatically.
 #'
 #' @param plotFn An optional function name to do the plotting internally, e.g.,
-#'               "barplot" to get a \code{barplot()} call. Default "plot".
+#'               "barplot" to get a barplot() call. Default "plot".
 #'
 #' @return Invisibly returns the \code{.quickPlot} class object.
 #' If this is assigned to an object, say \code{obj}, then this can be plotted
@@ -235,7 +235,7 @@ if (getRversion() >= "3.1.0") {
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom grDevices dev.cur dev.size
-#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar upViewport pushViewport
+#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar pushViewport upViewport
 #' @importFrom gridBase gridFIG
 #' @importFrom raster crop is.factor
 #' @include environment.R
