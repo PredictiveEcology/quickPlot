@@ -159,7 +159,7 @@ Default NULL, meaning
 let Plot function do it automatically.}
 
 \item{plotFn}{An optional function name to do the plotting internally, e.g.,
-"barplot" to get a barplot() call. Default "plot".}
+"barplot" to get a \code{barplot()} call. Default "plot".}
 
 \item{toDev}{Numeric. Which device should the new rePlot be plotted to.
 Default is current device.}

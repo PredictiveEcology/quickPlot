@@ -4,7 +4,9 @@
 \name{sample-maps}
 \alias{sample-maps}
 \title{Dummy maps included with \code{quickPlot}}
-\format{raster}
+\format{
+raster
+}
 \description{
 All maps included here are randomly generated maps created using
 \code{SpaDES.tools::gaussMap()}.

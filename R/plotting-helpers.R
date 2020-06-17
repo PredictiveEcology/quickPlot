@@ -1828,8 +1828,7 @@ setMethod(
 #'
 #' @param size    The size of the \code{SpatialPoints}.
 #'
-#' @param gp      \code{grid} parameters, usually the output of a call to
-#'                \code{\link{gpar}}.
+#' @param gp      \code{grid} parameters, usually the output of a call to \code{\link{gpar}}.
 #'
 #' @param gpText  \code{gpar} object for legend label text.
 #'

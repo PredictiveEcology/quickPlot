@@ -52,7 +52,7 @@ License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
 ByteCompile: yes
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Collate: 
     'environment.R'
     'plotting-classes.R'

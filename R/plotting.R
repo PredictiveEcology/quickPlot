@@ -218,7 +218,7 @@ if (getRversion() >= "3.1.0") {
 #'            let Plot function do it automatically.
 #'
 #' @param plotFn An optional function name to do the plotting internally, e.g.,
-#'               "barplot" to get a barplot() call. Default "plot".
+#'               "barplot" to get a \code{barplot()} call. Default "plot".
 #'
 #' @return Invisibly returns the \code{.quickPlot} class object.
 #' If this is assigned to an object, say \code{obj}, then this can be plotted
@@ -235,8 +235,7 @@ if (getRversion() >= "3.1.0") {
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom grDevices dev.cur dev.size
-#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar
-#' @importFrom grid upViewport pushViewport
+#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar upViewport pushViewport
 #' @importFrom gridBase gridFIG
 #' @importFrom raster crop is.factor
 #' @include environment.R
