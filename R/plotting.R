@@ -139,7 +139,7 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #'              the plot with the same name, such as plotting a
 #'              \code{SpatialPoints*} object on a \code{RasterLayer}.
 #'
-#' @param gp A \code{gpar} object, created by \code{\link{gpar}} function,
+#' @param gp A \code{gpar} object, created by \code{\link[quickPlot:grid-functions]{gpar}},
 #'           to change plotting parameters (see \pkg{grid} package).
 #'
 #' @param gpText A \code{gpar} object for the title text.
