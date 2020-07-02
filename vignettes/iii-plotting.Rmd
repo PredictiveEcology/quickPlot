@@ -10,11 +10,13 @@ output:
     self_contained: yes
     toc: yes
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{03 Plotting with quickPlot}
-  %\VignetteDepends{data.table, ggplot2, grDevices, igraph, RColorBrewer, quickPlot, stats}
+  %\VignetteIndexEntry{03 Plotting with `quickPlot`}
+  %\VignetteDepends{data.table, grDevices, magrittr, RColorBrewer, quickPlot, stats}
   %\VignetteKeyword{visualization, plotting, mapping}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r initial-clearPlot, eval=TRUE, echo=FALSE, fig.keep='none', message=FALSE}
@@ -46,8 +48,8 @@ Then we load that list of files.
 ```{r load_files, eval=TRUE, echo=TRUE, message=FALSE, fig.height=2}
 #  Make list of maps from package database to load, and what functions to use to load them
 library(data.table)
-library(igraph)
-library(raster)
+library(magrittr)
+if (!require("raster")) stop("This vignette requires the raster package: install.packages('raster')") 
 library(quickPlot)
 
 # omit forestAge and percentPine maps for simplicity
@@ -125,12 +127,12 @@ Plot(landscape, caribou, maps$DEM, spP, axes = TRUE,
 These can be combined with spatial objects as well.
 
 ```{r ggplot, eval=TRUE, echo=TRUE, cache=FALSE, fig.height=2}
-library(ggplot2)
-
-ggObj <- qplot(stats::rnorm(1e3), binwidth = 0.1)
-clearPlot()
-Plot(caribou, axes = "L", new = TRUE) 
-Plot(ggObj) 
+if (require("ggplot2", quietly = TRUE)) {
+  ggObj <- qplot(stats::rnorm(1e3), binwidth = 0.1)
+  clearPlot()
+  Plot(caribou, axes = "L", new = TRUE) 
+  Plot(ggObj) 
+}
 ```
 
 ### `base` plotting

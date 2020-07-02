@@ -62,7 +62,7 @@ active \code{clickExtent}. See example.
 }
 \examples{
 \dontrun{
-  library(igraph)
+  library(magrittr)
   library(raster)
 
   files <- system.file("maps", package = "quickPlot") \%>\%

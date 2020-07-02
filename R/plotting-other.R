@@ -152,13 +152,12 @@ setMethod("clearPlot",
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom raster is.factor factorValues cellFromXY
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
 #'
 #' @examples
 #' \dontrun{
-#'   library(igraph)
+#'   library(magrittr)
 #'   library(raster)
 #'
 #'   files <- system.file("maps", package = "quickPlot") %>%
@@ -191,17 +190,17 @@ clickValues <- function(n = 1) {
     ras1 <- eval(parse(text = objNames[i]), envir = coords$envir[[i]])
     if (!is.na(layNames[i])) {
       coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-        ras1[[layNames[i]]][cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
+        ras1[[layNames[i]]][raster::cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
       }))
     } else {
       coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-        ras1[cellFromXY(ras1, coords$coords[i, 1:2])]
+        ras1[raster::cellFromXY(ras1, coords$coords[i, 1:2])]
       }))
     }
   }
   if (any(raster::is.factor(ras1))) {
     for (i in which(raster::is.factor(ras1)))
-      coords$coords$value <- factorValues(ras1[[i]], coords$coords$value)
+      coords$coords$value <- raster::factorValues(ras1[[i]], coords$coords$value)
   }
   return(coords$coords)
 }
@@ -213,7 +212,6 @@ clickValues <- function(n = 1) {
 #'
 #' @export
 #' @importFrom grDevices dev.cur
-#' @importFrom raster crs<- crs
 #' @importFrom fpCompare %==%
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks

@@ -1,15 +1,17 @@
-### Allow gg S3 class to be used with Plot, an S4 function
-#' @importFrom ggplot2 ggplot
-setOldClass("gg")
-selectMethod("show", "gg")
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  setOldClass("gg")
+  selectMethod("show", "gg")
+}
 
 ### Allow histogram S3 class to be used with Plot, an S4 function
 setOldClass("histogram")
 selectMethod("show", "histogram")
 
 ### Allow igraph S3 class to be used with Plot, an S4 function
-setOldClass("igraph")
-selectMethod("show", "igraph")
+if (requireNamespace("igraph", quietly = TRUE)) {
+  setOldClass("igraph")
+  selectMethod("show", "igraph")
+}
 
 ### Allow gpar S3 class to be used with Plot, an S4 function
 setOldClass("gpar")
@@ -46,16 +48,32 @@ setAs(from = "list", to = "gpar", function(from) {
 #' @seealso \code{\link{quickPlotClasses}}
 #'
 #' @aliases griddedClasses
-#' @importClassesFrom raster RasterLayer
-#' @importClassesFrom raster RasterLayerSparse
-#' @importClassesFrom raster RasterStack
+#' @rawNamespace if (requireNamespace("raster",quietly=TRUE)) importClassesFrom(raster,RasterLayer)
+#' @rawNamespace if (requireNamespace("raster",quietly=TRUE)) importClassesFrom(raster,RasterLayerSparse)
+#' @rawNamespace if (requireNamespace("raster",quietly=TRUE)) importClassesFrom(raster,RasterStack)
 #' @name griddedClasses-class
 #' @rdname griddedClasses-class
 #' @author Eliot McIntire
-#' @exportClass griddedClasses
-setClassUnion(name = "griddedClasses",
-              members = c("RasterLayer", "RasterLayerSparse", "RasterStack")
-)
+#' @rawNamespace if (requireNamespace("raster",quietly=TRUE)) exportClasses(griddedClasses) else exportClasses(extentQP)
+if (requireNamespace("raster", quietly = TRUE)) {
+  setClassUnion(name = "griddedClasses",
+                members = c("RasterLayer", "RasterLayerSparse", "RasterStack")
+  )
+}
+
+################################################################################
+#' The \code{extentQP} class
+#'
+#' This is a dummy class for internal use only.
+#'
+#' @exportClass extentQP
+setClass("extentQP",
+         slots = list(xmin = "numeric", xmax = "numeric", ymin = "numeric", ymax = "numeric"),
+         prototype = list(xmin = 0, xmax = 2, ymin = 0, ymax = 2),
+         validity = function(object) {
+
+         })
+
 
 ################################################################################
 #' The \code{spatialObjects} class
@@ -78,25 +96,27 @@ setClassUnion(name = "griddedClasses",
 #' @seealso \code{\link{quickPlotClasses}}
 #'
 #' @aliases spatialObjects
-#' @importClassesFrom sp SpatialLines
-#' @importClassesFrom sp SpatialLinesDataFrame
-#' @importClassesFrom sp SpatialPixels
-#' @importClassesFrom sp SpatialPixelsDataFrame
-#' @importClassesFrom sp SpatialPoints
-#' @importClassesFrom sp SpatialPointsDataFrame
-#' @importClassesFrom sp SpatialPolygons
-#' @importClassesFrom sp SpatialPolygonsDataFrame
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialLines)
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialLinesDataFrame)
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialPixels)
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialPixelsDataFrame)
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialPoints)
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialPointsDataFrame)
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialPolygons)
+#' @rawNamespace if (requireNamespace("sp",quietly=TRUE)) importClassesFrom(sp,SpatialPolygonsDataFrame)
 #' @name spatialObjects-class
 #' @rdname spatialObjects-class
 #' @author Eliot McIntire
-#' @exportClass spatialObjects
-setClassUnion(name = "spatialObjects",
-              members = c("griddedClasses",
-                          "SpatialLines", "SpatialLinesDataFrame",
-                          "SpatialPixels", "SpatialPixelsDataFrame",
-                          "SpatialPoints", "SpatialPointsDataFrame",
-                          "SpatialPolygons", "SpatialPolygonsDataFrame")
-)
+#' @rawNamespace if (requireNamespace("raster",quietly=TRUE)) exportClasses(spatialObjects)
+if (requireNamespace("sp", quietly = TRUE)) {
+  setClassUnion(name = "spatialObjects",
+                members = c("griddedClasses",
+                            "SpatialLines", "SpatialLinesDataFrame",
+                            "SpatialPixels", "SpatialPixelsDataFrame",
+                            "SpatialPoints", "SpatialPointsDataFrame",
+                            "SpatialPolygons", "SpatialPolygonsDataFrame")
+  )
+}
 
 
 ################################################################################
@@ -107,15 +127,24 @@ setClassUnion(name = "spatialObjects",
 #' \code{SpatialLines*}, \code{RasterLayer}, \code{RasterStack}, and \code{ggplot} objects.
 #' These are the object classes that the \code{\link{Plot}} function can handle.
 #'
-#' @importFrom ggplot2 ggplot
 #' @aliases .quickPlotObjects
 #' @author Eliot McIntire
 #' @name .quickPlotObjects-class
 #' @rdname quickPlotObjects-class
 #' @seealso \code{\link{quickPlotClasses}}
 #'
-setClassUnion(name = ".quickPlotObjects",
-              members = c("spatialObjects", "gg"))
+#' @rawNamespace if (requireNamespace("ggplot2",quietly=TRUE)) importFrom(ggplot2,ggplot)
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  if (requireNamespace("raster", quietly = TRUE)) {
+    setClassUnion(name = ".quickPlotObjects",
+                members = c("spatialObjects", "gg"))
+  }
+} else {
+  if (requireNamespace("raster", quietly = TRUE)) {
+    setClassUnion(name = ".quickPlotObjects",
+                members = c("spatialObjects"))
+  }
+}
 
 ################################################################################
 #' The \code{.quickPlotGrob} class
@@ -322,6 +351,12 @@ setClass(".quickPlot",
 #' @name .quickPlottables-class
 #' @rdname quickPlottables-class
 #' @author Eliot McIntire
+#'
 #' @exportClass .quickPlottables
-setClassUnion(name = ".quickPlottables",
-              members = c(".quickPlotObjects", ".quickPlot"))
+if (requireNamespace("raster", quietly = TRUE)) {
+  setClassUnion(name = ".quickPlottables",
+                members = c(".quickPlotObjects", ".quickPlot"))
+} else {
+  setClassUnion(name = ".quickPlottables",
+                members = c(".quickPlot"))
+}

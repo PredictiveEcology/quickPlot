@@ -4,8 +4,6 @@
 \alias{numLayers}
 \alias{numLayers,list-method}
 \alias{numLayers,.quickPlot-method}
-\alias{numLayers,Raster-method}
-\alias{numLayers,Spatial-method}
 \alias{numLayers,ANY-method}
 \title{Find the number of layers in a Spatial Object}
 \usage{
@@ -14,10 +12,6 @@ numLayers(x)
 \S4method{numLayers}{list}(x)
 
 \S4method{numLayers}{.quickPlot}(x)
-
-\S4method{numLayers}{Raster}(x)
-
-\S4method{numLayers}{Spatial}(x)
 
 \S4method{numLayers}{ANY}(x)
 }
@@ -34,7 +28,7 @@ and \code{SpatialPoints}, \code{gg}, \code{histogram}, \code{igraph}.
 These latter classes return \code{1}.
 }
 \examples{
-library(igraph)
+library(magrittr)
 library(raster)
 
 files <- system.file("maps", package = "quickPlot") \%>\%

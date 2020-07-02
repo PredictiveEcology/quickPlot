@@ -10,7 +10,7 @@
 #' @export
 #' @rdname getSetColors
 #'
-#' @seealso \code{\link{setColors<-}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}}
+#' @seealso \code{\link{setColors<-}}, \code{RColorBrewer::brewer.pal}
 #'
 #' @example inst/examples/example_setColors.R
 #'
@@ -18,17 +18,18 @@ setGeneric("getColors", function(object) {
   standardGeneric("getColors")
 })
 
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "Raster",
-          definition = function(object) {
-            nams <- names(object)
-            cols <- lapply(nams, function(x) {
-              as.character(object[[x]]@legend@colortable)
+if (requireNamespace("raster", quietly = TRUE)) {
+  setMethod("getColors",
+            signature = "Raster",
+            definition = function(object) {
+              nams <- names(object)
+              cols <- lapply(nams, function(x) {
+                as.character(object[[x]]@legend@colortable)
+              })
+              names(cols) <- nams
+              return(cols)
             })
-            names(cols) <- nams
-            return(cols)
-})
+}
 
 #' @rdname getSetColors
 setMethod("getColors",
@@ -37,13 +38,14 @@ setMethod("getColors",
             return(NULL)
 })
 
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "SpatialPoints",
-          definition = function(object) {
-            cols <- list(object@data$color)
-            return(cols)
-})
+if (requireNamespace("sp", quietly = TRUE)) {
+  setMethod("getColors",
+            signature = "SpatialPoints",
+            definition = function(object) {
+              cols <- list(object@data$color)
+              return(cols)
+            })
+}
 
 #' \code{setColors} works as a replacement method or a normal function call.
 #' This function can accept \code{RColorBrewer} colors by name. See examples.
@@ -62,10 +64,9 @@ setMethod("getColors",
 #' @aliases setColours
 #' @export
 #' @importFrom grDevices colorRampPalette
-#' @importFrom RColorBrewer brewer.pal brewer.pal.info
 #' @rdname getSetColors
 #'
-#' @seealso \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}},
+#' @seealso \code{RColorBrewer::ColorBrewer},
 #'          \code{\link[grDevices:colorRamp]{colorRampPalette}}.
 #'
 setGeneric("setColors<-",
@@ -74,128 +75,133 @@ setGeneric("setColors<-",
 })
 
 #' @export
-#' @importFrom raster is.factor
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-  signature("RasterLayer", "numeric", "character"),
-  function(object, ..., n, value) {
-    if (is.na(n)) {
-      object <- setColors(object = object, value = value)
+if (requireNamespace("raster", quietly = TRUE)) {
+  setReplaceMethod(
+    "setColors",
+    signature("RasterLayer", "numeric", "character"),
+    function(object, ..., n, value) {
+      if (is.na(n)) {
+        object <- setColors(object = object, value = value)
+        return(object)
+      }
+      if (raster::is.factor(object)) {
+        a <- object[];
+        a <- a[!is.na(a)]
+        isInteger <- !any(a != as.integer(a))
+        # isInteger <- all(na.omit(object[])%%1==0)
+        if (isInteger) { # some factor rasters are actually real number -- makes no sense
+          if (n != NROW(object@data@attributes[[1]])) {
+            message("Number of colors not equal number of values: interpolating")
+            n <- NROW(object@data@attributes[[1]])
+          }
+        }
+      }
+      if (!(all(value %in% colors()))) {
+        if (!requireNamespace("RColorBrewer")) {stop("To set colors, please install.packages('RColorBrewer')")}
+        rcolbrewInfo <- RColorBrewer::brewer.pal.info
+        if ((value %in% row.names(rcolbrewInfo))[1]) { # nolint
+          if (n > rcolbrewInfo[value, "maxcolors"]) {
+            ntmp <- rcolbrewInfo[value, "maxcolors"]
+          } else {
+            ntmp <- n
+          }
+          value <- RColorBrewer::brewer.pal(ntmp, value)
+        }
+      }
+      if (raster::is.factor(object)) {
+        if (isInteger) { # some factor rasters are actually real number -- makes no sense
+          if (n != NROW(object@data@attributes[[1]])) {
+            object@legend@colortable <- pal(n)
+          } else {
+            object@legend@colortable <- value
+          }
+        }
+      } else {
+        pal <- colorRampPalette(value, alpha = TRUE, ...)
+        object@legend@colortable <- pal(n)
+      }
+      if (!is.character(object@legend@colortable)) stop("setColors needs color character values")
       return(object)
-    }
-    if (raster::is.factor(object)) {
-      a <- object[];
-      a <- a[!is.na(a)]
-      isInteger <- !any(a != as.integer(a))
-      # isInteger <- all(na.omit(object[])%%1==0)
-      if (isInteger) { # some factor rasters are actually real number -- makes no sense
-        if (n != NROW(object@data@attributes[[1]])) {
-          message("Number of colors not equal number of values: interpolating")
-          n <- NROW(object@data@attributes[[1]])
-        }
-      }
-    }
-    rcolbrewInfo <- RColorBrewer::brewer.pal.info
-    if ((value %in% row.names(rcolbrewInfo))[1]) { # nolint
-      if (n > rcolbrewInfo[value, "maxcolors"]) {
-        ntmp <- rcolbrewInfo[value, "maxcolors"]
-      } else {
-        ntmp <- n
-      }
-      value <- RColorBrewer::brewer.pal(ntmp, value)
-    }
-    if (raster::is.factor(object)) {
-      if (isInteger) { # some factor rasters are actually real number -- makes no sense
-        if (n != NROW(object@data@attributes[[1]])) {
-          object@legend@colortable <- pal(n)
-        } else {
-          object@legend@colortable <- value
-        }
-      }
-    } else {
-      pal <- colorRampPalette(value, alpha = TRUE, ...)
-      object@legend@colortable <- pal(n)
-    }
-    if (!is.character(object@legend@colortable)) stop("setColors needs color character values")
-    return(object)
-})
+    })
+}
 
 #' @export
-#' @importFrom raster is.factor maxValue
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-  signature("RasterLayer", "missing", "character"),
-  function(object, ..., value) {
-    isFac <- if (!raster::is.factor(object)) {
-      FALSE
-    } else {
-      if (all(na.omit(object[])%%1==0)) { # some factor rasters are actually real number -- makes no sense
-        TRUE
-      } else {
+if (requireNamespace("raster", quietly = TRUE)) {
+  setReplaceMethod(
+    "setColors",
+    signature("RasterLayer", "missing", "character"),
+    function(object, ..., value) {
+      isFac <- if (!raster::is.factor(object)) {
         FALSE
+      } else {
+        if (all(na.omit(object[])%%1==0)) { # some factor rasters are actually real number -- makes no sense
+          TRUE
+        } else {
+          FALSE
+        }
       }
-    }
 
-    if (!isFac) {
-      n <- round(maxValue(object) - minValue(object)) + 1
-    } else {
-      n <- length(value)
-    }
+      if (!isFac) {
+        n <- round(raster::maxValue(object) - raster::minValue(object)) + 1
+      } else {
+        n <- length(value)
+      }
 
-    setColors(object, n = n) <- value
-    if (!is.character(object@legend@colortable)) stop("setColors needs color character values")
-    return(object)
-})
-
-#' @export
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-   signature("RasterStack", "numeric", "list"),
-   function(object, ..., n, value) {
-     i <- which(names(object) %in% names(value))
-     if (length(i) == 0) stop("Layer names do not match stack layer names")
-     whValNamed <- names(value)[i] %in% names(n)
-     whNNamed <- names(n) %in% names(value)[i]
-     nFull <- n
-     if (length(n) != length(i)) {
-       # not enough n values
-       if (sum(!nzchar(names(n), keepNA = TRUE)) > 0) {
-         # are there unnamed ones
-         nFull <- rep(n[!whNNamed], length.out = length(i))
-         nFull[whValNamed] <- n[whNNamed]
-         names(nFull)[whValNamed] <- names(n)[whNNamed]
-       } else if (is.null(names(n))) {
-         nFull <- rep(n, length.out = length(i))
-       }
-     }
-
-     for (x in i) {
-       if (x %in% i[whValNamed]) {
-         setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <-
-           value[[names(value)[x]]]
-       } else {
-         setColors(object[[names(value)[x]]], ..., n = nFull[x]) <- value[[names(value)[x]]]
-       }
-     }
-     return(object)
-})
+      setColors(object, n = n) <- value
+      if (!is.character(object@legend@colortable)) stop("setColors needs color character values")
+      return(object)
+    })
+}
 
 #' @export
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-   signature("Raster", "missing", "list"),
-   function(object, ..., value) {
-     nams <- names(object)
-     i <- which(nams %in% names(value))
-     for (x in nams[i]) {
-       setColors(object[[x]], ...) <- value[[x]]
-     }
-     return(object)
-})
+if (requireNamespace("raster", quietly = TRUE)) {
+  setReplaceMethod(
+    "setColors",
+    signature("RasterStack", "numeric", "list"),
+    function(object, ..., n, value) {
+      i <- which(names(object) %in% names(value))
+      if (length(i) == 0) stop("Layer names do not match stack layer names")
+      whValNamed <- names(value)[i] %in% names(n)
+      whNNamed <- names(n) %in% names(value)[i]
+      nFull <- n
+      if (length(n) != length(i)) {
+        # not enough n values
+        if (sum(!nzchar(names(n), keepNA = TRUE)) > 0) {
+          # are there unnamed ones
+          nFull <- rep(n[!whNNamed], length.out = length(i))
+          nFull[whValNamed] <- n[whNNamed]
+          names(nFull)[whValNamed] <- names(n)[whNNamed]
+        } else if (is.null(names(n))) {
+          nFull <- rep(n, length.out = length(i))
+        }
+      }
+
+      for (x in i) {
+        if (x %in% i[whValNamed]) {
+          setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <-
+            value[[names(value)[x]]]
+        } else {
+          setColors(object[[names(value)[x]]], ..., n = nFull[x]) <- value[[names(value)[x]]]
+        }
+      }
+      return(object)
+    })
+}
+
+#' @export
+if (requireNamespace("raster", quietly = TRUE)) {
+  setReplaceMethod(
+    "setColors",
+    signature("Raster", "missing", "list"),
+    function(object, ..., value) {
+      nams <- names(object)
+      i <- which(nams %in% names(value))
+      for (x in nams[i]) {
+        setColors(object[[x]], ...) <- value[[x]]
+      }
+      return(object)
+    })
+}
 
 #' @export
 #' @export
@@ -205,24 +211,26 @@ setGeneric("setColors", function(object, value, n) {
 })
 
 #' @export
-#' @rdname getSetColors
-setMethod(
-  "setColors",
-  signature("RasterLayer", "character", "numeric"),
-  function(object, value, n) {
-    setColors(object = object, n = n) <- value
-    return(object)
-})
+if (requireNamespace("raster", quietly = TRUE)) {
+  setMethod(
+    "setColors",
+    signature("RasterLayer", "character", "numeric"),
+    function(object, value, n) {
+      setColors(object = object, n = n) <- value
+      return(object)
+    })
+}
 
 #' @export
-#' @rdname getSetColors
-setMethod(
-  "setColors",
-  signature("RasterLayer", "character", "missing"),
-  function(object, value) {
-    setColors(object = object) <- value
-    return(object)
-})
+if (requireNamespace("raster", quietly = TRUE)) {
+  setMethod(
+    "setColors",
+    signature("RasterLayer", "character", "missing"),
+    function(object, value) {
+      setColors(object = object) <- value
+      return(object)
+    })
+}
 
 ################################################################################
 #' Convert Raster to color matrix usable by raster function for plotting
@@ -261,10 +269,8 @@ setMethod(
 #' @aliases makeColourMatrix
 #' @author Eliot McIntire
 #' @importFrom grDevices colorRampPalette terrain.colors
-#' @importFrom raster minValue getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
 #' @importFrom utils tail head
-#' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname makeColorMatrix
@@ -276,272 +282,276 @@ setGeneric(
      standardGeneric(".makeColorMatrix")
 )
 
-#' @rdname makeColorMatrix
-setMethod(
-  ".makeColorMatrix",
-  signature = c("griddedClasses", "Extent", "numeric", "ANY"),
-  #signature = c("Raster", "Extent", "numeric", "ANY"),
-  definition = function(grobToPlot, zoomExtent, maxpixels, legendRange,
-                        cols, na.color, zero.color, skipSample = TRUE) { # nolint
-    zoom <- zoomExtent
+if (requireNamespace("raster", quietly = TRUE)) {
+  setMethod(
+    ".makeColorMatrix",
+    signature = c("griddedClasses", "Extent", "numeric", "ANY"),
+    #signature = c("Raster", "Extent", "numeric", "ANY"),
+    definition = function(grobToPlot, zoomExtent, maxpixels, legendRange,
+                          cols, na.color, zero.color, skipSample = TRUE) { # nolint
+      zoom <- zoomExtent
 
-    isFac <- FALSE
-    if (any(raster::is.factor(grobToPlot)))
-      if (all(na.omit(grobToPlot[]%%1)==0))
-        isFac <- TRUE
-    # It is 5x faster to access the min and max from the Raster than to
-    # calculate it, but it is also often wrong... it is only metadata
-    # on the raster, so it is possible that it is incorrect.
-    if (!skipSample) {
-      colorTable <- getColors(grobToPlot)[[1]]
-      if (!inherits(try(minValue(grobToPlot)), "try-error")) {
-        minz <- minValue(grobToPlot)
+      isFac <- FALSE
+      if (any(raster::is.factor(grobToPlot)))
+        if (all(na.omit(grobToPlot[]%%1)==0))
+          isFac <- TRUE
+      # It is 5x faster to access the min and max from the Raster than to
+      # calculate it, but it is also often wrong... it is only metadata
+      # on the raster, so it is possible that it is incorrect.
+      if (!skipSample) {
+        colorTable <- getColors(grobToPlot)[[1]]
+        if (!inherits(try(raster::minValue(grobToPlot)), "try-error")) {
+          minz <- raster::minValue(grobToPlot)
+        }
+        grobToPlot <- raster::sampleRegular(
+          x = grobToPlot, size = maxpixels,
+          ext = zoom, asRaster = TRUE, useGDAL = TRUE
+        )
+        if (length(colorTable) > 0) {
+          cols <- colorTable
+        }
       }
-      grobToPlot <- sampleRegular(
-        x = grobToPlot, size = maxpixels,
-        ext = zoom, asRaster = TRUE, useGDAL = TRUE
-      )
-      if (length(colorTable) > 0) {
-        cols <- colorTable
+      if (inherits(grobToPlot, "Raster")) {
+        z <- raster::getValues(grobToPlot) # more general that getValues(grobToPlot)
+      } else {
+        z <- grobToPlot[]
       }
-    }
-    if (inherits(grobToPlot, "Raster")) {
-      z <- getValues(grobToPlot) # more general that getValues(grobToPlot)
-    } else {
-      z <- grobToPlot[]
-    }
 
-    # If minValue is defined, then use it, otherwise, calculate them.
-    #  This is different than maxz because of the sampleRegular.
-    # If the low values in the raster are missed in the sampleRegular,
-    #  then the legend will be off by as many as are missing at the bottom;
-    #  so, use the metadata version of minValue, but use the max(z) to
-    #  accomodate cases where there are too many legend values for the
-    # number of raster values.
-  #if (!raster::is.factor(grobToPlot)) {
-    if (any(is.na(legendRange))) {
-      if (!exists("minz")) {
-        minz <- suppressWarnings(min(z, na.rm = TRUE))
+      # If minValue is defined, then use it, otherwise, calculate them.
+      #  This is different than maxz because of the sampleRegular.
+      # If the low values in the raster are missed in the sampleRegular,
+      #  then the legend will be off by as many as are missing at the bottom;
+      #  so, use the metadata version of minValue, but use the max(z) to
+      #  accomodate cases where there are too many legend values for the
+      # number of raster values.
+      #if (!raster::is.factor(grobToPlot)) {
+      if (any(is.na(legendRange))) {
+        if (!exists("minz")) {
+          minz <- suppressWarnings(min(z, na.rm = TRUE))
+        }
+        if (is.na(minz)) {
+          minz <- suppressWarnings(min(z, na.rm = TRUE))
+        }
+        if (is.infinite(minz)) {
+          minz <- 0
+        }
+        #
+        maxz <- suppressWarnings(max(z, na.rm = TRUE))
+        if (is.infinite(maxz)) {
+          maxz <- 0
+        }
+      } else {
+        minz <- min(legendRange)
+        maxz <- max(legendRange)
       }
-      if (is.na(minz)) {
-        minz <- suppressWarnings(min(z, na.rm = TRUE))
+
+      real <- any(na.omit(z) %% 1 != 0) # Test for real values or not
+
+      ## Deal with colors - This gets all combinations, real vs. integers,
+      ## with zero, with no zero, with NA, with no NA, not enough numbers,
+      ## too many numbers
+      maxNumCols <- 100
+
+      if (isFac) {
+        facLevs <- raster::levels(grobToPlot)[[1]]
+        nValues <- NROW(facLevs)
+      } else {
+        if (any(is.na(legendRange))) {
+          nValues <- ifelse(real, maxNumCols + 1, maxz - minz + 1)
+        } else {
+          nValues <- ifelse(real, maxNumCols + 1,
+                            length(seq(legendRange[1], legendRange[length(legendRange)])))
+        }
+      }
+
+      colTable <- NULL
+      if (is.null(cols)) {
+        # i.e., contained within raster or nothing
+        if (length(getColors(grobToPlot)[[1]]) > 0) {
+          colTable <- getColors(grobToPlot)[[1]]
+          lenColTable <- length(colTable)
+
+          cols <- if ((nValues > lenColTable) & !isFac) { # nolint
+            # not enough colors, use colorRamp
+            colorRampPalette(colTable)(nValues)
+          } else if ((nValues <= lenColTable) | isFac) { # nolint
+            # one more color than needed:
+            #   assume bottom is NA
+            if (isFac) {
+              factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
+                unique() %>%
+                na.omit() %>%
+                sort()
+              if (length(factorValues) == length(colTable)) {
+                colTable[seq.int(length(factorValues))]
+              } else {
+                if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (length(colTable) - 1)) {
+                  # The case where the IDs are numeric representations
+                  colTable[factorValues + 1]
+                } else {
+                  colTable[c(1, 1 + factorValues)] # CHANGE HERE
+                }
+
+              }
+            } else {
+              colTable
+            }
+          } else if (nValues <= (lenColTable - 1)) {
+            # one more color than needed:
+            #  assume bottom is NA
+            na.color <- colTable[1] # nolint
+            colTable[minz:maxz - minz + 2]
+          } else if (nValues <= (lenColTable - 2)) {
+            # two more colors than needed,
+            #  assume bottom is NA, second is white
+            na.color <- colTable[1] # nolint
+            zero.color <- colTable[2] # nolint
+            colTable[minz:maxz - minz + 3]
+          } else {
+            colTable
+          }
+        } else {
+          # default color if nothing specified:
+          cols <- rev(terrain.colors(nValues))
+        }
+      } else {
+        if (is.character(cols) & (length(cols) == 1)) {
+          if (!requireNamespace("RColorBrewer")) {stop("To set colors this way, please install.packages('RColorBrewer')")}
+          if (cols %in% rownames(RColorBrewer::brewer.pal.info)) {
+            suppressWarnings(cols <- RColorBrewer::brewer.pal(nValues, cols))
+          } else {
+            stop("To use a character length = 1 color, it must be in RColorBrewer::brewer.pal.info")
+          }
+        }
+        cols <- if (nValues > length(cols)) {
+          colorRampPalette(cols)(nValues)
+        } else if (nValues < length(cols)) {
+          if ((minz + nValues - 1)  > length(cols)) { # nolint
+            # there are enough colors, but they don't start at 1
+            cols[minz:maxz - minz + 1 + max(0, 1 - minz)]
+          } else {
+            cols[minz:maxz + max(0, 1 - minz)]
+          }
+        } else {
+          cols
+        }
+      }
+
+      # Colors are indexed from 1, as with all objects in R, but there
+      # are generally zero values on the rasters, so shift according to
+      # the minValue value, if it is below 1.
+      # Shift it by 2, 1 to make the zeros into two, the other for the
+      # NAs to be ones.
+
+      # If object is real numbers, the default above is to discretize.
+      # This is particularly bad for numbers below 10.
+      # Here, numbers below maxNumCols that are reals will be rescaled
+      #  to max = 100.
+      # These are, of course, only used for the color matrix, not the
+      #  values on the Raster.
+
+      # Plotting works by making a maxNumCols value raster if
+      #  it is a real value original raster. So, we need to keep
+      #  the original minz and maxz for legend purposes, but
+      #  work with the new rescaled minz and maxz
+      minzOrig <- minz
+      maxzOrig <- maxz
+      whichZero <- numeric()
+      whichZeroLegend <- numeric()
+      if (!is.null(zero.color)) {
+        whichZero <- which(z == 0)
+        whichZeroLegend <- which(seq(minz, maxz, length.out = nValues) == 0)
+      }
+
+      # Here, rescale so it is between 0 and maxNumCols or nValues
+      if (isFac) {
+        z <- match(z, facLevs$ID)
+      } else {
+        if (real) {
+          z <- maxNumCols / (maxz - minz) * (z - minz)
+          if (length(whichZero)) {
+            zeroValue <- maxNumCols / (maxz - minz) * (0 - minz)
+          }
+        } else {
+          # rescale so that the minimum is 1, not <1:
+          if (nValues > 1) {
+            z <- (nValues - 1) /  (maxz - minz) * (z - minz) + 1
+          } else {
+            z <- (z - minz) + 1
+          }
+
+          if (length(whichZero)) {
+            zeroValue <- (nValues - 1) / (maxz - minz) * (0 - minz) + 1
+          }
+
+        }
+      }
+      minz <- suppressWarnings(min(z, na.rm = TRUE))
+      maxz <- suppressWarnings(max(z, na.rm = TRUE))
+      if (is.infinite(minz)) {
+        maxz <- 0
       }
       if (is.infinite(minz)) {
         minz <- 0
       }
-      #
-      maxz <- suppressWarnings(max(z, na.rm = TRUE))
-      if (is.infinite(maxz)) {
-        maxz <- 0
-      }
-    } else {
-      minz <- min(legendRange)
-      maxz <- max(legendRange)
-    }
 
-    real <- any(na.omit(z) %% 1 != 0) # Test for real values or not
-
-    ## Deal with colors - This gets all combinations, real vs. integers,
-    ## with zero, with no zero, with NA, with no NA, not enough numbers,
-    ## too many numbers
-    maxNumCols <- 100
-
-    if (isFac) {
-      facLevs <- raster::levels(grobToPlot)[[1]]
-      nValues <- NROW(facLevs)
-    } else {
-      if (any(is.na(legendRange))) {
-        nValues <- ifelse(real, maxNumCols + 1, maxz - minz + 1)
-      } else {
-        nValues <- ifelse(real, maxNumCols + 1,
-                          length(seq(legendRange[1], legendRange[length(legendRange)])))
-      }
-    }
-
-    colTable <- NULL
-    if (is.null(cols)) {
-      # i.e., contained within raster or nothing
-      if (length(getColors(grobToPlot)[[1]]) > 0) {
-        colTable <- getColors(grobToPlot)[[1]]
-        lenColTable <- length(colTable)
-
-        cols <- if ((nValues > lenColTable) & !isFac) { # nolint
-          # not enough colors, use colorRamp
-          colorRampPalette(colTable)(nValues)
-        } else if ((nValues <= lenColTable) | isFac) { # nolint
-          # one more color than needed:
-          #   assume bottom is NA
-          if (isFac) {
-            factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
-              unique() %>%
-              na.omit() %>%
-              sort()
-            if (length(factorValues) == length(colTable)) {
-              colTable[seq.int(length(factorValues))]
+      if (any(!is.na(legendRange))) {
+        if ((max(legendRange) - min(legendRange) + 1) < length(cols)) { # nolint
+        } else {
+          if (!is.null(colTable)) {
+            if (length(getColors(grobToPlot)[[1]]) > 0) {
+              cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
             } else {
-              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (length(colTable) - 1)) {
-                # The case where the IDs are numeric representations
-                colTable[factorValues + 1]
-              } else {
-                colTable[c(1, 1 + factorValues)] # CHANGE HERE
-              }
-
+              # default color if nothing specified
+              cols <- rev(terrain.colors(maxzOrig - minzOrig + 1))
             }
-          } else {
-            colTable
-          }
-        } else if (nValues <= (lenColTable - 1)) {
-          # one more color than needed:
-          #  assume bottom is NA
-          na.color <- colTable[1] # nolint
-          colTable[minz:maxz - minz + 2]
-        } else if (nValues <= (lenColTable - 2)) {
-          # two more colors than needed,
-          #  assume bottom is NA, second is white
-          na.color <- colTable[1] # nolint
-          zero.color <- colTable[2] # nolint
-          colTable[minz:maxz - minz + 3]
-        } else {
-          colTable
-        }
-      } else {
-        # default color if nothing specified:
-        cols <- rev(terrain.colors(nValues))
-      }
-    } else {
-      if (is.character(cols) & (length(cols) == 1)) {
-        if (cols %in% rownames(brewer.pal.info)) {
-          suppressWarnings(cols <- brewer.pal(nValues, cols))
-        }
-      }
-      cols <- if (nValues > length(cols)) {
-        colorRampPalette(cols)(nValues)
-      } else if (nValues < length(cols)) {
-        if ((minz + nValues - 1)  > length(cols)) { # nolint
-          # there are enough colors, but they don't start at 1
-          cols[minz:maxz - minz + 1 + max(0, 1 - minz)]
-        } else {
-          cols[minz:maxz + max(0, 1 - minz)]
-        }
-      } else {
-        cols
-      }
-    }
-
-    # Colors are indexed from 1, as with all objects in R, but there
-    # are generally zero values on the rasters, so shift according to
-    # the minValue value, if it is below 1.
-    # Shift it by 2, 1 to make the zeros into two, the other for the
-    # NAs to be ones.
-
-    # If object is real numbers, the default above is to discretize.
-    # This is particularly bad for numbers below 10.
-    # Here, numbers below maxNumCols that are reals will be rescaled
-    #  to max = 100.
-    # These are, of course, only used for the color matrix, not the
-    #  values on the Raster.
-
-    # Plotting works by making a maxNumCols value raster if
-    #  it is a real value original raster. So, we need to keep
-    #  the original minz and maxz for legend purposes, but
-    #  work with the new rescaled minz and maxz
-    minzOrig <- minz
-    maxzOrig <- maxz
-    whichZero <- numeric()
-    whichZeroLegend <- numeric()
-    if (!is.null(zero.color)) {
-      whichZero <- which(z == 0)
-      whichZeroLegend <- which(seq(minz, maxz, length.out = nValues) == 0)
-    }
-
-    # Here, rescale so it is between 0 and maxNumCols or nValues
-    if (isFac) {
-      z <- match(z, facLevs$ID)
-    } else {
-      if (real) {
-        z <- maxNumCols / (maxz - minz) * (z - minz)
-        if (length(whichZero)) {
-          zeroValue <- maxNumCols / (maxz - minz) * (0 - minz)
-        }
-      } else {
-        # rescale so that the minimum is 1, not <1:
-        if (nValues > 1) {
-          z <- (nValues - 1) /  (maxz - minz) * (z - minz) + 1
-        } else {
-          z <- (z - minz) + 1
-        }
-
-        if (length(whichZero)) {
-          zeroValue <- (nValues - 1) / (maxz - minz) * (0 - minz) + 1
-        }
-
-      }
-    }
-    minz <- suppressWarnings(min(z, na.rm = TRUE))
-    maxz <- suppressWarnings(max(z, na.rm = TRUE))
-    if (is.infinite(minz)) {
-      maxz <- 0
-    }
-    if (is.infinite(minz)) {
-      minz <- 0
-    }
-
-    if (any(!is.na(legendRange))) {
-      if ((max(legendRange) - min(legendRange) + 1) < length(cols)) { # nolint
-      } else {
-        if (!is.null(colTable)) {
-          if (length(getColors(grobToPlot)[[1]]) > 0) {
-            cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
-          } else {
-            # default color if nothing specified
-            cols <- rev(terrain.colors(maxzOrig - minzOrig + 1))
           }
         }
       }
-    }
 
-    # here, the default color (transparent) for zero:
-    # if it is the minimum value, can be overridden.
+      # here, the default color (transparent) for zero:
+      # if it is the minimum value, can be overridden.
 
-    # if range of values is not within the legend range, then give them NA
-    if (minz < 0) z[z < 0] <- 0
-    if (!isFac) {
-      if (real) {
-        if (maxz > maxNumCols) z[z > maxNumCols] <- 0
-      } else {
-        if (maxz > nValues) z[z > nValues] <- 0
+      # if range of values is not within the legend range, then give them NA
+      if (minz < 0) z[z < 0] <- 0
+      if (!isFac) {
+        if (real) {
+          if (maxz > maxNumCols) z[z > maxNumCols] <- 0
+        } else {
+          if (maxz > nValues) z[z > nValues] <- 0
+        }
       }
+
+      z <- z + 1 # for the NAs
+      z[is.na(z)] <- 1
+
+      if (isFac & !is.null(colTable)) {
+        # changed from max to length to accommodate zeros or factors not starting at 1
+        cols <- rep(na.color, length(factorValues))
+        resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
+        if (length(colTable) == length(resequence))
+          cols[resequence] <- colTable
+        else
+          cols[resequence] <- colTable[resequence]
+      }
+      if (length(whichZeroLegend)) {
+        cols[whichZeroLegend] <- zero.color
+      }
+      cols <- c(na.color, cols) # make first index of colors be transparent
+
+      # Convert numeric z to a matrix of hex colors
+      z <- matrix(
+        cols[z], nrow = NROW(grobToPlot),
+        ncol = ncol(grobToPlot), byrow = TRUE
+      )
+
+      list(
+        z = z, minz = minzOrig, maxz = maxzOrig,
+        cols = cols, real = real
+      )
     }
-
-    z <- z + 1 # for the NAs
-    z[is.na(z)] <- 1
-
-    if (isFac & !is.null(colTable)) {
-      # changed from max to length to accommodate zeros or factors not starting at 1
-      cols <- rep(na.color, length(factorValues))
-      resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
-      if (length(colTable) == length(resequence))
-        cols[resequence] <- colTable
-      else
-        cols[resequence] <- colTable[resequence]
-    }
-    if (length(whichZeroLegend)) {
-      cols[whichZeroLegend] <- zero.color
-    }
-    cols <- c(na.color, cols) # make first index of colors be transparent
-
-    # Convert numeric z to a matrix of hex colors
-    z <- matrix(
-      cols[z], nrow = NROW(grobToPlot),
-      ncol = ncol(grobToPlot), byrow = TRUE
-    )
-
-    list(
-      z = z, minz = minzOrig, maxz = maxzOrig,
-      cols = cols, real = real
-    )
-  }
-)
+  )
+}
 
 #' Divergent colour palette
 #'

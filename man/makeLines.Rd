@@ -2,12 +2,9 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{makeLines}
 \alias{makeLines}
-\alias{makeLines,SpatialPoints,SpatialPoints-method}
 \title{Make \code{SpatialLines} object from two \code{SpatialPoints} objects}
 \usage{
 makeLines(from, to)
-
-\S4method{makeLines}{SpatialPoints,SpatialPoints}(from, to)
 }
 \arguments{
 \item{from}{Starting spatial coordinates (\code{SpatialPointsDataFrame}).}

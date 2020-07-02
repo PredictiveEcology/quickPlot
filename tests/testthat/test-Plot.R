@@ -1,7 +1,7 @@
 test_that("Plot 1 is not error-free", {
   skip_if_not_installed("fastshp")
 
-  library(igraph)
+  library(magrittr)
   library(sp)
   library(raster)
   library(fastshp)
@@ -157,9 +157,11 @@ test_that("Plot 1 is not error-free", {
 
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
-  ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
-                                geom = "histogram")
-  expect_silent(Plot(ggplot87654))
+  if (requireNamespace("ggplot2", quietly = TRUE)) {
+    ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
+                                  geom = "histogram")
+    expect_silent(Plot(ggplot87654))
+  }
 
   # test rearrangements
   expect_silent(Plot(caribou87654, new = TRUE))
@@ -676,8 +678,8 @@ test_that("Plot with base is not error-free", {
 
   library(visualTest)
   library(raster)
-  library(ggplot2)
-  library(igraph)
+  # library(ggplot2)
+  library(magrittr)
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
   dir.create(tmpdir)
@@ -786,39 +788,42 @@ test_that("Plot with base is not error-free", {
 
   ##################################################
 
-  png(file = "test.png", width = 500, height = 400)
-  ras <- rasOrig
-  set.seed(123)
-  clearPlot()
-  Plot(rnorm(10), addTo = "hist", ylab = "test")
-  a <- hist(rnorm(10), plot = FALSE)
-  Plot(a, addTo = "histogram", axes = "L", col = "#33EEAA33", xlim = c(-3, 3))
-  a <- hist(rnorm(100), plot = FALSE)
-  Plot(a, addTo = "histogram", axes = FALSE, col = paste0("#1133FF", "33"),
-       xlim = c(-3, 3), xlab = "", ylab = "")
-  ras2 <- raster(ras)
-  ras2[] <- sample(1:8)
-  Plot(ras2)
-  gg1 <- qplot(1:10)
-  suppressMessages(Plot(gg1))
-  suppressMessages(Plot(rnorm(10), ylab = "hist", new = TRUE))
-  Plot(ras2)
-  Plot(rnorm(10), ylab = "hist")
-  ras <- ras ^ 2
-  Plot(ras, new = TRUE, cols = "Reds")
-  Plot(rnorm(10), ylab = "hist", new = TRUE, addTo = "hist")
-  Plot(ras, new = TRUE, cols = "Reds", addTo = "ras2")
-  Plot(ras, cols = "Reds", addTo = "ras2")
-  dev.off()
+  if (requireNamespace("ggplot2", quietly = TRUE)) {
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "F3B4274A8C0FF059",
-                 Linux = "F3B5264A8C0FF04B",
-                 Windows = "F3B4264A8C8FF04B"
-  )
-  expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
+    png(file = "test.png", width = 500, height = 400)
+    ras <- rasOrig
+    set.seed(123)
+    clearPlot()
+    Plot(rnorm(10), addTo = "hist", ylab = "test")
+    a <- hist(rnorm(10), plot = FALSE)
+    Plot(a, addTo = "histogram", axes = "L", col = "#33EEAA33", xlim = c(-3, 3))
+    a <- hist(rnorm(100), plot = FALSE)
+    Plot(a, addTo = "histogram", axes = FALSE, col = paste0("#1133FF", "33"),
+         xlim = c(-3, 3), xlab = "", ylab = "")
+    ras2 <- raster(ras)
+    ras2[] <- sample(1:8)
+    Plot(ras2)
+    gg1 <- qplot(1:10)
+    suppressMessages(Plot(gg1))
+    suppressMessages(Plot(rnorm(10), ylab = "hist", new = TRUE))
+    Plot(ras2)
+    Plot(rnorm(10), ylab = "hist")
+    ras <- ras ^ 2
+    Plot(ras, new = TRUE, cols = "Reds")
+    Plot(rnorm(10), ylab = "hist", new = TRUE, addTo = "hist")
+    Plot(ras, new = TRUE, cols = "Reds", addTo = "ras2")
+    Plot(ras, cols = "Reds", addTo = "ras2")
+    dev.off()
 
+    #dput(getFingerprint(file = "test.png"))  # nolint
+    orig <- switch(Sys.info()["sysname"],
+                   Darwin = "F3B4274A8C0FF059",
+                   Linux = "F3B5264A8C0FF04B",
+                   Windows = "F3B4264A8C8FF04B"
+    )
+    expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
+
+  }
   ##################################################
 
   png(file = "test.png", width = 500, height = 400)
@@ -951,7 +956,7 @@ test_that("Plot lists", {
 
   skip_on_travis()
 
-  library(ggplot2); #on.exit(detach("package:ggplot2"), add = TRUE)
+  # library(ggplot2); #on.exit(detach("package:ggplot2"), add = TRUE)
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
 
@@ -1009,22 +1014,24 @@ test_that("Plot lists", {
     )
     expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
-    set.seed(123)
-    gg <- qplot(1:10, sample(1:10))
-    gg1 <- qplot(1:10, sample(1:10))
-    b <- list(gg = gg, gg1 = gg1)
-    png(file = "test.png", width = 400, height = 300)
-    clearPlot()
-    Plot(a, b)
-    dev.off()
+    if (requireNamespace("ggplot2", quietly = TRUE)) {
+      set.seed(123)
+      gg <- qplot(1:10, sample(1:10))
+      gg1 <- qplot(1:10, sample(1:10))
+      b <- list(gg = gg, gg1 = gg1)
+      png(file = "test.png", width = 400, height = 300)
+      clearPlot()
+      Plot(a, b)
+      dev.off()
 
-    #dput(getFingerprint(file = "test.png"))  # nolint
-    orig <- switch(Sys.info()["sysname"],
-                   Darwin = "A762D989649DD8CC",
-                   Linux = "877273AD8C8DF04A",
-                   Windows = "8773738D8C89F04E"
-    )
-    expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
+      #dput(getFingerprint(file = "test.png"))  # nolint
+      orig <- switch(Sys.info()["sysname"],
+                     Darwin = "A762D989649DD8CC",
+                     Linux = "877273AD8C8DF04A",
+                     Windows = "8773738D8C89F04E"
+      )
+      expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
+    }
   }
 })
 

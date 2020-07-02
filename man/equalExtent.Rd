@@ -16,7 +16,7 @@ equalExtent(extents)
 Assess whether a list of extents are all equal
 }
 \examples{
-library(igraph)
+library(magrittr)
 library(raster)
 
 files <- system.file("maps", package = "quickPlot") \%>\%

@@ -4,9 +4,7 @@
 \alias{layerNames}
 \alias{layerNames,list-method}
 \alias{layerNames,ANY-method}
-\alias{layerNames,Raster-method}
 \alias{layerNames,.quickPlot-method}
-\alias{layerNames,igraph-method}
 \title{Extract the layer names of Spatial Objects}
 \usage{
 layerNames(object)
@@ -15,11 +13,7 @@ layerNames(object)
 
 \S4method{layerNames}{ANY}(object)
 
-\S4method{layerNames}{Raster}(object)
-
 \S4method{layerNames}{.quickPlot}(object)
-
-\S4method{layerNames}{igraph}(object)
 }
 \arguments{
 \item{object}{A \code{Raster*}, \code{SpatialPoints*}, \code{SpatialLines*},
@@ -33,7 +27,7 @@ This function was created to give consistent, meaningful results for all
 classes of objects plotted by \code{Plot}.
 }
 \examples{
-library(igraph)
+library(magrittr)
 library(raster)
 
 ## RasterLayer objects
@@ -46,27 +40,29 @@ names(maps) <- sapply(basename(files), function(x) {
 layerNames(maps)
 
 ## Spatial* objects
-caribou <- SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
-                                        y = stats::runif(1e2, -50, 50)))
-layerNames(caribou)
+if (requireNamespace("sp", quietly = TRUE)) {
+  caribou <- SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
+                                          y = stats::runif(1e2, -50, 50)))
+  layerNames(caribou)
 
-sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
-sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
-srs1 <- Polygons(list(sr1), "s1")
-srs2 <- Polygons(list(sr2), "s2")
-spP <- SpatialPolygons(list(srs1, srs2), 1:2)
-layerNames(spP)
+  sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
+  sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
+  srs1 <- Polygons(list(sr1), "s1")
+  srs2 <- Polygons(list(sr2), "s2")
+  spP <- SpatialPolygons(list(srs1, srs2), 1:2)
+  layerNames(spP)
 
-l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
-l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
-l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
-sl1 <- Line(l1)
-sl1a <- Line(l1a)
-sl2 <- Line(l2)
-s1 <- Lines(list(sl1, sl1a), ID = "a")
-s2 <- Lines(list(sl2), ID = "b")
-sl <- SpatialLines(list(s1, s2))
-layerNames(sl)
+  l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
+  l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
+  l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
+  sl1 <- Line(l1)
+  sl1a <- Line(l1a)
+  sl2 <- Line(l2)
+  s1 <- Lines(list(sl1, sl1a), ID = "a")
+  s2 <- Lines(list(sl2), ID = "b")
+  sl <- SpatialLines(list(s1, s2))
+  layerNames(sl)
+}
 
 }
 \author{

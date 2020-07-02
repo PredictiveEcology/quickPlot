@@ -49,6 +49,5 @@ NULL
 
 #' @import graphics
 #' @import grid
-#' @import igraph
 #' @import methods
 NULL
