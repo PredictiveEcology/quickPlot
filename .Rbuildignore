@@ -2,9 +2,7 @@
 ^\.Rproj\.user$
 .*\.toc$
 ^\.lintr$
-^\.travis\.yml$
 ^_pkgdown\.yml$
-^appveyor\.yml$
 cheatsheets/
 ^CONTRIBUTING\.md$
 ^cran-comments\.md$
@@ -12,7 +10,7 @@ cheatsheets/
 ^LICENSE$
 ^revdep$
 stickers/
-^travis_wait_.*\.log$
 vignettes/.*_cache$
 vignettes/.*\.log$
-
+^\.github$
+^codecov\.yml$
