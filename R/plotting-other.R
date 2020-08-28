@@ -2,12 +2,10 @@
 #' Clear plotting device
 #'
 #' Under some conditions, a device and its metadata need to be cleared manually.
-#' This can be done with either the \code{new = TRUE} argument within the call to
-#' \code{Plot}.
+#' This can be done with either the \code{new = TRUE} argument within the call to \code{Plot}.
 #' Sometimes, the metadata of a previous plot will prevent correct plotting of
 #' a new \code{Plot} call.
-#' Use \code{clearPlot} to clear the device and all the associated metadata
-#' manually.
+#' Use \code{clearPlot} to clear the device and all the associated metadata manually.
 #'
 #' @param dev Numeric. Device number to clear.
 #'
@@ -15,8 +13,8 @@
 #' \code{.quickPlotEnv} should also be removed; i.e., not just the plot window wiped.
 #'
 #' @param force Logical or "all". Sometimes the graphics state cannot be fixed by a simple
-#'              clearPlot(). If TRUE, this will close the device and reopen the same
-#'              device number. If "all", then all quickPlot related data from all devices
+#'              \code{clearPlot()}. If TRUE, this will close the device and reopen the same
+#'              device number. If "all", then all \code{quickPlot} related data from all devices
 #'              will be cleared, in addition to device closing and reopening.
 #'
 #' @author Eliot McIntire
@@ -390,14 +388,13 @@ clickCoordinates <- function(n = 1) {
 #' Specify where to plot
 #'
 #' Switch to an existing plot device, or if not already open,
-#' launch a new graphics device based on operating system used. On Windows and
-#' Mac, if no x is provided, then this will open or switch to the first non
-#' R Studio device, which is much faster than the png-based R Studio Plot device.
+#' launch a new graphics device based on operating system used.
+#' On Windows and macOS, if \code{x} is not provided, this will open or switch to the first
+#' non-RStudio device, which is much faster than the png-based RStudio plot device.
 #' Currently, this will not open anything new
 #'
 #' For example, \code{dev(6)} switches the active plot device to device #6.
-#' If it doesn't exist, it opens it. NOTE: if devices 1-5 don't exist
-#' they will be opened too.
+#' If it does not exist, it opens it. If devices 1-5 don't exist they will be opened too.
 #'
 #' @param x   The number of a plot device. If missing, will open a new
 #'            non-RStudio plotting device
@@ -463,7 +460,7 @@ dev <- function(x, ...) {
 ################################################################################
 #' Open a new plotting window
 #'
-#' @param noRStudioGD Logical Passed to dev.new. Default is TRUE to avoid using
+#' @param noRStudioGD Logical Passed to \code{dev.new}. Default is TRUE to avoid using
 #'                    RStudio graphics device, which is slow.
 #'
 #' @param useRSGD     Logical indicating whether the default device should be the
@@ -473,7 +470,7 @@ dev <- function(x, ...) {
 #' @param ...         Additional arguments.
 #'
 #' @note \code{\link{dev.new}} is supposed to be the correct way to open a new
-#' window in a platform-generic way; however, doesn't work in RStudio
+#' window in a platform-generic way; however, does not work in RStudio
 #' (\href{https://github.com/PredictiveEcology/SpaDES/issues/116}{SpaDES#116}).
 #' Use \code{dev.useRSGD(FALSE)} to avoid RStudio for the remainder of this session,
 #' and \code{dev.useRSGD(TRUE)} to use the RStudio graphics device.

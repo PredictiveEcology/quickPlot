@@ -25,18 +25,16 @@ clearPlot(dev = dev.cur(), removeData = TRUE, force = FALSE)
 \code{.quickPlotEnv} should also be removed; i.e., not just the plot window wiped.}
 
 \item{force}{Logical or "all". Sometimes the graphics state cannot be fixed by a simple
-clearPlot(). If TRUE, this will close the device and reopen the same
-device number. If "all", then all quickPlot related data from all devices
+\code{clearPlot()}. If TRUE, this will close the device and reopen the same
+device number. If "all", then all \code{quickPlot} related data from all devices
 will be cleared, in addition to device closing and reopening.}
 }
 \description{
 Under some conditions, a device and its metadata need to be cleared manually.
-This can be done with either the \code{new = TRUE} argument within the call to
-\code{Plot}.
+This can be done with either the \code{new = TRUE} argument within the call to \code{Plot}.
 Sometimes, the metadata of a previous plot will prevent correct plotting of
 a new \code{Plot} call.
-Use \code{clearPlot} to clear the device and all the associated metadata
-manually.
+Use \code{clearPlot} to clear the device and all the associated metadata manually.
 }
 \examples{
 library(sp)

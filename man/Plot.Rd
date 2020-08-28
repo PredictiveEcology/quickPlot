@@ -72,11 +72,11 @@ See details.}
 and a new one made; if \code{FALSE}, then the \code{...} plots will be
 added to the current device, adding or rearranging the plot layout
 as necessary. Default is \code{FALSE}. This currently works best if
-there is only one object being plotted in a given Plot call. However,
+there is only one object being plotted in a given \code{Plot} call. However,
 it is possible to pass a list of logicals to this, matching the
 length of the ... objects. Use \code{clearPlot} to clear the whole
 plotting device. NOTE if \code{TRUE}: \emph{Everything that was there,
-including the legend and the end points of the color palette, will
+including the legend and the end points of the colour palette, will
 be removed and re-initiated}.}
 
 \item{addTo}{Character vector, with same length as \code{...}.
@@ -143,12 +143,12 @@ not the title. Default NULL, which means print the object
 name as title, if no other already exists on the plot, in
 which case, keep the previous title.}
 
-\item{na.color}{Character string indicating the color for \code{NA} values.
+\item{na.color}{Character string indicating the colour for \code{NA} values.
 Default transparent.}
 
-\item{zero.color}{Character string indicating the color for zero values,
+\item{zero.color}{Character string indicating the colour for zero values,
 when zero is the minimum value, otherwise, zero is
-treated as any other color. Default transparent.}
+treated as any other colour. Default transparent.}
 
 \item{length}{Numeric. Optional length, in inches, of the arrow head.}
 
@@ -160,7 +160,7 @@ let Plot function do it automatically.}
 \item{plotFn}{An optional function name to do the plotting internally, e.g.,
 "barplot" to get a barplot() call. Default "plot".}
 
-\item{toDev}{Numeric. Which device should the new rePlot be plotted to.
+\item{toDev}{Numeric. Which device should the new replot be plotted to.
 Default is current device.}
 
 \item{fromDev}{Numeric. Which device should the replot information be taken from.
@@ -177,8 +177,8 @@ replotted with \code{rePlot()} or on a new device with \code{rePlot(n)},
 where \code{n} is the new device number.
 }
 \description{
-This can take objects of type \code{Raster*}, \code{SpatialPoints*},
-\code{SpatialPolygons*}, and any combination of those.
+This can take objects of type \verb{Raster*}, \verb{SpatialPoints*}, \verb{SpatialPolygons*},
+and any combination of those.
 These can be provided as individual objects, or a named list.
 If a named list, the names either represent a different original object in the
 calling environment and that will be used, or if the names don't exist in the
@@ -213,31 +213,30 @@ The function is based on the grid package.
 Each panel in the multipanel plot must have a name.
 This name is used to overplot, rearrange the plots, or overlay using
 \code{addTo} when necessary.
-If the \code{...} are named spatialObjects, then \code{Plot} will use
+If the \code{...} are named \code{spatialObjects}, then \code{Plot} will use
 these names. However, this name will not persist when there is a future call
 to \code{Plot} that forces a rearrangement of the plots.
 A more stable way is to use the object names directly, and any layer names
 (in the case of \code{RasterLayer} or \code{RasterStack} objects).
-If plotting a RasterLayer and the layer name is "layer" or the same as the
+If plotting a \code{RasterLayer} and the layer name is "layer" or the same as the
 object name, then, for simplicity, only the object name will be used.
 In other words, only enough information is used to uniquely identify the plot.
 
-Because of modularity, Plot must have access to the original objects that were
-plotted. These objects will be used if a subsequent Plot event forces a
-rearrangement of the Plot device. Rather than saving all the plot information
-(including the data) at each Plot
-call (this is generally too much data to constantly make copies),
+For modularity, \code{Plot} must have access to the original objects that were plotted.
+These objects will be used if a subsequent Plot event forces a rearrangement of the plot device.
+Rather than saving all the plot information (including the data) at each \code{Plot} call
+(this is generally too much data to constantly make copies),
 the function saves a pointer to the original R object. If the plot needs
-to be rearranged because of a future addition, then Plot will search for that
-original object that created the first plots, and replot them. This has several
-consequences. First, that object must still exist and in the same environment.
+to be rearranged because of a future addition, then \code{Plot} will search for that
+original object that created the first plots, and replot them.
+This has several consequences.
+First, that object must still exist and in the same environment.
 Second, if that object has changed between the first time it is plot and any
 subsequent time it is replotted (via a forced rearrangement), then it will take
-the object *as it exists*, not as it existed. Third, if passing a named list
+the object \emph{as it exists}, not as it existed. Third, if passing a named list
 of objects, Plot will either create a link to objects with those names in the
-calling environment (e.g., .GlobalEnv) or, if they do not exist, then Plot
-will make a copy in the hidden .quickPlotEnv for later reuse.
-
+calling environment (e.g., \code{.GlobalEnv}) or, if they do not exist, then \code{Plot}
+will make a copy in the hidden \code{.quickPlotEnv} for later reuse.
 
 \code{cols} is a vector of colours that can be understood directly, or by
 \code{\link[grDevices:colorRamp]{colorRampPalette}}, such as \code{c("orange", "blue")},
@@ -248,13 +247,13 @@ Note that when this approach to setting colours is used, any overplotting
 will revert to the \code{colortable} slot of the object, or the default
 for rasters, which is \code{terrain.color()}
 
-\code{cols} can also accept \code{RColorBrewer} colors by keyword if it is
+\code{cols} can also accept \code{RColorBrewer} colours by keyword if it is
 character vector of length 1. i.e., this cannot be used to set many objects by keyword in
 the same Plot call. Default \code{terrain.color()}. See Details.
 
-Some coloring will be automatic. If the object being plotted is a Raster, then
-this will take the colorTable slot (can be changed via setColors() or other ways).
-If this is a SpatialPointsDataFrame, this function will use a column called \code{colors}
+Some colouring will be automatic. If the object being plotted is a Raster, then
+this will take the \code{colorTable} slot (can be changed via \code{setColors()} or other ways).
+If this is a \code{SpatialPointsDataFrame}, this function will use a column called \code{colors}
 and apply these to the symbols.
 
 Silently, one hidden object is made, \code{.quickPlot} in the
@@ -265,7 +264,7 @@ is required, subsequent to a \code{new = FALSE} additional plot.
 This function is optimized to allow modular Plotting. This means that several
 behaviours will appear unusual.
 For instance, if a first call to \code{Plot} is made, the legend will reflect
-the current color scheme. If a second or subsequent call to \code{Plot} is
+the current colour scheme. If a second or subsequent call to \code{Plot} is
 made with the same object but with different colours (e.g., with \code{cols}),
 the legend will not update. This behaviour is made with the decision that the
 original layer takes precedence and all subsequent plots to that same frame

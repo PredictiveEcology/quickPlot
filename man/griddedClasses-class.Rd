@@ -13,7 +13,7 @@ This class is the union of several spatial objects from \pkg{raster} and
 Members:
 
 \itemize{
-  \item \code{RasterLayer}, \code{RasterLayerSparse}, \code{RasterStack};
+\item \code{RasterLayer}, \code{RasterLayerSparse}, \code{RasterStack};
 }
 
 Notably missing is \code{RasterBrick}, for now.

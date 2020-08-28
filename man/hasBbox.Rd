@@ -2,12 +2,12 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{.hasBbox}
 \alias{.hasBbox}
-\title{Test whether class has bbox method}
+\title{Test whether class has \code{bbox} method}
 \usage{
 .hasBbox(z, objClass, objName, objEnv)
 }
 \arguments{
-\item{z}{Logical, whether this object is a SpatialObject}
+\item{z}{Logical, whether this object is a \code{SpatialObject}}
 
 \item{objClass}{The class of the object}
 

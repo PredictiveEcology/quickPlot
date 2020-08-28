@@ -17,13 +17,13 @@ directory on your system.
 }
 \details{
 \itemize{
-  \item \code{DEM.tif}: converted to a a small number of discrete levels
-        (in 100m hypothetical units).
-  \item \code{habitatQuality.tif}: made to look like a continuous habitat surface,
-         rescaled to 0 to 1.
-  \item \code{forestAge.tif}: rescaled to possible forest ages in a boreal forest setting.
-  \item \code{forestCover.tif}: rescaled to possible forest cover in a boreal forest setting.
-  \item \code{percentPine.tif}: rescaled to percentages.
+\item \code{DEM.tif}: converted to a a small number of discrete levels
+(in 100m hypothetical units).
+\item \code{habitatQuality.tif}: made to look like a continuous habitat surface,
+rescaled to 0 to 1.
+\item \code{forestAge.tif}: rescaled to possible forest ages in a boreal forest setting.
+\item \code{forestCover.tif}: rescaled to possible forest cover in a boreal forest setting.
+\item \code{percentPine.tif}: rescaled to percentages.
 }
 }
 \keyword{maps}

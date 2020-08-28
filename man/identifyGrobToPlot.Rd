@@ -11,22 +11,20 @@
 }
 \arguments{
 \item{toPlot}{The object to plot. Should be a single layer if from a multi-layer
-object such as a RasterStack.}
+object such as a \code{RasterStack}.}
 
-\item{sGrob}{quickPlot grob object}
+\item{sGrob}{\code{quickPlot} grob object}
 
 \item{takeFromPlotObj}{Logical. Should the data come from the argument passed
-into Plot (\code{TRUE}), or from the (\code{.quickPlotEnv})
-(\code{FALSE}).}
+into \code{Plot} (\code{TRUE}), or from the (\code{.quickPlotEnv}) (\code{FALSE}).}
 }
 \description{
 Internal function.
 }
 \details{
-Because the Plot function can use the global environment as a source of
-objects to plot, not just the call itself, this function identifies where
-the data for the grob should come from, the current call or the global
-environment.
+Because the \code{Plot} function can use the global environment as a source of
+objects to plot, not just the call itself, this function identifies where the
+data for the grob should come from, the current call or the global environment.
 }
 \author{
 Eliot McIntire

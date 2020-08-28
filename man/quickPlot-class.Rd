@@ -8,10 +8,10 @@
 \description{
 This class contains all necessary information to build a Plot on a device,
 except the actual data. Thus, this class differs notably from the grid package,
-which keeps a copy of all data *and* information in a hidden location for further
+which keeps a copy of all data \emph{and} information in a hidden location for further
 access for rebuilding, erasing etc. This difference allows the Plot function to
 be much faster than using the grid methodology directly. The cost to this speed
-gain is that the objects *must* be available, by name, in the .GlobalEnv.
+gain is that the objects \emph{must} be available, by name, in the \code{.GlobalEnv}.
 }
 \details{
 This class contains two slots, one for the overall arrangement of the plots within
@@ -27,7 +27,7 @@ adjust the axes. \code{size} adjusts point size in a
 original \code{Plot} call for each individual object. Multiple
 entries can be used, but they must be named list elements
 and they must match the \code{...} items to plot. This is true
-for a RasterStack also, i.e., the list of named elements
+for a \code{RasterStack} also, i.e., the list of named elements
 must be the same length as the number of layers being
 plotted. The naming convention used is: \code{RasterStackName$layerName},
 i.e, \code{landscape$DEM}.
@@ -37,7 +37,7 @@ i.e, \code{landscape$DEM}.
 \describe{
 \item{\code{arr}}{An .arrangement object}
 
-\item{\code{quickPlotGrobList}}{list. A list of lists of .quickPlotGrob objects}
+\item{\code{quickPlotGrobList}}{list. A list of lists of \code{.quickPlotGrob} objects}
 }}
 
 \seealso{

@@ -8,8 +8,8 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
 URL:
     http://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 0.1.6.9003
-Date: 2020-08-28
+Version: 0.1.7
+Date: 2020-08-31
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
     role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
@@ -53,6 +53,7 @@ License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
 ByteCompile: yes
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Collate: 
     'environment.R'

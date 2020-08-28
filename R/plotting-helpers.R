@@ -237,7 +237,7 @@ setMethod(
 #' @param plotObjects list. Any plot objects.
 #'
 #' @param plotArgs list. Any arguments that the the grid package can accept for
-#' the specific grob types, e.g., rasterGrob, polygonGrob, etc.
+#' the specific grob types, e.g., `rasterGrob`, `polygonGrob`, etc.
 #'
 #' @param whichQuickPlottables  Logical indicating which objects in the
 #' \code{Plot} call can be plotted by \code{Plot}.
@@ -245,8 +245,8 @@ setMethod(
 #' @param ... additional arguments. Currently nothing.
 #'
 #' @return A \code{\link{.quickPlot}} object, which has 2 slots, one for the plot arrangement
-#' (i.e., layout and dimensions) and one for all of the \code{quickPlotGrobs}
-#' (stored as a quickPlotGrobList of lists \code{.quickPlotGrob} objects).
+#' (i.e., layout and dimensions) and one for all of the `quickPlotGrobs`
+#' (stored as a `quickPlotGrobList` of lists `.quickPlotGrob` objects).
 #'
 #' @author Eliot McIntire
 #' @export
@@ -393,16 +393,16 @@ setMethod(
     return(newPlots)
 })
 
-#' Convert \code{plotArgs} to list of lists
+#' Convert `plotArgs` to list of lists
 #'
-#' Internal function. Take the inputs as plotArgs to the Plot function, and make
-#' them a list of length \code{numQuickPlotObjects} entries of lists.
+#' Internal function. Take the inputs as `plotArgs` to the Plot function, and make
+#' them a list of length `numQuickPlotObjects` entries of lists.
 #'
 #' @inheritParams .makeQuickPlot
 #'
-#' @param numQuickPlotObjects Numeric. The number of \code{.quickPlotObjects}.
-#'                 This can't easily be deduced from the \code{plotArgs} because
-#'                 of the \code{RasterStack}s. So passed manually.
+#' @param numQuickPlotObjects Numeric. The number of `.quickPlotObjects`.
+#'                 This can't easily be deduced from the `plotArgs` because
+#'                 of the `RasterStack`s. So passed manually.
 #'
 #' @author Eliot McIntire
 #' @include plotting-classes.R
@@ -675,26 +675,23 @@ setMethod(
 
 #' Parse arguments and find environments
 #'
-#' Internal function used within objectNames.
+#' Internal function used within `objectNames`.
 #'
-#' @param y  A character representation of the arguments passed to a function,
-#'           e.g., \code{Plot}.
+#' @param y  A character representation of the arguments passed to a function, e.g., `Plot`.
 #'
-#' @param e  Environment in which the function (e.g., \code{Plot}) was called.
+#' @param e  Environment in which the function (e.g., `Plot`) was called.
 #'
-#' @param eminus1  The parent environment of \code{e}.
+#' @param eminus1  The parent environment of `e`.
 #'
-#' @return A list of length 2, with names \code{objs} and \code{envs} giving the
-#' standardized representation (i.e., replacing \code{[[]]} with \code{$}
-#' notation for objects) of objects and their layers (if \code{RasterStacks}).
+#' @return A list of length 2, with names `objs` and `envs` giving the
+#' standardized representation (i.e., replacing `[[]]` with `$` notation for objects) of objects
+#' and their layers (if `RasterStack`s).
 #'
+#' @author Eliot McIntire and Alex Chubaty
 #' @importFrom grDevices dev.cur
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname parseArgs
-#' @author Eliot McIntire and Alex Chubaty
-#'
-# igraph exports %>% from magrittr
 .parseArgs <- function(y, e, eminus1) {
   elems <- list()
   i <- 1
@@ -923,7 +920,7 @@ setMethod(
 
 #' Importing some grid functions
 #'
-#' Currently only the gpar function is imported. This is a convenience so that users
+#' Currently only the `gpar` function is imported. This is a convenience so that users
 #' can change \code{Plot} arguments without having to load the entire grid package.
 #'
 #' @inheritParams grid::gpar
@@ -946,19 +943,19 @@ setMethod("gpar",
             return(grid::gpar(...))
 })
 
-#' Internal functions used by Plot
+#' Internal functions used by `Plot`
 #'
-#' Extract colors, legends and other things from object, and convert to a plotGrob
+#' Extract colours, legends and other things from object, and convert to a `plotGrob`.
 #'
 #' @param grobToPlot Graphical object to plot
-#' @param sGrob quickPlotGrob object
-#' @param takeFromPlotObj Logical indicating whether data for grobToPlot should be found in
+#' @param sGrob `quickPlotGrob` object
+#' @param takeFromPlotObj Logical indicating whether data for `grobToPlot` should be found in
 #'        current call to Plot or from disk
 #' @param arr An arrangement object
 #' @param newArr Logical, whether there is a new arrangement happening
-#' @param quickPlotGrobCounter Numeric. A counter. No meaning outside Plot function.
+#' @param quickPlotGrobCounter Numeric. A counter. No meaning outside `Plot` function.
 #' @param subPlots Character. Name of plot area.
-#' @param cols Color vector.
+#' @param cols Colour vector.
 #'
 #' @aliases PlotHelpers
 #' @author Eliot McIntire
@@ -968,7 +965,7 @@ setMethod("gpar",
 #' @rdname Plot-internal
 #'
 setGeneric(".preparePlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-                                                 quickPlotGrobCounter, subPlots, cols)
+                                        quickPlotGrobCounter, subPlots, cols)
   standardGeneric(".preparePlotGrob")
 )
 
@@ -1037,7 +1034,7 @@ setMethod(
 
     }
 
-    # This handles SpatialPointsDataFrames with column "color"
+    # This handles SpatialPointsDataFrames with column "colour"
     if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
       sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
 
@@ -1071,7 +1068,7 @@ setMethod(
   return(zMat)
 })
 
-#' @param whPlotFrame Numeric. Which plot within the quickPlotGrobPlots object.
+#' @param whPlotFrame Numeric. Which plot within the `quickPlotGrobPlots` object.
 #'
 #' @include plotting-classes.R
 #' @aliases PlotHelpers
@@ -1130,7 +1127,7 @@ setMethod(
     return(list(x = xaxis, y = yaxis))
 })
 
-#' @param quickSubPlots List of many quickPlotGrobs
+#' @param quickSubPlots List of many `quickPlotGrobs`
 #' @param isBaseSubPlot Logical. Is the currently being plotted object a base layer
 #' @param isNewPlot Logical. Is the currently being plotted object a new, additional plot
 #' @param isReplot Logical. Is the currently being plotted object a replot due to something
@@ -1453,17 +1450,15 @@ setMethod(
 #'
 #' Internal function.
 #'
-#' Because the Plot function can use the global environment as a source of
-#' objects to plot, not just the call itself, this function identifies where
-#' the data for the grob should come from, the current call or the global
-#' environment.
+#' Because the `Plot` function can use the global environment as a source of
+#' objects to plot, not just the call itself, this function identifies where the
+#' data for the grob should come from, the current call or the global environment.
 #'
 #' @param toPlot The object to plot. Should be a single layer if from a multi-layer
-#'               object such as a RasterStack.
-#' @param sGrob quickPlot grob object
+#'               object such as a `RasterStack`.
+#' @param sGrob `quickPlot` grob object
 #' @param takeFromPlotObj Logical. Should the data come from the argument passed
-#'                        into Plot (\code{TRUE}), or from the (\code{.quickPlotEnv})
-#'                        (\code{FALSE}).
+#'                        into `Plot` (`TRUE`), or from the (`.quickPlotEnv`) (`FALSE`).
 #'
 #' @author Eliot McIntire
 #' @include plotting-classes.R
@@ -1508,17 +1503,18 @@ setMethod(
 
 #' Prepare raster for plotting
 #'
-#' Internal function. Takes a raster .quickPlotGrob, and converts zoomExtent into
-#' a zoom, and legendRange into a legend.
-#' Then calculates the maxpixels to plot for speed.
+#' Internal function. Takes a raster \code{.quickPlotGrob}, and converts \code{zoomExtent} into
+#' a zoom, and \code{legendRange} into a legend.
+#' Then calculates the \code{maxpixels} to plot for speed.
 #'
-#' @param grobToPlot .quickPlotGrob
+#' @param grobToPlot A \code{.quickPlotGrob} object.
 #'
 #' @param zoomExtent an extent object
 #'
 #' @param legendRange a numeric vector of length >=2 indicating the desired legend range.
 #'
-#' @param takeFromPlotObj logical. Should the object be found in the Plot call or .GlobalEnv
+#' @param takeFromPlotObj logical. Should the object be found in the \code{Plot} call or
+#'   \code{.GlobalEnv}
 #'
 #' @param arr an \code{.arrangement} object
 #'
@@ -2380,12 +2376,12 @@ setMethod(
   return(list(wholeVp = wholeVp, extents = extents))
 }
 
-#' Test whether class has bbox method
+#' Test whether class has \code{bbox} method
 #'
 #' For internal use only.
 #'
 #' @rdname hasBbox
-#' @param z Logical, whether this object is a SpatialObject
+#' @param z Logical, whether this object is a \code{SpatialObject}
 #' @param objClass The class of the object
 #' @param objName The character string name of the object
 #' @param objEnv The environment where the object can be found
@@ -2410,22 +2406,21 @@ setMethod(
   }
 }
 
-#' Convert pairs of coordinates to SpatialLines
+#' Convert pairs of coordinates to `SpatialLines`
 #'
 #' This will convert 2 objects whose coordinates can be extracted with \code{coordinates}
-#' (e.g., \code{sp::SpatialPoints*})
-#' to a single SpatialLines
-#' object. The first object is treated as the "to" or destination, and the
-#' second object the "from" or source. This can be used to represent
-#' directional SpatialLines, especially with with arrow heads, as in
-#' \code{Plot(sl, length = 0.1)}
+#' (e.g., `sp::SpatialPoints*`) to a single `SpatialLines` object.
+#' The first object is treated as the "to" (destination), and the second object the "from" (source).
+#' This can be used to represent directional `SpatialLines`, especially with with arrow heads,
+#' as in `Plot(sl, length = 0.1)`.
+#'
+#' @param sp1 a `SpatialPoints*` object
+#' @param from a `SpatialPoints*` object. Optional. If not provided, then the function will
+#'             attempt to find the "previous" coordinates as columns (`prevX`, `prevY`)
+#'             in the `sp1` object.
 #'
 #' @export
-#' @importFrom sp SpatialLines Lines Line coordinates
-#' @param sp1 SpatialPoints* object
-#' @param from SpatialPoints* object. Optional. If not provided, then the function
-#'             will attempt to find the "previous" coordinates as columns
-#'             (\code{prevX}, \code{prevY}) in the \code{sp1} object.
+#' @importFrom sp coordinates Line Lines SpatialLines
 #' @examples
 #' caribou <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
 #'                                         y = stats::runif(1e1, -50, 50)))
@@ -2449,26 +2444,25 @@ sp2sl <- function(sp1, from) {
   SpatialLines(l)
 }
 
-#' Thin a polygon using \code{fastshp::thin}
+#' Thin a polygon using `fastshp::thin`
 #'
-#' For visualizing, it is sometimes useful to remove points in Spatial* objects.
+#' For visualizing, it is sometimes useful to remove points in `Spatial*` objects.
 #' This will change the geometry, so it is not recommended for computation.
-#' This is similar to \code{rgeos::gSimplify} and \code{sf::st_simplify},
+#' This is similar to `rgeos::gSimplify` and `sf::st_simplify`,
 #' but faster than both (see examples) for large shapefiles, particularly if
 #' \code{returnDataFrame} is \code{TRUE}.
 #' \emph{\code{thin} will not attempt to preserve topology.}
-#' It is strictly for making smaller polygons for the purpose (likely)
-#' of visualizing more quickly.
+#' It is strictly for making smaller polygons for the (likely) purpose of visualizing more quickly.
 #'
-#' @param x A Spatial* object
+#' @param x A `Spatial*` object
 #' @param tolerance Maximum allowable distance for a point to be removed.
 #' @param returnDataFrame If \code{TRUE}, this will return a list of 3 elements,
 #'        \code{xyOrd}, \code{hole}, and \code{idLength}.
 #'        If \code{FALSE} (default), it will return a \code{SpatialPolygons} object.
 #' @param minCoordsToThin If the number of coordinates is smaller than this number,
 #'        then thin will just pass through, though it will take the time required to
-#'        calculate how many points there are (which is not NROW(coordinates(x)) for
-#'        a SpatialPolygon)
+#'        calculate how many points there are (which is not `NROW(coordinates(x))` for
+#'        a `SpatialPolygon`)
 #' @param ... Passed to methods (e.g., \code{maxNumPolygons})
 #' @param maxNumPolygons For speed, \code{thin} can also simply remove some of the
 #'        polygons. This is likely only a reasonable thing to do if there are
@@ -2671,9 +2665,11 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   message("No method for that class of object exists. See methods('thin') to see current methods")
 }
 
-#' Fortify - i.e,. convert an arbitrary object to a data.frame-like object
+#' Fortify
 #'
-#' This only deals with SpatialPolygons.
+#' Convert an arbitrary object to a `data.frame`-like object.
+#'
+#' @note This only deals with `SpatialPolygons` objects.
 #'
 #' @rdname fortify
 #' @name fortify
@@ -2756,11 +2752,10 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 
 .polygonSeq <- function(polygon, maxNumPolygons) {
   if (is.numeric(polygon@data$Shape_Area)) {
-    which(polygon@data$Shape_Area>(sort(polygon@data$Shape_Area, decreasing = TRUE)[maxNumPolygons]))
+    which(polygon@data$Shape_Area > (sort(polygon@data$Shape_Area, decreasing = TRUE)[maxNumPolygons]))
   } else {
     round(seq(1, length(polygon), length.out = maxNumPolygons))
   }
-
 }
 
 .createPolygonGrob <- function(gp, xyOrd) {
@@ -2774,11 +2769,9 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   ),
   gp = gp,
   cl = "plotPoly")
-
 }
 
 .showingOnlyMessage <- function(numShowing, totalAvailable) {
   message("Showing only ", numShowing, " of ",
           totalAvailable," polygons in this view. See options('quickPlot.maxNumPolygons')")
-
 }

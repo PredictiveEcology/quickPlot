@@ -4,7 +4,7 @@
 \alias{.makeColorMatrix}
 \alias{makeColourMatrix}
 \alias{.makeColorMatrix,griddedClasses,Extent,numeric-method}
-\title{Convert Raster to color matrix usable by raster function for plotting}
+\title{Convert Raster to colour matrix usable by raster function for plotting}
 \usage{
 .makeColorMatrix(
   grobToPlot,
@@ -45,12 +45,12 @@ the data bounds contained within the \code{grobToPlot}.}
 \item{cols}{Colours specified in a way that can be understood directly
 or by \code{\link{colorRampPalette}}.}
 
-\item{na.color}{Character string indicating the color for \code{NA} values.
+\item{na.color}{Character string indicating the colour for \code{NA} values.
 Default transparent.}
 
-\item{zero.color}{Character string indicating the color for zero values,
+\item{zero.color}{Character string indicating the colour for zero values,
 when zero is the minimum value.
-Otherwise, it is treated as any other color.
+Otherwise, it is treated as any other colour.
 Default transparent.
 Use \code{NULL} if zero should be the value given to it
 by the \code{colortable} associated with the raster.}

@@ -6,7 +6,7 @@
 \alias{.quickPlotObjects}
 \title{The \code{.quickPlotObjects} class}
 \description{
-This class contains the union of spatialObjects and several other plot-type objects.
+This class contains the union of \code{spatialObjects} and several other plot-type objects.
 Currently, this includes \code{SpatialPoints*}, \code{SpatialPolygons*},
 \code{SpatialLines*}, \code{RasterLayer}, \code{RasterStack}, and \code{ggplot} objects.
 These are the object classes that the \code{\link{Plot}} function can handle.

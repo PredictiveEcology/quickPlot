@@ -16,7 +16,7 @@
 #' \tabular{ll}{
 #'   \strong{Unions of existing classes:}\tab \cr
 #'   \code{\link{.quickPlottables}} \tab The union of all object classes Plot can accept\cr
-#'   \code{\link{.quickPlotObjects}} \tab The union of spatialObjects and several others\cr
+#'   \code{\link{.quickPlotObjects}} \tab The union of \code{spatialObjects} and several others\cr
 #'   \code{\link{spatialObjects}} \tab The union of several spatial classes\cr
 #' }
 #'

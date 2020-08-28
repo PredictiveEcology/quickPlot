@@ -13,7 +13,7 @@ gpar(...)
 \item{...}{ Any number of named arguments. }
 }
 \description{
-Currently only the gpar function is imported. This is a convenience so that users
+Currently only the \code{gpar} function is imported. This is a convenience so that users
 can change \code{Plot} arguments without having to load the entire grid package.
 }
 \seealso{

@@ -3,7 +3,7 @@
 \name{fortify}
 \alias{fortify}
 \alias{.fortify}
-\title{Fortify - i.e,. convert an arbitrary object to a data.frame-like object}
+\title{Fortify}
 \usage{
 .fortify(
   x,
@@ -13,6 +13,9 @@
 )
 }
 \description{
-This only deals with SpatialPolygons.
+Convert an arbitrary object to a \code{data.frame}-like object.
+}
+\note{
+This only deals with \code{SpatialPolygons} objects.
 }
 \keyword{internal}

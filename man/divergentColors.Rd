@@ -30,11 +30,11 @@ divergentColors(
 \item{end.color}{End colour to be passed to \code{colorRampPalette}.}
 
 \item{min.value}{Numeric minimum value corresponding to \code{start.colour}.
-If attempting to change the color of a \code{RasterLayer},
+If attempting to change the colour of a \code{RasterLayer},
 this can be set to \code{minValue(RasterObject)}.}
 
 \item{max.value}{Numeric maximum value corresponding to \code{end.colour}.
-If attempting to change the color of a \code{RasterLayer},
+If attempting to change the colour of a \code{RasterLayer},
 this can be set to \code{maxValue(RasterObject)}.}
 
 \item{mid.value}{Numeric middle value corresponding to \code{mid.colour}.
@@ -47,7 +47,7 @@ Defaults to \code{"white"}.}
 A diverging colour palette.
 }
 \description{
-Creates a palette for the current session for a divergent-color graphic with
+Creates a palette for the current session for a divergent-colour graphic with
 a non-symmetric range.
 Based on ideas from Maureen Kennedy, Nick Povak, and Alina Cansler.
 }

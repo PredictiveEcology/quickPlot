@@ -9,7 +9,7 @@ whereInStack(name, whFrame = -1)
 \arguments{
 \item{name}{An object name to find in the call stack}
 
-\item{whFrame}{A numeric indicating which sys.frame (by negative number) to start searching in}
+\item{whFrame}{A numeric indicating which \code{sys.frame} (by negative number) to start searching in.}
 }
 \value{
 The environment that is in the call stack where the object exists, that is closest to the

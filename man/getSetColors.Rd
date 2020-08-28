@@ -47,14 +47,14 @@ setColors(object, value, n)
 \item{...}{Additional arguments to \code{colorRampPalette}.}
 
 \item{n}{An optional vector of values specifying the number
-of levels from which to interpolate the color palette.}
+of levels from which to interpolate the colour palette.}
 
-\item{value}{Named list of hex color codes (e.g., from
+\item{value}{Named list of hex colour codes (e.g., from
 \code{RColorBrewer::brewer.pal}), corresponding to the names
 of \code{RasterLayer}s in \code{x}.}
 }
 \value{
-Returns a named list of colors.
+Returns a named list of colours.
 
 Returns a Raster with the \code{colortable} slot set to \code{values}.
 }
@@ -62,7 +62,7 @@ Returns a Raster with the \code{colortable} slot set to \code{values}.
 Get and set colours for plotting \code{Raster*} objects
 
 \code{setColors} works as a replacement method or a normal function call.
-This function can accept \code{RColorBrewer} colors by name. See examples.
+This function can accept \code{RColorBrewer} colours by name. See examples.
 }
 \examples{
 library(igraph)
@@ -126,7 +126,7 @@ Plot(ras)
 \code{\link{setColors<-}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}}
 
 \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}},
-         \code{\link[grDevices:colorRamp]{colorRampPalette}}.
+\code{\link[grDevices:colorRamp]{colorRampPalette}}.
 }
 \author{
 Alex Chubaty

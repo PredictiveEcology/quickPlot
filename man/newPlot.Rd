@@ -10,7 +10,7 @@ newPlot(noRStudioGD = TRUE, ...)
 dev.useRSGD(useRSGD = FALSE)
 }
 \arguments{
-\item{noRStudioGD}{Logical Passed to dev.new. Default is TRUE to avoid using
+\item{noRStudioGD}{Logical Passed to \code{dev.new}. Default is TRUE to avoid using
 RStudio graphics device, which is slow.}
 
 \item{...}{Additional arguments.}
@@ -24,7 +24,7 @@ Open a new plotting window
 }
 \note{
 \code{\link{dev.new}} is supposed to be the correct way to open a new
-window in a platform-generic way; however, doesn't work in RStudio
+window in a platform-generic way; however, does not work in RStudio
 (\href{https://github.com/PredictiveEcology/SpaDES/issues/116}{SpaDES#116}).
 Use \code{dev.useRSGD(FALSE)} to avoid RStudio for the remainder of this session,
 and \code{dev.useRSGD(TRUE)} to use the RStudio graphics device.

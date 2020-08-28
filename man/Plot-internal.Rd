@@ -12,7 +12,7 @@
 \alias{.refreshGrob,.quickPlotGrob-method}
 \alias{.updateGrobGPTextAxis}
 \alias{.updateGrobGPTextAxis,.quickPlotGrob-method}
-\title{Internal functions used by Plot}
+\title{Internal functions used by \code{Plot}}
 \usage{
 .preparePlotGrob(
   grobToPlot,
@@ -103,24 +103,24 @@
 \arguments{
 \item{grobToPlot}{Graphical object to plot}
 
-\item{sGrob}{quickPlotGrob object}
+\item{sGrob}{\code{quickPlotGrob} object}
 
-\item{takeFromPlotObj}{Logical indicating whether data for grobToPlot should be found in
+\item{takeFromPlotObj}{Logical indicating whether data for \code{grobToPlot} should be found in
 current call to Plot or from disk}
 
 \item{arr}{An arrangement object}
 
 \item{newArr}{Logical, whether there is a new arrangement happening}
 
-\item{quickPlotGrobCounter}{Numeric. A counter. No meaning outside Plot function.}
+\item{quickPlotGrobCounter}{Numeric. A counter. No meaning outside \code{Plot} function.}
 
 \item{subPlots}{Character. Name of plot area.}
 
-\item{cols}{Color vector.}
+\item{cols}{Colour vector.}
 
-\item{whPlotFrame}{Numeric. Which plot within the quickPlotGrobPlots object.}
+\item{whPlotFrame}{Numeric. Which plot within the \code{quickPlotGrobPlots} object.}
 
-\item{quickSubPlots}{List of many quickPlotGrobs}
+\item{quickSubPlots}{List of many \code{quickPlotGrobs}}
 
 \item{isBaseSubPlot}{Logical. Is the currently being plotted object a base layer}
 
@@ -156,7 +156,7 @@ and upper bounds of a legend (i.e., \code{1:10} or
 the data bounds contained within the \code{grobToPlot}.}
 
 \item{plotArgs}{list. Any arguments that the the grid package can accept for
-the specific grob types, e.g., rasterGrob, polygonGrob, etc.}
+the specific grob types, e.g., \code{rasterGrob}, \code{polygonGrob}, etc.}
 
 \item{nColumns}{Numeric, length 1, indicating how many columns are in the device arrangement}
 
@@ -166,7 +166,7 @@ the specific grob types, e.g., rasterGrob, polygonGrob, etc.}
 \code{Plot} is currently being plotted, i.e., a counter of sorts.}
 }
 \description{
-Extract colors, legends and other things from object, and convert to a plotGrob
+Extract colours, legends and other things from object, and convert to a \code{plotGrob}.
 }
 \author{
 Eliot McIntire

@@ -19,7 +19,7 @@
 \item{plotObjects}{list. Any plot objects.}
 
 \item{plotArgs}{list. Any arguments that the the grid package can accept for
-the specific grob types, e.g., rasterGrob, polygonGrob, etc.}
+the specific grob types, e.g., \code{rasterGrob}, \code{polygonGrob}, etc.}
 
 \item{whichQuickPlottables}{Logical indicating which objects in the
 \code{Plot} call can be plotted by \code{Plot}.}
@@ -29,7 +29,7 @@ the specific grob types, e.g., rasterGrob, polygonGrob, etc.}
 \value{
 A \code{\link{.quickPlot}} object, which has 2 slots, one for the plot arrangement
 (i.e., layout and dimensions) and one for all of the \code{quickPlotGrobs}
-(stored as a quickPlotGrobList of lists \code{.quickPlotGrob} objects).
+(stored as a \code{quickPlotGrobList} of lists \code{.quickPlotGrob} objects).
 }
 \description{
 Builds a \code{.quickPlot} object from a list of objects.

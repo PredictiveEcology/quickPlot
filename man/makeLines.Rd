@@ -16,8 +16,8 @@ makeLines(from, to)
 }
 \value{
 A \code{SpatialLines} object. When this object is used within a
-        \code{Plot} call and the \code{length} argument is specified, then
-        arrow heads will be drawn. See examples.
+\code{Plot} call and the \code{length} argument is specified, then
+arrow heads will be drawn. See examples.
 }
 \description{
 The primary conceived usage of this is to draw arrows following the

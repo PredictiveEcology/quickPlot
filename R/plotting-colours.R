@@ -3,7 +3,7 @@
 #'
 #' @param object     A \code{Raster*} object.
 #'
-#' @return Returns a named list of colors.
+#' @return Returns a named list of colours.
 #'
 #' @aliases getColours
 #' @author Alex Chubaty
@@ -46,14 +46,14 @@ setMethod("getColors",
 })
 
 #' \code{setColors} works as a replacement method or a normal function call.
-#' This function can accept \code{RColorBrewer} colors by name. See examples.
+#' This function can accept \code{RColorBrewer} colours by name. See examples.
 #'
 #' @param ...   Additional arguments to \code{colorRampPalette}.
 #'
 #' @param n     An optional vector of values specifying the number
-#'              of levels from which to interpolate the color palette.
+#'              of levels from which to interpolate the colour palette.
 #'
-#' @param value  Named list of hex color codes (e.g., from
+#' @param value  Named list of hex colour codes (e.g., from
 #'               \code{RColorBrewer::brewer.pal}), corresponding to the names
 #'               of \code{RasterLayer}s in \code{x}.
 #'
@@ -91,7 +91,7 @@ setReplaceMethod(
       # isInteger <- all(na.omit(object[])%%1==0)
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
         if (n != NROW(object@data@attributes[[1]])) {
-          message("Number of colors not equal number of values: interpolating")
+          message("Number of colours not equal number of values: interpolating")
           n <- NROW(object@data@attributes[[1]])
         }
       }
@@ -117,7 +117,7 @@ setReplaceMethod(
       pal <- colorRampPalette(value, alpha = TRUE, ...)
       object@legend@colortable <- pal(n)
     }
-    if (!is.character(object@legend@colortable)) stop("setColors needs color character values")
+    if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
     return(object)
 })
 
@@ -131,7 +131,8 @@ setReplaceMethod(
     isFac <- if (!raster::is.factor(object)) {
       FALSE
     } else {
-      if (all(na.omit(object[])%%1==0)) { # some factor rasters are actually real number -- makes no sense
+      if (all(na.omit(object[]) %% 1 == 0)) {
+        ## some factor rasters are actually real number -- makes no sense
         TRUE
       } else {
         FALSE
@@ -145,7 +146,7 @@ setReplaceMethod(
     }
 
     setColors(object, n = n) <- value
-    if (!is.character(object@legend@colortable)) stop("setColors needs color character values")
+    if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
     return(object)
 })
 
@@ -225,7 +226,7 @@ setMethod(
 })
 
 ################################################################################
-#' Convert Raster to color matrix usable by raster function for plotting
+#' Convert Raster to colour matrix usable by raster function for plotting
 #'
 #' Internal function.
 #'
@@ -245,12 +246,12 @@ setMethod(
 #' @param cols         Colours specified in a way that can be understood directly
 #'                     or by \code{\link{colorRampPalette}}.
 #'
-#' @param na.color     Character string indicating the color for \code{NA} values.
+#' @param na.color     Character string indicating the colour for \code{NA} values.
 #'                     Default transparent.
 #'
-#' @param zero.color   Character string indicating the color for zero values,
+#' @param zero.color   Character string indicating the colour for zero values,
 #'                     when zero is the minimum value.
-#'                     Otherwise, it is treated as any other color.
+#'                     Otherwise, it is treated as any other colour.
 #'                     Default transparent.
 #'                     Use \code{NULL} if zero should be the value given to it
 #'                     by the \code{colortable} associated with the raster.
@@ -287,7 +288,7 @@ setMethod(
 
     isFac <- FALSE
     if (any(raster::is.factor(grobToPlot)))
-      if (all(na.omit(grobToPlot[]%%1)==0))
+      if (all(na.omit(grobToPlot[] %% 1) == 0))
         isFac <- TRUE
     # It is 5x faster to access the min and max from the Raster than to
     # calculate it, but it is also often wrong... it is only metadata
@@ -341,7 +342,7 @@ setMethod(
 
     real <- any(na.omit(z) %% 1 != 0) # Test for real values or not
 
-    ## Deal with colors - This gets all combinations, real vs. integers,
+    ## Deal with colours - This gets all combinations, real vs. integers,
     ## with zero, with no zero, with NA, with no NA, not enough numbers,
     ## too many numbers
     maxNumCols <- 100
@@ -366,10 +367,10 @@ setMethod(
         lenColTable <- length(colTable)
 
         cols <- if ((nValues > lenColTable) & !isFac) { # nolint
-          # not enough colors, use colorRamp
+          # not enough colours, use colorRamp
           colorRampPalette(colTable)(nValues)
         } else if ((nValues <= lenColTable) | isFac) { # nolint
-          # one more color than needed:
+          # one more colour than needed:
           #   assume bottom is NA
           if (isFac) {
             factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
@@ -391,12 +392,12 @@ setMethod(
             colTable
           }
         } else if (nValues <= (lenColTable - 1)) {
-          # one more color than needed:
+          # one more colour than needed:
           #  assume bottom is NA
           na.color <- colTable[1] # nolint
           colTable[minz:maxz - minz + 2]
         } else if (nValues <= (lenColTable - 2)) {
-          # two more colors than needed,
+          # two more colours than needed,
           #  assume bottom is NA, second is white
           na.color <- colTable[1] # nolint
           zero.color <- colTable[2] # nolint
@@ -405,20 +406,22 @@ setMethod(
           colTable
         }
       } else {
-        # default color if nothing specified:
+        # default colour if nothing specified:
         cols <- rev(terrain.colors(nValues))
       }
     } else {
       if (is.character(cols) & (length(cols) == 1)) {
         if (cols %in% rownames(brewer.pal.info)) {
-          suppressWarnings(cols <- brewer.pal(nValues, cols))
+          suppressWarnings({
+            cols <- brewer.pal(nValues, cols)
+          })
         }
       }
       cols <- if (nValues > length(cols)) {
         colorRampPalette(cols)(nValues)
       } else if (nValues < length(cols)) {
         if ((minz + nValues - 1)  > length(cols)) { # nolint
-          # there are enough colors, but they don't start at 1
+          # there are enough colours, but they don't start at 1
           cols[minz:maxz - minz + 1 + max(0, 1 - minz)]
         } else {
           cols[minz:maxz + max(0, 1 - minz)]
@@ -428,7 +431,7 @@ setMethod(
       }
     }
 
-    # Colors are indexed from 1, as with all objects in R, but there
+    # colours are indexed from 1, as with all objects in R, but there
     # are generally zero values on the rasters, so shift according to
     # the minValue value, if it is below 1.
     # Shift it by 2, 1 to make the zeros into two, the other for the
@@ -438,7 +441,7 @@ setMethod(
     # This is particularly bad for numbers below 10.
     # Here, numbers below maxNumCols that are reals will be rescaled
     #  to max = 100.
-    # These are, of course, only used for the color matrix, not the
+    # These are, of course, only used for the colour matrix, not the
     #  values on the Raster.
 
     # Plotting works by making a maxNumCols value raster if
@@ -493,14 +496,14 @@ setMethod(
           if (length(getColors(grobToPlot)[[1]]) > 0) {
             cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
           } else {
-            # default color if nothing specified
+            # default colour if nothing specified
             cols <- rev(terrain.colors(maxzOrig - minzOrig + 1))
           }
         }
       }
     }
 
-    # here, the default color (transparent) for zero:
+    # here, the default colour (transparent) for zero:
     # if it is the minimum value, can be overridden.
 
     # if range of values is not within the legend range, then give them NA
@@ -528,9 +531,9 @@ setMethod(
     if (length(whichZeroLegend)) {
       cols[whichZeroLegend] <- zero.color
     }
-    cols <- c(na.color, cols) # make first index of colors be transparent
+    cols <- c(na.color, cols) # make first index of colours be transparent
 
-    # Convert numeric z to a matrix of hex colors
+    # Convert numeric z to a matrix of hex colours
     z <- matrix(
       cols[z], nrow = NROW(grobToPlot),
       ncol = ncol(grobToPlot), byrow = TRUE
@@ -545,7 +548,7 @@ setMethod(
 
 #' Divergent colour palette
 #'
-#' Creates a palette for the current session for a divergent-color graphic with
+#' Creates a palette for the current session for a divergent-colour graphic with
 #' a non-symmetric range.
 #' Based on ideas from Maureen Kennedy, Nick Povak, and Alina Cansler.
 #'
@@ -554,11 +557,11 @@ setMethod(
 #' @param end.color    End colour to be passed to \code{colorRampPalette}.
 #'
 #' @param min.value    Numeric minimum value corresponding to \code{start.colour}.
-#'                     If attempting to change the color of a \code{RasterLayer},
+#'                     If attempting to change the colour of a \code{RasterLayer},
 #'                     this can be set to \code{minValue(RasterObject)}.
 #'
 #' @param max.value    Numeric maximum value corresponding to \code{end.colour}.
-#'                     If attempting to change the color of a \code{RasterLayer},
+#'                     If attempting to change the colour of a \code{RasterLayer},
 #'                     this can be set to \code{maxValue(RasterObject)}.
 #' @param mid.value    Numeric middle value corresponding to \code{mid.colour}.
 #'                     Default is \code{0}.
