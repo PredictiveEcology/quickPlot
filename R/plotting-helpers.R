@@ -2081,13 +2081,50 @@ setMethod(
           xmax(extent(grobToPlot)) - xmin(extent(grobToPlot))) / 2.4e4
     }
 
-    if (is.null(gp$fill)) {
-      gp$fill <- rep(RColorBrewer::brewer.pal(8, "Set2"), length.out = length(grobToPlot))
-    }
-
     # For speed of plotting
     xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
                              returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
+
+    numPolys <- length(unique(xyOrd$xyOrd$poly))
+    numSubPolys <- length(unique(xyOrd$xyOrd$groups))
+    if (!is.null(col)) {
+      gp$fill <- col
+    }
+    theCols <- if (length(gp$fill) == 1 || is.null(gp$fill)) {
+      if (is.null(gp$fill)) {
+        pal <- "Set2"
+      } else {
+        pal <- col
+      }
+      if (pal %in% rownames(RColorBrewer::brewer.pal.info)) {
+        numCols <- RColorBrewer::brewer.pal.info[pal,"maxcolors"]
+      }
+      rep(RColorBrewer::brewer.pal(numCols, pal), length.out = numPolys)
+    } else {
+      if (length(gp$fill) < numPolys) {
+        message("not enough colours for each polygon (there are ",numPolys,"), recycling")
+        rep(gp$fill, length.out = numPolys)
+      } else if (length(gp$fill) > numPolys) {
+        message("more colours than number of polygons (there are ",numPolys,"), setting unique colors to sub-polygons (there are "
+                ,numSubPolys,")")
+        if (length(gp$fill) != numSubPolys) {
+          message("Incorrect number of colours for number of sub-polygons; recycling")
+        }
+        rep(gp$fill, length.out = numSubPolys)
+      } else {
+        gp$fill
+      }
+    }
+
+    if (length(gp$fill) <= numPolys) {
+      dtFill <- data.table(poly = seq(numPolys),
+                           col = theCols)
+      dtFill2 <- unique(xyOrd$xyOrd[, c("groups", "poly")])
+      dtFill2 <- dtFill[dtFill2, on = "poly"]
+      gp$fill <- dtFill2$col
+    } else if (length(gp$fill) < NROW(xyOrd$idLength)) {
+      gp$fill <- theCols
+    }
 
     polyGrob <- .createPolygonGrob(gp = gp, xyOrd = xyOrd)
     grid.draw(polyGrob, recording = FALSE)
@@ -2714,6 +2751,10 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
     lapply(i, length)
   })) / 2)
 
+  polyLength <- data.table(V1 = unlist(lapply(xyOrd.l, function(i) {
+    NROW(i)
+  })))
+
   numPolygons <- unlist(length(xyOrd.l))
   numPolygon <- unlist(lapply(xyOrd.l, length))
 
@@ -2722,6 +2763,9 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   }))
 
   groups <- rep(1:NROW(idLength), idLength$V1)
+  poly <- rep(1:NROW(polyLength), polyLength$V1)
+  poly <- rep(poly, idLength$V1)
+
   if (!simple | matchFortify) {
     # Polygons <- rep(rep(seq(numPolygons), numPolygon), idLength$V1) # sequential numbering
     Polygons <- rep(rep(IDs, numPolygon), idLength$V1) # actual ID labelling
@@ -2737,7 +2781,7 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
                       #group = paste0(as.character(Polygons), ".", as.character(Polygon)))) # the actual fortify
                       group = groups))
   } else {
-    out <- setDT(data.frame(x = xyOrd[,1], y = xyOrd[,2], groups = groups))
+    out <- setDT(data.frame(x = xyOrd[,1], y = xyOrd[,2], groups = groups, poly = poly))
     if (!simple) {
       set(out, , "order", orders)
       set(out, , "hole", holes)

@@ -93,6 +93,29 @@ test_that("Plot 1 is not error-free", {
   SpP87 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
   expect_silent(Plot(SpP87, new = TRUE))
 
+  M <- 2
+  polys1 <- lapply(seq(M), function(m) {
+    N <- 20
+    adds <- rep(1:N, each = 4)
+    x <- rep((c(0,0,1,1) + m ) * N , N)
+    y <- rep(c(0,1,1,0), N) + adds
+    polyNum <- adds
+    coords1 <- cbind(x, y, polyNum)
+    polys1 <- sp::Polygons(by(coords1, polyNum, function(coo) {
+      list(sp::Polygon(coo[, 1:2]))}), paste0("ss", m))#[], paste0("s", unique(coo[, 3])))
+
+    polys1
+  })
+  polys2 <- sp::SpatialPolygons(polys1, seq(M))
+  Plot(polys2, new = TRUE, col = c("red", "blue"))
+  Plot(polys2, new = TRUE, col = c("Set3"))
+  mess <- capture_messages(Plot(polys2, new = TRUE, col = c("red", "blue", "green")))
+  expect_true(sum(grepl("Incorrect", mess)) == 1)
+  mess <- capture_messages(Plot(polys2, new = TRUE, col = RColorBrewer::brewer.pal(8, "Set3")))
+  expect_true(sum(grepl("Incorrect", mess)) == 1)
+
+
+
   # test SpatialLines
   l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
   l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)

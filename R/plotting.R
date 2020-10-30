@@ -77,9 +77,25 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' character vector of length 1. i.e., this cannot be used to set many objects by keyword in
 #' the same Plot call. Default \code{terrain.color()}. See Details.
 #'
+<<<<<<< Updated upstream
 #' Some colouring will be automatic. If the object being plotted is a Raster, then
 #' this will take the \code{colorTable} slot (can be changed via \code{setColors()} or other ways).
 #' If this is a \code{SpatialPointsDataFrame}, this function will use a column called \code{colors}
+=======
+#' For \code{SpatialPolygons}, \code{cols} can accept \code{RColorBrewer} colors by keyword as a
+#' character vector of length 1. For more control, pass a vector of colours to \code{cols} or
+#' to \code{gp = gpar(fill = vectorOfColours)}.
+#' In this second approach, the length of the vectorOfColours can be either less then or equal
+#' to the number of polygons in the \code{SpatialPolygons} object -- each polygon within
+#' a \code{Polygons} object will share the same colour -- or it can be greater than this number
+#' to give a different colour to each \code{Polygon} (of which there can be MANY more than
+#' \code{Polygons}. \code{Plot} will recycle these colours if there are not enough. The order
+#' provided will be the order assigned to each \code{Polygons} or \code{Polygon} object.
+#'
+#' Some coloring will be automatic. If the object being plotted is a Raster, then
+#' this will take the colorTable slot (can be changed via setColors() or other ways).
+#' If this is a SpatialPointsDataFrame, this function will use a column called \code{colors}
+>>>>>>> Stashed changes
 #' and apply these to the symbols.
 #'
 #' Silently, one hidden object is made, \code{.quickPlot} in the
