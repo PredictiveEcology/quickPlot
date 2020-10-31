@@ -3,6 +3,7 @@ Known issues: https://github.com/PredictiveEcology/quickPlot/issues
 version 0.1.7
 =============
 * bugfixes including `dev` on windows
+* bugfix for colour of filling polygons. Now can use `cols` or `gp = gpar(fill = xx)`. Distinguishes between `Polygons` and `Polygon`
 
 version 0.1.6
 =============

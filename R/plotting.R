@@ -82,6 +82,17 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' If this is a \code{SpatialPointsDataFrame}, this function will use a column called \code{colors}
 #' and apply these to the symbols.
 #'
+#' For \code{SpatialPolygons}, \code{cols} can accept \code{RColorBrewer} colors by keyword as a
+#' character vector of length 1. For more control, pass a vector of colours to \code{cols} or
+#' to \code{gp = gpar(fill = vectorOfColours)}.
+#' In this second approach, the length of the vectorOfColours can be either less then or equal
+#' to the number of polygons in the \code{SpatialPolygons} object -- each polygon within
+#' a \code{Polygons} object will share the same colour -- or it can be greater than this number
+#' to give a different colour to each \code{Polygon} (of which there can be MANY more than
+#' \code{Polygons}. \code{Plot} will recycle these colours if there are not enough. The order
+#' provided will be the order assigned to each \code{Polygons} or \code{Polygon} object.
+#'
+#'
 #' Silently, one hidden object is made, \code{.quickPlot} in the
 #' \code{.quickPlotEnv} environment, which is used for arranging plots in the
 #' device window, and identifying the objects to be replotted if rearranging
