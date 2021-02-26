@@ -126,6 +126,7 @@ test_that("Plot 1 is not error-free", {
   expect_true(sum(grepl("Incorrect", mess)) == 1)
   mess <- capture_messages(Plot(polys2, new = TRUE, col = RColorBrewer::brewer.pal(8, "Set3")))
   expect_true(sum(grepl("Incorrect", mess)) == 1)
+  mess <- capture_messages(Plot(polys2, new = TRUE, gp = gpar(fill = "Set3")))
 
   # Test polygon with > 1e3 points to test the speedup parameter
   r <- 1

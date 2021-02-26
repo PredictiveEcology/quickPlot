@@ -2090,11 +2090,12 @@ setMethod(
     if (!is.null(col)) {
       gp$fill <- col
     }
-    theCols <- if (length(gp$fill) == 1 || is.null(gp$fill)) {
+    theCols <- if ((length(gp$fill) == 1 && gp$fill %in% rownames(RColorBrewer::brewer.pal.info)) ||
+                   is.null(gp$fill)) {
       if (is.null(gp$fill)) {
         pal <- "Set2"
       } else {
-        pal <- col
+        pal <- gp$fill
       }
       if (pal %in% rownames(RColorBrewer::brewer.pal.info)) {
         numCols <- RColorBrewer::brewer.pal.info[pal,"maxcolors"]
