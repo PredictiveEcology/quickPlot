@@ -200,8 +200,6 @@ test_that("Plot 1 is not error-free", {
 test_that("Unit tests for image content is not error-free", {
   skip_if_not_installed("visualTest")
 
-  skip_on_travis()
-
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
 
@@ -288,8 +286,6 @@ test_that("Unit tests for image content is not error-free", {
 
 test_that("Unit tests for plotting colors", {
   skip_if_not_installed("visualTest")
-
-  skip_on_travis()
 
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
@@ -384,8 +380,6 @@ test_that("Unit tests for plotting colors", {
 test_that("Unit tests for internal functions in Plot", {
   skip_if_not_installed("visualTest")
 
-  skip_on_travis()
-
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
   library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
 
@@ -461,8 +455,6 @@ test_that("Unit tests for internal functions in Plot", {
 
 test_that("Plot 2 is not error-free", {
   skip_if_not_installed("visualTest")
-
-  skip_on_travis()
 
   library(raster)
   library(visualTest)
@@ -634,8 +626,6 @@ test_that("Plot 2 is not error-free", {
 test_that("setColors is not error-free", {
   skip("Apparently color palettes are not universal")
 
-  skip_on_travis()
-
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
 
   tmpdir <- file.path(tempdir(), "test_setColors")
@@ -694,8 +684,6 @@ test_that("setColors is not error-free", {
 
 test_that("Plot with base is not error-free", {
   skip_if_not_installed("visualTest")
-
-  skip_on_travis()
 
   library(visualTest)
   library(raster)
@@ -893,9 +881,7 @@ test_that("Plot with base is not error-free", {
 })
 
 test_that("Plot messages and warnings and errors", {
-  skip_on_travis()
-
-  library(raster); on.exit(detach("package:raster"), add = TRUE)
+    library(raster); on.exit(detach("package:raster"), add = TRUE)
 
   rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
@@ -971,8 +957,6 @@ test_that("Plot - going through package coverage", {
 
 test_that("Plot lists", {
   skip_if_not_installed("visualTest")
-
-  skip_on_travis()
 
   library(ggplot2); #on.exit(detach("package:ggplot2"), add = TRUE)
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
