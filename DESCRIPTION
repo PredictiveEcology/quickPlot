@@ -39,8 +39,8 @@ Imports:
 Suggests:
     covr,
     fastshp,
-    hunspell,
     knitr,
+    png,
     rmarkdown,
     spelling,
     testthat (>= 1.0.2),

@@ -40,7 +40,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("png", "remotes")) ## png needed by Suggested package visualTest
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("covr")
         shell: Rscript {0}
