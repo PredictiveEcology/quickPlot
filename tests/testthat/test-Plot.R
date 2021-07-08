@@ -1,3 +1,28 @@
+## to regenerate tests/fingerprints/fingerprints.csv, set newFingerprints = TRUE
+newFingerprints <- FALSE
+fingerprintFile <- if (interactive()) {
+  file.path("tests", "fingerprints", "fingerprints.csv")
+} else {
+  file.path("..", "fingerprints", "fingerprints.csv") ## from tests/testthat/
+}
+fingerprints <- data.table::fread(fingerprintFile)
+r_version <- as.character(getRversion())
+sysname <- Sys.info()["sysname"][[1]]
+
+fingerprint <- function(id, rversion, sysname) {
+  fingerprints[test_id == id & r_version == rversion & sys_name == sysname, ][["value"]]
+}
+
+updateFingerprint <- function(newValue, fingerprints) {
+  cols <- grep("value", names(fingerprints), invert = TRUE, value = TRUE)
+  temp1 <- fingerprints[newValue, on = cols, nomatch = 0][, value := i.value]
+  set(temp1, NULL, "i.value", NULL)
+  temp2 <- fingerprints[!newValue, on = .(test_id, r_version, sys_name)]
+  fingerprints <- if (nrow(temp1)) rbind(temp1, temp2) else rbind(temp2, newValue)
+  return(fingerprints)
+}
+
+## block A
 test_that("Plot 1 is not error-free", {
   skip_if_not_installed("fastshp")
 
@@ -197,11 +222,12 @@ test_that("Plot 1 is not error-free", {
   if (file.exists("Rplots.pdf")) file.remove("Rplots.pdf")
 })
 
+## block B
 test_that("Unit tests for image content is not error-free", {
   skip_if_not_installed("visualTest")
 
-  library(raster); #on.exit(detach("package:raster"), add = TRUE)
-  library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
+  library(raster)
+  library(visualTest)
 
   tmpdir <- file.path(tempdir(), "test_Plot_imageContent")
   dir.create(tmpdir)
@@ -232,13 +258,13 @@ test_that("Unit tests for image content is not error-free", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(
-    Sys.info()["sysname"],
-    Darwin = if (getRversion() >= 4.1) "AE66D1992E64F131" else "BB1FC0E03E1E3B30",
-    Linux = if (getRversion() >= 4.1) "AE66D1992E64F131" else "BB1EC4E03E1E3B30",
-    Windows = if (getRversion() >= 4.1) "AE66D1992E64F131" else "BB1FC0E03E1E3B30"
-  )
+  test_id <- "B1"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
   ################################
 
@@ -251,12 +277,13 @@ test_that("Unit tests for image content is not error-free", {
   Plot(ras)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = if (getRversion() >= 4.1) "AE66D1992E64F131" else "BB1FC0E03E1E3B30",
-    Linux = if (getRversion() >= 4.1) "AE66D1992E64F131" else "BB1EC4E03E1E3B30",
-    Windows = if (getRversion() >= 4.1) "AE66D1992E64F131" else "BB1FC0E03E1E3B30"
-  )
+  test_id <- "B2"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
   #################
 
@@ -275,15 +302,17 @@ test_that("Unit tests for image content is not error-free", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = if (getRversion() >= 4.1) "FB9B846431996B68" else "EEC0913E4AE16E2E",
-    Linux = if (getRversion() >= 4.1) "FB9B846431996B68" else "EEC0913E4AE16E2E",
-    Windows = if (getRversion() >= 4.1) "FB9B846431996B68" else "EEC0911E4BE16E2E"
-  )
+  test_id <- "B3"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 })
 
+## block C
 test_that("Unit tests for plotting colors", {
   skip_if_not_installed("visualTest")
 
@@ -313,12 +342,13 @@ test_that("Unit tests for plotting colors", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = "BF6AC491C0663B66",
-    Linux = "BF6AC491C0663B36",
-    Windows = "BF4AC091C0663B77"
-  )
+  test_id <- "C1"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.002))
   ###################################
 
@@ -334,12 +364,13 @@ test_that("Unit tests for plotting colors", {
   Plot(rasStack, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = if (getRversion() >= 4.1) "B938649AC2CE939B" else "B93964CAC2C6939B",
-    Linux = if (getRversion() >= 4.1) "B938649AC2CE939B" else "B938649AC2C69B9B",
-    Windows = "B9386C9AC6C6939A" ## TODO
-  )
+  test_id <- "C2"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ######################################
@@ -351,12 +382,13 @@ test_that("Unit tests for plotting colors", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = "BF6AC491C0663B66",
-    Linux = "BF6AC491C06E3B26",
-    Windows = "BF6AC091C06E3B65"
-  )
+  test_id <- "C3"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ###########################################
@@ -367,21 +399,23 @@ test_that("Unit tests for plotting colors", {
   Plot(ras, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = "AB95D06E84916F71",
-    Linux = "BB95D06EC4916F30",
-    Windows = "AB95D06EC4916F31"
-  )
+  test_id <- "C4"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 8))
   unlink("test.png")
 })
 
+## block D
 test_that("Unit tests for internal functions in Plot", {
   skip_if_not_installed("visualTest")
 
-  library(raster); #on.exit(detach("package:raster"), add = TRUE)
-  library(visualTest); #on.exit(detach("package:visualTest"), add = TRUE)
+  library(raster)
+  library(visualTest)
 
   tmpdir <- file.path(tempdir(), "test_Plot_internal")
   dir.create(tmpdir)
@@ -406,12 +440,13 @@ test_that("Unit tests for internal functions in Plot", {
   Plot(ras, new = TRUE, speedup = 2e5)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = if (getRversion() >= 4.1) "AF8FD07480303F75" else "AF8FD07080307F75",
-    Linux = if (getRversion() >= 4.1) "AF8FD07480303F75" else "AF8FD07080307F75",
-    Windows = "AFCFD074C0302F74" ## TODO
-  )
+  test_id <- "D1"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   #######################################
@@ -425,12 +460,13 @@ test_that("Unit tests for internal functions in Plot", {
   suppressWarnings(Plot(ras, new = TRUE, speedup = 2e5))
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = "A0CB77708A30DF74",
-    Linux = "A0CB77708A30DF74",
-    Windows = "A0CF75708A30DF74"
-  )
+  test_id <- "D2"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   #######################################
@@ -444,15 +480,17 @@ test_that("Unit tests for internal functions in Plot", {
   Plot(ras, legendRange = 0:5, new = TRUE)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-    Darwin = "AF99D0E4C0653F64", ## TODO
-    Linux = if (getRversion() >= 4.1) "AF9BD0C690703B36" else "AF9BD0E481253F68",
-    Windows = "AF99D066C1273F60" ## TODO
-  )
+  test_id <- "D3"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 })
 
+## block E
 test_that("Plot 2 is not error-free", {
   skip_if_not_installed("visualTest")
 
@@ -488,44 +526,44 @@ test_that("Plot 2 is not error-free", {
   )
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = if (getRversion() >= 4.1) "AA56D529D1A9858F" else "AA68D51495C3D99D",
-                 Linux = if (getRversion() >= 4.1) "AA56D529D1A9858F" else "AA68D51495C3D99D",
-                 Windows = "AA68D51695C3D89D" ## TODO
-  )
+  test_id <- "E1"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 4))
 
   skip("Remainder are visual tests ... difficult to assess - see verbal expectations")
 
-  #dev(); on.exit(dev.off(), add = TRUE)
   clearPlot()
 
-  # 128 < vals < 1806
+  ## 128 < vals < 1806
   Plot(r) # Expect rainbow colors, lots of peach, little green
 
-  # -71 < vals < 1606
+  ## -71 < vals < 1606
   r1 <- r - 200
   clearPlot()
   Plot(r1) # Expect legend from below 0 to just above 1500
 
-  # 0 < vals <= 1
+  ## 0 < vals <= 1
   r1 <- r / max(getValues(r), na.rm = TRUE)
   clearPlot()
   Plot(r1, new = TRUE) # Expect legend from below 0.2 to exactly 1
 
-  # 0 <= vals < 1
+  ## 0 <= vals < 1
   r1 <- (r - min(getValues(r), na.rm = TRUE)) / max(getValues(r), na.rm = TRUE)
   clearPlot()
   Plot(r1, new = TRUE)# Expect legend from exactly 0 to above 0.8
 
-  # 0 <= vals <= 1
+  ## 0 <= vals <= 1
   r1 <- r - min(getValues(r), na.rm = TRUE)
   r1 <- r1 / max(getValues(r1), na.rm = TRUE)
   clearPlot()
   Plot(r1, new = TRUE)# Expect legend from exactly 0 to exactly 1
 
-  # 0, 1, 2, 3
+  ## 0, 1, 2, 3
   r1 <- raster(ncol = 3, nrow = 3)
   set.seed(234)
   r1[] <- sample(0:3, replace = TRUE, size = 9)
@@ -533,7 +571,7 @@ test_that("Plot 2 is not error-free", {
   Plot(r1, new = TRUE) # integers - 0, 1, 2 and 3 should line up with centre of
                        # each color, even though there is no peach in plot
 
-  # 0, 1 #
+  ## 0, 1 #
   r1 <- raster(ncol = 3, nrow = 3)
   r1[] <- sample(0:1, replace = TRUE, size = 9)
   clearPlot()
@@ -541,32 +579,32 @@ test_that("Plot 2 is not error-free", {
                        #  only Green and light grey
   Plot(r1, new = TRUE, zero.color = "black") # black zeros
 
-  # 0, 1, 2, 3, ... 30
+  ## 0, 1, 2, 3, ... 30
   r1 <- raster(ncol = 30, nrow = 30)
   r1[] <- sample(0:30, replace = TRUE, size = 900)
   Plot(r1, new = TRUE)
   Plot(r1, new = TRUE, zero.color = "black") # black zeros, some scattered
 
-  # black zeros, plus legend -10 to 40
+  ## black zeros, plus legend -10 to 40
   Plot(r1, new = TRUE, zero.color = "black", legendRange = c(-10, 40))
 
-  # 0, 1, 2, 3, 4, 5, 6
+  ## 0, 1, 2, 3, 4, 5, 6
   r1 <- raster(ncol = 30, nrow = 30)
   r1[] <- sample(0:6, replace = TRUE, size = 900)
   Plot(r1, new = TRUE)
 
-  # 1, 2, 3, 4, 5, 6, ... 200
+  ## 1, 2, 3, 4, 5, 6, ... 200
   r1 <- raster(ncol = 30, nrow = 30)
   r1[] <- sample(1:200, replace = TRUE, size = 900)
-  Plot(r1, new = TRUE)
+  #Plot(r1, new = TRUE)
 
   # should be no black because no zeros
   Plot(r1, new = TRUE, zero.color = "black")
 
-  # should be slim black in legend, none in fig
+  ## should be slim black in legend, none in fig
   Plot(r1, new = TRUE, zero.color = "black", legendRange = c(-10, 200))
 
-  # 31, 32, ... 40
+  ## 31, 32, ... 40
   r1 <- raster(ncol = 30, nrow = 30)
   r1[] <- sample(31:40, replace = TRUE, size = 900)
   Plot(r1, new = TRUE)
@@ -582,11 +620,11 @@ test_that("Plot 2 is not error-free", {
   clearPlot()
   Plot(pixelGroupMap, new = TRUE)
 
-  # legend Should have all colors
+  ## legend Should have all colors
   Plot(pixelGroupMap, new = TRUE, cols = c("red", "yellow", "green", "blue"))
 
   ## Test legend that is pre-set, even with various types of rasters
-  # should be dark red raster, legend from 0 to 200
+  ## should be dark red raster, legend from 0 to 200
   clearPlot()
   Plot(r1, legendRange = c(0, 200), new = TRUE, cols = c("red", "green"))
 
@@ -619,8 +657,10 @@ test_that("Plot 2 is not error-free", {
   setColors(r1) <- c("green", "red")
   Plot(r1, new = TRUE)
 
+  try(dev.off())
 })
 
+## block F
 test_that("setColors is not error-free", {
   skip("Apparently color palettes are not universal")
 
@@ -680,6 +720,7 @@ test_that("setColors is not error-free", {
   ))
 })
 
+## block G
 test_that("Plot with base is not error-free", {
   skip_if_not_installed("visualTest")
 
@@ -710,12 +751,13 @@ test_that("Plot with base is not error-free", {
   Plot(ras)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "B04CC39C93D3CE36", ## TODO
-                 Linux = if (getRversion() >= 4.1) "ACC99364C7969333" else "B14CC39C93D3CE86",
-                 Windows = "B0CCC39893D3CE36" ## TODO
-  )
+  test_id <- "G1"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ##################################################
@@ -729,12 +771,13 @@ test_that("Plot with base is not error-free", {
   Plot(rasOrig)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "AED2D131E06D7A0E", ## TODO
-                 Linux = if (getRversion() >= 4.1) "AEF0D54A932D6C49" else "AED2D1B1E06D3A0E",
-                 Windows = "AED2D121E21F7A0E" ## TODO
-  )
+  test_id <- "G2"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ##################################################
@@ -750,12 +793,13 @@ test_that("Plot with base is not error-free", {
   Plot(rasOrig)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "BEC6C131E03F3A0E", ## TODO
-                 Linux = if (getRversion() >= 4.1) "BEF0C54A923D3C49" else "BEC6C1B1E03F380E",
-                 Windows = "BED2C131E01F3A4E" ## TODO
-  )
+  test_id <- "G3"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ##################################################
@@ -765,12 +809,13 @@ test_that("Plot with base is not error-free", {
   Plot(1:10, ylab = "hist")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "AB27BDD38284D94A", ## TODO
-                 Linux = if (getRversion() >= 4.1) "EB67BD13828CD948" else "AB27BD730284D9CA",
-                 Windows = "EB27FD720284D958" ## TODO
-  )
+  test_id <- "G4"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   # Mixing base and grid
@@ -780,12 +825,13 @@ test_that("Plot with base is not error-free", {
   Plot(1:10, ylab = "hist")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "9FE1E441C2FAE01E", ## TODO
-                 Linux = if (getRversion() >= 4.1) "9FE3E4F0C21EC4C4" else "9FE1E441C2F2E09E",
-                 Windows = "9FE5E451C27AE01C" ## TODO
-  )
+  test_id <- "G5"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ##################################################
@@ -815,12 +861,13 @@ test_that("Plot with base is not error-free", {
   Plot(ras, cols = "Reds", addTo = "ras2")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "F3B4274A8C0FF059", ## TODO
-                 Linux = if (getRversion() >= 4.1) "F2B52A4B9D1EE04A" else "F3B5264A8C0FF04B",
-                 Windows = "F3B4264A8C8FF04B" ## TODO
-  )
+  test_id <- "G6"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ##################################################
@@ -843,12 +890,13 @@ test_that("Plot with base is not error-free", {
   Plot(ras)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "BC16C3CA96E1C365", ## TODO
-                 Linux = if (getRversion() >= 4.1) "BC16E3CA96E1C165" else "BC16E3CC96E1C165",
-                 Windows = "9D96C3CE94E1E168" ## TODO
-  )
+  test_id <- "G7"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
   ##################################################
@@ -864,15 +912,17 @@ test_that("Plot with base is not error-free", {
   Plot(ras,  addTo = "ras", cols = "Blues")
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = "B44CC39A93B1CE96", # TODO
-                 Linux = if (getRversion() >= 4.1) "B8C99364C796D332" else "A54CC39A93B3CE86",
-                 Windows = "A44CC39A93B3CE96" # TODO
-  )
+  test_id <- "G8"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 })
 
+## block H
 test_that("Plot messages and warnings and errors", {
   library(raster)
 
@@ -883,6 +933,7 @@ test_that("Plot messages and warnings and errors", {
   expect_error(Plot(ras, rnorm(10)), "Can't mix base plots with .quickPlottables")
 })
 
+## block I
 test_that("rePlot doesn't work", {
   skip_if_not_installed("visualTest")
 
@@ -919,6 +970,7 @@ test_that("rePlot doesn't work", {
   expect_true(isSimilar(file = "test2.png", fingerprint = orig, threshold = 0.3))
 })
 
+## block J
 test_that("Plot - going through package coverage", {
   library(raster)
 
@@ -950,6 +1002,7 @@ test_that("Plot - going through package coverage", {
   try(dev.off())
 })
 
+## block K
 test_that("Plot lists", {
   skip_if_not_installed("visualTest")
 
@@ -986,12 +1039,13 @@ test_that("Plot lists", {
   Plot(a)
   dev.off()
 
-  #dput(getFingerprint(file = "test.png"))  # nolint
-  orig <- switch(Sys.info()["sysname"],
-                 Darwin = if (getRversion() >= 4.1) "AC92D152D7689778" else "AD3CC238D2C7C36A",
-                 Linux = if (getRversion() >= 4.1) "AC92D152D7689778" else "AD3CD238D2C7C26A",
-                 Windows = "AD3DD26CD287C609" ## TODO
-  )
+  test_id <- "K1"
+  if (isTRUE(newFingerprints)) {
+    newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                           value =  getFingerprint(file = "test.png"))
+    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  }
+  orig <- fingerprint(test_id, r_version, sysname)
   expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
 
   if (requireNamespace("fastshp", quietly = TRUE)) {
@@ -1002,12 +1056,13 @@ test_that("Plot lists", {
     Plot(a)
     dev.off()
 
-    #dput(getFingerprint(file = "test.png"))  # nolint
-    orig <- switch(Sys.info()["sysname"],
-                   Darwin = "B74AC8A5C8B5155B", ## TODO
-                   Linux = if (getRversion() >= 4.1) "B75AC8A5C8B5954A" else "B75788AAC8C85657",
-                   Windows = "B755A8AEC8C85353" ## TODO
-    )
+    test_id <- "K2"
+    if (isTRUE(newFingerprints)) {
+      newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                             value =  getFingerprint(file = "test.png"))
+      fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+    }
+    orig <- fingerprint(test_id, r_version, sysname)
     expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.3))
 
     set.seed(123)
@@ -1019,16 +1074,18 @@ test_that("Plot lists", {
     Plot(a, b)
     dev.off()
 
-    #dput(getFingerprint(file = "test.png"))  # nolint
-    orig <- switch(Sys.info()["sysname"],
-                   Darwin = "A762D989649DD8CC", ## TODO
-                   Linux = if (getRversion() >= 4.1) "A762D9986499D8CD" else "877273AD8C8DF04A",
-                   Windows = "8773738D8C89F04E" ## TODO
-    )
+    test_id <- "K3"
+    if (isTRUE(newFingerprints)) {
+      newValue <- data.table(test_id = test_id, r_version = r_version, sys_name = sysname,
+                             value =  getFingerprint(file = "test.png"))
+      fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+    }
+    orig <- fingerprint(test_id, r_version, sysname)
     expect_true(isSimilar(file = "test.png", fingerprint = orig, threshold = 0.02))
   }
 })
 
+## block L
 test_that("Plot non complicated object names", {
   library(raster)
 
@@ -1051,6 +1108,7 @@ test_that("Plot non complicated object names", {
   try(dev.off())
 })
 
+## block M
 test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
   library(raster)
 
@@ -1062,3 +1120,7 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
 
   try(dev.off())
 })
+
+if (isTRUE(newFingerprints)) {
+  write.csv(fingerprints, file = fingerprintFile, row.names = FALSE)
+}
