@@ -401,7 +401,6 @@ test_that("Unit tests for internal functions in Plot", {
   dir.create(tmpdir)
   cwd <- getwd()
 
-
   on.exit({
     if (length(dev.list()) > 0) dev.off()
 
@@ -706,9 +705,9 @@ test_that("Plot with base is not error-free", {
   skip_if_not_installed("visualTest")
 
   library(raster)
+  library(visualTest)
   library(ggplot2)
   library(igraph)
-  library(visualTest)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
@@ -1068,7 +1067,7 @@ test_that("Plot lists", {
 })
 
 ## block L
-test_that("Plot non complicated object names", {
+test_that("Plot non-complicated object names", {
   library(raster)
 
   a <- list()
@@ -1100,4 +1099,3 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
 
   try(dev.off())
 })
-
