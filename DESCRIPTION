@@ -65,4 +65,5 @@ Collate:
     'plotting.R'
     'quickPlot-classes.R'
     'quickPlot-package.R'
+    'testing-helpers.R'
     'zzz.R'
