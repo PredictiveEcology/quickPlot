@@ -1,3 +1,7 @@
+globalVariables(c(
+  "i.value", "sys_name", "test_id", "value"
+))
+
 r_version <- function() {
   as.character(getRversion())
 }
@@ -20,20 +24,21 @@ updateFingerprint <- function(newValue, fingerprints) {
 }
 
 fingerprintFile <- function(dir = getwd()) {
-  file.path(dir, "tests", "fingerprints", "fingerprints.csv")
+  if (interactive()) {
+    normalizePath(file.path(dir, "tests", "fingerprints", "fingerprints.csv"), mustWork = TRUE)
+  } else {
+    normalizePath(file.path(dir, "..", "fingerprints", "fingerprints.csv"), mustWork = TRUE)
+  }
 }
 
+#' @importFrom data.table fread
 setupTestFingerprints <- function(cwd = getwd()) {
-  library(visualTest)
-
-  fingerprints <- data.table::fread(fingerprintFile(cwd))
-
-  return(fingerprints)
+  fread(fingerprintFile(cwd))
 }
 
-#' @importFrom utils write.csv
-teardownTestFingerprints <- function(cwd = getwd()) {
+#' @importFrom data.table fwrite
+teardownTestFingerprints <- function(fingerprints, cwd = getwd()) {
   if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
-    write.csv(fingerprints, file = fingerprintFile(cwd), row.names = FALSE)
+    fwrite(fingerprints, file = fingerprintFile(cwd))
   }
 }

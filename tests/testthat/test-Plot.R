@@ -204,8 +204,8 @@ test_that("Unit tests for image content is not error-free", {
   skip_if_not_installed("visualTest")
 
   library(raster)
-
-  fingerprints <- setupTestFingerprints() ## loads visualTest package
+  library(visualTest)
+  fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot_imageContent")
   dir.create(tmpdir)
@@ -287,7 +287,7 @@ test_that("Unit tests for image content is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  teardownTestFingerprints(cwd)
+  teardownTestFingerprints(fingerprints, cwd)
 })
 
 ## block C
@@ -295,8 +295,8 @@ test_that("Unit tests for plotting colors", {
   skip_if_not_installed("visualTest")
 
   library(raster)
-
-  fingerprints <- setupTestFingerprints() ## loads visualTest package
+  library(visualTest)
+  fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot_colors")
   dir.create(tmpdir)
@@ -386,7 +386,7 @@ test_that("Unit tests for plotting colors", {
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 8))
   unlink("test.png")
 
-  teardownTestFingerprints(cwd)
+  teardownTestFingerprints(fingerprints, cwd)
 })
 
 ## block D
@@ -394,7 +394,8 @@ test_that("Unit tests for internal functions in Plot", {
   skip_if_not_installed("visualTest")
 
   library(raster)
-  fingerprints <- setupTestFingerprints() ## loads visualTest package
+  library(visualTest)
+  fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot_internal")
   dir.create(tmpdir)
@@ -468,7 +469,7 @@ test_that("Unit tests for internal functions in Plot", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  teardownTestFingerprints(cwd)
+  teardownTestFingerprints(fingerprints, cwd)
 })
 
 ## block E
@@ -476,7 +477,8 @@ test_that("Plot 2 is not error-free", {
   skip_if_not_installed("visualTest")
 
   library(raster)
-  fingerprints <- setupTestFingerprints() ## loads visualTest package
+  library(visualTest)
+  fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot2")
   dir.create(tmpdir)
@@ -513,7 +515,7 @@ test_that("Plot 2 is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 4))
 
-  teardownTestFingerprints(cwd)
+  teardownTestFingerprints(fingerprints, cwd)
 
   ####################################################################################
   skip("Remainder are visual tests ... difficult to assess - see verbal expectations")
@@ -703,10 +705,11 @@ test_that("setColors is not error-free", {
 test_that("Plot with base is not error-free", {
   skip_if_not_installed("visualTest")
 
-  fingerprints <- setupTestFingerprints() ## loads visualTest package
   library(raster)
   library(ggplot2)
   library(igraph)
+  library(visualTest)
+  fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
   dir.create(tmpdir)
@@ -898,7 +901,7 @@ test_that("Plot with base is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  teardownTestFingerprints(cwd)
+  teardownTestFingerprints(fingerprints, cwd)
 })
 
 ## block H
@@ -917,7 +920,8 @@ test_that("rePlot doesn't work", {
   skip_if_not_installed("visualTest")
 
   library(raster);
-  fingerprints <- setupTestFingerprints() ## loads visualTest package;
+  library(visualTest)
+  fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
   dir.create(tmpdir)
@@ -985,7 +989,8 @@ test_that("Plot lists", {
 
   library(ggplot2)
   library(raster)
-  fingerprints <- setupTestFingerprints() ## loads visualTest package
+  library(visualTest)
+  fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
   dir.create(tmpdir)
@@ -1059,7 +1064,7 @@ test_that("Plot lists", {
     expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.02))
   }
 
-  teardownTestFingerprints(cwd)
+  teardownTestFingerprints(fingerprints, cwd)
 })
 
 ## block L
