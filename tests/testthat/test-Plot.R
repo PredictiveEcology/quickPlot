@@ -650,10 +650,7 @@ test_that("setColors is not error-free", {
   dir.create(tmpdir)
   cwd <- getwd()
 
-
   on.exit({
-
-    #if (length(dev.list()) > 0) dev.off()
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
   set.seed(1234)
