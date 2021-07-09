@@ -403,7 +403,6 @@ test_that("Unit tests for internal functions in Plot", {
 
   on.exit({
     if (length(dev.list()) > 0) dev.off()
-
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
@@ -644,7 +643,7 @@ test_that("Plot 2 is not error-free", {
 test_that("setColors is not error-free", {
   skip("Apparently color palettes are not universal")
 
-  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  library(raster)
 
   tmpdir <- file.path(tempdir(), "test_setColors")
   dir.create(tmpdir)
