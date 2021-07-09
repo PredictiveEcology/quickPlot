@@ -992,7 +992,7 @@ test_that("Plot lists", {
   library(visualTest)
   fingerprints <- setupTestFingerprints()
 
-  tmpdir <- file.path(tempdir(), "test_Plot1")
+  tmpdir <- file.path(tempdir(), "test_Plot3")
   dir.create(tmpdir)
 
   cwd <- getwd()
