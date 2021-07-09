@@ -36,9 +36,10 @@ setupTestFingerprints <- function(cwd = getwd()) {
   fread(fingerprintFile(cwd))
 }
 
-#' @importFrom data.table fwrite
+#' @importFrom data.table fwrite setkey
 teardownTestFingerprints <- function(fingerprints, cwd = getwd()) {
   if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
+    setkey(fingerprints, r_version, sys_name, test_id)
     fwrite(fingerprints, file = fingerprintFile(cwd))
   }
 }
