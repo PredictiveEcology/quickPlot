@@ -652,8 +652,8 @@ test_that("setColors is not error-free", {
   on.exit({
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
-  set.seed(1234)
 
+  set.seed(1234)
   ras1 <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
   ras2 <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
   rasStack <- stack(ras1, ras2)
