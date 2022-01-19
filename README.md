@@ -4,7 +4,7 @@
 [![R build status](https://github.com/PredictiveEcology/quickPlot/workflows/R-CMD-check/badge.svg)](https://github.com/PredictiveEcology/quickPlot/actions)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/quickPlot)](https://cran.r-project.org/package=quickPlot)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/quickPlot)](https://cran.r-project.org/package=quickPlot)
-[![codecov](https://codecov.io/gh/PredictiveEcology/quickPlot/branch/master/graph/badge.svg)](https://codecov.io/gh/PredictiveEcology/quickPlot)
+[![codecov](https://codecov.io/gh/PredictiveEcology/quickPlot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PredictiveEcology/quickPlot)
 <!-- badges: end -->
 
 Built on top of `grid`, this package aims at making a high-level plotting system that is optimized for speed and modularity.
