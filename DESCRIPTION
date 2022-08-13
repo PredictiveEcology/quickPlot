@@ -14,7 +14,7 @@ Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
            role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
-    role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
+           role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
     person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
            role = "cph")
     )
@@ -45,9 +45,6 @@ Suggests:
     spelling,
     testthat (>= 1.0.2),
     visualTest
-Remotes:
-    s-u/fastshp,
-    MangoTheCat/visualTest
 Encoding: UTF-8
 Language: en-CA
 License: GPL-3
