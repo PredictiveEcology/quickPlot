@@ -46,7 +46,7 @@ Suggests:
     testthat (>= 1.0.2),
     visualTest
 Remotes:
-    s-u/fastshp
+    s-u/fastshp,
     MangoTheCat/visualTest
 Encoding: UTF-8
 Language: en-CA
