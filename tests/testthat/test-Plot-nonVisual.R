@@ -59,8 +59,6 @@ test_that("Plotting types without visual checking works", {
   }
 })
 
-
-
 test_that("setColors with an NA", {
   library(raster); #on.exit(detach("package:raster"), add = TRUE)
 
@@ -74,6 +72,7 @@ test_that("setColors with an NA", {
                        ncol = ncol, nrow = nrow))
   ras[1] <- NA
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
-  expect_silent(ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow")))
-
-})# test non contiguous factor raster
+  expect_silent({
+    ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
+  })
+})
