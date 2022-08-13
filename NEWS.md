@@ -1,4 +1,8 @@
-Known issues: https://github.com/PredictiveEcology/quickPlot/issues
+Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
+
+version 0.1.8
+=============
+* drop support for R version 3.6 (versions >= 4.0 are currently supported)
 
 version 0.1.7
 =============
