@@ -37,7 +37,7 @@ jobs:
 
       - name: Install additional package dependencies
         run: |
-          pak::pkg_install("s-u/fastshp")
+          remotes::install_github("s-u/fastshp")
           pak::pkg_install("MangoTheCat/visualTest")
         shell: Rscript {0}
 
