@@ -1,6 +1,8 @@
 ##  to regenerate tests/fingerprints/fingerprints.csv, use:
 ##    Sys.setenv(R_QUICKPLOT_NEW_FINGERPRINTS = TRUE)
 
+skip_on_ci() ## August 2022 -- GitHub actions fingerprints differ by system + R version
+
 ## block A
 test_that("Plot 1 is not error-free", {
   skip_if_not_installed("fastshp")
