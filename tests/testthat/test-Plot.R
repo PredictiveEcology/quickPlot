@@ -1083,6 +1083,7 @@ test_that("Plot non-complicated object names", {
   expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new = TRUE))
   a$e[["s"]]$layer.1[2] <- maxValue(a$e[["s"]]$layer.1)
   expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new = TRUE))
+  dev.off()
 })
 
 ## block M
