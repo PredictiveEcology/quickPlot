@@ -104,20 +104,20 @@
 )
 }
 \arguments{
-\item{grobToPlot}{\code{Raster*}, \code{SpatialLines*},
-\code{SpatialPoints*}, or \code{SpatialPolygons*} object.}
+\item{grobToPlot}{\verb{Raster*}, \verb{SpatialLines*},
+\verb{SpatialPoints*}, or \verb{SpatialPolygons*} object.}
 
-\item{col}{Currently only used for the legend of a \code{Raster*} object.}
+\item{col}{Currently only used for the legend of a \verb{Raster*} object.}
 
 \item{real}{Logical indicating whether the data are \code{real} numbers
 (i.e., as opposed to \code{integer} or \code{factor}).}
 
 \item{size}{The size of the \code{SpatialPoints}.}
 
-\item{minv}{The minimum value on a \code{Raster*}. Required because not
+\item{minv}{The minimum value on a \verb{Raster*}. Required because not
 all Rasters have this defined internally.}
 
-\item{maxv}{The maximum value on a \code{Raster*}. Required because not
+\item{maxv}{The maximum value on a \verb{Raster*}. Required because not
 all Rasters have this defined internally.}
 
 \item{legend}{Logical indicating whether a legend should be drawn.
@@ -125,20 +125,20 @@ Default \code{TRUE}.}
 
 \item{legendText}{Vector of values to use for legend value labels.
 Defaults to \code{NULL} which results in a pretty numeric
-representation. If \code{Raster*} has a Raster Attribute
+representation. If \verb{Raster*} has a Raster Attribute
 Table (rat; see \pkg{raster} package), this will be used
 by default. Currently, only a single vector is accepted.}
 
 \item{length}{Numeric.}
 
-\item{gp}{\code{grid} parameters, usually the output of a call to \code{\link{gpar}}.}
+\item{gp}{\code{grid} parameters, usually the output of a call to \code{\link[=gpar]{gpar()}}.}
 
 \item{gpText}{\code{gpar} object for legend label text.}
 
 \item{pch}{Point character for \code{SpatialPoints}, as \code{par}.}
 
 \item{speedup}{Numeric. The factor by which the number of vertices in
-\code{SpatialPolygons} and \code{SpatialLines*} will be
+\code{SpatialPolygons} and \verb{SpatialLines*} will be
 subsampled. The vertices are already subsampled by default to
 make plotting faster.}
 

@@ -27,7 +27,7 @@ environment.}
 Only used for its side effect, namely the object assigned to the \code{.quickPlotEnv}
 }
 \description{
-Internal function. Simple wrapper for \code{\link{assign}}.
+Internal function. Simple wrapper for \code{\link[=assign]{assign()}}.
 }
 \author{
 Alex Chubaty

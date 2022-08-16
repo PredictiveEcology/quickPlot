@@ -15,7 +15,7 @@
 \alias{setColors}
 \alias{setColors,RasterLayer,character,numeric-method}
 \alias{setColors,RasterLayer,character,missing-method}
-\title{Get and set colours for plotting \code{Raster*} objects}
+\title{Get and set colours for plotting \verb{Raster*} objects}
 \usage{
 getColors(object)
 
@@ -42,7 +42,7 @@ setColors(object, value, n)
 \S4method{setColors}{RasterLayer,character,missing}(object, value)
 }
 \arguments{
-\item{object}{A \code{Raster*} object.}
+\item{object}{A \verb{Raster*} object.}
 
 \item{...}{Additional arguments to \code{colorRampPalette}.}
 
@@ -59,7 +59,7 @@ Returns a named list of colours.
 Returns a Raster with the \code{colortable} slot set to \code{values}.
 }
 \description{
-Get and set colours for plotting \code{Raster*} objects
+Get and set colours for plotting \verb{Raster*} objects
 
 \code{setColors} works as a replacement method or a normal function call.
 This function can accept \code{RColorBrewer} colours by name. See examples.
@@ -123,10 +123,10 @@ clearPlot()
 Plot(ras)
 }
 \seealso{
-\code{\link{setColors<-}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal}}
+\code{\link[=setColors<-]{setColors<-()}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}}
 
-\code{\link[RColorBrewer:ColorBrewer]{brewer.pal}},
-\code{\link[grDevices:colorRamp]{colorRampPalette}}.
+\code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}},
+\code{\link[grDevices:colorRamp]{colorRampPalette()}}.
 }
 \author{
 Alex Chubaty

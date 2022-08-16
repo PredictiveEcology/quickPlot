@@ -9,7 +9,7 @@
 This class contains the plotting arrangement information.
 }
 \details{
-These \code{gp*} parameters will specify plot parameters that are
+These \verb{gp*} parameters will specify plot parameters that are
 available with \code{gpar()}. \code{gp} will adjust plot parameters,
 \code{gpText} will adjust title and legend text, \code{gpAxis} will
 adjust the axes. \code{size} adjusts point size in a \code{SpatialPoints} object.
@@ -62,7 +62,7 @@ Default is 5. See details.}
 }}
 
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

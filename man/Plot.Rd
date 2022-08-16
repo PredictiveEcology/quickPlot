@@ -74,7 +74,7 @@ added to the current device, adding or rearranging the plot layout
 as necessary. Default is \code{FALSE}. This currently works best if
 there is only one object being plotted in a given \code{Plot} call. However,
 it is possible to pass a list of logicals to this, matching the
-length of the ... objects. Use \code{clearPlot} to clear the whole
+length of the \code{...} objects. Use \code{clearPlot} to clear the whole
 plotting device. NOTE if \code{TRUE}: \emph{Everything that was there,
 including the legend and the end points of the colour palette, will
 be removed and re-initiated}.}
@@ -82,9 +82,9 @@ be removed and re-initiated}.}
 \item{addTo}{Character vector, with same length as \code{...}.
 This is for overplotting, when the overplot is not to occur on
 the plot with the same name, such as plotting a
-\code{SpatialPoints*} object on a \code{RasterLayer}.}
+\verb{SpatialPoints*} object on a \code{RasterLayer}.}
 
-\item{gp}{A \code{gpar} object, created by \code{\link[quickPlot:grid-functions]{gpar}},
+\item{gp}{A \code{gpar} object, created by \code{\link[=gpar]{gpar()}},
 to change plotting parameters (see \pkg{grid} package).}
 
 \item{gpText}{A \code{gpar} object for the title text.
@@ -127,7 +127,7 @@ the data bounds contained within the \code{grobToPlot}.}
 \item{legendText}{Character vector of legend value labels.
 Defaults to \code{NULL}, which results in a pretty numeric
 representation.
-If \code{Raster*} has a Raster Attribute Table (\code{rat};
+If \verb{Raster*} has a Raster Attribute Table (\code{rat};
 see \pkg{raster} package), this will be used by default.
 Currently, only a single vector is accepted.
 The length of this must match the length of the legend, so
@@ -193,13 +193,13 @@ Customization of the \code{ggplot2} elements can be done as a normal
 \details{
 \strong{NOTE:} Plot uses the \pkg{grid} package; therefore, it is NOT compatible
 with base R graphics. Also, because it does not by default wipe the plotting device
-before plotting, a call to \code{\link{clearPlot}} is helpful to resolve
+before plotting, a call to \code{\link[=clearPlot]{clearPlot()}} is helpful to resolve
 many errors. Careful use of the other device tools, such as \code{dev.off()} and
 \code{dev.list()} might also clear problems that may arise.
 
 If \code{new = TRUE}, a new plot will be generated, but only in the figure region that
 has the same name as the object being plotted.
-This is different than calling \code{clearPlot(); Plot(Object)},
+This is different than calling \verb{clearPlot(); Plot(Object)},
 i.e,. directly before creating a new Plot. \code{clearPlot()} will clear the entire
 plotting device.
 When \code{new = FALSE}, any plot that already exists will be overplotted,
@@ -239,7 +239,7 @@ calling environment (e.g., \code{.GlobalEnv}) or, if they do not exist, then \co
 will make a copy in the hidden \code{.quickPlotEnv} for later reuse.
 
 \code{cols} is a vector of colours that can be understood directly, or by
-\code{\link[grDevices:colorRamp]{colorRampPalette}}, such as \code{c("orange", "blue")},
+\code{\link[grDevices:colorRamp]{colorRampPalette()}}, such as \code{c("orange", "blue")},
 will give a colour range from orange to blue, interpolated.
 If a list, it will be used, in order, for each item to be plotted.
 It will be recycled if it is shorter than the objects to be plotted.
@@ -288,7 +288,7 @@ In other words, \code{speedup} will not do anything if the factor for
 speeding up is not high enough (i.e., >3). If no sub-sampling is desired,
 use a speedup value less than 0.1.
 
-These \code{gp*} parameters will specify plot parameters that are available
+These \verb{gp*} parameters will specify plot parameters that are available
 with \code{gpar()}. \code{gp} will adjust plot parameters, \code{gpText}
 will adjust title and legend text, \code{gpAxis} will adjust the axes.
 \code{size} adjusts point size in a \code{SpatialPoints} object.
@@ -404,9 +404,9 @@ Plot(a)
 clearPlot()
 }
 \seealso{
-\code{\link{clearPlot}}, \code{\link{gpar}}, \code{\link{raster}},
-\code{\link{par}}, \code{\link{SpatialPolygons}}, \code{\link{grid.polyline}},
-\code{\link{ggplot}}, \code{\link{dev}}
+\code{\link[=clearPlot]{clearPlot()}}, \code{\link[=gpar]{gpar()}}, \code{\link[=raster]{raster()}},
+\code{\link[=par]{par()}}, \code{\link[=SpatialPolygons]{SpatialPolygons()}}, \code{\link[=grid.polyline]{grid.polyline()}},
+\code{\link[=ggplot]{ggplot()}}, \code{\link[=dev]{dev()}}
 }
 \author{
 Eliot McIntire

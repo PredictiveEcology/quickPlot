@@ -9,7 +9,7 @@
 This class contains the plotting \code{.quickPlotGrob} information.
 }
 \details{
-These \code{gp*} parameters will specify plot parameters that are available
+These \verb{gp*} parameters will specify plot parameters that are available
 with \code{gpar()}. \code{gp} will adjust plot parameters, \code{gpText} will
 adjust title and legend text, \code{gpAxis} will adjust the axes.
 \code{size} adjusts point size in a \code{SpatialPoints} object.
@@ -42,7 +42,7 @@ Primarily used for \code{RasterStack}s.}
 }}
 
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

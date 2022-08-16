@@ -12,22 +12,22 @@
 
 \tabular{ll}{
 \strong{New classes}\tab \cr
-\code{\link{.arrangement}} \tab The layout or "arrangement" of plot objects\cr
-\code{\link{.quickPlot}} \tab Main class for \code{Plot} - contains \code{.quickGrob}
+\code{\link[=.arrangement]{.arrangement()}} \tab The layout or "arrangement" of plot objects\cr
+\code{\link[=.quickPlot]{.quickPlot()}} \tab Main class for \code{Plot} - contains \code{.quickGrob}
 and \code{.arrangement} objects\cr
-\code{\link{.quickPlotGrob}} \tab GRaphical OBject used by \code{quickPlot} - smallest unit\cr
+\code{\link[=.quickPlotGrob]{.quickPlotGrob()}} \tab GRaphical OBject used by \code{quickPlot} - smallest unit\cr
 }
 
 \tabular{ll}{
 \strong{Unions of existing classes:}\tab \cr
-\code{\link{.quickPlottables}} \tab The union of all object classes Plot can accept\cr
-\code{\link{.quickPlotObjects}} \tab The union of \code{spatialObjects} and several others\cr
-\code{\link{spatialObjects}} \tab The union of several spatial classes\cr
+\code{\link[=.quickPlottables]{.quickPlottables()}} \tab The union of all object classes Plot can accept\cr
+\code{\link[=.quickPlotObjects]{.quickPlotObjects()}} \tab The union of \code{spatialObjects} and several others\cr
+\code{\link[=spatialObjects]{spatialObjects()}} \tab The union of several spatial classes\cr
 }
 }
 
 \seealso{
-\code{\link{Plot}}
+\code{\link[=Plot]{Plot()}}
 }
 \author{
 Eliot McIntire and Alex Chubaty

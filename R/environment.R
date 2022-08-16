@@ -6,13 +6,13 @@
 #' @rdname quickPlotEnv
 .quickPlotEnv <- new.env(parent = emptyenv())
 
-#' Get objects from the internal \code{quickPlot} environment
+#' Get objects from the internal `quickPlot` environment
 #'
-#' Internal function. Simple wrapper for \code{\link{get}}.
+#' Internal function. Simple wrapper for [get()].
 #'
 #' @param x   an object name (given as a character string).
 #'
-#' @param ... Additional arguments to pass to \code{get}.
+#' @param ... Additional arguments to pass to `get`.
 #'
 #' @author Alex Chubaty
 #' @keywords internal
@@ -29,21 +29,21 @@ setMethod(".getQuickPlot",
             get(x, envir = .quickPlotEnv, ...)
 })
 
-#' Assign to the internal \code{quickPlot} environment.
+#' Assign to the internal `quickPlot` environment.
 #'
-#' Internal function. Simple wrapper for \code{\link{assign}}.
+#' Internal function. Simple wrapper for [assign()].
 #'
 #' @param x     a variable name, given as a character string.
 #'              No coercion is done, and the first element of a character vector
 #'              of length greater than one will be used, with a warning.
 #'
 #' @param value The object to assign. If this is missing, values will be found
-#'              with \code{get(x)} in the same environment as the calling
+#'              with `get(x)` in the same environment as the calling
 #'              environment.
 #'
-#' @param ... Additional arguments to pass to \code{assign}.
+#' @param ... Additional arguments to pass to `assign`.
 #'
-#' @return Only used for its side effect, namely the object assigned to the \code{.quickPlotEnv}
+#' @return Only used for its side effect, namely the object assigned to the `.quickPlotEnv`
 #'
 #' @keywords internal
 #' @rdname assignQuickPlot
@@ -67,15 +67,15 @@ setMethod(".assignQuickPlot",
             assign(x, get(x), envir = .quickPlotEnv, ...)
 })
 
-#' Is an object defined in the \code{.quickPlotEnv} environment?
+#' Is an object defined in the `.quickPlotEnv` environment?
 #'
-#' Internal function. Simple wrapper for \code{\link{exists}}.
+#' Internal function. Simple wrapper for [exists()].
 #'
 #' @param x   An object name, given as a character string.
 #'            No coercion is done, and the first element of a character vector
 #'            of length greater than one will be used, with a warning.
 #'
-#' @param ... Additional arguments passed to \code{\link{exists}}
+#' @param ... Additional arguments passed to [exists()]
 #'
 #' @author Alex Chubaty
 #' @keywords internal

@@ -5,12 +5,12 @@ if (getRversion() >= "3.1.0") {
 
 #' Find the number of layers in a Spatial Object
 #'
-#' There are already methods for \code{Raster*} in the raster package.
-#' Adding methods for \code{list}, \code{SpatialPolygons}, \code{SpatialLines},
-#' and \code{SpatialPoints}, \code{gg}, \code{histogram}, \code{igraph}.
-#' These latter classes return \code{1}.
+#' There are already methods for `Raster*` in the raster package.
+#' Adding methods for `list`, `SpatialPolygons`, `SpatialLines`,
+#' and `SpatialPoints`, `gg`, `histogram`, `igraph`.
+#' These latter classes return `1`.
 #'
-#' @param x A \code{.quickPlotObjects} object or list of these.
+#' @param x A `.quickPlotObjects` object or list of these.
 #'
 #' @return The number of layers in the object.
 #'
@@ -89,14 +89,14 @@ setMethod(
 
 #' Extract the layer names of Spatial Objects
 #'
-#' There are already methods for \code{Raster*} objects. This adds methods for
-#' \code{SpatialPoints*}, \code{SpatialLines*}, and \code{SpatialPolygons*},
+#' There are already methods for `Raster*` objects. This adds methods for
+#' `SpatialPoints*`, `SpatialLines*`, and `SpatialPolygons*`,
 #' returning an empty character vector of length 1.
 #' This function was created to give consistent, meaningful results for all
-#' classes of objects plotted by \code{Plot}.
+#' classes of objects plotted by `Plot`.
 #'
-#' @param object  A \code{Raster*}, \code{SpatialPoints*}, \code{SpatialLines*},
-#'                or \code{SpatialPolygons*} object; or list of these.
+#' @param object  A `Raster*`, `SpatialPoints*`, `SpatialLines*`,
+#'                or `SpatialPolygons*` object; or list of these.
 #'
 #' @author Eliot McIntire
 #' @export
@@ -230,9 +230,9 @@ setMethod(
     )
 })
 
-#' Make a \code{.quickPlot} class object
+#' Make a `.quickPlot` class object
 #'
-#' Builds a \code{.quickPlot} object from a list of objects.
+#' Builds a `.quickPlot` object from a list of objects.
 #'
 #' @param plotObjects list. Any plot objects.
 #'
@@ -240,11 +240,11 @@ setMethod(
 #' the specific grob types, e.g., `rasterGrob`, `polygonGrob`, etc.
 #'
 #' @param whichQuickPlottables  Logical indicating which objects in the
-#' \code{Plot} call can be plotted by \code{Plot}.
+#' `Plot` call can be plotted by `Plot`.
 #'
 #' @param ... additional arguments. Currently nothing.
 #'
-#' @return A \code{\link{.quickPlot}} object, which has 2 slots, one for the plot arrangement
+#' @return A [.quickPlot()] object, which has 2 slots, one for the plot arrangement
 #' (i.e., layout and dimensions) and one for all of the `quickPlotGrobs`
 #' (stored as a `quickPlotGrobList` of lists `.quickPlotGrob` objects).
 #'
@@ -634,17 +634,17 @@ setMethod(
     return(p)
 })
 
-#' Make \code{SpatialLines} object from two \code{SpatialPoints} objects
+#' Make `SpatialLines` object from two `SpatialPoints` objects
 #'
 #' The primary conceived usage of this is to draw arrows following the
 #' trajectories of agents.
 #'
-#' @param from  Starting spatial coordinates (\code{SpatialPointsDataFrame}).
+#' @param from  Starting spatial coordinates (`SpatialPointsDataFrame`).
 #'
-#' @param to    Ending spatial coordinates (\code{SpatialPointsDataFrame}).
+#' @param to    Ending spatial coordinates (`SpatialPointsDataFrame`).
 #'
-#' @return A \code{SpatialLines} object. When this object is used within a
-#'         \code{Plot} call and the \code{length} argument is specified, then
+#' @return A `SpatialLines` object. When this object is used within a
+#'         `Plot` call and the `length` argument is specified, then
 #'         arrow heads will be drawn. See examples.
 #'
 #' @author Eliot McIntire
@@ -878,20 +878,20 @@ setMethod(
 ################################################################################
 #' Extracts the object names
 #'
-#' Internal function primarily used from \code{Plot}.
+#' Internal function primarily used from `Plot`.
 #'
 #' @param calledFrom  character vector of length 1, indicating which function
-#'                    call is desired. Defaults to \code{Plot}.
+#'                    call is desired. Defaults to `Plot`.
 #'
 #' @param argClass    character vector of length 1, indicating which class is
 #'                    being searched for among the arguments.
-#'                    Defaults to \code{.quickPlotObjects}.
+#'                    Defaults to `.quickPlotObjects`.
 #'
-#' @param argName     character vector of length 1, or \code{NULL}, indicating
+#' @param argName     character vector of length 1, or `NULL`, indicating
 #'                    if the arguments to select have a name, no name (empty
-#'                    string), or do not use name (\code{NULL}).
+#'                    string), or do not use name (`NULL`).
 #'
-#' @return \code{NULL}. This function is invoked for its side effects.
+#' @return `NULL`. This function is invoked for its side effects.
 #'
 #' @author Eliot McIntire
 #' @export
@@ -921,7 +921,7 @@ setMethod(
 #' Importing some grid functions
 #'
 #' Currently only the `gpar` function is imported. This is a convenience so that users
-#' can change \code{Plot} arguments without having to load the entire grid package.
+#' can change `Plot` arguments without having to load the entire grid package.
 #'
 #' @inheritParams grid::gpar
 #'
@@ -930,7 +930,7 @@ setMethod(
 #' @importFrom grid gpar
 #' @name gpar
 #' @rdname grid-functions
-#' @seealso \code{\link[grid]{gpar}}
+#' @seealso [grid::gpar()]
 #'
 setGeneric("gpar", function(...) {
   standardGeneric("gpar")
@@ -1132,14 +1132,14 @@ setMethod(
 #' @param isNewPlot Logical. Is the currently being plotted object a new, additional plot
 #' @param isReplot Logical. Is the currently being plotted object a replot due to something
 #'                 like a rearrangement
-#' @param zMat List resulting from \code{.preparePlotGrob}
+#' @param zMat List resulting from `.preparePlotGrob`
 #' @param wipe Logical. Is the currently being plotted object require a white rectangle to
 #'             be plotted first, and subsequent other changes.
-#' @param xyAxes List of length 2, resulting from \code{.xyAxes}
+#' @param xyAxes List of length 2, resulting from `.xyAxes`
 #' @inheritParams Plot
-#' @param vps A viewport tree resulting from \code{.makeViewports}
-#' @param nonPlotArgs Arguments passed to \code{Plot} that are not \code{.quickPlottables},
-#'                    but are passed along with \code{.quickPlottables}.
+#' @param vps A viewport tree resulting from `.makeViewports`
+#' @param nonPlotArgs Arguments passed to `Plot` that are not `.quickPlottables`,
+#'                    but are passed along with `.quickPlottables`.
 #'
 #' @include plotting-classes.R
 #' @importFrom grid seekViewport grid.text
@@ -1355,7 +1355,7 @@ setMethod(
 #' @param nColumns Numeric, length 1, indicating how many columns are in the device arrangement
 #' @param nRows Numeric, length 1, indicating how many rows are in the device arrangement
 #' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed into
-#'                  \code{Plot} is currently being plotted, i.e., a counter of sorts.
+#'                  `Plot` is currently being plotted, i.e., a counter of sorts.
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
@@ -1503,20 +1503,20 @@ setMethod(
 
 #' Prepare raster for plotting
 #'
-#' Internal function. Takes a raster \code{.quickPlotGrob}, and converts \code{zoomExtent} into
-#' a zoom, and \code{legendRange} into a legend.
-#' Then calculates the \code{maxpixels} to plot for speed.
+#' Internal function. Takes a raster `.quickPlotGrob`, and converts `zoomExtent` into
+#' a zoom, and `legendRange` into a legend.
+#' Then calculates the `maxpixels` to plot for speed.
 #'
-#' @param grobToPlot A \code{.quickPlotGrob} object.
+#' @param grobToPlot A `.quickPlotGrob` object.
 #'
 #' @param zoomExtent an extent object
 #'
 #' @param legendRange a numeric vector of length >=2 indicating the desired legend range.
 #'
-#' @param takeFromPlotObj logical. Should the object be found in the \code{Plot} call or
-#'   \code{.GlobalEnv}
+#' @param takeFromPlotObj logical. Should the object be found in the `Plot` call or
+#'   `.GlobalEnv`
 #'
-#' @param arr an \code{.arrangement} object
+#' @param arr an `.arrangement` object
 #'
 #' @param speedup numeric, greater than 1 will usually speed up plotting at the
 #'                expense of resolution
@@ -1561,12 +1561,12 @@ setMethod(
 
 #' Merge two quickPlot objects
 #'
-#' Merges two \code{.quickPlot} objects
+#' Merges two `.quickPlot` objects
 #'
-#' @param newSP  The "new" \code{.quickPlot} object.
+#' @param newSP  The "new" `.quickPlot` object.
 #'               I.e., the new merges and overwrites into current.
 #'
-#' @param curr   The "current" \code{.quickPlot} object.
+#' @param curr   The "current" `.quickPlot` object.
 #'               I.e., the one to be merged into.
 #'
 #' @param ...    Additional arguments. Currently none implemented.
@@ -1716,7 +1716,7 @@ setMethod(
 #' number of spatial objects to plot and builds an object that will be used by
 #' the Plot functions to plot them efficiently.
 #'
-#' @param sPlot A \code{.quickPlot} object.
+#' @param sPlot A `.quickPlot` object.
 #' @inheritParams Plot
 #'
 #' @author Eliot McIntire
@@ -1797,65 +1797,65 @@ setMethod(
 #'
 #' Internal function. Plot a raster Grob, a points Grob, polygon Grob.
 #'
-#' \code{speedup} is only used for \code{SpatialPolygons}, \code{SpatialPoints},
-#' and \code{SpatialLines} in this function.
+#' `speedup` is only used for `SpatialPolygons`, `SpatialPoints`,
+#' and `SpatialLines` in this function.
 #' Attempts have been made to subsample at a good level that optimizes speed of
 #' plotting, without losing visible quality. Nevertheless, to force all points to
 #' be plotted, use a speedup value less than 0.1.
 #' From a speed perspective, there appears to be an optimal subsampling when
-#' using \code{thin} from the \pkg{fastshp} package.
+#' using `thin` from the \pkg{fastshp} package.
 #' Presumably, too much thinning requires large distance matrices to be
 #' calculated, slowing plotting down.
 #' Too little thinning causes an overabundance of points to be plotted, slowing
 #' plotting down.
 #'
-#' The suggested package \code{fastshp} can be installed with:
-#' \code{install.packages("fastshp", repos = "https://rforge.net", type = "source")}.
+#' The suggested package `fastshp` can be installed with:
+#' `install.packages("fastshp", repos = "https://rforge.net", type = "source")`.
 #'
 #' NOTE: you may get errors relating to not having installed the software tools
 #' required for building R packages on your system.
-#' For building on Windows, you'll need to install \code{Rtools} from
-#' \url{https://cran.r-project.org/bin/windows/Rtools/}.
+#' For building on Windows, you'll need to install `Rtools` from
+#' <https://cran.r-project.org/bin/windows/Rtools/>.
 #'
-#' @param grobToPlot  \code{Raster*}, \code{SpatialLines*},
-#'                    \code{SpatialPoints*}, or \code{SpatialPolygons*} object.
+#' @param grobToPlot  `Raster*`, `SpatialLines*`,
+#'                    `SpatialPoints*`, or `SpatialPolygons*` object.
 #'
-#' @param col     Currently only used for the legend of a \code{Raster*} object.
+#' @param col     Currently only used for the legend of a `Raster*` object.
 #'
-#' @param size    The size of the \code{SpatialPoints}.
+#' @param size    The size of the `SpatialPoints`.
 #'
-#' @param gp      \code{grid} parameters, usually the output of a call to \code{\link{gpar}}.
+#' @param gp      `grid` parameters, usually the output of a call to [gpar()].
 #'
-#' @param gpText  \code{gpar} object for legend label text.
+#' @param gpText  `gpar` object for legend label text.
 #'
 #' @param legend  Logical indicating whether a legend should be drawn.
-#'                Default \code{TRUE}.
+#'                Default `TRUE`.
 #'
 #' @param legendText  Vector of values to use for legend value labels.
-#'                    Defaults to \code{NULL} which results in a pretty numeric
-#'                    representation. If \code{Raster*} has a Raster Attribute
+#'                    Defaults to `NULL` which results in a pretty numeric
+#'                    representation. If `Raster*` has a Raster Attribute
 #'                    Table (rat; see \pkg{raster} package), this will be used
 #'                    by default. Currently, only a single vector is accepted.
 #'
 #' @param length  Numeric.
 #'
-#' @param minv    The minimum value on a \code{Raster*}. Required because not
+#' @param minv    The minimum value on a `Raster*`. Required because not
 #'                all Rasters have this defined internally.
 #'
-#' @param maxv    The maximum value on a \code{Raster*}. Required because not
+#' @param maxv    The maximum value on a `Raster*`. Required because not
 #'                all Rasters have this defined internally.
 #'
-#' @param pch     Point character for \code{SpatialPoints}, as \code{par}.
+#' @param pch     Point character for `SpatialPoints`, as `par`.
 #'
-#' @param real    Logical indicating whether the data are \code{real} numbers
-#'                (i.e., as opposed to \code{integer} or \code{factor}).
+#' @param real    Logical indicating whether the data are `real` numbers
+#'                (i.e., as opposed to `integer` or `factor`).
 #'
 #' @param speedup Numeric. The factor by which the number of vertices in
-#'                \code{SpatialPolygons} and \code{SpatialLines*} will be
+#'                `SpatialPolygons` and `SpatialLines*` will be
 #'                subsampled. The vertices are already subsampled by default to
 #'                make plotting faster.
 #'
-#' @param vp      whole viewport tree of \code{quickPlotGrob}
+#' @param vp      whole viewport tree of `quickPlotGrob`
 #'
 #' @param name    Character string of name of object being plotted.
 #'
@@ -2224,20 +2224,20 @@ setMethod(
 #' Internal function. Using the size of the current device, and number and
 #' dimension ratios of the plots, place them optimally in the plotting region.
 #'
-#' @param arr an object of class \code{.arrangement}.
+#' @param arr an object of class `.arrangement`.
 #'
 #' @param visualSqueeze Numeric. The proportion of the white space to be used
 #'                      for plots. Default is 0.75.
 #'
 #' @param legend Logical indicating whether legend should be included as part of
-#'               layout calculation. Default is \code{TRUE}.
+#'               layout calculation. Default is `TRUE`.
 #'
 #' @param axes Logical indicating whether the axes should be included as part of
-#'             layout calculation. Default is \code{TRUE}.
+#'             layout calculation. Default is `TRUE`.
 #'
 #' @param title Logical indicating whether the names of each plot should be
 #'              written above plots and should be included as part of layout
-#'               calculation. Default is \code{TRUE}.
+#'               calculation. Default is `TRUE`.
 #'
 #' @author Eliot McIntire
 #' @importFrom grid unit unit.c
@@ -2293,10 +2293,10 @@ setMethod(
 #' add some nested viewports to an existing arrangement, i.e., is there still
 #' white space available to plot.
 #'
-#' @param sPlot An object of class \code{.quickPlot}.
+#' @param sPlot An object of class `.quickPlot`.
 #'
 #' @param newArr  Logical indicating whether this function will create a
-#'                completely new viewport. Default \code{FALSE}.
+#'                completely new viewport. Default `FALSE`.
 #'
 #' @author Eliot McIntire
 #' @include plotting-classes.R
@@ -2414,12 +2414,12 @@ setMethod(
   return(list(wholeVp = wholeVp, extents = extents))
 }
 
-#' Test whether class has \code{bbox} method
+#' Test whether class has `bbox` method
 #'
 #' For internal use only.
 #'
 #' @rdname hasBbox
-#' @param z Logical, whether this object is a \code{SpatialObject}
+#' @param z Logical, whether this object is a `SpatialObject`
 #' @param objClass The class of the object
 #' @param objName The character string name of the object
 #' @param objEnv The environment where the object can be found
@@ -2446,7 +2446,7 @@ setMethod(
 
 #' Convert pairs of coordinates to `SpatialLines`
 #'
-#' This will convert 2 objects whose coordinates can be extracted with \code{coordinates}
+#' This will convert 2 objects whose coordinates can be extracted with `coordinates`
 #' (e.g., `sp::SpatialPoints*`) to a single `SpatialLines` object.
 #' The first object is treated as the "to" (destination), and the second object the "from" (source).
 #' This can be used to represent directional `SpatialLines`, especially with with arrow heads,
@@ -2488,24 +2488,24 @@ sp2sl <- function(sp1, from) {
 #' This will change the geometry, so it is not recommended for computation.
 #' This is similar to `rgeos::gSimplify` and `sf::st_simplify`,
 #' but faster than both (see examples) for large shapefiles, particularly if
-#' \code{returnDataFrame} is \code{TRUE}.
-#' \emph{\code{thin} will not attempt to preserve topology.}
+#' `returnDataFrame` is `TRUE`.
+#' *`thin` will not attempt to preserve topology.*
 #' It is strictly for making smaller polygons for the (likely) purpose of visualizing more quickly.
 #'
 #' @param x A `Spatial*` object
 #' @param tolerance Maximum allowable distance for a point to be removed.
-#' @param returnDataFrame If \code{TRUE}, this will return a list of 3 elements,
-#'        \code{xyOrd}, \code{hole}, and \code{idLength}.
-#'        If \code{FALSE} (default), it will return a \code{SpatialPolygons} object.
+#' @param returnDataFrame If `TRUE`, this will return a list of 3 elements,
+#'        `xyOrd`, `hole`, and `idLength`.
+#'        If `FALSE` (default), it will return a `SpatialPolygons` object.
 #' @param minCoordsToThin If the number of coordinates is smaller than this number,
 #'        then thin will just pass through, though it will take the time required to
 #'        calculate how many points there are (which is not `NROW(coordinates(x))` for
 #'        a `SpatialPolygon`)
-#' @param ... Passed to methods (e.g., \code{maxNumPolygons})
-#' @param maxNumPolygons For speed, \code{thin} can also simply remove some of the
+#' @param ... Passed to methods (e.g., `maxNumPolygons`)
+#' @param maxNumPolygons For speed, `thin` can also simply remove some of the
 #'        polygons. This is likely only a reasonable thing to do if there are
 #'        a lot of polygons being plotted in a small space. Current default is
-#'        taken from \code{options('quickPlot.maxNumPolygons')}, with a message.
+#'        taken from `options('quickPlot.maxNumPolygons')`, with a message.
 #'
 #' @export
 #' @importFrom data.table as.data.table data.table set

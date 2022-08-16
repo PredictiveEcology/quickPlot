@@ -38,7 +38,7 @@ These functions use \code{grid.locator}. The primary two user-level functions ar
 \code{clickValues} and \code{clickExtent}. These functions automatically select
 the correct viewport (i.e., map) where the mouse clicks occurred so the user
 does not have to manually specify which map is being clicked on.
-This works for \code{Raster*}, \code{SpatialPoints*}, and \code{SpatialPolygons*} objects.
+This works for \verb{Raster*}, \verb{SpatialPoints*}, and \verb{SpatialPolygons*} objects.
 }
 \details{
 \code{clickValues} is equivalent to running \code{X[SpatialPoints(locator(n))]}, where

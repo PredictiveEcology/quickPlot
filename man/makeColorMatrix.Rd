@@ -43,7 +43,7 @@ and upper bounds of a legend (i.e., \code{1:10} or
 the data bounds contained within the \code{grobToPlot}.}
 
 \item{cols}{Colours specified in a way that can be understood directly
-or by \code{\link{colorRampPalette}}.}
+or by \code{\link[=colorRampPalette]{colorRampPalette()}}.}
 
 \item{na.color}{Character string indicating the colour for \code{NA} values.
 Default transparent.}

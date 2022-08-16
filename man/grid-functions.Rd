@@ -17,5 +17,5 @@ Currently only the \code{gpar} function is imported. This is a convenience so th
 can change \code{Plot} arguments without having to load the entire grid package.
 }
 \seealso{
-\code{\link[grid]{gpar}}
+\code{\link[grid:gpar]{grid::gpar()}}
 }

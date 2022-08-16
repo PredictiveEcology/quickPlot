@@ -15,7 +15,7 @@
 \item{...}{Additional arguments to pass to \code{get}.}
 }
 \description{
-Internal function. Simple wrapper for \code{\link{get}}.
+Internal function. Simple wrapper for \code{\link[=get]{get()}}.
 }
 \author{
 Alex Chubaty

@@ -27,7 +27,7 @@ the specific grob types, e.g., \code{rasterGrob}, \code{polygonGrob}, etc.}
 \item{...}{additional arguments. Currently nothing.}
 }
 \value{
-A \code{\link{.quickPlot}} object, which has 2 slots, one for the plot arrangement
+A \code{\link[=.quickPlot]{.quickPlot()}} object, which has 2 slots, one for the plot arrangement
 (i.e., layout and dimensions) and one for all of the \code{quickPlotGrobs}
 (stored as a \code{quickPlotGrobList} of lists \code{.quickPlotGrob} objects).
 }

@@ -15,11 +15,11 @@ gain is that the objects \emph{must} be available, by name, in the \code{.Global
 }
 \details{
 This class contains two slots, one for the overall arrangement of the plots within
-the device window, and the second for all the \code{\link{.quickPlotGrob}} objects within
-that device window. These \code{\link{.quickPlotGrob}} objects are the individual
+the device window, and the second for all the \code{\link[=.quickPlotGrob]{.quickPlotGrob()}} objects within
+that device window. These \code{\link[=.quickPlotGrob]{.quickPlotGrob()}} objects are the individual
 "smallest" plot unit.
 
-These \code{gp*} parameters will specify plot parameters that are
+These \verb{gp*} parameters will specify plot parameters that are
 available with \code{gpar()}. \code{gp} will adjust plot parameters,
 \code{gpText} will adjust title and legend text, \code{gpAxis} will
 adjust the axes. \code{size} adjusts point size in a
@@ -41,7 +41,7 @@ i.e, \code{landscape$DEM}.
 }}
 
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

@@ -8,11 +8,11 @@
 \description{
 This class is the union of all \code{.quickPlotObjects} (e.g., \verb{RasterLayer*},
 \verb{SpatialPoints*}, \verb{SpatialPolygons*}, \code{ggplot}, \code{hist}, etc.)
-and \code{\link{.quickPlot}} class objects.
-This allows replotting of a \code{\link{.quickPlot}} object.
+and \code{\link[=.quickPlot]{.quickPlot()}} class objects.
+This allows replotting of a \code{\link[=.quickPlot]{.quickPlot()}} object.
 }
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

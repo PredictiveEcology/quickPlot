@@ -19,7 +19,7 @@ Members:
 Notably missing is \code{RasterBrick}, for now.
 }
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

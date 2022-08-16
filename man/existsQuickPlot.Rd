@@ -14,10 +14,10 @@
 No coercion is done, and the first element of a character vector
 of length greater than one will be used, with a warning.}
 
-\item{...}{Additional arguments passed to \code{\link{exists}}}
+\item{...}{Additional arguments passed to \code{\link[=exists]{exists()}}}
 }
 \description{
-Internal function. Simple wrapper for \code{\link{exists}}.
+Internal function. Simple wrapper for \code{\link[=exists]{exists()}}.
 }
 \author{
 Alex Chubaty

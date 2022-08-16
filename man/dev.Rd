@@ -10,7 +10,7 @@ dev(x, ...)
 \item{x}{The number of a plot device. If missing, will open a new
 non-RStudio plotting device}
 
-\item{...}{Additional arguments passed to \code{\link{newPlot}}.}
+\item{...}{Additional arguments passed to \code{\link[=newPlot]{newPlot()}}.}
 }
 \value{
 Opens a new plot device on the screen.
