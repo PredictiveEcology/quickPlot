@@ -34,6 +34,7 @@ jobs:
 
       - name: Install additional package dependencies
         run: |
+          pak::pkg_install("remotes")
           remotes::install_github("s-u/fastshp")
         shell: Rscript {0}
 
