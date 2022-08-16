@@ -50,8 +50,6 @@ jobs:
           extra-packages: |
             any::rcmdcheck
             fastshp=?ignore
-            PredictiveEcology/Require@development
-            PredictiveEcology/reproducible@development
 
       - name: Install additional package dependencies
         run: |
