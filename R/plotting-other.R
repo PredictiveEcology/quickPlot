@@ -390,10 +390,10 @@ clickCoordinates <- function(n = 1) {
 #' Switch to an existing plot device, or if not already open,
 #' launch a new graphics device based on operating system used.
 #' On Windows and macOS, if \code{x} is not provided, this will open or switch to the first
-#' non-RStudio device, which is much faster than the png-based RStudio plot device.
-#' Currently, this will not open anything new
+#' non-RStudio device, which is much faster than the \file{png}-based RStudio plot device.
+#' Currently, this will not open anything new.
 #'
-#' For example, \code{dev(6)} switches the active plot device to device #6.
+#' For example, \code{dev(6)} switches the active plot device to device 6.
 #' If it does not exist, it opens it. If devices 1-5 don't exist they will be opened too.
 #'
 #' @param x   The number of a plot device. If missing, will open a new
@@ -401,8 +401,8 @@ clickCoordinates <- function(n = 1) {
 #'
 #' @param ... Additional arguments passed to \code{\link{newPlot}}.
 #'
-#' @return Opens a new plot device on the screen. Invisibly returns the
-#' device number selected.
+#' @return Opens a new plot device on the screen.
+#' Invisibly returns the device number selected.
 #'
 #' @author Eliot McIntire and Alex Chubaty
 #' @export

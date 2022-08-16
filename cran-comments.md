@@ -1,32 +1,31 @@
 ## Updated release
 
-This is a minor update with a key new function. This update, however, is required in revdep packages.
+This is a maintenance release which drops support for R < 4.0.
 
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 20.04                 (GitHub), R 3.6.3
 * Ubuntu 20.04                 (GitHub), R 4.0.5
-* Windows                      (GitHub), R 3.3.3
-* Windows                      (GitHub), R 3.6.3
+* Ubuntu 20.04                 (GitHub), R 4.1.3
 * Windows                      (GitHub), R 4.0.5
-* Windows                 (win-builder), R 4.0.5
+* Windows                      (GitHub), R 4.1.3
+* Windows                 (win-builder), R 4.1.3
 
 ### Current R versions
-* macOS 10.15.7 Catalina       (GitHub), R 4.1.0
-* macOS 11.1 Big Sur            (local), R 4.1.0
-* Ubuntu 20.04                 (GitHub), R 4.1.0
-* Ubuntu 20.04                  (local), R 4.1.0
-* Windows                      (GitHub), R 4.1.0
-* Windows                       (local), R 4.1.0
-* Windows                 (win-builder), R 4.1.0
+* macOS 11.6 Big Sur           (GitHub), R 4.2.1
+* macOS 11.6 Big Sur            (local), R 4.2.1
+* macOs (m1) Big Sur             (rhub), R 4.2.1
+* Ubuntu 20.04                 (GitHub), R 4.2.1
+* Ubuntu 20.04                  (local), R 4.2.1
+* Windows                      (GitHub), R 4.2.1
+* Windows                       (local), R 4.2.1
+* Windows                 (win-builder), R 4.2.1
 
 ### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2021-07-03 r80596)
-* Ubuntu 20.04                  (local), R-devel (2021-07-05 r80598)
-* Windows                      (GitHub), R-devel (2021-07-03 r80596)
-* Windows                 (win-builder), R-devel (2021-07-03 r80596)
-
+* Ubuntu 20.04                 (GitHub), R-devel (2022-08-11 r82713)
+* Ubuntu 20.04                  (local), R-devel (2022-08-11 r82713)
+* Windows                      (GitHub), R-devel (2022-08-14 r82716 ucrt)
+* Windows                 (win-builder), R-devel (2022-08-14 r82716 ucrt)
 ## R CMD check results
 
 There are no errors, or warningsin any of the above.

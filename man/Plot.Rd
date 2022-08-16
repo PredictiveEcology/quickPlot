@@ -256,10 +256,10 @@ this will take the \code{colorTable} slot (can be changed via \code{setColors()}
 If this is a \code{SpatialPointsDataFrame}, this function will use a column called \code{colors}
 and apply these to the symbols.
 
-For \code{SpatialPolygons}, \code{cols} can accept \code{RColorBrewer} colors by keyword as a
+For \code{SpatialPolygons}, \code{cols} can accept \code{RColorBrewer} colours by keyword as a
 character vector of length 1. For more control, pass a vector of colours to \code{cols} or
 to \code{gp = gpar(fill = vectorOfColours)}.
-In this second approach, the length of the vectorOfColours can be either less then or equal
+In this second approach, the length of the \code{vectorOfColours} can be either less then or equal
 to the number of polygons in the \code{SpatialPolygons} object -- each polygon within
 a \code{Polygons} object will share the same colour -- or it can be greater than this number
 to give a different colour to each \code{Polygon} (of which there can be MANY more than
@@ -271,14 +271,14 @@ Silently, one hidden object is made, \code{.quickPlot} in the
 device window, and identifying the objects to be replotted if rearranging
 is required, subsequent to a \code{new = FALSE} additional plot.
 
-This function is optimized to allow modular Plotting. This means that several
-behaviours will appear unusual.
+This function is optimized to allow modular Plotting.
+This means that several behaviours will appear unusual.
 For instance, if a first call to \code{Plot} is made, the legend will reflect
 the current colour scheme. If a second or subsequent call to \code{Plot} is
 made with the same object but with different colours (e.g., with \code{cols}),
 the legend will not update. This behaviour is made with the decision that the
 original layer takes precedence and all subsequent plots to that same frame
-are overplots only.
+are over-plots only.
 
 \code{speedup} is not a precise number because it is faster to plot an
 non-resampled raster if the new resampling is close to the original number of
