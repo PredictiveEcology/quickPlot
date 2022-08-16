@@ -1,0 +1,10 @@
+pandoc: 2.14.2
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  iii-plotting: iii-plotting.html
+last_built: 2022-08-16T18:57Z
+urls:
+  reference: http://quickplot.predictiveecology.org/reference
+  article: http://quickplot.predictiveecology.org/articles
+
