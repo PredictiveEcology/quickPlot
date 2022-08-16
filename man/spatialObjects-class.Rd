@@ -6,24 +6,23 @@
 \alias{spatialObjects}
 \title{The \code{spatialObjects} class}
 \description{
-This class is the union of several spatial objects from \pkg{raster} and
-\pkg{sp} packages.
+This class is the union of several spatial objects from \pkg{raster} and \pkg{sp} packages.
 }
 \details{
 Members:
 
 \itemize{
-  \item \code{RasterLayer}, \code{RasterLayerSparse}, \code{RasterStack};
-  \item \code{SpatialLines}, \code{SpatialLinesDataFrame};
-  \item \code{SpatialPixels}, \code{SpatialPixelsDataFrame};
-  \item \code{SpatialPoints}, \code{SpatialPointsDataFrame};
-  \item \code{SpatialPolygons}, \code{SpatialPolygonsDataFrame}.
+\item \code{RasterLayer}, \code{RasterLayerSparse}, \code{RasterStack};
+\item \code{SpatialLines}, \code{SpatialLinesDataFrame};
+\item \code{SpatialPixels}, \code{SpatialPixelsDataFrame};
+\item \code{SpatialPoints}, \code{SpatialPointsDataFrame};
+\item \code{SpatialPolygons}, \code{SpatialPolygonsDataFrame}.
 }
 
 Notably missing is \code{RasterBrick}, for now.
 }
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

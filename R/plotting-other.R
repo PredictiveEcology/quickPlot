@@ -2,21 +2,19 @@
 #' Clear plotting device
 #'
 #' Under some conditions, a device and its metadata need to be cleared manually.
-#' This can be done with either the \code{new = TRUE} argument within the call to
-#' \code{Plot}.
+#' This can be done with either the `new = TRUE` argument within the call to `Plot`.
 #' Sometimes, the metadata of a previous plot will prevent correct plotting of
-#' a new \code{Plot} call.
-#' Use \code{clearPlot} to clear the device and all the associated metadata
-#' manually.
+#' a new `Plot` call.
+#' Use `clearPlot` to clear the device and all the associated metadata manually.
 #'
 #' @param dev Numeric. Device number to clear.
 #'
 #' @param removeData Logical indicating whether any data that was stored in the
-#' \code{.quickPlotEnv} should also be removed; i.e., not just the plot window wiped.
+#' `.quickPlotEnv` should also be removed; i.e., not just the plot window wiped.
 #'
 #' @param force Logical or "all". Sometimes the graphics state cannot be fixed by a simple
-#'              clearPlot(). If TRUE, this will close the device and reopen the same
-#'              device number. If "all", then all quickPlot related data from all devices
+#'              `clearPlot()`. If TRUE, this will close the device and reopen the same
+#'              device number. If "all", then all `quickPlot` related data from all devices
 #'              will be cleared, in addition to device closing and reopening.
 #'
 #' @author Eliot McIntire
@@ -100,13 +98,13 @@ setMethod("clearPlot",
           })
 
 ################################################################################
-#' Convert \code{grid.locator} units
+#' Convert `grid.locator` units
 #'
-#' Internal function from example in \code{?grid.locator}.
-#' Converts \code{grid.locator} units to meaningful units.
-#' Used within \code{.clickCoord}
+#' Internal function from example in `?grid.locator`.
+#' Converts `grid.locator` units to meaningful units.
+#' Used within `.clickCoord`
 #'
-#' @param grid.locator an object that was output by a call to \code{grid.locator}
+#' @param grid.locator an object that was output by a call to `grid.locator`
 #'                     and mouse click(s).
 #'
 #' @export
@@ -122,13 +120,13 @@ setMethod("clearPlot",
 ################################################################################
 #' Mouse interactions with Plots
 #'
-#' These functions use \code{grid.locator}. The primary two user-level functions are
-#' \code{clickValues} and \code{clickExtent}. These functions automatically select
+#' These functions use `grid.locator`. The primary two user-level functions are
+#' `clickValues` and `clickExtent`. These functions automatically select
 #' the correct viewport (i.e., map) where the mouse clicks occurred so the user
 #' does not have to manually specify which map is being clicked on.
-#' This works for \code{Raster*}, \code{SpatialPoints*}, and \code{SpatialPolygons*} objects.
+#' This works for `Raster*`, `SpatialPoints*`, and `SpatialPolygons*` objects.
 #'
-#' \code{clickValues} is equivalent to running \code{X[SpatialPoints(locator(n))]}, where
+#' `clickValues` is equivalent to running `X[SpatialPoints(locator(n))]`, where
 #' X is the raster being clicked on, in base graphics. This function determines which place in the
 #' grid.layout was clicked and makes all appropriate calculations to determine the value
 #' on the raster(s) at that or those location(s). It should be noted that when zooming in
@@ -136,19 +134,19 @@ setMethod("clearPlot",
 #' if the extent is not perfectly in line with pixel edges. As a result, when values
 #' returned by this function may be slightly off (<0.5 pixel width).
 #'
-#' \code{clickExtent} is for drawing an extent with two mouse clicks on a given Plotted map.
+#' `clickExtent` is for drawing an extent with two mouse clicks on a given Plotted map.
 #'
-#' \code{clickCoordinates} is the workhorse function that determines which plot has been
-#' clicked on and passes this plot name and the clicked coordinates to \code{.clickCoord}.
+#' `clickCoordinates` is the workhorse function that determines which plot has been
+#' clicked on and passes this plot name and the clicked coordinates to `.clickCoord`.
 #'
-#' \code{.clickCoord} is intended for internal use and is called by other functions here.
+#' `.clickCoord` is intended for internal use and is called by other functions here.
 #'
 #' @param n The number of mouse clicks to do.
 #'
-#' @return \code{clickValues} returns the layer names and values at the clicked points.
-#' \code{clickExtent} invisibly returns the extent object, and optionally plots
+#' @return `clickValues` returns the layer names and values at the clicked points.
+#' `clickExtent` invisibly returns the extent object, and optionally plots
 #' it in a new device window.
-#' \code{clickCoordinates} returns the xy coordinates in the units of the plot clicked on.
+#' `clickCoordinates` returns the xy coordinates in the units of the plot clicked on.
 #'
 #' @author Eliot McIntire
 #' @export
@@ -199,7 +197,7 @@ clickValues <- function(n = 1) {
       }))
     }
   }
-  if (any(raster::is.factor(ras1)) & all(ras1[]%%1==0)) {
+  if (any(raster::is.factor(ras1))) {
     for (i in which(raster::is.factor(ras1)))
       coords$coords$value <- factorValues(ras1[[i]], coords$coords$value)
   }
@@ -208,8 +206,8 @@ clickValues <- function(n = 1) {
 
 #' @param devNum The device number for the new plot to be plotted on.
 #'
-#' @param plot.it Logical. If \code{TRUE} a new plotting window is made for the
-#'                new extent. Default \code{TRUE}.
+#' @param plot.it Logical. If `TRUE` a new plotting window is made for the
+#'                new extent. Default `TRUE`.
 #'
 #' @export
 #' @importFrom grDevices dev.cur
@@ -219,9 +217,9 @@ clickValues <- function(n = 1) {
 #' @rdname quickPlotMouseClicks
 #'
 #' @details
-#' \code{clickExtent} will place the new, zoomed in plot over top of the existing
+#' `clickExtent` will place the new, zoomed in plot over top of the existing
 #' object. To recover original full object, double click anywhere during an
-#' active \code{clickExtent}. See example.
+#' active `clickExtent`. See example.
 #'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
   corners <- clickCoordinates(2)
@@ -365,7 +363,7 @@ clickCoordinates <- function(n = 1) {
 
 #' @param X The raster object whose values will be returned where mouse clicks occur.
 #'
-#' @param gl An object created by a call to \code{grid.locator}.
+#' @param gl An object created by a call to `grid.locator`.
 #'
 #' @export
 #' @importFrom grid seekViewport grid.locator convertX convertY
@@ -390,22 +388,21 @@ clickCoordinates <- function(n = 1) {
 #' Specify where to plot
 #'
 #' Switch to an existing plot device, or if not already open,
-#' launch a new graphics device based on operating system used. On Windows and
-#' Mac, if no x is provided, then this will open or switch to the first non
-#' R Studio device, which is much faster than the png-based R Studio Plot device.
-#' Currently, this will not open anything new
+#' launch a new graphics device based on operating system used.
+#' On Windows and macOS, if `x` is not provided, this will open or switch to the first
+#' non-RStudio device, which is much faster than the \file{png}-based RStudio plot device.
+#' Currently, this will not open anything new.
 #'
-#' For example, \code{dev(6)} switches the active plot device to device #6.
-#' If it doesn't exist, it opens it. NOTE: if devices 1-5 don't exist
-#' they will be opened too.
+#' For example, `dev(6)` switches the active plot device to device 6.
+#' If it does not exist, it opens it. If devices 1-5 don't exist they will be opened too.
 #'
 #' @param x   The number of a plot device. If missing, will open a new
 #'            non-RStudio plotting device
 #'
-#' @param ... Additional arguments passed to \code{\link{newPlot}}.
+#' @param ... Additional arguments passed to [newPlot()].
 #'
-#' @return Opens a new plot device on the screen. Invisibly returns the
-#' device number selected.
+#' @return Opens a new plot device on the screen.
+#' Invisibly returns the device number selected.
 #'
 #' @author Eliot McIntire and Alex Chubaty
 #' @export
@@ -430,9 +427,12 @@ dev <- function(x, ...) {
     if (is.null(dev.list())) {
       x <- 2L
     } else {
-      if (any(names(dev.list()) == "RStudioGD")) {
-        x <- min(min(dev.list()) + 1,
-                 which(names(dev.list()) == "RStudioGD") + 3L)
+      namesDevList <- names(dev.list())
+      isRstudioDev <- namesDevList == "RStudioGD"
+      hasAPngForStudio <- (identical(namesDevList[min(length(namesDevList), which(isRstudioDev) + 1)], "png"))
+      if (any(isRstudioDev)) {
+        x <- min(min(dev.list()) + 1 + hasAPngForStudio,
+                 which(isRstudioDev) + 3L)
         dev(x)
       } else {
         x <- min(dev.list())
@@ -460,23 +460,23 @@ dev <- function(x, ...) {
 ################################################################################
 #' Open a new plotting window
 #'
-#' @param noRStudioGD Logical Passed to dev.new. Default is TRUE to avoid using
+#' @param noRStudioGD Logical Passed to `dev.new`. Default is TRUE to avoid using
 #'                    RStudio graphics device, which is slow.
 #'
 #' @param useRSGD     Logical indicating whether the default device should be the
-#'                    RStudio graphic device, or the platform default (\code{quartz}
-#'                    on macOS; \code{windows} on Windows; \code{x11} on others, e.g., Linux).
+#'                    RStudio graphic device, or the platform default (`quartz`
+#'                    on macOS; `windows` on Windows; `x11` on others, e.g., Linux).
 #'
 #' @param ...         Additional arguments.
 #'
-#' @note \code{\link{dev.new}} is supposed to be the correct way to open a new
-#' window in a platform-generic way; however, doesn't work in RStudio
-#' (\href{https://github.com/PredictiveEcology/SpaDES/issues/116}{SpaDES#116}).
-#' Use \code{dev.useRSGD(FALSE)} to avoid RStudio for the remainder of this session,
-#' and \code{dev.useRSGD(TRUE)} to use the RStudio graphics device.
-#' (This sets the default device via the \code{device} option.)
+#' @note [dev.new()] is supposed to be the correct way to open a new
+#' window in a platform-generic way; however, does not work in RStudio
+#' ([SpaDES#116](https://github.com/PredictiveEcology/SpaDES/issues/116)).
+#' Use `dev.useRSGD(FALSE)` to avoid RStudio for the remainder of this session,
+#' and `dev.useRSGD(TRUE)` to use the RStudio graphics device.
+#' (This sets the default device via the `device` option.)
 #'
-#' @seealso \code{\link{dev}}.
+#' @seealso [dev()].
 #'
 #' @author Eliot McIntire and Alex Chubaty
 #' @export

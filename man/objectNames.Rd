@@ -4,8 +4,7 @@
 \alias{.objectNames}
 \title{Extracts the object names}
 \usage{
-.objectNames(calledFrom = "Plot", argClass = ".quickPlotObjects",
-  argName = "")
+.objectNames(calledFrom = "Plot", argClass = ".quickPlotObjects", argName = "")
 }
 \arguments{
 \item{calledFrom}{character vector of length 1, indicating which function

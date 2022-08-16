@@ -2,25 +2,23 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{sp2sl}
 \alias{sp2sl}
-\title{Convert pairs of coordinates to SpatialLines}
+\title{Convert pairs of coordinates to \code{SpatialLines}}
 \usage{
 sp2sl(sp1, from)
 }
 \arguments{
-\item{sp1}{SpatialPoints* object}
+\item{sp1}{a \verb{SpatialPoints*} object}
 
-\item{from}{SpatialPoints* object. Optional. If not provided, then the function
-will attempt to find the "previous" coordinates as columns
-(\code{prevX}, \code{prevY}) in the \code{sp1} object.}
+\item{from}{a \verb{SpatialPoints*} object. Optional. If not provided, then the function will
+attempt to find the "previous" coordinates as columns (\code{prevX}, \code{prevY})
+in the \code{sp1} object.}
 }
 \description{
 This will convert 2 objects whose coordinates can be extracted with \code{coordinates}
-(e.g., \code{sp::SpatialPoints*})
-to a single SpatialLines
-object. The first object is treated as the "to" or destination, and the
-second object the "from" or source. This can be used to represent
-directional SpatialLines, especially with with arrow heads, as in
-\code{Plot(sl, length = 0.1)}
+(e.g., \verb{sp::SpatialPoints*}) to a single \code{SpatialLines} object.
+The first object is treated as the "to" (destination), and the second object the "from" (source).
+This can be used to represent directional \code{SpatialLines}, especially with with arrow heads,
+as in \code{Plot(sl, length = 0.1)}.
 }
 \examples{
 caribou <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),

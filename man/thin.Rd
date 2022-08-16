@@ -8,14 +8,19 @@
 \usage{
 thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 
-\method{thin}{SpatialPolygons}(x, tolerance = NULL,
-  returnDataFrame = FALSE, minCoordsToThin = 0,
-  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000), ...)
+\method{thin}{SpatialPolygons}(
+  x,
+  tolerance = NULL,
+  returnDataFrame = FALSE,
+  minCoordsToThin = 0,
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000),
+  ...
+)
 
 \method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 }
 \arguments{
-\item{x}{A Spatial* object}
+\item{x}{A \verb{Spatial*} object}
 
 \item{tolerance}{Maximum allowable distance for a point to be removed.}
 
@@ -25,8 +30,8 @@ If \code{FALSE} (default), it will return a \code{SpatialPolygons} object.}
 
 \item{minCoordsToThin}{If the number of coordinates is smaller than this number,
 then thin will just pass through, though it will take the time required to
-calculate how many points there are (which is not NROW(coordinates(x)) for
-a SpatialPolygon)}
+calculate how many points there are (which is not \code{NROW(coordinates(x))} for
+a \code{SpatialPolygon})}
 
 \item{...}{Passed to methods (e.g., \code{maxNumPolygons})}
 
@@ -36,14 +41,13 @@ a lot of polygons being plotted in a small space. Current default is
 taken from \code{options('quickPlot.maxNumPolygons')}, with a message.}
 }
 \description{
-For visualizing, it is sometimes useful to remove points in Spatial* objects.
+For visualizing, it is sometimes useful to remove points in \verb{Spatial*} objects.
 This will change the geometry, so it is not recommended for computation.
 This is similar to \code{rgeos::gSimplify} and \code{sf::st_simplify},
 but faster than both (see examples) for large shapefiles, particularly if
 \code{returnDataFrame} is \code{TRUE}.
 \emph{\code{thin} will not attempt to preserve topology.}
-It is strictly for making smaller polygons for the purpose (likely)
-of visualizing more quickly.
+It is strictly for making smaller polygons for the (likely) purpose of visualizing more quickly.
 }
 \examples{
 library(raster)

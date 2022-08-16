@@ -6,13 +6,13 @@
 \alias{.quickPlotObjects}
 \title{The \code{.quickPlotObjects} class}
 \description{
-This class contains the union of spatialObjects and several other plot-type objects.
-Currently, this includes \code{SpatialPoints*}, \code{SpatialPolygons*},
-\code{SpatialLines*}, \code{RasterLayer}, \code{RasterStack}, and \code{ggplot} objects.
-These are the object classes that the \code{\link{Plot}} function can handle.
+This class contains the union of \code{spatialObjects} and several other plot-type objects.
+Currently, this includes \verb{SpatialPoints*}, \verb{SpatialPolygons*},
+\verb{SpatialLines*}, \code{RasterLayer}, \code{RasterStack}, and \code{ggplot} objects.
+These are the object classes that the \code{\link[=Plot]{Plot()}} function can handle.
 }
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

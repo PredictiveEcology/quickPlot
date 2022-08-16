@@ -4,8 +4,7 @@
 \alias{.makeLayout}
 \title{Make an optimal layout of plots}
 \usage{
-.makeLayout(arr, visualSqueeze, legend = TRUE, axes = TRUE,
-  title = TRUE)
+.makeLayout(arr, visualSqueeze, legend = TRUE, axes = TRUE, title = TRUE)
 }
 \arguments{
 \item{arr}{an object of class \code{.arrangement}.}
@@ -21,7 +20,7 @@ layout calculation. Default is \code{TRUE}.}
 
 \item{title}{Logical indicating whether the names of each plot should be
 written above plots and should be included as part of layout
- calculation. Default is \code{TRUE}.}
+calculation. Default is \code{TRUE}.}
 }
 \description{
 Internal function. Using the size of the current device, and number and

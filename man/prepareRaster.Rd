@@ -4,17 +4,25 @@
 \alias{.prepareRaster}
 \title{Prepare raster for plotting}
 \usage{
-.prepareRaster(grobToPlot, zoomExtent, legendRange, takeFromPlotObj, arr,
-  speedup, newArr)
+.prepareRaster(
+  grobToPlot,
+  zoomExtent,
+  legendRange,
+  takeFromPlotObj,
+  arr,
+  speedup,
+  newArr
+)
 }
 \arguments{
-\item{grobToPlot}{.quickPlotGrob}
+\item{grobToPlot}{A \code{.quickPlotGrob} object.}
 
 \item{zoomExtent}{an extent object}
 
 \item{legendRange}{a numeric vector of length >=2 indicating the desired legend range.}
 
-\item{takeFromPlotObj}{logical. Should the object be found in the Plot call or .GlobalEnv}
+\item{takeFromPlotObj}{logical. Should the object be found in the \code{Plot} call or
+\code{.GlobalEnv}}
 
 \item{arr}{an \code{.arrangement} object}
 
@@ -24,9 +32,9 @@ expense of resolution}
 \item{newArr}{logical, whether this is a new arrangement or just adding to a previous one}
 }
 \description{
-Internal function. Takes a raster .quickPlotGrob, and converts zoomExtent into
-a zoom, and legendRange into a legend.
-Then calculates the maxpixels to plot for speed.
+Internal function. Takes a raster \code{.quickPlotGrob}, and converts \code{zoomExtent} into
+a zoom, and \code{legendRange} into a legend.
+Then calculates the \code{maxpixels} to plot for speed.
 }
 \author{
 Eliot McIntire

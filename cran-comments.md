@@ -1,34 +1,31 @@
 ## Updated release
 
-This is a minor update with a key new function. This update, however, is required in revdep packages.
+This is a maintenance release which drops support for R < 4.0.
 
 ## Test environments
 
 ### Previous R versions
-* Ubuntu 14.04        (travis-ci), R 3.1.0
-* Ubuntu 14.04        (travis-ci), R 3.2.0
-* Ubuntu 14.04        (travis-ci), R 3.3.0
-* Ubuntu 14.04        (travis-ci), R 3.4.0
-* Windows              (appveyor), R 3.1.0
-* Windows              (appveyor), R 3.2.0
-* Windows              (appveyor), R 3.3.0
-* Windows              (appveyor), R 3.4.0
+* Ubuntu 20.04                 (GitHub), R 4.0.5
+* Ubuntu 20.04                 (GitHub), R 4.1.3
+* Windows                      (GitHub), R 4.0.5
+* Windows                      (GitHub), R 4.1.3
+* Windows                 (win-builder), R 4.1.3
 
 ### Current R versions
-* macOS High Sierra   (travis-ci), R 3.5.0
-* macOS Mojave            (local), R 3.5.1
-* Ubuntu 14.04        (travis-ci), R 3.5.1
-* Ubuntu 18.04            (local), R 3.5.1
-* Windows              (appveyor), R 3.5.1
-* Windows           (win-builder), R 3.5.1
-* Windows 7               (local), R 3.5.1
+* macOS 11.6 Big Sur           (GitHub), R 4.2.1
+* macOS 11.6 Big Sur            (local), R 4.2.1
+* macOs (m1) Big Sur             (rhub), R 4.2.1
+* Ubuntu 20.04                 (GitHub), R 4.2.1
+* Ubuntu 20.04                  (local), R 4.2.1
+* Windows                      (GitHub), R 4.2.1
+* Windows                       (local), R 4.2.1
+* Windows                 (win-builder), R 4.2.1
 
 ### Development R version
-* Ubuntu 14.04     (travis-ci), R 3.6.0 (2018-11-06 r75545)
-* Ubuntu 18.04         (local), R 3.6.0 (2018-11-06 r75553)
-* Windows           (appveyor), R 3.6.0 (2018-11-02 r75540)
-* Windows        (win-builder), R 3.6.0 (2018-10-30 r75516)
-
+* Ubuntu 20.04                 (GitHub), R-devel (2022-08-11 r82713)
+* Ubuntu 20.04                  (local), R-devel (2022-08-11 r82713)
+* Windows                      (GitHub), R-devel (2022-08-14 r82716 ucrt)
+* Windows                 (win-builder), R-devel (2022-08-14 r82716 ucrt)
 ## R CMD check results
 
 There are no errors, or warningsin any of the above.
@@ -49,8 +46,7 @@ The `fastshp` package in Suggests is optionally installed from Rforge and not re
 
 ## Downstream dependencies
 
-I have run R CMD check on downstream dependencies and all have passed, except as noted below.
+We checked 4 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
-Summary at https://github.com/PredictiveEcology/quickPlot/blob/master/revdep/README.md.
-
-Packages `SpaDES.core` and `reproducible` produced ERRORs, which are fixed in forthcoming releases, to be submitted to CRAN shortly.
+ * We saw 0 new problems
+ * We failed to check 0 packages

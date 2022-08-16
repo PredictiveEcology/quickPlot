@@ -6,10 +6,10 @@
 \alias{.quickPlotGrob}
 \title{The \code{.quickPlotGrob} class}
 \description{
-This class contains the plotting .quickPlotGrob information.
+This class contains the plotting \code{.quickPlotGrob} information.
 }
 \details{
-These \code{gp*} parameters will specify plot parameters that are available
+These \verb{gp*} parameters will specify plot parameters that are available
 with \code{gpar()}. \code{gp} will adjust plot parameters, \code{gpText} will
 adjust title and legend text, \code{gpAxis} will adjust the axes.
 \code{size} adjusts point size in a \code{SpatialPoints} object.
@@ -26,9 +26,9 @@ The naming convention used is: \code{RasterStackName$layerName}, i.e, \code{land
 \item{\code{plotName}}{character. Name of the plot frame, which is by default a concatenation
 of the \code{objName} and \code{layerName}}
 
-\item{\code{objName}}{character. Name of object represented by this .quickPlotGrob}
+\item{\code{objName}}{character. Name of object represented by this \code{.quickPlotGrob}}
 
-\item{\code{envir}}{environment. The environment in which to find the objName}
+\item{\code{envir}}{environment. The environment in which to find the \code{objName}}
 
 \item{\code{layerName}}{character. Name of the layer represented by this \code{.quickPlotGrob}.
 Primarily used for \code{RasterStack}s.}
@@ -36,13 +36,13 @@ Primarily used for \code{RasterStack}s.}
 \item{\code{objClass}}{character. Class of the object represented by this \code{.quickPlotGrob}.}
 
 \item{\code{isSpatialObjects}}{logical. TRUE if the object is one of the SpaDES recognized
-spatialObject classes.}
+\code{spatialObject} classes.}
 
 \item{\code{plotArgs}}{list. Any parameters needed for plotting, set by \code{Plot} call.}
 }}
 
 \seealso{
-\code{\link{quickPlotClasses}}
+\code{\link[=quickPlotClasses]{quickPlotClasses()}}
 }
 \author{
 Eliot McIntire

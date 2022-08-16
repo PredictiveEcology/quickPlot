@@ -10,23 +10,22 @@ dev(x, ...)
 \item{x}{The number of a plot device. If missing, will open a new
 non-RStudio plotting device}
 
-\item{...}{Additional arguments passed to \code{\link{newPlot}}.}
+\item{...}{Additional arguments passed to \code{\link[=newPlot]{newPlot()}}.}
 }
 \value{
-Opens a new plot device on the screen. Invisibly returns the
-device number selected.
+Opens a new plot device on the screen.
+Invisibly returns the device number selected.
 }
 \description{
 Switch to an existing plot device, or if not already open,
-launch a new graphics device based on operating system used. On Windows and
-Mac, if no x is provided, then this will open or switch to the first non
-R Studio device, which is much faster than the png-based R Studio Plot device.
-Currently, this will not open anything new
+launch a new graphics device based on operating system used.
+On Windows and macOS, if \code{x} is not provided, this will open or switch to the first
+non-RStudio device, which is much faster than the \file{png}-based RStudio plot device.
+Currently, this will not open anything new.
 }
 \details{
-For example, \code{dev(6)} switches the active plot device to device #6.
-If it doesn't exist, it opens it. NOTE: if devices 1-5 don't exist
-they will be opened too.
+For example, \code{dev(6)} switches the active plot device to device 6.
+If it does not exist, it opens it. If devices 1-5 don't exist they will be opened too.
 }
 \examples{
 \dontrun{

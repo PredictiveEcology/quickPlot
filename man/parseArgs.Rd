@@ -7,8 +7,7 @@
 .parseArgs(y, e, eminus1)
 }
 \arguments{
-\item{y}{A character representation of the arguments passed to a function,
-e.g., \code{Plot}.}
+\item{y}{A character representation of the arguments passed to a function, e.g., \code{Plot}.}
 
 \item{e}{Environment in which the function (e.g., \code{Plot}) was called.}
 
@@ -16,11 +15,11 @@ e.g., \code{Plot}.}
 }
 \value{
 A list of length 2, with names \code{objs} and \code{envs} giving the
-standardized representation (i.e., replacing \code{[[]]} with \code{$}
-notation for objects) of objects and their layers (if \code{RasterStacks}).
+standardized representation (i.e., replacing \verb{[[]]} with \code{$} notation for objects) of objects
+and their layers (if \code{RasterStack}s).
 }
 \description{
-Internal function used within objectNames.
+Internal function used within \code{objectNames}.
 }
 \author{
 Eliot McIntire and Alex Chubaty

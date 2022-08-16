@@ -1,173 +1,181 @@
-### deal with spurious data.table warnings
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c("groups", "thin", "whGrobNamesi",
-                           "xmax", "xmin", "ymax", "ymin"))
-}
+utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax", "ymin"))
 
 ################################################################################
-#' \code{Plot}: Fast, optimally arranged, multipanel plotting
+#' `Plot`: Fast, optimally arranged, multi-panel plotting
 #'
-#' This can take objects of type \code{Raster*}, \code{SpatialPoints*},
-#' \code{SpatialPolygons*}, and any combination of those.
+#' This can take objects of type `Raster*`, `SpatialPoints*`, `SpatialPolygons*`,
+#' and any combination of those.
 #' These can be provided as individual objects, or a named list.
 #' If a named list, the names either represent a different original object in the
 #' calling environment and that will be used, or if the names don't exist in the
-#' calling environment, then they will be copied to \code{.quickPlotEnv} for reuse later.
-#' It can also handle \code{ggplot2} objects or \code{base::histogram} objects
-#' created via call to \code{exHist <- hist(1:10, plot = FALSE)}. It can also take
-#' arguments as if it were a call to \code{plot}. In this latter
-#' case, the user should be explicit about naming the plot area using \code{addTo}.
-#' Customization of the \code{ggplot2} elements can be done as a normal
-#' \code{ggplot2} plot, then added with \code{Plot(ggplotObject)}.
+#' calling environment, then they will be copied to `.quickPlotEnv` for reuse later.
+#' It can also handle `ggplot2` objects or `base::histogram` objects
+#' created via call to `exHist <- hist(1:10, plot = FALSE)`. It can also take
+#' arguments as if it were a call to `plot`. In this latter
+#' case, the user should be explicit about naming the plot area using `addTo`.
+#' Customization of the `ggplot2` elements can be done as a normal
+#' `ggplot2` plot, then added with `Plot(ggplotObject)`.
 #'
-#' \strong{NOTE:} Plot uses the \pkg{grid} package; therefore, it is NOT compatible
+#' **NOTE:** Plot uses the \pkg{grid} package; therefore, it is NOT compatible
 #' with base R graphics. Also, because it does not by default wipe the plotting device
-#' before plotting, a call to \code{\link{clearPlot}} is helpful to resolve
-#' many errors. Careful use of the other device tools, such as \code{dev.off()} and
-#' \code{dev.list()} might also clear problems that may arise.
+#' before plotting, a call to [clearPlot()] is helpful to resolve
+#' many errors. Careful use of the other device tools, such as `dev.off()` and
+#' `dev.list()` might also clear problems that may arise.
 #'
-#' If \code{new = TRUE}, a new plot will be generated, but only in the figure region that
+#' If `new = TRUE`, a new plot will be generated, but only in the figure region that
 #' has the same name as the object being plotted.
-#' This is different than calling \code{clearPlot(); Plot(Object)},
-#' i.e,. directly before creating a new Plot. \code{clearPlot()} will clear the entire
+#' This is different than calling `clearPlot(); Plot(Object)`,
+#' i.e,. directly before creating a new Plot. `clearPlot()` will clear the entire
 #' plotting device.
-#' When \code{new = FALSE}, any plot that already exists will be overplotted,
+#' When `new = FALSE`, any plot that already exists will be overplotted,
 #' while plots that have not already been plotted will be added.
 #' This function rearranges the plotting device to maximize the size of all the
 #' plots, minimizing white space.
 #' If using the RStudio IDE, it is recommended to make and use a new device
-#' with \code{dev()}, because the built in device is not made for rapid redrawing.
+#' with `dev()`, because the built in device is not made for rapid redrawing.
 #' The function is based on the grid package.
 #'
 #' Each panel in the multipanel plot must have a name.
 #' This name is used to overplot, rearrange the plots, or overlay using
-#' \code{addTo} when necessary.
-#' If the \code{...} are named spatialObjects, then \code{Plot} will use
+#' `addTo` when necessary.
+#' If the `...` are named `spatialObjects`, then `Plot` will use
 #' these names. However, this name will not persist when there is a future call
-#' to \code{Plot} that forces a rearrangement of the plots.
+#' to `Plot` that forces a rearrangement of the plots.
 #' A more stable way is to use the object names directly, and any layer names
-#' (in the case of \code{RasterLayer} or \code{RasterStack} objects).
-#' If plotting a RasterLayer and the layer name is "layer" or the same as the
+#' (in the case of `RasterLayer` or `RasterStack` objects).
+#' If plotting a `RasterLayer` and the layer name is "layer" or the same as the
 #' object name, then, for simplicity, only the object name will be used.
 #' In other words, only enough information is used to uniquely identify the plot.
 #'
-#' Because of modularity, Plot must have access to the original objects that were
-#' plotted. These objects will be used if a subsequent Plot event forces a
-#' rearrangement of the Plot device. Rather than saving all the plot information
-#' (including the data) at each Plot
-#' call (this is generally too much data to constantly make copies),
+#' For modularity, `Plot` must have access to the original objects that were plotted.
+#' These objects will be used if a subsequent Plot event forces a rearrangement of the plot device.
+#' Rather than saving all the plot information (including the data) at each `Plot` call
+#' (this is generally too much data to constantly make copies),
 #' the function saves a pointer to the original R object. If the plot needs
-#' to be rearranged because of a future addition, then Plot will search for that
-#' original object that created the first plots, and replot them. This has several
-#' consequences. First, that object must still exist and in the same environment.
+#' to be rearranged because of a future addition, then `Plot` will search for that
+#' original object that created the first plots, and replot them.
+#' This has several consequences.
+#' First, that object must still exist and in the same environment.
 #' Second, if that object has changed between the first time it is plot and any
 #' subsequent time it is replotted (via a forced rearrangement), then it will take
 #' the object *as it exists*, not as it existed. Third, if passing a named list
 #' of objects, Plot will either create a link to objects with those names in the
-#' calling environment (e.g., .GlobalEnv) or, if they do not exist, then Plot
-#' will make a copy in the hidden .quickPlotEnv for later reuse.
+#' calling environment (e.g., `.GlobalEnv`) or, if they do not exist, then `Plot`
+#' will make a copy in the hidden `.quickPlotEnv` for later reuse.
 #'
 #'
-#' \code{cols} is a vector of colours that can be understood directly, or by
-#' \code{\link[grDevices]{colorRampPalette}}, such as \code{c("orange", "blue")},
+#' `cols` is a vector of colours that can be understood directly, or by
+#' [`colorRampPalette()`][grDevices::colorRamp], such as `c("orange", "blue")`,
 #' will give a colour range from orange to blue, interpolated.
 #' If a list, it will be used, in order, for each item to be plotted.
 #' It will be recycled if it is shorter than the objects to be plotted.
 #' Note that when this approach to setting colours is used, any overplotting
-#' will revert to the \code{colortable} slot of the object, or the default
-#' for rasters, which is \code{terrain.color()}
+#' will revert to the `colortable` slot of the object, or the default
+#' for rasters, which is `terrain.color()`
 #'
-#' \code{cols} can also accept \code{RColorBrewer} colors by keyword if it is
+#' `cols` can also accept `RColorBrewer` colours by keyword if it is
 #' character vector of length 1. i.e., this cannot be used to set many objects by keyword in
-#' the same Plot call. Default \code{terrain.color()}. See Details.
+#' the same Plot call. Default `terrain.color()`. See Details.
 #'
-#' Some coloring will be automatic. If the object being plotted is a Raster, then
-#' this will take the colorTable slot (can be changed via setColors() or other ways).
-#' If this is a SpatialPointsDataFrame, this function will use a column called \code{colors}
+#' Some colouring will be automatic. If the object being plotted is a Raster, then
+#' this will take the `colorTable` slot (can be changed via `setColors()` or other ways).
+#' If this is a `SpatialPointsDataFrame`, this function will use a column called `colors`
 #' and apply these to the symbols.
 #'
-#' Silently, one hidden object is made, \code{.quickPlot} in the
-#' \code{.quickPlotEnv} environment, which is used for arranging plots in the
-#' device window, and identifying the objects to be replotted if rearranging
-#' is required, subsequent to a \code{new = FALSE} additional plot.
+#' For `SpatialPolygons`, `cols` can accept `RColorBrewer` colours by keyword as a
+#' character vector of length 1. For more control, pass a vector of colours to `cols` or
+#' to `gp = gpar(fill = vectorOfColours)`.
+#' In this second approach, the length of the `vectorOfColours` can be either less then or equal
+#' to the number of polygons in the `SpatialPolygons` object -- each polygon within
+#' a `Polygons` object will share the same colour -- or it can be greater than this number
+#' to give a different colour to each `Polygon` (of which there can be MANY more than
+#' `Polygons`. `Plot` will recycle these colours if there are not enough. The order
+#' provided will be the order assigned to each `Polygons` or `Polygon` object.
 #'
-#' This function is optimized to allow modular Plotting. This means that several
-#' behaviours will appear unusual.
-#' For instance, if a first call to \code{Plot} is made, the legend will reflect
-#' the current color scheme. If a second or subsequent call to \code{Plot} is
-#' made with the same object but with different colours (e.g., with \code{cols}),
+#'
+#' Silently, one hidden object is made, `.quickPlot` in the
+#' `.quickPlotEnv` environment, which is used for arranging plots in the
+#' device window, and identifying the objects to be replotted if rearranging
+#' is required, subsequent to a `new = FALSE` additional plot.
+#'
+#' This function is optimized to allow modular Plotting.
+#' This means that several behaviours will appear unusual.
+#' For instance, if a first call to `Plot` is made, the legend will reflect
+#' the current colour scheme. If a second or subsequent call to `Plot` is
+#' made with the same object but with different colours (e.g., with `cols`),
 #' the legend will not update. This behaviour is made with the decision that the
 #' original layer takes precedence and all subsequent plots to that same frame
-#' are overplots only.
+#' are over-plots only.
 #'
-#' \code{speedup} is not a precise number because it is faster to plot an
+#' `speedup` is not a precise number because it is faster to plot an
 #' non-resampled raster if the new resampling is close to the original number of
 #' pixels.
 #' At the moment, for rasters, this is set to 1/3 of the original pixels.
-#' In other words, \code{speedup} will not do anything if the factor for
+#' In other words, `speedup` will not do anything if the factor for
 #' speeding up is not high enough (i.e., >3). If no sub-sampling is desired,
 #' use a speedup value less than 0.1.
 #'
-#' These \code{gp*} parameters will specify plot parameters that are available
-#' with \code{gpar()}. \code{gp} will adjust plot parameters, \code{gpText}
-#' will adjust title and legend text, \code{gpAxis} will adjust the axes.
-#' \code{size} adjusts point size in a \code{SpatialPoints} object.
-#' These will persist with the original \code{Plot} call for each individual object.
+#' These `gp*` parameters will specify plot parameters that are available
+#' with `gpar()`. `gp` will adjust plot parameters, `gpText`
+#' will adjust title and legend text, `gpAxis` will adjust the axes.
+#' `size` adjusts point size in a `SpatialPoints` object.
+#' These will persist with the original `Plot` call for each individual object.
 #' Multiple entries can be used, but they must be named list elements and they
-#' must match the \code{...} items to plot.
-#' This is true for a \code{RasterStack} also, i.e., the list of named elements
+#' must match the `...` items to plot.
+#' This is true for a `RasterStack` also, i.e., the list of named elements
 #' must be the same length as the number of layers being plotted.
-#' The naming convention used is: \code{RasterStackName$layerName}, i.e,
-#' \code{landscape$DEM}.
+#' The naming convention used is: `RasterStackName$layerName`, i.e,
+#' `landscape$DEM`.
 #'
-#' @param ... A combination of \code{spatialObjects} or non-spatial objects.
-#'            For many object classes, there are specific \code{Plot} methods. Where
+#' @param ... A combination of `spatialObjects` or non-spatial objects.
+#'            For many object classes, there are specific `Plot` methods. Where
 #'            there are no specific ones, the base plotting will be used internally.
-#'            This means that for objects with no specific \code{Plot} methods,
-#'            many arguments, such as \code{addTo}, will not work.
+#'            This means that for objects with no specific `Plot` methods,
+#'            many arguments, such as `addTo`, will not work.
 #'            See details.
 #'
-#' @param new Logical. If \code{TRUE}, then the previous named plot area is wiped
-#'            and a new one made; if \code{FALSE}, then the \code{...} plots will be
+#' @param new Logical. If `TRUE`, then the previous named plot area is wiped
+#'            and a new one made; if `FALSE`, then the `...` plots will be
 #'            added to the current device, adding or rearranging the plot layout
-#'            as necessary. Default is \code{FALSE}. This currently works best if
-#'            there is only one object being plotted in a given Plot call. However,
+#'            as necessary. Default is `FALSE`. This currently works best if
+#'            there is only one object being plotted in a given `Plot` call. However,
 #'            it is possible to pass a list of logicals to this, matching the
-#'            length of the ... objects. Use \code{clearPlot} to clear the whole
-#'            plotting device.
+#'            length of the `...` objects. Use `clearPlot` to clear the whole
+#'            plotting device. NOTE if `TRUE`: *Everything that was there,
+#'            including the legend and the end points of the colour palette, will
+#'            be removed and re-initiated*.
 #'
-#' @param addTo Character vector, with same length as \code{...}.
+#' @param addTo Character vector, with same length as `...`.
 #'              This is for overplotting, when the overplot is not to occur on
 #'              the plot with the same name, such as plotting a
-#'              \code{SpatialPoints*} object on a \code{RasterLayer}.
+#'              `SpatialPoints*` object on a `RasterLayer`.
 #'
-#' @param gp A \code{gpar} object, created by \code{\link{gpar}} function,
+#' @param gp A `gpar` object, created by [`gpar()`],
 #'           to change plotting parameters (see \pkg{grid} package).
 #'
-#' @param gpText A \code{gpar} object for the title text.
-#'               Default \code{gpar(col = "black")}.
+#' @param gpText A `gpar` object for the title text.
+#'               Default `gpar(col = "black")`.
 #'
-#' @param gpAxis A \code{gpar} object for the axes.
-#'               Default \code{gpar(col = "black")}.
+#' @param gpAxis A `gpar` object for the axes.
+#'               Default `gpar(col = "black")`.
 #'
-#' @param axes Logical or \code{"L"}, representing the left and bottom axes,
-#'             over all plots.
+#' @param axes Logical or `"L"`, representing the left and bottom axes, over all plots.
 #'
 #' @param speedup Numeric. The factor by which the number of pixels is divided
 #'                by to plot rasters. See Details.
 #'
-#' @param size Numeric. The size, in points, for \code{SpatialPoints} symbols,
+#' @param size Numeric. The size, in points, for `SpatialPoints` symbols,
 #'             if using a scalable symbol.
 #'
-#' @param cols (also \code{col}) Character vector or list of character vectors of colours.
+#' @param cols (also `col`) Character vector or list of character vectors of colours.
 #'             See details.
 #'
-#' @param col (also \code{cols}) Alternative to \code{cols} to be consistent with \code{plot}.
-#'            \code{cols} takes precedence, if both are provided.
+#' @param col (also `cols`) Alternative to `cols` to be consistent with `plot`.
+#'            `cols` takes precedence, if both are provided.
 #'
-#' @param zoomExtent An \code{Extent} object. Supplying a single extent that is
+#' @param zoomExtent An `Extent` object. Supplying a single extent that is
 #'                   smaller than the rasters will call a crop statement before
-#'                   plotting. Defaults to \code{NULL}.
+#'                   plotting. Defaults to `NULL`.
 #'                   This occurs after any downsampling of rasters, so it may
 #'                   produce very pixelated maps.
 #'
@@ -175,35 +183,35 @@ if (getRversion() >= "3.1.0") {
 #'                      for plots. Default is 0.75.
 #'
 #' @param legend Logical indicating whether a legend should be drawn.
-#'               Default is \code{TRUE}.
+#'               Default is `TRUE`.
 #'
 #' @param legendRange Numeric vector giving values that, representing the lower
-#'                    and upper bounds of a legend (i.e., \code{1:10} or
-#'                    \code{c(1,10)} will give same result) that will override
-#'                    the data bounds contained within the \code{grobToPlot}.
+#'                    and upper bounds of a legend (i.e., `1:10` or
+#'                    `c(1,10)` will give same result) that will override
+#'                    the data bounds contained within the `grobToPlot`.
 #'
 #' @param legendText Character vector of legend value labels.
-#'                   Defaults to \code{NULL}, which results in a pretty numeric
+#'                   Defaults to `NULL`, which results in a pretty numeric
 #'                   representation.
-#'                   If \code{Raster*} has a Raster Attribute Table (\code{rat};
+#'                   If `Raster*` has a Raster Attribute Table (`rat`;
 #'                   see \pkg{raster} package), this will be used by default.
 #'                   Currently, only a single vector is accepted.
 #'                   The length of this must match the length of the legend, so
 #'                   this is mostly useful for discrete-valued rasters.
 #'
-#' @param na.color Character string indicating the color for \code{NA} values.
+#' @param na.color Character string indicating the colour for `NA` values.
 #'                 Default transparent.
 #'
-#' @param zero.color Character string indicating the color for zero values,
+#' @param zero.color Character string indicating the colour for zero values,
 #'                   when zero is the minimum value, otherwise, zero is
-#'                   treated as any other color. Default transparent.
+#'                   treated as any other colour. Default transparent.
 #'
-#' @param pch see \code{?par}.
+#' @param pch see `?par`.
 #'
 #' @param title Logical or character string. If logical, it
 #'              indicates whether to print the object name as the title
 #'              above the plot. If a character string, it will print this
-#'              above the plot. NOTE: the object name is used with \code{addTo},
+#'              above the plot. NOTE: the object name is used with `addTo`,
 #'              not the title. Default NULL, which means print the object
 #'              name as title, if no other already exists on the plot, in
 #'              which case, keep the previous title.
@@ -218,23 +226,22 @@ if (getRversion() >= "3.1.0") {
 #' @param plotFn An optional function name to do the plotting internally, e.g.,
 #'               "barplot" to get a barplot() call. Default "plot".
 #'
-#' @return Invisibly returns the \code{.quickPlot} class object.
-#' If this is assigned to an object, say \code{obj}, then this can be plotted
-#' again with \code{Plot(obj)}.
-#' This object is also stored in the locked \code{.quickPlotEnv}, so can simply be
-#' replotted with \code{rePlot()} or on a new device with \code{rePlot(n)},
-#' where \code{n} is the new device number.
+#' @return Invisibly returns the `.quickPlot` class object.
+#' If this is assigned to an object, say `obj`, then this can be plotted
+#' again with `Plot(obj)`.
+#' This object is also stored in the locked `.quickPlotEnv`, so can simply be
+#' replotted with `rePlot()` or on a new device with `rePlot(n)`,
+#' where `n` is the new device number.
 #'
-#' @seealso \code{\link{clearPlot}}, \code{\link{gpar}}, \code{\link{raster}},
-#' \code{\link{par}}, \code{\link{SpatialPolygons}}, \code{\link{grid.polyline}},
-#' \code{\link{ggplot}}, \code{\link{dev}}
+#' @seealso [clearPlot()], [gpar()], [raster()],
+#' [par()], [SpatialPolygons()], [grid.polyline()],
+#' [ggplot()], [dev()]
 #'
 #' @author Eliot McIntire
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom grDevices dev.cur dev.size
-#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar
-#' @importFrom grid upViewport pushViewport
+#' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar pushViewport upViewport
 #' @importFrom gridBase gridFIG
 #' @importFrom raster crop is.factor
 #' @include environment.R
@@ -665,18 +672,18 @@ setMethod(
     seekViewport("top", recording = FALSE)
     .assignQuickPlot(paste0("quickPlot", dev.cur()), updated)
     return(invisible(updated$curr))
-  })
+})
 
 ################################################################################
 #' Re-plot to a specific device
 #'
-#' @param toDev    Numeric. Which device should the new rePlot be plotted to.
+#' @param toDev    Numeric. Which device should the new replot be plotted to.
 #'                 Default is current device.
 #'
 #' @param fromDev  Numeric. Which device should the replot information be taken from.
 #'                 Default is current device
 #'
-#' @param clearFirst Logical. Should \code{clearPlot} be run before replotting. Default TRUE.
+#' @param clearFirst Logical. Should `clearPlot` be run before replotting. Default TRUE.
 #'
 #' @export
 #' @include plotting-classes.R
@@ -701,26 +708,25 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
   }
 }
 
-
 #' Find the environment in the call stack that contains an object by name
 #'
-#' This is similar to \code{pryr::where}, except instead of working up the search() path
+#' This is similar to `pryr::where`, except instead of working up the search() path
 #' of packages, it searches up the call stack for an object. Ostensibly similar
-#' to \code{base::dynGet}, but it will only return the environment, not the object
-#' itself and it will try to extract just the object name from \code{name},
+#' to `base::dynGet`, but it will only return the environment, not the object
+#' itself and it will try to extract just the object name from `name`,
 #' even if supplied with a more complicated name
-#' (e.g., if \code{obj$firstElement@slot1$size} is
+#' (e.g., if `obj$firstElement@slot1$size` is
 #' supplied, the function will only search for obj). The function is fairly fast.
-#' This function is an important component to the \code{Plot} function.
+#' This function is an important component to the `Plot` function.
 #'
 #' @param name An object name to find in the call stack
-#' @param whFrame A numeric indicating which sys.frame (by negative number) to start searching in
+#' @param whFrame A numeric indicating which `sys.frame` (by negative number) to start searching in.
 #'
 #' @details
-#' The difference between this and what \code{get} and \code{exists} do, is that these other
+#' The difference between this and what `get` and `exists` do, is that these other
 #' functions
 #' search up the enclosing environments, i.e., it matters where the functions were defined.
-#' \code{whereInStack} looks up the call stack environments. See the example for the difference.
+#' `whereInStack` looks up the call stack environments. See the example for the difference.
 #'
 #' @return
 #' The environment that is in the call stack where the object exists, that is closest to the
