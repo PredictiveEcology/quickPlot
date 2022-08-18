@@ -18,7 +18,6 @@ test_that("Plot 1 is not error-free", {
   cwd <- getwd()
 
   on.exit({
-
     if (length(dev.list()) > 0) dev.off()
     if (file.exists("Rplots.pdf")) file.remove("Rplots.pdf")
     unlink(tmpdir, recursive = TRUE)

@@ -12,6 +12,7 @@ sysname <- function() {
 
 fingerprint <- function(fingerprints, id, rversion, sysname) {
   fingerprints[test_id == id & r_version == rversion & sys_name == sysname, ][["value"]]
+  ## TODO: allow use of most recent fingerprints for the platform
 }
 
 updateFingerprint <- function(newValue, fingerprints) {
