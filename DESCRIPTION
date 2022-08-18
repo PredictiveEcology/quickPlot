@@ -6,7 +6,7 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
     visualizations when testing code, with the key benefit that visualizations
     are updated independently of one another.
     The suggested packages 'fastshp' and 'visualTest' can be installed with e.g.,
-    'install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")'
+    'install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")'.
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
