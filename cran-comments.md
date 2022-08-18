@@ -26,6 +26,7 @@ This is a maintenance release which drops support for R < 4.0.
 * Ubuntu 20.04                  (local), R-devel (2022-08-11 r82713)
 * Windows                      (GitHub), R-devel (2022-08-14 r82716 ucrt)
 * Windows                 (win-builder), R-devel (2022-08-17 r82724 ucrt)
+
 ## R CMD check results
 
 There are no errors, or warnings in any of the above.
