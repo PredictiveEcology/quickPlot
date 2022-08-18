@@ -25,24 +25,30 @@ This is a maintenance release which drops support for R < 4.0.
 * Ubuntu 20.04                 (GitHub), R-devel (2022-08-11 r82713)
 * Ubuntu 20.04                  (local), R-devel (2022-08-11 r82713)
 * Windows                      (GitHub), R-devel (2022-08-14 r82716 ucrt)
-* Windows                 (win-builder), R-devel (2022-08-14 r82716 ucrt)
+* Windows                 (win-builder), R-devel (2022-08-17 r82724 ucrt)
 ## R CMD check results
 
 There are no errors, or warnings in any of the above.
 
-There are 2 NOTEs, which are not new notes for this package:
+There are some NOTEs:
 
-    Package suggested but not available for checking: 'fastshp'
-
-We provide instructions for the user to install the suggested `fastshp` package.
-
-The `fastshp` package in Suggests is optionally installed from Rforge and not required to use the package; it simply speeds up some of the plotting. Instructions for installation are provided in the README and via a message to the user. We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
+The `fastshp` and `visualTest` packages in Suggests are optionally installed from our R-universe repository.
+Instructions for installation are provided in the README, DESCRIPTION, and via a message to the user.
+We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
 
         Suggests or Enhances not in mainstream repositories:
-          fastshp
-      
+          fastshp, visualTest
         Availability using Additional_repositories specification:
-          fastshp   yes   https://rforge.net
+          fastshp      yes   https://predictiveecology.r-universe.dev/
+          visualTest   yes   https://predictiveecology.r-universe.dev/
+
+Related to the above note:
+
+        The Description field contains
+          "https://PredictiveEcology.r-universe.dev")'.
+        Please enclose URLs in angle brackets (<...>).
+
+This URL is included as part of the command used to install these additional packages.
 
 ## Downstream dependencies
 
