@@ -5,7 +5,7 @@ library(hexSticker)
 library(showtext)
 library(sysfonts)
 
-## Loading Google fonts (http://www.google.com/fonts)
+## Loading Google fonts (https://www.google.com/fonts)
 font_add_google("Roboto Slab", "roboto")
 ## Automatically use showtext to render text for future devices
 showtext_auto()
@@ -17,5 +17,5 @@ sticker(expression(plot(cars, cex = 0.5, cex.axis = 0.5, mgp = c(0, 0.3, 0), xla
         h_color = "darkred", h_fill = "#cccccc",
         p_color = "darkred", p_family = "bree", p_size = 22, p_x = 1, p_y = 1.55,
         s_x = 0.8, s_y = 0.75, s_width = 1.2, s_height = 1.2,
-        url = "http://quickplot.predictiveecology.org", u_color = "#000000", u_size = 4,
+        url = "https://quickplot.predictiveecology.org", u_color = "#000000", u_size = 4,
         filename = "stickers/hexsticker.png", spotlight = FALSE)

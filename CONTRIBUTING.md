@@ -14,7 +14,7 @@ We welcome contributions to `quickPlot`, both as bug reports or package enhancem
 
 2. Please follow our code [style guide](https://github.com/PredictiveEcology/SpaDES/wiki/Dev-Docs---Code-Style-Guide) and make your code as easy to follow as possible.
 
-3. If adding new functionality, please include instructional examples and/or [unit tests](http://r-pkgs.had.co.nz/tests.html).
+3. If adding new functionality, please include instructional examples and/or [unit tests](https://r-pkgs.had.co.nz/tests.html).
 
 3. Submit a [pull request](https://docs.github.com/articles/using-pull-requests) against the development branch.
 

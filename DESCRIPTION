@@ -5,8 +5,10 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
     optimized for speed and modularity. This has great utility for quick
     visualizations when testing code, with the key benefit that visualizations
     are updated independently of one another.
+    The suggested packages 'fastshp' and 'visualTest' can be installed with e.g.,
+    'install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")'.
 URL:
-    http://quickplot.predictiveecology.org,
+    https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
 Version: 0.1.8
 Date: 2022-08-16
@@ -48,6 +50,7 @@ Suggests:
 Remotes:
     s-u/fastshp,
     MangoTheCat/visualTest
+Additional_repositories: https://predictiveecology.r-universe.dev/
 Encoding: UTF-8
 Language: en-CA
 License: GPL-3
