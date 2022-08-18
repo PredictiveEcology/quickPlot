@@ -28,7 +28,7 @@ This is a maintenance release which drops support for R < 4.0.
 * Windows                 (win-builder), R-devel (2022-08-14 r82716 ucrt)
 ## R CMD check results
 
-There are no errors, or warningsin any of the above.
+There are no errors, or warnings in any of the above.
 
 There are 2 NOTEs, which are not new notes for this package:
 
