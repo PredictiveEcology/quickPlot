@@ -11,8 +11,15 @@ sysname <- function() {
 }
 
 fingerprint <- function(fingerprints, id, rversion, sysname) {
-  fingerprints[test_id == id & r_version == rversion & sys_name == sysname, ][["value"]]
-  ## TODO: allow use of most recent fingerprints for the platform
+  fp <- fingerprints[test_id == id & r_version == rversion & sys_name == sysname, ][["value"]]
+
+  ## get most recent fingerprint if none currently available for current R version
+  if (length(fp) == 0) {
+    vers <- tail(sort(fingerprints[test_id == id & sys_name == sysname, ][["r_version"]]), n = 1)
+    fp <- fingerprints[test_id == id & r_version == vers & sys_name == sysname, ][["value"]]
+  }
+
+  return(fp)
 }
 
 updateFingerprint <- function(newValue, fingerprints) {
