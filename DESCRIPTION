@@ -10,15 +10,15 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 0.1.8
-Date: 2022-08-16
+Version: 0.1.8.9000
+Date: 2023-01-05
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
            role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
-           role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
-    person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
-           role = "cph")
+    role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
+    person("His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada",
+    role = "cph")
     )
 Depends:
     R (>= 4.0)
