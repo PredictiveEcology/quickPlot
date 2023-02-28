@@ -97,7 +97,6 @@ setClassUnion(name = "spatialObjects",
                           "SpatialPolygons", "SpatialPolygonsDataFrame")
 )
 
-
 ################################################################################
 #' The `.quickPlotObjects` class
 #'
@@ -196,20 +195,19 @@ setClass(".quickPlotGrob",
 #'
 #' @slot actual.ratio numeric. Ratio of columns to rows
 #'
-#' @slot ds.dimensionRatio numeric. Ratio of the device size to the ratio of the
-#' extents
+#' @slot ds.dimensionRatio numeric. Ratio of the device size to the ratio of the extents.
 #'
-#' @slot ds  numeric of length 2. The dimensions of the plotting window in inches
+#' @slot ds  numeric of length 2. The dimensions of the plotting window in inches.
 #'
 #' @slot objects  list of length number of spatial objects. Each list has a character vector
-#' of the layer names in each of those
+#' of the layer names in each of those.
 #'
-#' @slot isRaster  logical vector, indicating whether each object is a `Raster*` object
+#' @slot isRaster  logical vector, indicating whether each object is a `Raster*` object.
 #'
-#' @slot names  character vector. The names of the layers in the plot
+#' @slot names  character vector, indicating the names of the layers in the plot.
 #'
-#' @slot extents list of class Extent objects. These are needed to calculate the
-#' `ds.dimensionRatio`, which is used to scale the Spatial objects correctly
+#' @slot extents list of class `Extent` objects. These are needed to calculate the
+#' `ds.dimensionRatio`, which is used to scale the `Spatial*` objects correctly.
 #'
 #' @slot isSpatialObjects logical indicating whether the object(s) are `spatialObjects` or not.
 #'

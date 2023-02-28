@@ -335,6 +335,18 @@ setMethod(
     } else {
       dotObjs <- dots
     }
+
+    ## TODO: temporary workaround to enable Plotting terra rasters
+    useNames <- names(dotObjs)
+    dotObjs <- lapply(dotObjs, function(x) {
+      if (requireNamespace("terra", quietly = TRUE) && is(x, "SpatRaster")) {
+        x <- raster::raster(x)
+      }
+      x
+    })
+    names(dotObjs) <- useNames
+    ## END WORKAROUND
+
     whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
 
     for (fr in rev(whFrame)) {
@@ -358,7 +370,6 @@ setMethod(
         plotArgs <- plotArgsTmp
         break
       }
-
     }
 
     # if user uses col instead of cols
@@ -468,10 +479,8 @@ setMethod(
         assign(paste0("Dev", dev.cur()),
                new.env(hash = FALSE, parent = .quickPlotEnv),
                envir = .quickPlotEnv)
-        objFrame <-
-          get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
+        objFrame <- get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
         dots$env <- list2env(dots, envir = objFrame)
-
       } else {
         if (any(isDoCall)) {
           objNames <- names(dotObjs)
@@ -481,7 +490,6 @@ setMethod(
         }
         objFrame <- whereInStack(objNames[[1]])
         names(plotObjs)[whichQuickPlottables] <- objNames
-
       }
     }
 
@@ -504,8 +512,7 @@ setMethod(
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
     # Create a .quickPlot object from the plotObjs and plotArgs
-    newQuickPlots <- .makeQuickPlot(
-      plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
+    newQuickPlots <- .makeQuickPlot(plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
     if (exists(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv)) {
       currQuickPlots <- .getQuickPlot(paste0("quickPlot", dev.cur()))
@@ -563,7 +570,6 @@ setMethod(
         updated$curr@arr, sapply(visualSqueeze, max), sapply(legend, any),
         sapply(axes, function(x) !any(x == TRUE))
       )
-
     }
 
     # Create the viewports as per the optimal layout

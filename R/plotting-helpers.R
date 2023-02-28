@@ -283,8 +283,7 @@ setMethod(
       })
     }
 
-    names(plotObjects) <- unlist(lapply(objs, function(x)
-      x$objs))
+    names(plotObjects) <- unlist(lapply(objs, function(x) x$objs))
 
     if (!is.null(suppliedNames)) {
       if (all(unlist(lapply(suppliedNames, nzchar, keepNA = TRUE)))) {
@@ -357,9 +356,15 @@ setMethod(
         quickPlotGrobList[[lN[x]]]@objName <- objectNamesLong[x]
         quickPlotGrobList[[lN[x]]]@envir <- lEnvs[[x]]
         quickPlotGrobList[[lN[x]]]@layerName <- lNamesPlotObj[x]
-        quickPlotGrobList[[lN[x]]]@objClass <- class(
-          eval(parse(text = objectNamesLong[x]), lEnvs[[x]])
-        )
+
+        ## TODO: temporary workaround to enable Plotting terra rasters
+        theObj <- eval(parse(text = objectNamesLong[x]), lEnvs[[x]])
+        if (is(theObj, "SpatRaster")) {
+          theObj <- raster::raster(theObj)
+        }
+        ## END WORKAROUND
+
+        quickPlotGrobList[[lN[x]]]@objClass <- class(theObj)
         quickPlotGrobList[[lN[x]]]@isSpatialObjects <- isSpatialObjects[x]
       }
       return(quickPlotGrobList)
@@ -1769,7 +1774,7 @@ setMethod(
       colByRow[, 1] <- ceiling(nPlots / (1:nPlots))
       colByRow[, 2] <- ceiling(nPlots / colByRow[, 1])
 
-      # rewritten for clarity/brevity with pipes below
+      ## rewritten for clarity/brevity with pipes below
       whBest <- apply(colByRow, 1, function(x) x[1] / x[2]) %>%
         `-`(., dsDimensionRatio) %>%
         abs() %>%
@@ -2316,10 +2321,24 @@ setMethod(
         if (!is.null(x[[1]]@plotArgs$zoomExtent)) {
           x[[1]]@plotArgs$zoomExtent
         } else {
-          extent(eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir))
+          ## TODO: temporary workaround to enable Plotting terra rasters
+          obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
+          if (is(obj, "SpatRaster")) {
+            obj <- raster::raster(obj)
+          }
+          ## END WORKAROUND
+
+          extent(obj)
         }
       } else {
         obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
+
+        ## TODO: temporary workaround to enable Plotting terra rasters
+        if (is(obj, "SpatRaster")) {
+          obj <- raster::raster(obj)
+        }
+        ## END WORKAROUND
+
         # if the object has an extent method
         if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
           # list has an extent method, but too general
@@ -2338,8 +2357,7 @@ setMethod(
     nrow = rows * 3 + 2, ncol = columns * 3 + 2,
     widths = arr@layout$wdth, heights = arr@layout$ht
   )
-  topVp <- viewport(layout = gl1,
-                    name = "top"
+  topVp <- viewport(layout = gl1, name = "top"
   )
   plotVps <- list()
 
@@ -2434,8 +2452,16 @@ setMethod(
     }
   }
   if (hasBbox) {
-    # for spatial objects
-    apply(bbox(eval(parse(text = objName), envir = objEnv)), 1, function(y) {
+    ## for spatial objects
+
+    ## TODO: temporary workaround to enable Plotting terra rasters
+    theObj <- eval(parse(text = objName), envir = objEnv)
+    if (is(theObj, "SpatRaster")) {
+      theObj <- raster::raster(theObj)
+    }
+    ## END WORKAROUND
+
+    apply(bbox(theObj), 1, function(y) {
       diff(range(y))
     })
   } else {
@@ -2638,7 +2664,7 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
       thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
                              tolerance = tolerance, id = xyOrd[["out"]]$groups)
 
-      set(xyOrd[["out"]], , "thinRes", thinRes)
+      set(xyOrd[["out"]], NULL, "thinRes", thinRes)
       xyOrd[["out"]][, keepAll := sum(thinRes) < 4, by = groups]
 
       xyOrd[["out"]] <- xyOrd[["out"]][thinRes | keepAll]
@@ -2648,8 +2674,8 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
         xyOrd[["idLength"]] <- xyOrd[["out"]][, list(V1 = .N), by = groups]
       } else {
         # clean up a bit
-        set(xyOrd[["out"]], , "order", NULL)
-        set(xyOrd[["out"]], , "groups", NULL)
+        set(xyOrd[["out"]], NULL, "order", NULL)
+        set(xyOrd[["out"]], NULL, "groups", NULL)
 
         polyList <- split(xyOrd[["out"]], by = c("Polygons", "Polygon"),
                            flatten = FALSE, keep.by = FALSE)
@@ -2784,10 +2810,10 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   } else {
     out <- setDT(data.frame(x = xyOrd[,1], y = xyOrd[,2], groups = groups, poly = poly))
     if (!simple) {
-      set(out, , "order", orders)
-      set(out, , "hole", holes)
-      set(out, , "Polygons", Polygons)
-      set(out, , "Polygon", Polygon)
+      set(out, NULL, "order", orders)
+      set(out, NULL, "hole", holes)
+      set(out, NULL, "Polygons", Polygons)
+      set(out, NULL, "Polygon", Polygon)
     }
     out <- list(out = out, hole = hole, idLength = idLength)
 
