@@ -2,24 +2,9 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{layerNames}
 \alias{layerNames}
-\alias{layerNames,list-method}
-\alias{layerNames,ANY-method}
-\alias{layerNames,Raster-method}
-\alias{layerNames,.quickPlot-method}
-\alias{layerNames,igraph-method}
 \title{Extract the layer names of Spatial Objects}
 \usage{
 layerNames(object)
-
-\S4method{layerNames}{list}(object)
-
-\S4method{layerNames}{ANY}(object)
-
-\S4method{layerNames}{Raster}(object)
-
-\S4method{layerNames}{.quickPlot}(object)
-
-\S4method{layerNames}{igraph}(object)
 }
 \arguments{
 \item{object}{A \verb{Raster*}, \verb{SpatialPoints*}, \verb{SpatialLines*},

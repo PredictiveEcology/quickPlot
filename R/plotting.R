@@ -297,7 +297,7 @@ setMethod(
     isDoCall <- grepl("^do.call", scalls) & grepl("\\<Plot\\>", scalls) & !grepl("test_that", scalls)
 
     dots <- list(...)
-    if (is.list(dots[[1]]) & !is(dots[[1]], ".quickPlottables") &
+    if (is.list(dots[[1]]) & !isQuickPlottable(dots[[1]]) &
         # some reason, `inherits` doesn't work here for ggplot
         !inherits(dots[[1]], "communities") & !inherits(dots[[1]], "igraph") &
         !inherits(dots[[1]], "histogram")) {
@@ -337,14 +337,14 @@ setMethod(
     }
 
     ## TODO: temporary workaround to enable Plotting terra rasters
-    useNames <- names(dotObjs)
-    dotObjs <- lapply(dotObjs, function(x) {
-      if (requireNamespace("terra", quietly = TRUE) && is(x, "SpatRaster")) {
-        x <- raster::raster(x)
-      }
-      x
-    })
-    names(dotObjs) <- useNames
+    # useNames <- names(dotObjs)
+    # dotObjs <- lapply(dotObjs, function(x) {
+    #   if (requireNamespace("terra", quietly = TRUE) && is(x, "SpatRaster")) {
+    #     x <- terra::rast(x)
+    #   }
+    #   x
+    # })
+    # names(dotObjs) <- useNames
     ## END WORKAROUND
 
     whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
@@ -389,7 +389,7 @@ setMethod(
     }
 
     whichQuickPlottables <- sapply(dotObjs, function(x) {
-      is(x, ".quickPlottables") # `inherits` doesn't work for gg objects, need `is`
+      isQuickPlottable(x) # `inherits` doesn't work for gg objects, need `is`
     })
 
     if (!(all(!whichQuickPlottables) | all(whichQuickPlottables)))
@@ -512,6 +512,7 @@ setMethod(
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
     # Create a .quickPlot object from the plotObjs and plotArgs
+    browser()
     newQuickPlots <- .makeQuickPlot(plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
     if (exists(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv)) {
@@ -630,7 +631,9 @@ setMethod(
           grobToPlot <- .identifyGrobToPlot(grobToPlot, sGrob, layerFromPlotObj)
 
           isPlotFnAddable <- FALSE
-          if (!is(grobToPlot, ".quickPlotObjects")) {
+
+          if (!isQuickPlottable(grobToPlot)) {
+            browser()
             if (!inherits(grobToPlot, ".quickPlot")) {
               if (sGrob@plotArgs$userProvidedPlotFn & !isTRUE(grobToPlot[["add"]])) {
                 isPlotFnAddable <- TRUE
@@ -807,3 +810,26 @@ whereInStack <- function(name, whFrame = -1) {
   # Success case
   sys.frame(whFrame)
 }
+
+
+
+
+
+
+# .quickPlotClasses <- c(spatialClasses, "gg")
+
+quickPlotClasses <- c(".quickPlotObjects", ".quickPlot")
+
+isQuickPlottable <- function(x) {
+  isSpatialAny(x) || is(x, "gg")
+}
+
+isSpatial <- function(x) inherits(x, "Spatial")
+isSpatVector <- function(x) inherits(x, "SpatVector")
+isSpat <- function(x) inherits(x, c("SpatRaster", "SpatVector"))
+isGridded <- function(x) inherits(x, c("SpatRaster", "Raster"))
+isVector <-  function(x) isSpatVector(x) || inherits(x, "Spatial") || isSF(x)
+isSpatialAny <- function(x) isGridded(x) || isVector(x)
+isSF <- function(x) inherits(x, c("sf", "sfc"))
+isRaster <- function(x) inherits(x, "Raster")
+isQuickPlotClass <- function(x) isSpatialAny(x) || inherits(x, "gg")

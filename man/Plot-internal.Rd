@@ -3,7 +3,6 @@
 \name{.preparePlotGrob}
 \alias{.preparePlotGrob}
 \alias{PlotHelpers}
-\alias{.preparePlotGrob,griddedClasses,.quickPlotGrob-method}
 \alias{.xyAxes}
 \alias{.xyAxes,.quickPlotGrob,.arrangement-method}
 \alias{.Plot}
@@ -15,17 +14,6 @@
 \title{Internal functions used by \code{Plot}}
 \usage{
 .preparePlotGrob(
-  grobToPlot,
-  sGrob,
-  takeFromPlotObj,
-  arr,
-  newArr,
-  quickPlotGrobCounter,
-  subPlots,
-  cols
-)
-
-\S4method{.preparePlotGrob}{griddedClasses,.quickPlotGrob}(
   grobToPlot,
   sGrob,
   takeFromPlotObj,

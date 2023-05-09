@@ -5,12 +5,9 @@ skip_on_ci() ## August 2022 -- GitHub actions fingerprints differ by system + R 
 
 ## block A
 test_that("Plot 1 is not error-free", {
-  skip_if_not_installed("fastshp")
+  # skip_if_not_installed("fastshp")
 
-  library(igraph)
-  library(sp)
-  library(raster)
-  library(fastshp)
+  library(terra)
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
   dir.create(tmpdir)
@@ -23,67 +20,39 @@ test_that("Plot 1 is not error-free", {
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
-  ras <- raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+  ras <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
                 vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-  DEM87654 <- ras
-  names(DEM87654) <- "DEM87654"
-  habitatQuality87654 <- raster(ras)
-  habitatQuality87654[] <- sample(1:10, replace = TRUE, size = 100)
-  names(habitatQuality87654) <- "habitatQuality87654"
-  landscape87654 <- raster::stack(DEM87654, habitatQuality87654)
-  caribou87654 <- sp::SpatialPoints(
-    coords = cbind(x = stats::runif(1e1, 0, 10), y = stats::runif(1e1, 0, 10))
+  DEM8765 <- ras
+  names(DEM8765) <- "DEM87654"
+  DEM87654 <- raster::raster(DEM8765)
+
+  habitatQuality8765 <- rast(ras)
+  habitatQuality8765[] <- sample(1:10, replace = TRUE, size = 100)
+  names(habitatQuality8765) <- "habitatQuality87654"
+  habitatQuality87654 <- raster::raster(habitatQuality8765)
+
+  landscape8765 <- c(DEM8765, habitatQuality8765)
+  landscape87654 <- raster::stack(landscape8765)
+  caribou8765 <- terra::vect(type = "points",
+    x = cbind(x = stats::runif(1e1, 0, 10), y = stats::runif(1e1, 0, 10))
   )
+  caribou87654 <- as(caribou8765, "Spatial")
 
-  # If any rearrangements are required, Plot searches for objects in Global Env
-  # So all tests must run a clearPlot or a new = TRUE to be cleared to
-  # prevent rearrangements
-  clearPlot()
-  expect_error(Plot(asdfd))
-  clearPlot()
-  expect_silent(Plot(landscape87654))
-
-  clearPlot()
-  expect_silent(Plot(caribou87654))
-
-  # Test speedup > 0.1 for SpatialPoints
-  clearPlot()
-  expect_silent(Plot(caribou87654, speedup = 2))
-
-  # can add a plot to the plotting window
-  clearPlot()
-  expect_silent(Plot(landscape87654))
-  expect_silent(Plot(caribou87654, new = FALSE))
-
-  # Can add two maps with same name, if one is in a stack; they are given
-  #  unique names based on object name
-  clearPlot()
-  expect_silent(Plot(landscape87654, caribou87654, DEM87654))
-
-  # can mix stacks, rasters, SpatialPoint*
-  clearPlot()
-  expect_silent(Plot(landscape87654, habitatQuality87654, caribou87654))
-  # can mix stacks, rasters, SpatialPoint*, and SpatialPolygons*
-  clearPlot()
-  expect_silent(Plot(landscape87654, caribou87654))
 
   Sr1 <- sp::Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)))
   Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
   Srs1 <- sp::Polygons(list(Sr1), "s1")
   Srs2 <- sp::Polygons(list(Sr2), "s2")
   SpP87654 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
-  clearPlot()
-  expect_silent(Plot(SpP87654))
-  clearPlot()
-  expect_silent(Plot(landscape87654, caribou87654, SpP87654, new = TRUE))
+  SpP8765 <- terra::vect(SpP87654)
 
+
+
+  # Test polygon with > 1e3 points to test the speedup parameter
   Sr1 <- sp::Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)))
   Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
   Srs1 <- sp::Polygons(list(Sr1), "s1")
   Srs2 <- sp::Polygons(list(Sr2), "s2")
-  SpP87 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
-
-  # Test polygon with > 1e3 points to test the speedup parameter
   r <- 1
   N <- 1000
   cx <- 0
@@ -95,8 +64,8 @@ test_that("Plot 1 is not error-free", {
   Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
   Srs1 <- sp::Polygons(list(Sr1), "s1")
   Srs2 <- sp::Polygons(list(Sr2), "s2")
-  SpP87 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
-  expect_silent(Plot(SpP87, new = TRUE))
+  SpP874 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
+  SpP87 <- terra::vect(SpP874)
 
 
   # test SpatialLines
@@ -109,7 +78,69 @@ test_that("Plot 1 is not error-free", {
   S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
   S2 <- sp::Lines(list(Sl2), ID = "b")
   Sl87654 <- sp::SpatialLines(list(S1, S2))
-  expect_silent(Plot(Sl87654))
+  Sl8765 <- terra::vect(Sl87654)
+
+  # If any rearrangements are required, Plot searches for objects in Global Env
+  # So all tests must run a clearPlot or a new = TRUE to be cleared to
+  # prevent rearrangements
+  clearPlot()
+  expect_error(Plot(asdfd))
+
+  cars <- list(caribou8765, caribou87654)
+  lands <- list(landscape8765, landscape87654)
+  habs <- list(habitatQuality8765, habitatQuality87654)
+  DEMs <- list(DEM8765, DEM87654)
+  SpPs <- list(SpP8765, SpP87654)
+  SpP8s <- list(SpP87, SpP874)
+  Sls <- list(Sl8765, Sl87654)
+
+  for (i in seq_along(lands)) {
+    car <- cars[[i]]
+    land <- lands[[i]]
+    DEM <- DEMs[[i]]
+    hab <- habs[[i]]
+    SpP <- SpPs[[i]]
+    SpP8 <- SpP8s[[i]]
+    Sl <- Sls[[i]]
+
+    clearPlot()
+    expect_silent(Plot(land))
+    clearPlot()
+    expect_silent(Plot(car))
+    # Test speedup > 0.1 for SpatialPoints
+    clearPlot()
+    expect_silent(Plot(car, speedup = 2))
+    clearPlot()
+    expect_silent(Plot(land))
+    # can add a plot to the plotting window
+    expect_silent(Plot(car, new = FALSE))
+    clearPlot()
+    # Can add two maps with same name, if one is in a stack; they are given
+    #  unique names based on object name
+    expect_silent(Plot(land, car, DEM))
+    # can mix stacks, rasters, SpatialPoint*
+    clearPlot()
+    expect_silent(Plot(land, hab, car))
+    # can mix stacks, rasters, SpatialPoint*, and SpatialPolygons*
+    clearPlot()
+    expect_silent(Plot(land, car))
+
+
+    clearPlot()
+    expect_silent(Plot(SpP))
+    clearPlot()
+    expect_silent(Plot(land, car, SpP, new = TRUE))
+    clearPlot()
+    expect_silent(Plot(SpP))
+    clearPlot()
+    expect_silent(Plot(land, car, SpP, new = TRUE))
+
+    expect_silent(Plot(SpP8, new = TRUE))
+    expect_silent(Plot(Sl))
+
+  }
+
+
 
   M <- 2
   polys1 <- lapply(seq(M), function(m) {
@@ -127,11 +158,18 @@ test_that("Plot 1 is not error-free", {
   polys2 <- sp::SpatialPolygons(polys1, seq(M))
   Plot(polys2, new = TRUE, col = c("red", "blue"))
   Plot(polys2, new = TRUE, col = c("Set3"))
-  mess <- capture_messages(Plot(polys2, new = TRUE, col = c("red", "blue", "green")))
-  expect_true(sum(grepl("Incorrect", mess)) == 1)
-  mess <- capture_messages(Plot(polys2, new = TRUE, col = RColorBrewer::brewer.pal(8, "Set3")))
-  expect_true(sum(grepl("Incorrect", mess)) == 1)
-  mess <- capture_messages(Plot(polys2, new = TRUE, gp = gpar(fill = "Set3")))
+
+  polys <- terra::vect(polys2)
+  Plot(polys, new = TRUE, col = c("red", "blue"))
+  Plot(polys, new = TRUE, col = c("Set3"))
+
+  for (pol in list(polys2, polys)) {
+    mess <- capture_messages(Plot(pol, new = TRUE, col = c("red", "blue", "green")))
+    expect_true(sum(grepl("Incorrect", mess)) == 1)
+    mess <- capture_messages(Plot(pol, new = TRUE, col = RColorBrewer::brewer.pal(8, "Set3")))
+    expect_true(sum(grepl("Incorrect", mess)) == 1)
+    mess <- capture_messages(Plot(pol, new = TRUE, gp = gpar(fill = "Set3")))
+  }
 
   # Test polygon with > 1e3 points to test the speedup parameter
   r <- 1
@@ -150,32 +188,49 @@ test_that("Plot 1 is not error-free", {
   S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
   S2 <- sp::Lines(list(Sl2), ID = "b")
   Sl87654 <- sp::SpatialLines(list(S1, S2))
-  expect_silent(Plot(Sl87654, new = TRUE))
-  # test addTo
-  expect_silent(Plot(SpP87654, addTo = "landscape87654$habitatQuality87654"))
+  Sl8765 <- terra::vect(Sl87654)
+  Sls <- list(Sl87654, Sl8765)
 
-  # test various arguments
-  clearPlot()
-  expect_silent(Plot(caribou87654, new = TRUE, gpAxis = gpar(cex = 0.4), size = 1))
-  clearPlot()
-  expect_silent(Plot(DEM87654, gpText = gpar(cex = 0.4)))
 
-  # test colors
-  clearPlot()
-  expect_silent(Plot(DEM87654, cols = c("blue", "red")))
-
-  # Should work with col as well as cols
-  clearPlot()
-  expect_silent(Plot(DEM87654, col = c("blue", "red")))
-
-  # test visualSqueeze
-  clearPlot()
-  expect_silent(Plot(DEM87654, visualSqueeze = 0.2, new = TRUE))
   # test speedup
-  caribou87 <- sp::SpatialPoints(
-    coords = cbind(x = stats::runif(1.1e3, 0, 10), y = stats::runif(1e1, 0, 10))
+  caribou874 <- sp::SpatialPoints(
+    coords = cbind(x = stats::runif(1.1e3, 0, 10), y = stats::runif(1.1e3, 0, 10))
   )
-  expect_silent(Plot(caribou87, speedup = 10, new = TRUE))
+  caribou87 <- terra::vect(caribou874)
+
+  cars2 <- list(caribou87, caribou874)
+  for (i in seq_along(Sls)) {
+    land <- lands[[i]]
+    Sl <- Sls[[i]]
+    Sp <- SpPs[[i]]
+    car <- cars[[i]]
+    car2 <- cars2[[i]]
+    DEM <- DEMs[[i]]
+    terra::crs(Sp) <- terra::crs(land)
+    terra::crs(Sl) <- terra::crs(land)
+    expect_silent(Plot(land, new = TRUE))
+    expect_silent(Plot(Sl, new = TRUE))
+    expect_silent(Plot(land$DEM87654, addTo = "land$habitatQuality87654"))
+    expect_silent(Plot(Sp, addTo = "land$habitatQuality87654"))
+    # test various arguments
+    clearPlot()
+    expect_silent(Plot(car, new = TRUE, gpAxis = gpar(cex = 0.4), size = 1))
+    clearPlot()
+    expect_silent(Plot(DEM, gpText = gpar(cex = 0.4)))
+    # test colors
+    clearPlot()
+    expect_silent(Plot(DEM, cols = c("blue", "red")))
+    # Should work with col as well as cols
+    clearPlot()
+    expect_silent(Plot(DEM, col = c("blue", "red")))
+    # test visualSqueeze
+    clearPlot()
+    expect_silent(Plot(DEM, visualSqueeze = 0.2, new = TRUE))
+    clearPlot()
+    expect_silent(Plot(car2, speedup = 10, new = TRUE))
+  }
+
+
 
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
@@ -204,7 +259,7 @@ test_that("Plot 1 is not error-free", {
 test_that("Unit tests for image content is not error-free", {
   skip_if_not_installed("visualTest")
 
-  library(raster)
+  library(terra)
   library(visualTest)
   fingerprints <- setupTestFingerprints()
 
@@ -225,7 +280,7 @@ test_that("Unit tests for image content is not error-free", {
 
   # Test legend with a factor raster
   set.seed(24334)
-  ras <- raster(matrix(sample(1:nLevels, size = N, replace = TRUE),
+  ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = 1:nLevels, Class = paste0("Level", 1:nLevels))
 
@@ -247,7 +302,7 @@ test_that("Unit tests for image content is not error-free", {
 
   # Test legend with a factor raster
   set.seed(24334)
-  ras <- raster(matrix(sample(1:nLevels, size = N, replace = TRUE),
+  ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
   clearPlot()
@@ -269,7 +324,7 @@ test_that("Unit tests for image content is not error-free", {
   N <- ncol * nrow
   set.seed(24334)
   levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
-  ras <- raster(matrix(sample(levs, size = N, replace = TRUE),
+  ras <- rast(matrix(sample(levs, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
   ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
@@ -295,7 +350,7 @@ test_that("Unit tests for image content is not error-free", {
 test_that("Unit tests for plotting colors", {
   skip_if_not_installed("visualTest")
 
-  library(raster)
+  library(terra)
   library(visualTest)
   fingerprints <- setupTestFingerprints()
 
@@ -309,7 +364,7 @@ test_that("Unit tests for plotting colors", {
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
-  ras <- raster(matrix(c(1, 0, 1, 2), ncol = 2))
+  ras <- rast(matrix(c(1, 0, 1, 2), ncol = 2))
   setColors(ras, n = 3) <- c("red", "blue", "green")
 
   ###################################
@@ -330,8 +385,8 @@ test_that("Unit tests for plotting colors", {
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.002))
   ###################################
 
-  ras2 <- raster(matrix(c(3, 1, 1, 2), ncol = 2))
-  rasStack <- raster::stack(ras, ras2)
+  ras2 <- rast(matrix(c(3, 1, 1, 2), ncol = 2))
+  rasStack <- terra::rast(ras, ras2)
   names(rasStack) <- c("ras", "ras2")
   setColors(rasStack, n = 3) <- list(ras = c("black", "blue", "green"))
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
@@ -394,7 +449,7 @@ test_that("Unit tests for plotting colors", {
 test_that("Unit tests for internal functions in Plot", {
   skip_if_not_installed("visualTest")
 
-  library(raster)
+  library(terra)
   library(visualTest)
   fingerprints <- setupTestFingerprints()
 
@@ -411,7 +466,7 @@ test_that("Unit tests for internal functions in Plot", {
   # Test .makeColorMatrix for subsampled rasters
   # (i.e., where speedup is high compared to ncells)
   set.seed(1234)
-  ras <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
+  ras <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
   setColors(ras, n = 3) <- c("red", "blue", "green")
 
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
@@ -431,7 +486,7 @@ test_that("Unit tests for internal functions in Plot", {
   #######################################
   # Test that NA rasters plot correctly, i.e., with na.color only
   ras <- matrix(NA_real_, ncol = 3, nrow = 3)
-  ras <- suppressWarnings(raster(ras)) # There is a min and max warning on NA rasters
+  ras <- suppressWarnings(rast(ras)) # There is a min and max warning on NA rasters
   setColors(ras, n = 3) <- c("red", "blue", "green")
 
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
@@ -451,7 +506,7 @@ test_that("Unit tests for internal functions in Plot", {
   #######################################
   # Test legendRange in Plot
   set.seed(1234)
-  ras <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
+  ras <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
   setColors(ras, n = 3) <- c("red", "blue", "green")
 
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
@@ -475,7 +530,7 @@ test_that("Unit tests for internal functions in Plot", {
 test_that("Plot 2 is not error-free", {
   skip_if_not_installed("visualTest")
 
-  library(raster)
+  library(terra)
   library(visualTest)
   fingerprints <- setupTestFingerprints()
 
@@ -490,7 +545,7 @@ test_that("Plot 2 is not error-free", {
   }, add = TRUE) # nolint
 
   set.seed(123)
-  r <- raster(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
+  r <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
 
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
   clearPlot()
@@ -546,7 +601,7 @@ test_that("Plot 2 is not error-free", {
   Plot(r1, new = TRUE)# Expect legend from exactly 0 to exactly 1
 
   ## 0, 1, 2, 3
-  r1 <- raster(ncol = 3, nrow = 3)
+  r1 <- rast(ncol = 3, nrow = 3)
   set.seed(234)
   r1[] <- sample(0:3, replace = TRUE, size = 9)
   clearPlot()
@@ -554,7 +609,7 @@ test_that("Plot 2 is not error-free", {
                        # each color, even though there is no peach in plot
 
   ## 0, 1 #
-  r1 <- raster(ncol = 3, nrow = 3)
+  r1 <- rast(ncol = 3, nrow = 3)
   r1[] <- sample(0:1, replace = TRUE, size = 9)
   clearPlot()
   Plot(r1, new = TRUE) # Expect 0 and 1 lined up to middle of green and light grey
@@ -562,7 +617,7 @@ test_that("Plot 2 is not error-free", {
   Plot(r1, new = TRUE, zero.color = "black") # black zeros
 
   ## 0, 1, 2, 3, ... 30
-  r1 <- raster(ncol = 30, nrow = 30)
+  r1 <- rast(ncol = 30, nrow = 30)
   r1[] <- sample(0:30, replace = TRUE, size = 900)
   Plot(r1, new = TRUE)
   Plot(r1, new = TRUE, zero.color = "black") # black zeros, some scattered
@@ -571,12 +626,12 @@ test_that("Plot 2 is not error-free", {
   Plot(r1, new = TRUE, zero.color = "black", legendRange = c(-10, 40))
 
   ## 0, 1, 2, 3, 4, 5, 6
-  r1 <- raster(ncol = 30, nrow = 30)
+  r1 <- rast(ncol = 30, nrow = 30)
   r1[] <- sample(0:6, replace = TRUE, size = 900)
   Plot(r1, new = TRUE)
 
   ## 1, 2, 3, 4, 5, 6, ... 200
-  r1 <- raster(ncol = 30, nrow = 30)
+  r1 <- rast(ncol = 30, nrow = 30)
   r1[] <- sample(1:200, replace = TRUE, size = 900)
   #Plot(r1, new = TRUE)
 
@@ -587,15 +642,15 @@ test_that("Plot 2 is not error-free", {
   Plot(r1, new = TRUE, zero.color = "black", legendRange = c(-10, 200))
 
   ## 31, 32, ... 40
-  r1 <- raster(ncol = 30, nrow = 30)
+  r1 <- rast(ncol = 30, nrow = 30)
   r1[] <- sample(31:40, replace = TRUE, size = 900)
   Plot(r1, new = TRUE)
   Plot(r1, new = TRUE, legendRange = c(0, 40)) # legend from 0 to 40, mostly green
   Plot(r1, new = TRUE, zero.color = "black") # no black
   Plot(r1, new = TRUE, zero.color = "black", legendRange = c(35, 40)) # lots of white
 
-  pixelGroupMap <- raster(xmn = 50, xmx = 50 + 3 * 100,
-                          ymn = 50, ymx = 50 + 3 * 100,
+  pixelGroupMap <- rast(xmin = 50, xmax = 50 + 3 * 100,
+                          ymin = 50, ymax = 50 + 3 * 100,
                           res = c(100, 100), val = 1)
   pixelGroupMap[1] <- -1
   pixelGroupMap[2:6] <- 2

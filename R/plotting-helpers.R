@@ -20,72 +20,88 @@ if (getRversion() >= "3.1.0") {
 #' @rdname numLayers
 #'
 #' @examples
-#' library(igraph)
-#' library(raster)
+#' library(terra)
 #'
-#' files <- system.file("maps", package = "quickPlot") %>%
-#'   dir(., full.names = TRUE, pattern = "tif")
-#' maps <- lapply(files, function(x) raster(x))
+#' files <- system.file("maps", package = "quickPlot") |>
+#'   dir(full.names = TRUE, pattern = "tif")
+#' maps <- lapply(files, function(x) rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
 #' })
-#' stck <- stack(maps)
+#' stck <- rast(maps)
 #'
 #' numLayers(maps)
 #' numLayers(stck)
 #'
-setGeneric("numLayers", function(x) standardGeneric("numLayers"))
-
-#' @export
-#' @rdname numLayers
-setMethod(
-  "numLayers",
-  signature = "list",
-  definition = function(x) {
+numLayers <- function(x) {
+  if (is.list(x)) {
     sum(unlist(lapply(x, function(x) {
-      if (inherits(x, "RasterStack")) {
-        numLayers(x)
-      } else {
-        1L
-      }
+      numLayers(x)
     })))
-})
+  } else if (inherits(x, ".quickPlot")) {
+    length(x@arr@extents)
+  } else if (isGridded(x)) {
+    if (is(x, "SpatRaster")) {
+      terra::nlyr(x)
+    } else {
+      raster::nlayers(x)
+    }
 
-#' @rdname numLayers
-setMethod(
-  "numLayers",
-  signature = ".quickPlot",
-  definition = function(x) {
-    return(length(x@arr@extents))
-})
+  } else {
+    1L
+  }
+}
 
-#' @export
-#' @importFrom raster nlayers
-#' @rdname numLayers
-setMethod(
-  "numLayers",
-  signature = "Raster",
-  definition = function(x) {
-    return(nlayers(x))
-})
+# @export
+# @rdname numLayers
+# setMethod(
+#   "numLayers",
+#   signature = "list",
+#   definition = function(x) {
+#     sum(unlist(lapply(x, function(x) {
+#       if (inherits(x, "RasterStack")) {
+#         numLayers(x)
+#       } else {
+#         1L
+#       }
+#     })))
+# })
 
-#' @export
-#' @rdname numLayers
-setMethod(
-  "numLayers",
-  signature = "Spatial",
-  definition = function(x) {
-    return(1L)
-})
+# @rdname numLayers
+# setMethod(
+#   "numLayers",
+#   signature = ".quickPlot",
+#   definition = function(x) {
+#     return(length(x@arr@extents))
+# })
 
-#' @export
-#' @rdname numLayers
-setMethod(
-  "numLayers",
-  signature = "ANY",
-  definition = function(x) {
-    return(1L)
-})
+# @export
+# @importFrom raster nlayers
+# @rdname numLayers
+# setMethod(
+#   "numLayers",
+#   signature = "Raster",
+#   definition = function(x) {
+#     return(nlayers(x))
+# })
+
+# @export
+# @rdname numLayers
+# setMethod(
+#   "numLayers",
+#   signature = "Spatial",
+#   definition = function(x) {
+#     return(1L)
+# })
+
+# @export
+# @rdname numLayers
+# setMethod(
+#   "numLayers",
+#   signature = "ANY",
+#   definition = function(x) {
+#     return(1L)
+# })
 
 #' Extract the layer names of Spatial Objects
 #'
@@ -139,55 +155,66 @@ setMethod(
 #' sl <- SpatialLines(list(s1, s2))
 #' layerNames(sl)
 #'
-setGeneric("layerNames", function(object) {
-  standardGeneric("layerNames")
-})
-
-#' @export
-#' @rdname layerNames
-setMethod(
-  "layerNames",
-  signature = "list",
-  definition = function(object) {
+layerNames <- function(object) {
+  if (is.list(object)) {
     unlist(lapply(object, layerNames))
-})
-
-#' @export
-#' @rdname layerNames
-setMethod(
-  "layerNames",
-  signature = "ANY",
-  definition = function(object) {
-    return("")
-})
-
-#' @export
-#' @rdname layerNames
-setMethod(
-  "layerNames",
-  signature = "Raster",
-  definition = function(object) {
+  } else if (isGridded(object)) {
     names(object)
-})
-
-#' @rdname layerNames
-setMethod(
-  "layerNames",
-  signature = ".quickPlot",
-  definition = function(object) {
-    return(unlist(lapply(object@quickPlotGrobList, function(x) {
+  } else if (is(object, ".quickPlot")) {
+    unlist(lapply(object@quickPlotGrobList, function(x) {
       unlist(lapply(x, function(y) y@plotName))[[1]]
-    })))
-})
+    }))
+  } else {
+    ""
+  }
 
-#' @export
-#' @rdname layerNames
-setMethod(
-  "layerNames",
-  signature = "igraph",
-  definition = function(object) {
-    return("")
-})
+}
+
+# @export
+# @rdname layerNames
+# setMethod(
+#   "layerNames",
+#   signature = "list",
+#   definition = function(object) {
+#     unlist(lapply(object, layerNames))
+# })
+
+# @export
+# @rdname layerNames
+# setMethod(
+#   "layerNames",
+#   signature = "ANY",
+#   definition = function(object) {
+#     return("")
+# })
+
+# @export
+# @rdname layerNames
+# setMethod(
+#   "layerNames",
+#   signature = "Raster",
+#   definition = function(object) {
+#     names(object)
+# })
+
+# @rdname layerNames
+# setMethod(
+#   "layerNames",
+#   signature = ".quickPlot",
+#   definition = function(object) {
+#     return(unlist(lapply(object@quickPlotGrobList, function(x) {
+#       unlist(lapply(x, function(y) y@plotName))[[1]]
+#     })))
+# })
+
+# @export
+# @rdname layerNames
+# setMethod(
+#   "layerNames",
+#   signature = "igraph",
+#   definition = function(object) {
+#     return("")
+# })
 
 #' Assess whether a list of extents are all equal
 #'
@@ -267,7 +294,7 @@ setMethod(
   definition = function(plotObjects, plotArgs, whichQuickPlottables, ...) {
 
     isSpatialObjects <- unlist(lapply(plotObjects, function(x) {
-      inherits(x, "spatialObjects")
+      isSpatialAny(x)
     }))
 
     env <- list(...)$env
@@ -360,7 +387,7 @@ setMethod(
         ## TODO: temporary workaround to enable Plotting terra rasters
         theObj <- eval(parse(text = objectNamesLong[x]), lEnvs[[x]])
         if (is(theObj, "SpatRaster")) {
-          theObj <- raster::raster(theObj)
+          theObj <- terra::rast(theObj)
         }
         ## END WORKAROUND
 
@@ -969,109 +996,168 @@ setMethod("gpar",
 #' @name .preparePlotGrob
 #' @rdname Plot-internal
 #'
-setGeneric(".preparePlotGrob", function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-                                        quickPlotGrobCounter, subPlots, cols)
-  standardGeneric(".preparePlotGrob")
-)
+.preparePlotGrob <- function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+                                        quickPlotGrobCounter, subPlots, cols) {
+  UseMethod(".preparePlotGrob")
+}
 
-#' @aliases PlotHelpers
-#' @keywords internal
-#' @rdname Plot-internal
-setMethod(
-  ".preparePlotGrob",
-  signature = c("griddedClasses", ".quickPlotGrob"),
-  definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+.preparePlotGrob.default <-
+  function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
                         quickPlotGrobCounter, subPlots, cols) {
 
-    # Rasters may be zoomed into and subsampled and have unique legend
-    #            if (sGrob@plotArgs$new)
-    pR <- .prepareRaster(grobToPlot, sGrob@plotArgs$zoomExtent,
-                         sGrob@plotArgs$legendRange, takeFromPlotObj,
-                         arr, sGrob@plotArgs$speedup, newArr = newArr)
-    zMat <- .makeColorMatrix(grobToPlot, pR$zoom, pR$maxpixels,
-                             pR$legendRange,
-                             na.color = sGrob@plotArgs$na.color,
-                             zero.color = sGrob@plotArgs$zero.color,
-                             cols = sGrob@plotArgs$cols,
-                             skipSample = pR$skipSample)
-    return(zMat)
-})
-
-#' @importFrom rgeos gIntersects gArea
-setMethod(
-  ".preparePlotGrob",
-  signature = c("Spatial", ".quickPlotGrob"),
-  definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-                        quickPlotGrobCounter, subPlots, cols) {
-
-    if (!is.null(sGrob@plotArgs$zoomExtent) &&
-        !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
-        #!identical(arr@extents[[subPlots]], sGrob@plotArgs$zoomExtent)) {
-      useCrop <- FALSE
-      if (!useCrop) {
-        zoom <- sGrob@plotArgs$zoomExtent
-        extPolygon <- as(zoom, "SpatialPolygons")
-        crs(extPolygon) <- crs(grobToPlot)
-        extPolygon <- list(extPolygon)
-        names(extPolygon) <- sGrob@plotName
-
-        fullArea <-
-          rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
-        zoomArea <-
-          rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
-        numPolys <- length(grobToPlot)
-        ratio <- fullArea / zoomArea
-        if (numPolys / ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
-          polySeq <-
-            .polygonSeq(grobToPlot,
-                        maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
-          .showingOnlyMessage(numShowing = getOption("quickPlot.maxNumPolygons", 3e3),
-                              totalAvailable = length(grobToPlot))
-          grobToPlot <- grobToPlot[polySeq,]
-
-        }
-        message("Cropping to new extent")
-        a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
-        grobToPlot <- grobToPlot[a[1,],]
-      } else {
+    if (is(grobToPlot, "SpatialLines")) {
+      if (!is.null(sGrob@plotArgs$zoomExtent)) {
         grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
       }
+      zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
+                   cols = sGrob@plotArgs$cols, real = FALSE)
+    } else if (isSpatial(grobToPlot) ) {
+      if (!is.null(sGrob@plotArgs$zoomExtent) &&
+          !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
+        #!identical(arr@extents[[subPlots]], sGrob@plotArgs$zoomExtent)) {
+        useCrop <- FALSE
+        if (!useCrop) {
+          zoom <- sGrob@plotArgs$zoomExtent
+          extPolygon <- as(zoom, "SpatialPolygons")
+          crs(extPolygon) <- crs(grobToPlot)
+          extPolygon <- list(extPolygon)
+          names(extPolygon) <- sGrob@plotName
+
+          browser()
+          fullArea <-
+            rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
+          zoomArea <-
+            rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
+          numPolys <- length(grobToPlot)
+          ratio <- fullArea / zoomArea
+          if (numPolys / ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
+            polySeq <-
+              .polygonSeq(grobToPlot,
+                          maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
+            .showingOnlyMessage(numShowing = getOption("quickPlot.maxNumPolygons", 3e3),
+                                totalAvailable = length(grobToPlot))
+            grobToPlot <- grobToPlot[polySeq,]
+
+          }
+          message("Cropping to new extent")
+          browser()
+          a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
+          grobToPlot <- grobToPlot[a[1,],]
+        } else {
+          grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+        }
+
+      }
+
+      # This handles SpatialPointsDataFrames with column "colour"
+      if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
+        sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
+
+      zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
+                   cols = sGrob@plotArgs$cols, real = FALSE)
+    } else if (isGridded(grobToPlot)) {
+
+      # Rasters may be zoomed into and subsampled and have unique legend
+      #            if (sGrob@plotArgs$new)
+      pR <- .prepareRaster(grobToPlot, sGrob@plotArgs$zoomExtent,
+                           sGrob@plotArgs$legendRange, takeFromPlotObj,
+                           arr, sGrob@plotArgs$speedup, newArr = newArr)
+      zMat <- .makeColorMatrix(grobToPlot, pR$zoom, pR$maxpixels,
+                               pR$legendRange,
+                               na.color = sGrob@plotArgs$na.color,
+                               zero.color = sGrob@plotArgs$zero.color,
+                               cols = sGrob@plotArgs$cols,
+                               skipSample = pR$skipSample)
+    } else {
+      if (any(grepl(pattern = "color", colnames(grobToPlot))) & is.null(cols))
+        sGrob@plotArgs$cols <- grobToPlot$color
+
+      zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
+                   cols = sGrob@plotArgs$cols, real = FALSE)
 
     }
 
-    # This handles SpatialPointsDataFrames with column "colour"
-    if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
-      sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
-
-    zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
-                 cols = sGrob@plotArgs$cols, real = FALSE)
     return(zMat)
-})
+}
 
-setMethod(
-  ".preparePlotGrob",
-  signature = c("ANY", ".quickPlotGrob"),
-  definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-                        quickPlotGrobCounter, subPlots, cols) {
-    if (any(grepl(pattern = "color", colnames(grobToPlot))) & is.null(cols))
-      sGrob@plotArgs$cols <- grobToPlot$color
+# @importFrom rgeos gIntersects gArea
+# setMethod(
+# .preparePlotGrob <-
+#   # signature = c("Spatial", ".quickPlotGrob"),
+#   # definition =
+#   function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+#                         quickPlotGrobCounter, subPlots, cols) {
+#
+#     if (!is.null(sGrob@plotArgs$zoomExtent) &&
+#         !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
+#         #!identical(arr@extents[[subPlots]], sGrob@plotArgs$zoomExtent)) {
+#       useCrop <- FALSE
+#       if (!useCrop) {
+#         zoom <- sGrob@plotArgs$zoomExtent
+#         extPolygon <- as(zoom, "SpatialPolygons")
+#         crs(extPolygon) <- crs(grobToPlot)
+#         extPolygon <- list(extPolygon)
+#         names(extPolygon) <- sGrob@plotName
+#
+#         browser()
+#         fullArea <-
+#           rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
+#         zoomArea <-
+#           rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
+#         numPolys <- length(grobToPlot)
+#         ratio <- fullArea / zoomArea
+#         if (numPolys / ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
+#           polySeq <-
+#             .polygonSeq(grobToPlot,
+#                         maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
+#           .showingOnlyMessage(numShowing = getOption("quickPlot.maxNumPolygons", 3e3),
+#                               totalAvailable = length(grobToPlot))
+#           grobToPlot <- grobToPlot[polySeq,]
+#
+#         }
+#         message("Cropping to new extent")
+#         browser()
+#         a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
+#         grobToPlot <- grobToPlot[a[1,],]
+#       } else {
+#         grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+#       }
+#
+#     }
+#
+#     # This handles SpatialPointsDataFrames with column "colour"
+#     if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
+#       sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
+#
+#     zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
+#                  cols = sGrob@plotArgs$cols, real = FALSE)
+#     return(zMat)
+# })
 
-    list(z = grobToPlot, minz = 0, maxz = 0,
-         cols = sGrob@plotArgs$cols, real = FALSE)
-})
+# setMethod(
+#   ".preparePlotGrob",
+#   signature = c("ANY", ".quickPlotGrob"),
+#   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+#                         quickPlotGrobCounter, subPlots, cols) {
+#     if (any(grepl(pattern = "color", colnames(grobToPlot))) & is.null(cols))
+#       sGrob@plotArgs$cols <- grobToPlot$color
+#
+#     list(z = grobToPlot, minz = 0, maxz = 0,
+#          cols = sGrob@plotArgs$cols, real = FALSE)
+# })
 
-setMethod(
-  ".preparePlotGrob",
-  signature = c("SpatialLines", ".quickPlotGrob"),
-  definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-                        quickPlotGrobCounter, subPlots, cols) {
-  if (!is.null(sGrob@plotArgs$zoomExtent)) {
-    grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
-  }
-  zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
-               cols = sGrob@plotArgs$cols, real = FALSE)
-  return(zMat)
-})
+# setMethod(
+#   ".preparePlotGrob",
+#   signature = c("SpatialLines", ".quickPlotGrob"),
+#   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+#                         quickPlotGrobCounter, subPlots, cols) {
+#   if (!is.null(sGrob@plotArgs$zoomExtent)) {
+#     grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+#   }
+#   zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
+#                cols = sGrob@plotArgs$cols, real = FALSE)
+#   return(zMat)
+# })
 
 #' @param whPlotFrame Numeric. Which plot within the `quickPlotGrobPlots` object.
 #'
@@ -1868,7 +1954,6 @@ setMethod(
 #'
 #' @author Eliot McIntire
 #' @export
-#' @exportMethod .plotGrob
 #' @importFrom data.table ':=' data.table
 #' @importFrom grDevices as.raster
 #' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
@@ -1877,33 +1962,48 @@ setMethod(
 #' @keywords internal
 #' @rdname plotGrob
 #'
-setGeneric(
-  ".plotGrob",
+# setGeneric(
+.plotGrob <-
   function(grobToPlot, col = NULL, real = FALSE, size = unit(5, "points"), minv, maxv,
            legend = TRUE, legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
            pch = 19, speedup = 1, name = character(), vp = list(), ...) {
-  standardGeneric(".plotGrob")
-})
+    UseMethod(".plotGrob")
+    # standardGeneric(".plotGrob")
+  }# )
 
-#' @rdname plotGrob
-#' @importFrom grid pointsGrob
-setMethod(
-  ".plotGrob",
-  signature = c("SpatialPoints"),
-  definition = function(grobToPlot, col, size,
-                        legend, gp = gpar(), pch, speedup, name, vp, ...) {
-    speedupScale <- 40
-    speedupScale <- if (grepl(proj4string(grobToPlot), pattern = "longlat")) {
-      pointDistance(
-        p1 = c(xmax(extent(grobToPlot)), ymax(extent(grobToPlot))),
-        p2 = c(xmin(extent(grobToPlot)), ymin(extent(grobToPlot))),
-        lonlat = TRUE
-      ) / (4.8e5 * speedupScale)
-    } else {
-      max(ymax(extent(grobToPlot)) - ymin(extent(grobToPlot)),
-          xmax(extent(grobToPlot)) - xmin(extent(grobToPlot))) /
-        speedupScale
-    }
+# @rdname plotGrob
+# @importFrom grid pointsGrob
+# setMethod(
+.plotGrob.default <- function(grobToPlot, col, real, size, minv, maxv,
+                              legend, legendText, length, gp = gpar(), gpText,
+                              pch, speedup, name, vp, ...) {
+  if (is.matrix(grobToPlot)) {
+    outGrob <- pgmatrix(grobToPlot, col, real, size, minv, maxv,
+                        legend, legendText, gp, gpText, pch, name, vp, ...)
+  } else if (is(grobToPlot, "SpatialPolygons") ||
+             (is(grobToPlot, "SpatVector") && identical("polygons", terra::geomtype(grobToPlot)))) {
+    outGrob <- pgSpatialPolygons(grobToPlot, col, size,
+                                 legend, gp = gpar(), pch, speedup, name, vp, ...)
+  } else if (is(grobToPlot, "SpatialLines") ||
+             (is(grobToPlot, "SpatVector") && identical("lines", terra::geomtype(grobToPlot)))) {
+    outGrob <- pgSpatialLines(grobToPlot, col, size,
+                              legend, length, gp = gpar(), pch, speedup, name, vp, ...)
+  } else { # for SpatialPoints and points SpatVector
+
+    speedupScale <- speedupScale(grobToPlot, lonlatSU = 40 * 4.8e5, SU = 40)
+    # speedupScale <- 40
+    # extGTP <- extent(grobToPlot)
+    # speedupScale <- if (isTRUE(isLonLat(grobToPlot))) {
+    #   pointDistance(
+    #     p1 = c(extGTP$xmax, extGTP$ymax),
+    #     p2 = c(extGTP$xmin, extGTP$ymin),
+    #     lonlat = TRUE
+    #   ) / (4.8e5 * speedupScale)
+    # } else {
+    #   max(extGTP$ymax - extGTP$ymin,
+    #       extGTP$xmax - extGTP$xmin) /
+    #     speedupScale
+    # }
     xyOrd <- coordinates(grobToPlot)
 
     if (!is.null(col)) {
@@ -1942,7 +2042,7 @@ setMethod(
       }
     }
 
-    pntGrob <- gTree(
+    outGrob <- gTree(
       grobToPlot = grobToPlot,
       children = gList(
         pointsGrob(
@@ -1953,276 +2053,273 @@ setMethod(
       gp = gp,
       cl = "plotPoint"
     )
-    grid.draw(pntGrob, recording = FALSE)
-    return(invisible(pntGrob))
-})
+    grid.draw(outGrob, recording = FALSE)
+  }
 
-#' @rdname plotGrob
-setMethod(
-  ".plotGrob",
-  signature = c("matrix"),
-  definition = function(grobToPlot, col, real, size, minv, maxv,
-                        legend, legendText, gp, gpText, pch, name, vp, ...) {
+  return(invisible(outGrob))
+}
 
-    pr <- if (real) {
-      pretty(range(minv, maxv))
-    } else {
-      if (!is.null(legendText)) {
-        nrowLegText <- NROW(legendText)
-        if (NCOL(legendText) > 1) {
-          # means it was a factor
-          legendText$contigValue <- 1:nrowLegText
-          if (nrowLegText > 20) {
-            pr <- pretty(legendText$contigValue)
-            pr <- pr - min(pr) + 1 # start it at one
-          } else {
-            legendText$contigValue
-          }
+pgmatrix <- function(grobToPlot, col, real, size, minv, maxv,
+                     legend, legendText, gp, gpText, pch, name, vp, ...) {
 
+  pr <- if (real) {
+    pretty(range(minv, maxv))
+  } else {
+    if (!is.null(legendText)) {
+      nrowLegText <- NROW(legendText)
+      if (NCOL(legendText) > 1) {
+        # means it was a factor
+        legendText$contigValue <- 1:nrowLegText
+        if (nrowLegText > 20) {
+          pr <- pretty(legendText$contigValue)
+          pr <- pr - min(pr) + 1 # start it at one
         } else {
-          unique(round(pretty(range(minv, maxv), n = length(legendText))))
+          legendText$contigValue
         }
+
       } else {
-        unique(round(pretty(range(minv, maxv))))
+        unique(round(pretty(range(minv, maxv), n = length(legendText))))
       }
-    }
-
-    if (NCOL(legendText) == 1) {
-      # means it was not a factor
-      pr <- pr[pr <= maxv & pr >= minv]
     } else {
-      pr <- pr[pr <= nrowLegText & pr >= 1]
+      unique(round(pretty(range(minv, maxv))))
     }
-    if (length(pr) == 0) pr <- seq(minv, maxv, by = 2)
-    maxcol <- length(col)
-    mincol <- 2
+  }
 
-    gpText$cex <- gpText$cex * 0.6
-    if (length(gpText) == 0)
-      gpText <- gpar(col = "black", cex = 0.6)
+  if (NCOL(legendText) == 1) {
+    # means it was not a factor
+    pr <- pr[pr <= maxv & pr >= minv]
+  } else {
+    pr <- pr[pr <= nrowLegText & pr >= 1]
+  }
+  if (length(pr) == 0) pr <- seq(minv, maxv, by = 2)
+  maxcol <- length(col)
+  mincol <- 2
 
-    rastGrob2 <- gTree(
-      grobToPlot = grobToPlot, pr = pr, col = col,
-      children = gList(
-        rasterGrob(
-          as.raster(grobToPlot),
-          interpolate = FALSE,
-          name = "raster"
-        ),
-        if (legend) {
-          if (NCOL(legendText) > 1) {
-            # for factors
-            colForLegend <- col[rev(legendText$contigValue - min(legendText$contigValue) + 2)]
-          } else {
-            colForLegend <- col[(maxcol):mincol]
-          }
-          rasterGrob(
-            as.raster(colForLegend),
-            x = 1.04, y = 0.5,
-            height = 0.5, width = 0.03,
-            interpolate = FALSE,
-            name = "legend"
-          )
-        },
-        if (legend) {
-          txt <- if (is.null(legendText)) {
-            pr
-          } else {
-            # factor legends
-            if (NCOL(legendText) > 1) {
-              legendIndex <- pr
-              legendText[legendIndex, 2]
-            } else {
-              legendIndex <- pr - min(pr) + 1
-              legendText[legendIndex]
-            }
-          }
-          textGrob(
-            txt,
-            x = 1.08,
-            y = if (!real) {
-              # factors
-              if (NCOL(legendText) > 1) {
-                maxv <- legendText$contigValue[nrowLegText]
-                minv <- legendText$contigValue[1]
-              }
-              ((pr - minv) / ((maxv + 1) - minv)) / 2 + 0.25 + 1 / # nolint
-                (diff(range(minv, maxv)) + 1) / 4
-            } else {
-              ((pr - minv) / ((maxv) - minv)) / 2 + 0.25 # nolint
-            },
-            gp = gpText,
-            just = "left", check.overlap =
-              TRUE,
-            name = "legendText"
-          )
-        }
+  gpText$cex <- gpText$cex * 0.6
+  if (length(gpText) == 0)
+    gpText <- gpar(col = "black", cex = 0.6)
+
+  rastGrob2 <- gTree(
+    grobToPlot = grobToPlot, pr = pr, col = col,
+    children = gList(
+      rasterGrob(
+        as.raster(grobToPlot),
+        interpolate = FALSE,
+        name = "raster"
       ),
-      gp = gp, cl = "plotRast2"
-    )
-
-    seekViewport(paste0("outer", name), recording = FALSE)
-    grid.draw(rastGrob2, recording = FALSE)
-
-    return(invisible())
-})
-
-#' @rdname plotGrob
-#' @importFrom grid polygonGrob
-setMethod(
-  ".plotGrob",
-  signature = c("SpatialPolygons"),
-  definition = function(grobToPlot, col, size,
-                        legend, gp = gpar(), pch, speedup, name, vp, ...) {
-
-    speedupScale <- if (grepl(proj4string(grobToPlot), pattern = "longlat")) {
-      pointDistance(
-        p1 = c(xmax(extent(grobToPlot)), ymax(extent(grobToPlot))),
-        p2 = c(xmin(extent(grobToPlot)), ymin(extent(grobToPlot))),
-        lonlat = TRUE
-      ) / 1.2e10
-    } else {
-      max(ymax(extent(grobToPlot)) - ymin(extent(grobToPlot)),
-          xmax(extent(grobToPlot)) - xmin(extent(grobToPlot))) / 2.4e4
-    }
-
-    # For speed of plotting
-    xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
-                             returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
-
-    numPolys <- length(unique(xyOrd$xyOrd$poly))
-    numSubPolys <- length(unique(xyOrd$xyOrd$groups))
-    if (!is.null(col)) {
-      gp$fill <- col
-    }
-    theCols <- if ((length(gp$fill) == 1 && gp$fill %in% rownames(RColorBrewer::brewer.pal.info)) ||
-                   is.null(gp$fill)) {
-      if (is.null(gp$fill)) {
-        pal <- "Set2"
-      } else {
-        pal <- gp$fill
-      }
-      if (pal %in% rownames(RColorBrewer::brewer.pal.info)) {
-        numCols <- RColorBrewer::brewer.pal.info[pal,"maxcolors"]
-      }
-      rep(RColorBrewer::brewer.pal(numCols, pal), length.out = numPolys)
-    } else {
-      if (length(gp$fill) < numPolys) {
-        message("not enough colours for each polygon (there are ",numPolys,"), recycling")
-        rep(gp$fill, length.out = numPolys)
-      } else if (length(gp$fill) > numPolys) {
-        message("more colours than number of polygons (there are ",numPolys,"), setting unique colors to sub-polygons (there are "
-                ,numSubPolys,")")
-        if (length(gp$fill) != numSubPolys) {
-          message("Incorrect number of colours for number of sub-polygons; recycling")
+      if (legend) {
+        if (NCOL(legendText) > 1) {
+          # for factors
+          colForLegend <- col[rev(legendText$contigValue - min(legendText$contigValue) + 2)]
+        } else {
+          colForLegend <- col[(maxcol):mincol]
         }
-        rep(gp$fill, length.out = numSubPolys)
-      } else {
-        gp$fill
+        rasterGrob(
+          as.raster(colForLegend),
+          x = 1.04, y = 0.5,
+          height = 0.5, width = 0.03,
+          interpolate = FALSE,
+          name = "legend"
+        )
+      },
+      if (legend) {
+        txt <- if (is.null(legendText)) {
+          pr
+        } else {
+          # factor legends
+          if (NCOL(legendText) > 1) {
+            legendIndex <- pr
+            legendText[legendIndex, 2]
+          } else {
+            legendIndex <- pr - min(pr) + 1
+            legendText[legendIndex]
+          }
+        }
+        textGrob(
+          txt,
+          x = 1.08,
+          y = if (!real) {
+            # factors
+            if (NCOL(legendText) > 1) {
+              maxv <- legendText$contigValue[nrowLegText]
+              minv <- legendText$contigValue[1]
+            }
+            ((pr - minv) / ((maxv + 1) - minv)) / 2 + 0.25 + 1 / # nolint
+              (diff(range(minv, maxv)) + 1) / 4
+          } else {
+            ((pr - minv) / ((maxv) - minv)) / 2 + 0.25 # nolint
+          },
+          gp = gpText,
+          just = "left", check.overlap =
+            TRUE,
+          name = "legendText"
+        )
       }
-    }
+    ),
+    gp = gp, cl = "plotRast2"
+  )
 
-    if (length(gp$fill) <= numPolys) {
-      dtFill <- data.table(poly = seq(numPolys),
-                           col = theCols)
-      dtFill2 <- unique(xyOrd$xyOrd[, c("groups", "poly")])
-      dtFill2 <- dtFill[dtFill2, on = "poly"]
-      gp$fill <- dtFill2$col
-    } else if (length(gp$fill) < NROW(xyOrd$idLength)) {
-      gp$fill <- theCols
-    }
+  seekViewport(paste0("outer", name), recording = FALSE)
+  grid.draw(rastGrob2, recording = FALSE)
 
-    polyGrob <- .createPolygonGrob(gp = gp, xyOrd = xyOrd)
-    grid.draw(polyGrob, recording = FALSE)
-    return(invisible(polyGrob))
-})
+  return(invisible())
+}
 
-#' @rdname plotGrob
-#' @importFrom grid polylineGrob arrow
-setMethod(
-  ".plotGrob",
-  signature = c("SpatialLines"),
-  definition = function(grobToPlot, col, size,
-                        legend, length, gp = gpar(), pch, speedup, name, vp, ...) {
-    speedupScale <- if (grepl(proj4string(grobToPlot), pattern = "longlat")) {
-      pointDistance(
-        p1 = c(xmax(extent(grobToPlot)), ymax(extent(grobToPlot))),
-        p2 = c(xmin(extent(grobToPlot)), ymin(extent(grobToPlot))),
-        lonlat = TRUE
-      ) / 1.2e10
+pgSpatialPolygons <- function(grobToPlot, col, size,
+                              legend, gp = gpar(), pch, speedup, name, vp, ...) {
+  speedupScale <- speedupScale(grobToPlot, lonlatSU = 1.2e10, SU = 2.4e4)
+
+  # extGTP <- extent(grobToPlot)
+  # speedupScale <- if (isLonLat(grobToPlot)) {
+  #   pointDistance(
+  #     p1 = c(extGTP$xmax, extGTP$ymax),
+  #     p2 = c(extGTP$xmin, extGTP$ymin),
+  #     lonlat = TRUE
+  #   ) / 1.2e10
+  # } else {
+  #   max(extGTP$ymax - extGTP$ymin,
+  #       extGTP$xmax - extGTP$xmin) / 2.4e4
+  # }
+
+  # For speed of plotting
+  xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
+                           returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
+
+  numPolys <- length(unique(xyOrd$xyOrd$poly))
+  numSubPolys <- length(unique(xyOrd$xyOrd$groups))
+  if (!is.null(col)) {
+    gp$fill <- col
+  }
+  theCols <- if ((length(gp$fill) == 1 && gp$fill %in% rownames(RColorBrewer::brewer.pal.info)) ||
+                 is.null(gp$fill)) {
+    if (is.null(gp$fill)) {
+      pal <- "Set2"
     } else {
-      max(ymax(extent(grobToPlot)) - ymin(extent(grobToPlot)),
-          xmax(extent(grobToPlot)) - xmin(extent(grobToPlot))) / 2.4e4
+      pal <- gp$fill
     }
+    if (pal %in% rownames(RColorBrewer::brewer.pal.info)) {
+      numCols <- RColorBrewer::brewer.pal.info[pal,"maxcolors"]
+    }
+    rep(RColorBrewer::brewer.pal(numCols, pal), length.out = numPolys)
+  } else {
+    if (length(gp$fill) < numPolys) {
+      message("not enough colours for each polygon (there are ",numPolys,"), recycling")
+      rep(gp$fill, length.out = numPolys)
+    } else if (length(gp$fill) > numPolys) {
+      message("more colours than number of polygons (there are ",numPolys,"), setting unique colors to sub-polygons (there are "
+              ,numSubPolys,")")
+      if (length(gp$fill) != numSubPolys) {
+        message("Incorrect number of colours for number of sub-polygons; recycling")
+      }
+      rep(gp$fill, length.out = numSubPolys)
+    } else {
+      gp$fill
+    }
+  }
 
+  if (length(gp$fill) <= numPolys) {
+    dtFill <- data.table(poly = seq(numPolys),
+                         col = theCols)
+    dtFill2 <- unique(xyOrd$xyOrd[, c("groups", "poly")])
+    dtFill2 <- dtFill[dtFill2, on = "poly"]
+    gp$fill <- dtFill2$col
+  } else if (length(gp$fill) < NROW(xyOrd$idLength)) {
+    gp$fill <- theCols
+  }
+
+  polyGrob <- .createPolygonGrob(gp = gp, xyOrd = xyOrd)
+  grid.draw(polyGrob, recording = FALSE)
+  return(invisible(polyGrob))
+}
+
+pgSpatialLines <- function(grobToPlot, col, size,
+                           legend, length, gp = gpar(), pch, speedup, name, vp, ...) {
+  speedupScale <- speedupScale(grobToPlot, lonlatSU = 1.2e10, SU = 2.4e4)
+  # speedupScale <- if (grepl(proj4string(grobToPlot), pattern = "longlat")) {
+  #   pointDistance(
+  #     p1 = c(xmax(extent(grobToPlot)), ymax(extent(grobToPlot))),
+  #     p2 = c(xmin(extent(grobToPlot)), ymin(extent(grobToPlot))),
+  #     lonlat = TRUE
+  #   ) / 1.2e10
+  # } else {
+  #   max(ymax(extent(grobToPlot)) - ymin(extent(grobToPlot)),
+  #       xmax(extent(grobToPlot)) - xmin(extent(grobToPlot))) / 2.4e4
+  # }
+
+  if (isSpat(grobToPlot)) {
+    xy <- geom(grobToPlot)
+    idLength <- as.data.table(xy)[, .N, by = c("geom", "part")]$N
+    xy <- xy[, c("x", "y")]
+  } else {
     # For speed of plotting
     xy <- lapply(1:length(grobToPlot), function(i) {
       grobToPlot@lines[[i]]@Lines[[1]]@coords
     })
     idLength <- unlist(lapply(xy, length)) / 2
     xy <- do.call(rbind, xy)
+  }
 
-    if (NROW(xy) > 1e3) {
-      # thin if fewer than 1000 pts
-      if (speedup > 0.1) {
-        if (requireNamespace("fastshp", quietly = TRUE)) {
-          thinned <- fastshp::thin(xy[, 1], xy[, 2],
-                                   tolerance = speedupScale * speedup)
+  if (NROW(xy) > 1e3) {
+    # thin if fewer than 1000 pts
+    if (speedup > 0.1) {
+      if (requireNamespace("fastshp", quietly = TRUE)) {
+        thinned <- fastshp::thin(xy[, 1], xy[, 2],
+                                 tolerance = speedupScale * speedup)
 
-          # keep first and last points of every polyline,
-          # if there are fewer than 10,000 vertices
-          if (sum(thinned) < 1e4) {
-            lastIDs <- cumsum(idLength)
+        # keep first and last points of every polyline,
+        # if there are fewer than 10,000 vertices
+        if (sum(thinned) < 1e4) {
+          lastIDs <- cumsum(idLength)
 
-            # Ensure first and last points of each line are kept:
-            thinned[c(1, lastIDs + 1)[-(1 + length(lastIDs))]] <- TRUE # nolint
-            thinned[lastIDs] <- TRUE
-          }
-          xy <- xy[thinned, ]
-          idLength <- tapply(thinned, rep(1:length(idLength), idLength), sum)
-        } else {
+          # Ensure first and last points of each line are kept:
+          thinned[c(1, lastIDs + 1)[-(1 + length(lastIDs))]] <- TRUE # nolint
+          thinned[lastIDs] <- TRUE
+        }
+        xy <- xy[thinned, ]
+        idLength <- tapply(thinned, rep(1:length(idLength), idLength), sum)
+      } else {
+        message(
+          paste(
+            "To speed up Lines plotting using Plot, install the fastshp package:\n",
+            "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")"
+          )
+        )
+        if (Sys.info()[["sysname"]] == "Windows") {
           message(
             paste(
-              "To speed up Lines plotting using Plot, install the fastshp package:\n",
-              "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")"
+              "You may also need to download and install Rtools from:\n",
+              "  https://cran.r-project.org/bin/windows/Rtools/"
             )
           )
-          if (Sys.info()[["sysname"]] == "Windows") {
-            message(
-              paste(
-                "You may also need to download and install Rtools from:\n",
-                "  https://cran.r-project.org/bin/windows/Rtools/"
-              )
-            )
-          }
         }
       }
     }
+  }
 
-    if (is.null(length)) {
-      lineGrob <- gTree(children = gList(
-        polylineGrob(
-          x = xy[, 1], y = xy[, 2], id.lengths = idLength,
-          gp = gp, default.units = "native"
-        )
-      ),
-      gp = gp,
-      cl = "plotLine")
-    } else {
-      lineGrob <- gTree(children = gList(
-        polylineGrob(
-          x = xy[, 1], y = xy[, 2], id.lengths = idLength,
-          gp = gp, default.units = "native",
-          arrow = arrow(length = unit(length, "inches"))
-        )
-      ),
-      gp = gp,
-      cl = "plotLine")
-    }
+  if (is.null(length)) {
+    lineGrob <- gTree(children = gList(
+      polylineGrob(
+        x = xy[, 1], y = xy[, 2], id.lengths = idLength,
+        gp = gp, default.units = "native"
+      )
+    ),
+    gp = gp,
+    cl = "plotLine")
+  } else {
+    lineGrob <- gTree(children = gList(
+      polylineGrob(
+        x = xy[, 1], y = xy[, 2], id.lengths = idLength,
+        gp = gp, default.units = "native",
+        arrow = arrow(length = unit(length, "inches"))
+      )
+    ),
+    gp = gp,
+    cl = "plotLine")
+  }
 
-    grid.draw(lineGrob, recording = FALSE)
-    return(invisible(lineGrob))
-})
+  grid.draw(lineGrob, recording = FALSE)
+  return(invisible(lineGrob))
+}
 
 #' Make an optimal layout of plots
 #'
@@ -2314,7 +2411,7 @@ setMethod(
   arr <- sPlot@arr
   sgl <- sPlot@quickPlotGrobList
 
-  extents <- unlist(sapply(sgl, function(x) {
+  extents <- sapply(sgl, function(x) {
     unname(lapply(x[[1]]@isSpatialObjects, function(z) {
       if (z == TRUE) {
         # for spatial objects
@@ -2323,9 +2420,9 @@ setMethod(
         } else {
           ## TODO: temporary workaround to enable Plotting terra rasters
           obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
-          if (is(obj, "SpatRaster")) {
-            obj <- raster::raster(obj)
-          }
+          # if (is(obj, "SpatRaster")) {
+          #   obj <- terra::rast(obj)
+          # }
           ## END WORKAROUND
 
           extent(obj)
@@ -2335,7 +2432,7 @@ setMethod(
 
         ## TODO: temporary workaround to enable Plotting terra rasters
         if (is(obj, "SpatRaster")) {
-          obj <- raster::raster(obj)
+          obj <- terra::rast(obj)
         }
         ## END WORKAROUND
 
@@ -2345,11 +2442,11 @@ setMethod(
           extent(obj)
         } else {
           # for non spatial objects
-          extent(c(xmin = 0, xmax = 2, ymin = 0, ymax = 2))
+          list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
         }
       }
     }))
-  }))
+  })
 
   columns <- arr@columns
   rows <- arr@rows
@@ -2382,32 +2479,32 @@ setMethod(
       lpr <- c((lpr):(lpr + 1)) # nolint
     }
     # makes equal scale
-    yrange <- extents[[extentInd]]@ymax - extents[[extentInd]]@ymin
+    yrange <- extents[[extentInd]]$ymax - extents[[extentInd]]$ymin
     if (yrange > 0) {
-      if (abs((yrange / (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin)) - # nolint
+      if (abs((yrange / (extents[[extentInd]]$xmax - extents[[extentInd]]$xmin)) - # nolint
         (biggestDims[1] / biggestDims[2])) > getOption("quickPlot.tolerance")) {
         dimensionRatio <- arr@layout$wdthUnits * arr@ds[1] /
           (arr@layout$htUnits * arr@ds[2])
-        plotScaleRatio <- (extents[[extentInd]]@xmin - extents[[extentInd]]@xmax) /
-          (extents[[extentInd]]@ymin - extents[[extentInd]]@ymax)
+        plotScaleRatio <- (extents[[extentInd]]$xmin - extents[[extentInd]]$xmax) /
+          (extents[[extentInd]]$ymin - extents[[extentInd]]$ymax)
 
         vS.w <- min(1, plotScaleRatio / dimensionRatio) # nolint
         vS.h <- min(1, dimensionRatio / plotScaleRatio) # nolint
 
-        addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025) # nolint
-        addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025) # nolint
-        # addY <- abs(extents[[extentInd]]@ymax - extents[[extentInd]]@ymin -
-        #               (extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) /
+        addX <- abs((extents[[extentInd]]$xmax - extents[[extentInd]]$xmin) * 0.025) # nolint
+        addY <- abs((extents[[extentInd]]$ymax - extents[[extentInd]]$ymin) * 0.025) # nolint
+        # addY <- abs(extents[[extentInd]]$ymax - extents[[extentInd]]$ymin -
+        #               (extents[[extentInd]]$ymax - extents[[extentInd]]$ymin) /
         #               vS.h) / 2
-        # addX <- abs(extents[[extentInd]]@xmax - extents[[extentInd]]@xmin -
-        #               (extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) /
+        # addX <- abs(extents[[extentInd]]$xmax - extents[[extentInd]]$xmin -
+        #               (extents[[extentInd]]$xmax - extents[[extentInd]]$xmin) /
         #               vS.w) / 2
       } else {
         addY <- addX <- 0
       }
     } else {
-      addX <- abs((extents[[extentInd]]@xmax - extents[[extentInd]]@xmin) * 0.025) # nolint
-      addY <- abs((extents[[extentInd]]@ymax - extents[[extentInd]]@ymin) * 0.025) # nolint
+      addX <- abs((extents[[extentInd]]$xmax - extents[[extentInd]]$xmin) * 0.025) # nolint
+      addY <- abs((extents[[extentInd]]$ymax - extents[[extentInd]]$ymin) * 0.025) # nolint
     }
     # end equal scale
     plotVps[[nam[extentInd]]] <- viewport(
@@ -2415,15 +2512,15 @@ setMethod(
       name = nam[extentInd],
       layout.pos.col = lpc,
       layout.pos.row = lpr,
-      xscale = c(extents[[extentInd]]@xmin - addX, extents[[extentInd]]@xmax + addX),
-      yscale = c(extents[[extentInd]]@ymin - addY, extents[[extentInd]]@ymax + addY)
+      xscale = c(extents[[extentInd]]$xmin - addX, extents[[extentInd]]$xmax + addX),
+      yscale = c(extents[[extentInd]]$ymin - addY, extents[[extentInd]]$ymax + addY)
     )
     plotVps[[paste0("outer", nam[extentInd])]] <- viewport(#clip = "on",
       name = paste0("outer", nam[extentInd]),
       layout.pos.col = lpc,
       layout.pos.row = lpr,
-      xscale = c(extents[[extentInd]]@xmin - addX, extents[[extentInd]]@xmax + addX),
-      yscale = c(extents[[extentInd]]@ymin - addY, extents[[extentInd]]@ymax + addY)
+      xscale = c(extents[[extentInd]]$xmin - addX, extents[[extentInd]]$xmax + addX),
+      yscale = c(extents[[extentInd]]$ymin - addY, extents[[extentInd]]$ymax + addY)
     )
   }
 
@@ -2454,19 +2551,30 @@ setMethod(
   if (hasBbox) {
     ## for spatial objects
 
-    ## TODO: temporary workaround to enable Plotting terra rasters
+    # ## TODO: temporary workaround to enable Plotting terra rasters
     theObj <- eval(parse(text = objName), envir = objEnv)
-    if (is(theObj, "SpatRaster")) {
-      theObj <- raster::raster(theObj)
-    }
-    ## END WORKAROUND
+    # if (is(theObj, "SpatRaster")) {
+    #   theObj <- terra::rast(theObj)
+    # }
+    # ## END WORKAROUND
 
-    apply(bbox(theObj), 1, function(y) {
-      diff(range(y))
-    })
+    xyRange(theObj)
   } else {
     # for non spatial objects
     c(1, 1)
+  }
+}
+
+xyRange <- function(obj) {
+  if (isGridded(obj) || is(obj, "SpatVector"))
+    c(terra::xmax(obj) - terra::xmin(obj), terra::ymax(obj) - terra::ymin(obj))
+  else if (inherits(obj, "sf")) {
+    bb <- sf::st_bbox(obj)
+    c(bb["xmax"] - bb["xmin"], bb["ymax"] - bb["ymin"])
+  } else {
+    apply(bbox(obj), 1, function(y) {
+      diff(range(y))
+    })
   }
 }
 
@@ -2648,9 +2756,8 @@ thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 
 #' @export
 #' @rdname thin
-thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 0,
+thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 1e5,
                                  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...) {
-
   # For speed of plotting
   xyOrd <- .fortify(x, matchFortify = FALSE,
                     simple = returnDataFrame, maxNumPolygons) # a list: out, hole, idLength
@@ -2725,8 +2832,15 @@ thin.SpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, m
 
 #' @export
 #' @rdname thin
-thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
-  message("No method for that class of object exists. See methods('thin') to see current methods")
+thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumPolygons, ...) {
+  if (is(x, "SpatialPolygons") || (isSpatVector(x) && identical("polygons", terra::geomtype(x)))) {
+    x <- thnSpatialPolygons(x, tolerance = tolerance, returnDataFrame = returnDataFrame,
+                            minCoordsToThin = minCoordsToThin,
+                            maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...)
+
+  } else {
+    message("No method for that class of object exists. See methods('thin') to see current methods")
+  }
 }
 
 #' Fortify
@@ -2741,84 +2855,94 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 #' @keywords internal
 .fortify <- function(x, matchFortify = TRUE, simple = FALSE,
                      maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
-  ord <- x@plotOrder
-  if (length(ord) > maxNumPolygons) {
-
-    polygonSeq <- .polygonSeq(x, maxNumPolygons) #if (is.numeric(x@data$Shape_Area)) {
-    ord <- ord[polygonSeq]
-    .showingOnlyMessage(numShowing = maxNumPolygons,
-                        totalAvailable = length(x@plotOrder))
-  }
-  ordSeq <- seq(ord)
-
-  xy <- lapply(ordSeq, function(i) {
-    lapply(x@polygons[[ord[i]]]@Polygons, function(j) {
-      j@coords
-    })
-  })
-
-  hole <- tryCatch(unlist(lapply(ordSeq, function(xx) {
-    lapply(x@polygons[[ord[xx]]]@Polygons, function(yy)
-      yy@hole)
-  })), error = function(xx) FALSE)
-
-  IDs <- tryCatch(unlist(lapply(ordSeq, function(xx) {
-    x@polygons[[ord[xx]]]@ID
-  })), error = function(xx) FALSE)
-
-  ordInner <- lapply(ordSeq, function(xx) {
-    x@polygons[[ord[xx]]]@plotOrder
-  })
-
-  xyOrd.l <- lapply(ordSeq, function(i) { # nolint
-    xy[[ordSeq[i]]][ordInner[[ordSeq[i]]]]
-  })
-
-  idLength <- data.table(V1 = unlist(lapply(xyOrd.l, function(i) {
-    lapply(i, length)
-  })) / 2)
-
-  polyLength <- data.table(V1 = unlist(lapply(xyOrd.l, function(i) {
-    NROW(i)
-  })))
-
-  numPolygons <- unlist(length(xyOrd.l))
-  numPolygon <- unlist(lapply(xyOrd.l, length))
-
-  xyOrd <- do.call(rbind, lapply(xyOrd.l, function(i) {
-    do.call(rbind, i)
-  }))
-
-  groups <- rep(1:NROW(idLength), idLength$V1)
-  poly <- rep(1:NROW(polyLength), polyLength$V1)
-  poly <- rep(poly, idLength$V1)
-
-  if (!simple | matchFortify) {
-    # Polygons <- rep(rep(seq(numPolygons), numPolygon), idLength$V1) # sequential numbering
-    Polygons <- rep(rep(IDs, numPolygon), idLength$V1) # actual ID labelling
-    Polygon <- rep(unlist(lapply(numPolygon, seq)), idLength$V1)
-    holes <- rep(hole, idLength$V1)
-    orders <- unlist(lapply(idLength$V1, seq))
-  }
-
-  if (matchFortify) {
-    if (!simple) message("for matchFortify = TRUE, simple is set to FALSE")
-    return(data.frame(lat = xyOrd[,1], long = xyOrd[,2], order = orders,
-                      hole = holes, id = Polygons, piece = Polygon,
-                      #group = paste0(as.character(Polygons), ".", as.character(Polygon)))) # the actual fortify
-                      group = groups))
+  if (isSpatVector(x)) {
+    dt <- as.data.table(terra::geom(x))
+    hole <- dt[, any(hole == 1), by = "geom"]$V1
+    idLength <- dt[, list(V1 = .N), by = "geom"][, "V1"]
+    data.table::setnames(dt, "geom", new = "groups")
+    data.table::set(dt, NULL, "poly", dt$groups)
+    out <- list(out = dt, hole = hole, idLength = idLength)
   } else {
-    out <- setDT(data.frame(x = xyOrd[,1], y = xyOrd[,2], groups = groups, poly = poly))
-    if (!simple) {
-      set(out, NULL, "order", orders)
-      set(out, NULL, "hole", holes)
-      set(out, NULL, "Polygons", Polygons)
-      set(out, NULL, "Polygon", Polygon)
-    }
-    out <- list(out = out, hole = hole, idLength = idLength)
 
-    return(out)
+    ord <- if (isSpatial(x)) x@plotOrder else seq_along(x) # a seq vector of length(x)
+    if (length(ord) > maxNumPolygons) {
+
+      polygonSeq <- .polygonSeq(x, maxNumPolygons) #if (is.numeric(x@data$Shape_Area)) {
+      ord <- ord[polygonSeq]
+      .showingOnlyMessage(numShowing = maxNumPolygons,
+                          totalAvailable = length(x@plotOrder))
+    }
+    ordSeq <- seq(ord)
+
+    xy <- lapply(ordSeq, function(i) {
+      lapply(x@polygons[[ord[i]]]@Polygons, function(j) {
+        j@coords
+      })
+    })
+
+    hole <- tryCatch(unlist(lapply(ordSeq, function(xx) {
+      lapply(x@polygons[[ord[xx]]]@Polygons, function(yy)
+        yy@hole)
+    })), error = function(xx) FALSE)
+
+    IDs <- tryCatch(unlist(lapply(ordSeq, function(xx) {
+      x@polygons[[ord[xx]]]@ID
+    })), error = function(xx) FALSE)
+
+    ordInner <- lapply(ordSeq, function(xx) {
+      x@polygons[[ord[xx]]]@plotOrder
+    })
+
+    xyOrd.l <- lapply(ordSeq, function(i) { # nolint
+      xy[[ordSeq[i]]][ordInner[[ordSeq[i]]]]
+    })
+
+    idLength <- data.table(V1 = unlist(lapply(xyOrd.l, function(i) {
+      lapply(i, length)
+    })) / 2)
+
+    polyLength <- data.table(V1 = unlist(lapply(xyOrd.l, function(i) {
+      NROW(i)
+    })))
+
+    numPolygons <- unlist(length(xyOrd.l))
+    numPolygon <- unlist(lapply(xyOrd.l, length))
+
+    xyOrd <- do.call(rbind, lapply(xyOrd.l, function(i) {
+      do.call(rbind, i)
+    }))
+
+    groups <- rep(1:NROW(idLength), idLength$V1)
+    poly <- rep(1:NROW(polyLength), polyLength$V1)
+    poly <- rep(poly, idLength$V1)
+
+    if (!simple | matchFortify) {
+      # Polygons <- rep(rep(seq(numPolygons), numPolygon), idLength$V1) # sequential numbering
+      Polygons <- rep(rep(IDs, numPolygon), idLength$V1) # actual ID labelling
+      Polygon <- rep(unlist(lapply(numPolygon, seq)), idLength$V1)
+      holes <- rep(hole, idLength$V1)
+      orders <- unlist(lapply(idLength$V1, seq))
+    }
+
+    if (matchFortify) {
+      if (!simple) message("for matchFortify = TRUE, simple is set to FALSE")
+      return(data.frame(lat = xyOrd[,1], long = xyOrd[,2], order = orders,
+                        hole = holes, id = Polygons, piece = Polygon,
+                        #group = paste0(as.character(Polygons), ".", as.character(Polygon)))) # the actual fortify
+                        group = groups))
+    } else {
+      out <- setDT(data.frame(x = xyOrd[,1], y = xyOrd[,2], groups = groups, poly = poly))
+      if (!simple) {
+        set(out, NULL, "order", orders)
+        set(out, NULL, "hole", holes)
+        set(out, NULL, "Polygons", Polygons)
+        set(out, NULL, "Polygon", Polygon)
+      }
+      out <- list(out = out, hole = hole, idLength = idLength)
+
+    }
   }
+  return(out)
 }
 
 .polygonSeq <- function(polygon, maxNumPolygons) {
@@ -2845,4 +2969,55 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 .showingOnlyMessage <- function(numShowing, totalAvailable) {
   message("Showing only ", numShowing, " of ",
           totalAvailable," polygons in this view. See options('quickPlot.maxNumPolygons')")
+}
+
+extent <- function(x) {
+  ee <- if (isGridded(x) || inherits(x, "Spatial") || isSpat(x)) {
+    if (isSpat(x))
+      ee <- terra::ext(x)
+    else
+      ee <- raster::extent(x)
+    list(xmin = terra::xmin(ee), xmax = terra::xmax(ee),
+         ymin = terra::ymin(ee), ymax = terra::ymax(ee))
+  } else if (inherits(x, "sf")) {
+    sf::st_bbox(x)
+    browser()
+  } else {
+    ee <- raster::extent(x)
+  }
+  ee
+}
+
+
+coordinates <- function(x) {
+  if (isSpat(x) && isVector(x)) {
+    terra::crds(x)
+  } else {
+    raster::coordinates(x)
+  }
+
+}
+
+isLonLat <- function(x) {
+  if (isSpat(x)) {
+    isTRUE(terra::is.lonlat(x))
+  } else {
+    isTRUE(raster::isLonLat(x))
+  }
+}
+
+speedupScale <- function(grobToPlot, lonlatSU, SU) {
+  extGTP <- extent(grobToPlot)
+  speedupScale <- if (isTRUE(isLonLat(grobToPlot))) {
+    pointDistance(
+      p1 = c(extGTP$xmax, extGTP$ymax),
+      p2 = c(extGTP$xmin, extGTP$ymin),
+      lonlat = TRUE
+    ) / (lonlatSU)
+  } else {
+    max(extGTP$ymax - extGTP$ymin,
+        extGTP$xmax - extGTP$xmin) /
+      SU
+  }
+  speedupScale
 }

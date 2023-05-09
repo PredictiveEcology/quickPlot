@@ -12,5 +12,3 @@
   invisible()
 }
 
-#' @import rgdal
-NULL

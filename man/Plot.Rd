@@ -303,7 +303,6 @@ The naming convention used is: \code{RasterStackName$layerName}, i.e,
 \examples{
 library(sp)
 library(raster)
-requireNamespace("rgdal") # required for raster loading
 library(RColorBrewer)
 
 files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")

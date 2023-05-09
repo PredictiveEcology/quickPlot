@@ -1,9 +1,9 @@
 test_that("Plotting types without visual checking works", {
-  r1 <- raster::raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+  r1 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
                        vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-  r2 <- raster::raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+  r2 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
                        vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-  s1 <- raster::stack(r1, r2)
+  s1 <- terra::rast(r1, r2)
   sp1 <- sp::SpatialPoints(cbind(x = stats::runif(10, 0, 10),
                                  y = stats::runif(10, 0, 10)))
   if (interactive()) {

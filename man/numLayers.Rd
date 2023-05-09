@@ -2,24 +2,9 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{numLayers}
 \alias{numLayers}
-\alias{numLayers,list-method}
-\alias{numLayers,.quickPlot-method}
-\alias{numLayers,Raster-method}
-\alias{numLayers,Spatial-method}
-\alias{numLayers,ANY-method}
 \title{Find the number of layers in a Spatial Object}
 \usage{
 numLayers(x)
-
-\S4method{numLayers}{list}(x)
-
-\S4method{numLayers}{.quickPlot}(x)
-
-\S4method{numLayers}{Raster}(x)
-
-\S4method{numLayers}{Spatial}(x)
-
-\S4method{numLayers}{ANY}(x)
 }
 \arguments{
 \item{x}{A \code{.quickPlotObjects} object or list of these.}
@@ -34,16 +19,15 @@ and \code{SpatialPoints}, \code{gg}, \code{histogram}, \code{igraph}.
 These latter classes return \code{1}.
 }
 \examples{
-library(igraph)
-library(raster)
+library(terra)
 
-files <- system.file("maps", package = "quickPlot") \%>\%
-  dir(., full.names = TRUE, pattern = "tif")
-maps <- lapply(files, function(x) raster(x))
+files <- system.file("maps", package = "quickPlot") |>
+  dir(full.names = TRUE, pattern = "tif")
+maps <- lapply(files, function(x) rast(x))
 names(maps) <- sapply(basename(files), function(x) {
   strsplit(x, split = "\\\\.")[[1]][1]
 })
-stck <- stack(maps)
+stck <- rast(maps)
 
 numLayers(maps)
 numLayers(stck)

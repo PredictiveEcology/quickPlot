@@ -270,24 +270,14 @@ setMethod(
 #' @keywords internal
 #' @rdname makeColorMatrix
 #'
-setGeneric(
-  ".makeColorMatrix",
-   function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
-            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE)  # nolint
-     standardGeneric(".makeColorMatrix")
-)
+.makeColorMatrix <- function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
+            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE) {
 
-#' @rdname makeColorMatrix
-setMethod(
-  ".makeColorMatrix",
-  signature = c("griddedClasses", "Extent", "numeric", "ANY"),
-  #signature = c("Raster", "Extent", "numeric", "ANY"),
-  definition = function(grobToPlot, zoomExtent, maxpixels, legendRange,
-                        cols, na.color, zero.color, skipSample = TRUE) { # nolint
+  # signature = c("griddedClasses", "Extent", "numeric", "ANY"),
     zoom <- zoomExtent
 
     isFac <- FALSE
-    if (any(raster::is.factor(grobToPlot)))
+    if (any(terra::is.factor(grobToPlot)))
       if (all(na.omit(grobToPlot[] %% 1) == 0))
         isFac <- TRUE
     # It is 5x faster to access the min and max from the Raster than to
@@ -306,8 +296,8 @@ setMethod(
         cols <- colorTable
       }
     }
-    if (inherits(grobToPlot, "Raster")) {
-      z <- getValues(grobToPlot) # more general that getValues(grobToPlot)
+    if (isGridded(grobToPlot)) {
+      z <- terra::values(grobToPlot)
     } else {
       z <- grobToPlot[]
     }
@@ -348,6 +338,7 @@ setMethod(
     maxNumCols <- 100
 
     if (isFac) {
+      browser()
       facLevs <- raster::levels(grobToPlot)[[1]]
       nValues <- NROW(facLevs)
     } else {
@@ -544,7 +535,7 @@ setMethod(
       cols = cols, real = real
     )
   }
-)
+
 
 #' Divergent colour palette
 #'
