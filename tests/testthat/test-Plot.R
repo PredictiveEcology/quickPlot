@@ -5,18 +5,9 @@ skip_on_ci() ## August 2022 -- GitHub actions fingerprints differ by system + R 
 
 ## block A
 test_that("Plot 1 is not error-free", {
-  # skip_if_not_installed("fastshp")
-
   tmpdir <- withr::local_tempdir()
   withr::local_dir(new = tmpdir)
   withr::local_package("terra")
-  # library(terra)
-
-  # tmpdir <- file.path(tempdir(), "test_Plot1")
-  # dir.create(tmpdir)
-
-  # cwd <- getwd()
-
   on.exit({
     if (length(dev.list()) > 0) dev.off()
     if (file.exists("Rplots.pdf")) file.remove("Rplots.pdf")
@@ -98,13 +89,13 @@ test_that("Plot 1 is not error-free", {
   Sls <- list(Sl8765, Sl87654)
 
   for (i in seq_along(lands)) {
-    car <- cars[[i]]
-    land <- lands[[i]]
-    DEM <- DEMs[[i]]
-    hab <- habs[[i]]
-    SpP <- SpPs[[i]]
-    SpP8 <- SpP8s[[i]]
-    Sl <- Sls[[i]]
+    car <- cars[[sample(2, 1)]]
+    land <- lands[[sample(2, 1)]]
+    DEM <- DEMs[[sample(2, 1)]]
+    hab <- habs[[sample(2, 1)]]
+    SpP <- SpPs[[sample(2, 1)]]
+    SpP8 <- SpP8s[[sample(2, 1)]]
+    Sl <- Sls[[sample(2, 1)]]
 
     clearPlot()
     expect_silent(Plot(land))
@@ -203,14 +194,14 @@ test_that("Plot 1 is not error-free", {
 
   cars2 <- list(caribou87, caribou874)
   for (i in seq_along(Sls)) {
-    land <- lands[[i]]
-    Sl <- Sls[[i]]
-    Sp <- SpPs[[i]]
-    car <- cars[[i]]
-    car2 <- cars2[[i]]
-    DEM <- DEMs[[i]]
-    terra::crs(Sp) <- terra::crs(land)
-    terra::crs(Sl) <- terra::crs(land)
+    land <- lands[[sample(2, 1)]]
+    Sl <- Sls[[sample(2, 1)]]
+    Sp <- SpPs[[sample(2, 1)]]
+    car <- cars[[sample(2, 1)]]
+    car2 <- cars2[[sample(2, 1)]]
+    DEM <- DEMs[[sample(2, 1)]]
+    suppressWarnings(terra::crs(Sp) <- terra::crs(land))
+    suppressWarnings(terra::crs(Sl) <- terra::crs(land))
     expect_silent(Plot(land, new = TRUE))
     expect_silent(Plot(Sl, new = TRUE))
     expect_silent(Plot(land$DEM87654, addTo = "land$habitatQuality87654"))
@@ -237,25 +228,37 @@ test_that("Plot 1 is not error-free", {
 
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
+  dev()
   hist87654 <- hist(stats::rnorm(1e3), plot = FALSE)
   clearPlot()
   expect_silent(Plot(hist87654))
 
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
-  ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
-                                geom = "histogram")
+
+
+  suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
+                                geom = "histogram")) # warning is about deprecation
   expect_silent(Plot(ggplot87654))
 
-  # test rearrangements
-  expect_silent(Plot(caribou87654, new = TRUE))
-  expect_silent(Plot(DEM87654))
-  expect_silent(Plot(habitatQuality87654))
+  for (i in seq_along(Sls)) {
+    land <- lands[[sample(2, 1)]]
+    Sl <- Sls[[sample(2, 1)]]
+    Sp <- SpPs[[sample(2, 1)]]
+    car <- cars[[sample(2, 1)]]
+    car2 <- cars2[[sample(2, 1)]]
+    DEM <- DEMs[[sample(2, 1)]]
 
-  testPlot <- Plot(habitatQuality87654)
-  expect_silent(Plot(testPlot))
-  expect_silent(Plot(habitatQuality87654, addTo = "test"))
-  expect_silent(rePlot())
+    # test rearrangements
+    expect_silent(Plot(car, new = TRUE))
+    expect_silent(Plot(DEM))
+    expect_silent(Plot(land))
+
+    testPlot <- Plot(land)
+    expect_silent(Plot(testPlot))
+    expect_silent(Plot(car, addTo = "DEM"))
+    expect_silent(rePlot())
+  }
 })
 
 ## block B
@@ -287,7 +290,7 @@ test_that("Unit tests for image content is not error-free", {
                        ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = 1:nLevels, Class = paste0("Level", 1:nLevels))
 
-  ################################
+  # New Section
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
   clearPlot()
   Plot(ras, new = TRUE)
@@ -301,7 +304,7 @@ test_that("Unit tests for image content is not error-free", {
   }
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
-  ################################
+  # New Section
 
   # Test legend with a factor raster
   set.seed(24334)
@@ -320,7 +323,7 @@ test_that("Unit tests for image content is not error-free", {
   }
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
-  #################
+  # New Section
 
   # test non contiguous factor raster
   nLevels <- 6
@@ -370,7 +373,7 @@ test_that("Unit tests for plotting colors", {
   ras <- rast(matrix(c(1, 0, 1, 2), ncol = 2))
   setColors(ras, n = 3) <- c("red", "blue", "green")
 
-  ###################################
+  ##
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
   clearPlot()
 
@@ -386,7 +389,7 @@ test_that("Unit tests for plotting colors", {
   }
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.002))
-  ###################################
+  ##
 
   ras2 <- rast(matrix(c(3, 1, 1, 2), ncol = 2))
   rasStack <- terra::rast(ras, ras2)
@@ -409,7 +412,7 @@ test_that("Unit tests for plotting colors", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ######################################
+  #####
 
   # Test setColors
   ras <- setColors(ras, c("red", "purple", "orange"), n = 3)
@@ -427,7 +430,7 @@ test_that("Unit tests for plotting colors", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ###########################################
+  # New Section
 
   ras <- setColors(ras, c("yellow", "orange"))
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
@@ -465,7 +468,7 @@ test_that("Unit tests for internal functions in Plot", {
     unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
-  #######################################
+
   # Test .makeColorMatrix for subsampled rasters
   # (i.e., where speedup is high compared to ncells)
   set.seed(1234)
@@ -486,7 +489,7 @@ test_that("Unit tests for internal functions in Plot", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  #######################################
+  # New Section
   # Test that NA rasters plot correctly, i.e., with na.color only
   ras <- matrix(NA_real_, ncol = 3, nrow = 3)
   ras <- suppressWarnings(rast(ras)) # There is a min and max warning on NA rasters
@@ -506,7 +509,7 @@ test_that("Unit tests for internal functions in Plot", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  #######################################
+  # New Section
   # Test legendRange in Plot
   set.seed(1234)
   ras <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -574,7 +577,7 @@ test_that("Plot 2 is not error-free", {
 
   teardownTestFingerprints(fingerprints, cwd)
 
-  ####################################################################################
+  # New Section#
   skip("Remainder are visual tests ... difficult to assess - see verbal expectations")
 
   clearPlot()
@@ -778,7 +781,7 @@ test_that("Plot with base is not error-free", {
   ras <- rasOrig
   aTime <- Sys.time()
 
-  ##########
+  # New Section
   clearPlot()
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
   clearPlot()
@@ -794,7 +797,7 @@ test_that("Plot with base is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ##################################################
+  # New Section
   set.seed(123)
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
   clearPlot()
@@ -814,7 +817,7 @@ test_that("Plot with base is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ##################################################
+  # New Section
 
   # Test overplotting, replotting
   set.seed(123)
@@ -836,7 +839,7 @@ test_that("Plot with base is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ##################################################
+  # New Section
 
   png(file = file.path(tmpdir, "test.png"))
   clearPlot()
@@ -868,7 +871,7 @@ test_that("Plot with base is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ##################################################
+  # New Section
 
   png(file = file.path(tmpdir, "test.png"), width = 500, height = 400)
   ras <- rasOrig
@@ -904,7 +907,7 @@ test_that("Plot with base is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ##################################################
+  # New Section
 
   png(file = file.path(tmpdir, "test.png"), width = 500, height = 400)
   ras <- rasOrig
@@ -933,7 +936,7 @@ test_that("Plot with base is not error-free", {
   orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
   expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  ##################################################
+  # New Section
 
   png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
   set.seed(123)
@@ -960,11 +963,7 @@ test_that("Plot with base is not error-free", {
 
 ## block H
 test_that("Plot messages and warnings and errors", {
-  # library(raster)
-
-  on.exit(detach("package:raster"), add = TRUE)
-
-  rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
   expect_error(Plot(ras, rnorm(10)), "Can't mix base plots with .quickPlottables")
 })
@@ -1009,18 +1008,21 @@ test_that("rePlot doesn't work", {
 
 ## block J
 test_that("Plot - going through package coverage", {
-  # library(raster)
-
-  tmpdir <- file.path(tempdir(), "test_Plot2")
-  dir.create(tmpdir)
-  cwd <- getwd()
-
-  on.exit({
-    unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE) # nolint
+  tmpdir <- withr::local_tempdir()
+  withr::local_dir(new = tmpdir)
+  withr::local_package("terra")
+  #
+  #
+  # tmpdir <- file.path(tempdir(), "test_Plot2")
+  # dir.create(tmpdir)
+  # cwd <- getwd()
+  #
+  # on.exit({
+  #   unlink(tmpdir, recursive = TRUE)
+  # }, add = TRUE) # nolint
 
   set.seed(123)
-  rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
 
   if (requireNamespace("fastshp", quietly = TRUE)) {
@@ -1124,34 +1126,36 @@ test_that("Plot lists", {
 ## block L
 test_that("Plot non-complicated object names", {
   # library(raster)
+  withr::local_package("terra")
 
   a <- list()
   a$e <- new.env()
-  rasOrig <- raster(extent(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   rasOrig2 <- rasOrig
   a$e$p <- rasOrig
-  a$e$s <- stack(rasOrig2, rasOrig)
+  a$e$s <- c(rasOrig2, lyr.2 = rasOrig)
   expect_silent(Plot(a$e$p))
   expect_silent(Plot(a$e[["p"]]))
-  expect_silent(Plot(a$e[["s"]]$layer.1))
-  expect_silent(Plot(a$e[["s"]]$layer.1[1:10], addTo = "secondPlot"))
+  expect_silent(Plot(a$e[["s"]]$lyr.1))
+  expect_silent(Plot(a$e[["s"]]$lyr.1[1:10], addTo = "secondPlot"))
 
   # add the same data as a different plot -- use a named list
-  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new = TRUE))
-  a$e[["s"]]$layer.1[2] <- maxValue(a$e[["s"]]$layer.1)
-  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$layer.1), new = TRUE))
+  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$lyr.1), new = TRUE))
+  a$e[["s"]]$lyr.1[2] <- terra::minmax(a$e[["s"]]$lyr.1)[2]
+  expect_silent(Plot(list("thirdPlot" = a$e[["s"]]$lyr.1), new = TRUE))
   dev.off()
 })
 
 ## block M
 test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
   # library(raster)
+  withr::local_package("terra")
 
   Plot <- function(x) {
     quickPlot::Plot(x)
   }
 
-  expect_silent(Plot(raster(matrix(1:100, 10, 10))))
+  expect_silent(Plot(terra::rast(matrix(1:100, 10, 10))))
 
   try(dev.off())
 })

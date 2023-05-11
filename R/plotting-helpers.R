@@ -34,7 +34,7 @@ if (getRversion() >= "3.1.0") {
 #' numLayers(stck)
 #'
 numLayers <- function(x) {
-  if (is.list(x)) {
+  if (is(x, "list")) {
     sum(unlist(lapply(x, function(y) {
       if (isSpatialAny(y)) {
         numLayers(y)
@@ -160,11 +160,11 @@ numLayers <- function(x) {
 #' layerNames(sl)
 #'
 layerNames <- function(object) {
-  if (is.list(object)) {
+  if (is(object, "list")) {
     unlist(lapply(object, layerNames))
   } else if (isGridded(object)) {
     names(object)
-  } else if (is(object, ".quickPlot")) {
+  } else if (inherits(object, ".quickPlot")) {
     unlist(lapply(object@quickPlotGrobList, function(x) {
       unlist(lapply(x, function(y) y@plotName))[[1]]
     }))
@@ -388,12 +388,9 @@ setMethod(
         quickPlotGrobList[[lN[x]]]@envir <- lEnvs[[x]]
         quickPlotGrobList[[lN[x]]]@layerName <- lNamesPlotObj[x]
 
-        ## TODO: temporary workaround to enable Plotting terra rasters
-        theObj <- eval(parse(text = objectNamesLong[x]), lEnvs[[x]])
-        if (is(theObj, "SpatRaster")) {
-          theObj <- terra::rast(theObj)
-        }
-        ## END WORKAROUND
+        theObj <- try(eval(parse(text = objectNamesLong[x]), lEnvs[[x]]), silent = TRUE)
+        if (is(theObj, "try-error"))
+          theObj <- get(objectNamesLong[x], lEnvs[[x]])
 
         quickPlotGrobList[[lN[x]]]@objClass <- class(theObj)
         quickPlotGrobList[[lN[x]]]@isSpatialObjects <- isSpatialObjects[x]
@@ -410,6 +407,7 @@ setMethod(
   ".makeQuickPlot",
   signature = c(plotObjects = "list", plotArgs = "missing"),
   definition = function(plotObjects, ...) {
+    browser()
     plotArgs <- formals("Plot")[-1]
     newPlots <- .makeQuickPlot(plotObjects, plotArgs, ...)
     return(newPlots)
@@ -1229,6 +1227,7 @@ setMethod(
   definition = function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                         isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
                         vps, nonPlotArgs) {
+
     seekViewport(subPlots, recording = FALSE)
 
     if (is.list(grobToPlot)) {
@@ -1236,7 +1235,16 @@ setMethod(
       # Because base plotting is not set up to overplot,
       # must plot a white rectangle
 
-      par(fig = gridFIG())
+      gf <- try(gridFIG())
+      if (is(gf, "try-error")) {
+        if (identical(names(dev.cur()), "RStudioGD")) {
+          stop("quickPlot sometimes has trouble with plotting base plots ",
+               "in an RStudio window; try ",
+               "using a new device with: ",
+               "\nrePlot(toDev = dev(noRStudioGD = TRUE))")
+        }
+      }
+      par(fig = gf)
       sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
 
       # clear out all arguments that don't have meaning in plot.default
@@ -1403,9 +1411,12 @@ setMethod(
         seekViewport(subPlots, recording = FALSE)
       }
     } #gg vs histogram vs spatialObject
+
     # print Title on plot
-    if (is.null(sGrob@plotArgs$title)) sGrob@plotArgs$title <- TRUE
-    if (!identical(FALSE, sGrob@plotArgs$title) | (isBaseSubPlot & (isNewPlot | isReplot))) {
+    if (is.null(sGrob@plotArgs$title)) {
+      sGrob@plotArgs$title <- TRUE
+    }
+    if (!identical(FALSE, sGrob@plotArgs$title) && (isBaseSubPlot & (isNewPlot | isReplot))) {
       plotName <- if (isTRUE(sGrob@plotArgs$title)) sGrob@plotName else sGrob@plotArgs$title
       a <- try(seekViewport(paste0("outer", subPlots), recording = FALSE))
       suppressWarnings(grid.text(plotName, name = "title",
@@ -2528,7 +2539,9 @@ pgSpatialLines <- function(grobToPlot, col, size,
     ## for spatial objects
 
     # ## TODO: temporary workaround to enable Plotting terra rasters
-    theObj <- eval(parse(text = objName), envir = objEnv)
+    theObj <- try(eval(parse(text = objName), envir = objEnv), silent = TRUE)
+    if (is(theObj, "try-error"))
+      theObj <- get(objName, envir = objEnv)
     # if (is(theObj, "SpatRaster")) {
     #   theObj <- terra::rast(theObj)
     # }
@@ -2570,9 +2583,9 @@ xyRange <- function(obj) {
 #' @export
 #' @importFrom sp coordinates Line Lines SpatialLines
 #' @examples
-#' caribou <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
+#' caribou <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
 #'                                         y = stats::runif(1e1, -50, 50)))
-#' caribouFrom <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
+#' caribouFrom <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
 #'                                         y = stats::runif(1e1, -50, 50)))
 #' caribouLines <- sp2sl(caribou, caribouFrom)
 #' Plot(caribouLines, length = 0.1)
@@ -2585,11 +2598,18 @@ sp2sl <- function(sp1, from) {
     endCoord <- coordinates(from)
   }
 
-  for (i in seq_along(l)) {
-    l[[i]] <- Lines(list(Line(rbind(beginCoord[i, ], endCoord[i, ]))), as.character(i))
+  if (is(sp1, "Spatial")) {
+    for (i in seq_along(l)) {
+      l[[i]] <- Lines(list(Line(rbind(beginCoord[i, ], endCoord[i, ]))), as.character(i))
+    }
+    SpatialLines(l)
+  } else {
+    mat <- cbind(object = rep(seq(NROW(sp1)), 2),
+                 part = 1,
+                 rbind(beginCoord, endCoord))
+    mat <- mat[order(mat[, "object"]), ]
+    out <- terra::vect(mat, "lines")
   }
-
-  SpatialLines(l)
 }
 
 #' Thin a polygon using `fastshp::thin`

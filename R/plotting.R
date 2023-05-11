@@ -297,7 +297,7 @@ setMethod(
     isDoCall <- grepl("^do.call", scalls) & grepl("\\<Plot\\>", scalls) & !grepl("test_that", scalls)
 
     dots <- list(...)
-    if (is.list(dots[[1]]) & !isQuickPlottable(dots[[1]]) &
+    if (is.list(dots[[1]]) & !isQuickPlottables(dots[[1]]) &
         # some reason, `inherits` doesn't work here for ggplot
         !inherits(dots[[1]], "communities") & !inherits(dots[[1]], "igraph") &
         !inherits(dots[[1]], "histogram")) {
@@ -389,7 +389,7 @@ setMethod(
     }
 
     whichQuickPlottables <- sapply(dotObjs, function(x) {
-      isQuickPlottable(x) # `inherits` doesn't work for gg objects, need `is`
+      isQuickPlottables(x) # `inherits` doesn't work for gg objects, need `is`
     })
 
     if (!(all(!whichQuickPlottables) | all(whichQuickPlottables)))
@@ -475,11 +475,15 @@ setMethod(
 
     if (any(whichQuickPlottables)) {
       # perhaps push objects into an environment, if they are only in the list
+      devCurEnvName <- paste0("Dev", dev.cur())
+      devCurEnv <- get0(devCurEnvName, envir = .quickPlotEnv)
       if (isList) {
-        assign(paste0("Dev", dev.cur()),
-               new.env(hash = FALSE, parent = .quickPlotEnv),
-               envir = .quickPlotEnv)
-        objFrame <- get(paste0("Dev", dev.cur()), envir = .quickPlotEnv)
+        if (is.null(devCurEnv)) {
+          devCurEnv <- new.env(hash = FALSE, parent = .quickPlotEnv)
+          assign(devCurEnvName, devCurEnv, envir = .quickPlotEnv)
+        }
+
+        objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
         dots$env <- list2env(dots, envir = objFrame)
       } else {
         if (any(isDoCall)) {
@@ -488,7 +492,18 @@ setMethod(
           objNames <- lapply(substitute(placeholderFunction(...))[-1],
                              deparse, backtick = TRUE)
         }
-        objFrame <- whereInStack(objNames[[1]])
+        objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
+        if (is(objFrame, "try-error")) {
+          if (is.null(devCurEnv)) {
+            devCurEnv <- new.env(hash = FALSE, parent = .quickPlotEnv)
+            assign(devCurEnvName, devCurEnv, envir = .quickPlotEnv)
+          }
+          objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+          objNames[[1]] <- paste0("Object_", length(ls(devCurEnv)) + 1)
+          names(dots) <- objNames
+          dots$env <- list2env(dots, envir = objFrame)
+        }
+
         names(plotObjs)[whichQuickPlottables] <- objNames
       }
     }
@@ -512,7 +527,6 @@ setMethod(
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
     # Create a .quickPlot object from the plotObjs and plotArgs
-    # browser()
     newQuickPlots <- .makeQuickPlot(plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
     if (exists(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv)) {
@@ -590,6 +604,7 @@ setMethod(
     for (subPlots in names(quickSubPlots)) {
       quickPlotGrobCounter <- 0
       for (sGrob in quickSubPlots[[subPlots]]) {
+
         quickPlotGrobCounter <- quickPlotGrobCounter + 1
         needPlot <- updated$needPlotting[[subPlots]][[quickPlotGrobCounter]]
 
@@ -632,7 +647,7 @@ setMethod(
 
           isPlotFnAddable <- FALSE
 
-          if (!isQuickPlottable(grobToPlot)) {
+          if (!isQuickPlotObject(grobToPlot)) {
             if (!inherits(grobToPlot, ".quickPlot")) {
               if (sGrob@plotArgs$userProvidedPlotFn && !isTRUE(grobToPlot[["add"]])) {
                 isPlotFnAddable <- TRUE
@@ -666,9 +681,13 @@ setMethod(
             }}
 
           # Plot any grobToPlot to device, given all the parameters
-          sGrob <- .Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
+          sGrob2 <- try(.Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                          isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
-                         vps, nonPlotArgs)
+                         vps, nonPlotArgs))
+          if (!is(sGrob2, "try-error")) {
+            sGrob <- sGrob2
+          } else {
+          }
 
         } # needPlot
         updated$isNewPlot[[subPlots]][[quickPlotGrobCounter]] <- FALSE
@@ -819,8 +838,12 @@ whereInStack <- function(name, whFrame = -1) {
 
 quickPlotClasses <- c(".quickPlotObjects", ".quickPlot")
 
-isQuickPlottable <- function(x) {
+isQuickPlotObject <- function(x) {
   isSpatialAny(x) || is(x, "gg")
+}
+
+isQuickPlottables <- function(x) {
+  isQuickPlotObject(x) || inherits(x, ".quickPlot")
 }
 
 isSpatial <- function(x) inherits(x, "Spatial")

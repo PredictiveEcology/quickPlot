@@ -155,17 +155,14 @@ setMethod("clearPlot",
 #' @rdname quickPlotMouseClicks
 #'
 #' @examples
-#' \dontrun{
-#'   library(igraph)
-#'   library(raster)
-#'
+#' \donttest{
 #'   files <- system.file("maps", package = "quickPlot") %>%
 #'     dir(., full.names = TRUE, pattern = "tif")
-#'   maps <- lapply(files, function(x) raster(x))
+#'   maps <- lapply(files, function(x) terra::rast(x))
 #'   names(maps) <- sapply(basename(files), function(x) {
 #'     strsplit(x, split = "\\.")[[1]][1]
 #'   })
-#'   landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
+#'   landscape <- c(maps$DEM, maps$forestCover, maps$habitatQuality)
 #'
 #'   clearPlot()
 #'   Plot(landscape)
@@ -181,6 +178,7 @@ setMethod("clearPlot",
 #' }
 #'
 clickValues <- function(n = 1) {
+  browser()
   coords <- clickCoordinates(n = n)
   objLay <- strsplit(coords$map, "\\$")
   objNames <- unlist(lapply(objLay, function(x) x[1]))
@@ -222,8 +220,9 @@ clickValues <- function(n = 1) {
 #' active `clickExtent`. See example.
 #'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
+  browser()
   corners <- clickCoordinates(2)
-  zoom <- extent(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
+  zoom <- terra::ext(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
 
   if (plot.it) {
 

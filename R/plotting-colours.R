@@ -14,36 +14,44 @@
 #'
 #' @example inst/examples/example_setColors.R
 #'
-setGeneric("getColors", function(object) {
-  standardGeneric("getColors")
-})
+getColors <- function(object) {
+  browser()
+  if (isGridded(object)) {
+    browser()
+    nams <- names(object)
+    if (isRaster(object)) {
+      cols <- lapply(nams, function(x) {
+        as.character(object[[x]]@legend@colortable)
+      })
+    } else {
+      cols <- terra::coltab(object)
+    }
+    names(cols) <- nams
+  } else if (isSpatial(object)) {
+    cols <- list(object@data$color)
+  } else {
+    browser()
+    NULL
+  }
 
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "Raster",
-          definition = function(object) {
-            nams <- names(object)
-            cols <- lapply(nams, function(x) {
-              as.character(object[[x]]@legend@colortable)
-            })
-            names(cols) <- nams
-            return(cols)
-})
+          # signature = "Raster",
+          # definition = function(object) {
+          #   nams <- names(object)
+          #   cols <- lapply(nams, function(x) {
+          #     as.character(object[[x]]@legend@colortable)
+          #   })
+          #   names(cols) <- nams
+          #   return(cols)
 
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "ANY",
-          definition = function(object) {
-            return(NULL)
-})
+          # signature = "ANY",
+          # definition = function(object) {
+          #   return(NULL)
 
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "SpatialPoints",
-          definition = function(object) {
-            cols <- list(object@data$color)
-            return(cols)
-})
+          # signature = "SpatialPoints",
+          # definition = function(object) {
+          #   cols <- list(object@data$color)
+          #   return(cols)
+}
 
 #' `setColors` works as a replacement method or a normal function call.
 #' This function can accept `RColorBrewer` colours by name. See examples.
@@ -284,6 +292,7 @@ setMethod(
     # calculate it, but it is also often wrong... it is only metadata
     # on the raster, so it is possible that it is incorrect.
     if (!skipSample) {
+      browser()
       colorTable <- getColors(grobToPlot)[[1]]
       if (!inherits(try(minValue(grobToPlot)), "try-error")) {
         minz <- minValue(grobToPlot)
@@ -338,8 +347,7 @@ setMethod(
     maxNumCols <- 100
 
     if (isFac) {
-      browser()
-      facLevs <- raster::levels(grobToPlot)[[1]]
+      facLevs <- terra::levels(grobToPlot)[[1]]
       nValues <- NROW(facLevs)
     } else {
       if (any(is.na(legendRange))) {

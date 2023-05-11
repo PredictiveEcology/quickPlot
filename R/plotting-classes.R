@@ -117,7 +117,7 @@ setAs(from = "list", to = "gpar", function(from) {
 # @seealso [quickPlotClasses()]
 #
 # setClassUnion(name = ".quickPlotObjects",
-#               members = c("spatialObjects"))##, "gg"))
+#               members = c("spatialObjects", "gg"))
 
 ################################################################################
 #' The `.quickPlotGrob` class
