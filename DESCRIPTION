@@ -33,7 +33,6 @@ Imports:
     igraph,
     methods,
     RColorBrewer,
-    rgeos,
     stats
 Suggests:
     covr,

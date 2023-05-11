@@ -512,7 +512,7 @@ setMethod(
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
     # Create a .quickPlot object from the plotObjs and plotArgs
-    browser()
+    # browser()
     newQuickPlots <- .makeQuickPlot(plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
     if (exists(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv)) {
@@ -633,9 +633,8 @@ setMethod(
           isPlotFnAddable <- FALSE
 
           if (!isQuickPlottable(grobToPlot)) {
-            browser()
             if (!inherits(grobToPlot, ".quickPlot")) {
-              if (sGrob@plotArgs$userProvidedPlotFn & !isTRUE(grobToPlot[["add"]])) {
+              if (sGrob@plotArgs$userProvidedPlotFn && !isTRUE(grobToPlot[["add"]])) {
                 isPlotFnAddable <- TRUE
               }
             }

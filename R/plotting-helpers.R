@@ -35,8 +35,12 @@ if (getRversion() >= "3.1.0") {
 #'
 numLayers <- function(x) {
   if (is.list(x)) {
-    sum(unlist(lapply(x, function(x) {
-      numLayers(x)
+    sum(unlist(lapply(x, function(y) {
+      if (isSpatialAny(y)) {
+        numLayers(y)
+      } else {
+        1L # e.g., histogram
+      }
     })))
   } else if (inherits(x, ".quickPlot")) {
     length(x@arr@extents)
@@ -1007,47 +1011,18 @@ setMethod("gpar",
 
     if (is(grobToPlot, "SpatialLines")) {
       if (!is.null(sGrob@plotArgs$zoomExtent)) {
-        grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
+        browser()
+        grobToPlot <- terra::crop(grobToPlot, sGrob@plotArgs$zoomExtent)
       }
       zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
                    cols = sGrob@plotArgs$cols, real = FALSE)
-    } else if (isSpatial(grobToPlot) ) {
+    } else if (isSpatial(grobToPlot) || isSpatVector(grobToPlot)) {
       if (!is.null(sGrob@plotArgs$zoomExtent) &&
           !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
-        #!identical(arr@extents[[subPlots]], sGrob@plotArgs$zoomExtent)) {
-        useCrop <- FALSE
-        if (!useCrop) {
-          zoom <- sGrob@plotArgs$zoomExtent
-          extPolygon <- as(zoom, "SpatialPolygons")
-          crs(extPolygon) <- crs(grobToPlot)
-          extPolygon <- list(extPolygon)
-          names(extPolygon) <- sGrob@plotName
-
-          browser()
-          fullArea <-
-            rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
-          zoomArea <-
-            rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
-          numPolys <- length(grobToPlot)
-          ratio <- fullArea / zoomArea
-          if (numPolys / ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
-            polySeq <-
-              .polygonSeq(grobToPlot,
-                          maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
-            .showingOnlyMessage(numShowing = getOption("quickPlot.maxNumPolygons", 3e3),
-                                totalAvailable = length(grobToPlot))
-            grobToPlot <- grobToPlot[polySeq,]
-
-          }
-          message("Cropping to new extent")
-          browser()
-          a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
-          grobToPlot <- grobToPlot[a[1,],]
-        } else {
-          grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
-        }
-
+        grobToPlot <- terra::crop(grobToPlot, sGrob@plotArgs$zoomExtent)
       }
+
+
 
       # This handles SpatialPointsDataFrames with column "colour"
       if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
@@ -1179,8 +1154,8 @@ setMethod(
   signature = c(".quickPlotGrob", ".arrangement"),
   definition = function(sGrob, arr, whPlotFrame) {
     if (sGrob@plotArgs$axes == "L") {
-      if (sGrob@objClass == "Raster" &
-          (arr@extents[(whPlotFrame - 1) %% arr@columns + 1][[1]] ==
+      if (sGrob@objClass %in% c("Raster", "SpatRaster") &&
+          identical(arr@extents[(whPlotFrame - 1) %% arr@columns + 1][[1]],
            arr@extents[max(
              which(
                (1:length(arr@names) - 1) %% arr@columns + 1 ==
@@ -1200,8 +1175,8 @@ setMethod(
     }
 
     if (sGrob@plotArgs$axes == "L") {
-      if (sGrob@objClass == "Raster" &
-          (arr@extents[whPlotFrame][[1]] ==
+      if (sGrob@objClass %in% c("Raster", "SpatRaster") &
+          identical(arr@extents[whPlotFrame][[1]],
            arr@extents[(ceiling(whPlotFrame / arr@columns) - 1) * arr@columns + 1][[1]])) {
         if ((whPlotFrame - 1) %% arr@columns == 0) { # nolint
           yaxis <- TRUE
@@ -1260,6 +1235,7 @@ setMethod(
       # This is for base plot calls... the grobToPlot is a call i.e,. a name
       # Because base plotting is not set up to overplot,
       # must plot a white rectangle
+
       par(fig = gridFIG())
       sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
 
@@ -2620,8 +2596,8 @@ sp2sl <- function(sp1, from) {
 #'
 #' For visualizing, it is sometimes useful to remove points in `Spatial*` objects.
 #' This will change the geometry, so it is not recommended for computation.
-#' This is similar to `rgeos::gSimplify` and `sf::st_simplify`,
-#' but faster than both (see examples) for large shapefiles, particularly if
+#' This is similar to `sf::st_simplify`,
+#' but faster (see examples) for large shapefiles, particularly if
 #' `returnDataFrame` is `TRUE`.
 #' *`thin` will not attempt to preserve topology.*
 #' It is strictly for making smaller polygons for the (likely) purpose of visualizing more quickly.
@@ -2641,120 +2617,14 @@ sp2sl <- function(sp1, from) {
 #'        a lot of polygons being plotted in a small space. Current default is
 #'        taken from `options('quickPlot.maxNumPolygons')`, with a message.
 #'
-#' @export
 #' @importFrom data.table as.data.table data.table set
 #' @importFrom raster xmax xmin
 #' @importFrom sp CRS Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
 #' @rdname thin
-#'
-#' @examples
-#' library(raster)
-#'
-#' b <- SpatialPoints(cbind(-110, 59, 1000))
-#' crs(b) <- sp::CRS("+init=epsg:4326")
-#'
-#' crsObj <- CRS(paste0("+proj=tmerc +lat_0=0 +lon_0=-115 +k=0.9992 +x_0=500000 +y_0=0 ",
-#'                      "+datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"))
-#'
-#' # make a random polygon -- code adapted from SpaDES.tools::randomPolygon package:
-#'   areaM2 <- 1000 * 1e4 * 1.304 # rescale so mean area is close to hectares
-#'   b <- spTransform(b, crsObj)
-#'
-#'   radius <- sqrt(areaM2 / pi)
-#'
-#'   meanX <- mean(coordinates(b)[, 1]) - radius
-#'   meanY <- mean(coordinates(b)[, 2]) - radius
-#'
-#'   minX <- meanX - radius
-#'   maxX <- meanX + radius
-#'   minY <- meanY - radius
-#'   maxY <- meanY + radius
-#'
-#' # Add random noise to polygon
-#'   xAdd <- round(runif(1, radius * 0.8, radius * 1.2))
-#'   yAdd <- round(runif(1, radius * 0.8, radius * 1.2))
-#'   nPoints <- 20
-#'   betaPar <- 0.6
-#'   X <- c(jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX)),
-#'         jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxX - minX) + minX, decreasing = TRUE)))
-#'   Y <- c(jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (maxY - meanY) + meanY)),
-#'          jitter(sort(rbeta(nPoints, betaPar, betaPar) * (maxY - minY) + minY, decreasing = TRUE)),
-#'          jitter(sort(rbeta(nPoints / 2, betaPar, betaPar) * (meanY - minY) + minY)))
-#'
-#'   Sr1 <- Polygon(cbind(X + xAdd, Y + yAdd))
-#'   Srs1 <- Polygons(list(Sr1), "s1")
-#'   a <- SpatialPolygons(list(Srs1), 1L)
-#'   crs(a) <- crsObj
-#' # end of making random polygon
-#'
-#' clearPlot()
-#' Plot(a)
-#' NROW(a@polygons[[1]]@Polygons[[1]]@coords)
-#' if (require(fastshp)) {
-#'   aThin <- quickPlot::thin(a, 200)
-#'   NROW(aThin@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#'   Plot(aThin) # looks similar
-#' }
-#'
-#' # compare -- if you have rgeos
-#' # if (require("rgeos")) {
-#' #   aSimplify <- gSimplify(a, tol = 200)
-#' #   NROW(aSimplify@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#' #   Plot(aSimplify)
-#' # }
-#'
-#' # compare -- if you have sf
-#' # if (require("sf")) {
-#' #   aSF <- st_simplify(st_as_sf(a), dTolerance = 200)
-#' #   # convert to Spatial to see how many coordinates
-#' #   aSF2 <- as(aSF, "Spatial")
-#' #   NROW(aSF2@polygons[[1]]@Polygons[[1]]@coords) # fewer
-#' #   Plot(aSF)
-#' # }
-#'
-#' # thin is faster than rgeos::gSimplify and sf::st_simplify on large shapefiles
-#' \dontrun{
-#'   # this involves downloading a 9 MB file
-#'   setwd(tempdir())
-#'   albertaEcozoneFiles <- c("Natural_Regions_Subregions_of_Alberta.dbf",
-#'                            "Natural_Regions_Subregions_of_Alberta.lyr",
-#'                            "Natural_Regions_Subregions_of_Alberta.prj",
-#'                            "Natural_Regions_Subregions_of_Alberta.shp.xml",
-#'                            "Natural_Regions_Subregions_of_Alberta.shx",
-#'                            "natural_regions_subregions_of_alberta.zip",
-#'                            "nsr2005_final_letter.jpg", "nsr2005_final_letter.pdf")
-#'   albertaEcozoneURL <- paste0("https://www.albertaparks.ca/media/429607/",
-#'                               "natural_regions_subregions_of_alberta.zip")
-#'   albertaEcozoneFilename <- "Natural_Regions_Subregions_of_Alberta.shp"
-#'   zipFilename <- basename(albertaEcozoneURL)
-#'   download.file(albertaEcozoneURL, destfile = zipFilename)
-#'   unzip(zipFilename, junkpaths = TRUE)
-#'   a <- raster::shapefile(albertaEcozoneFilename)
-#'
-#'   # compare -- if you have rgeos and sf package
-#'   # if (require("sf")) {
-#'   #   aSF <- st_as_sf(a)
-#'   # }
-#'   # if (require("rgeos") && require("sf")) {
-#'     # thin at 10m
-#'     microbenchmark::microbenchmark(times = 20
-#'                                    , thin(a, 10),
-#'                                    , thin(a, 10, returnDataFrame = TRUE) # much faster
-#'    #                               , gSimplify(a, 10),
-#'    #                               , st_simplify(aSF, dTolerance = 10))
-#'                                   )
-#'    # Unit: milliseconds
-#'    #                              expr      min   median      max neval cld
-#'    # thin(a, 10)                        989.812 1266.393 1479.879     6  a
-#'    # gSimplify(a, 10   )               4020.349 4211.414 8881.535     6   b
-#'    # st_simplify(aSF, dTolerance = 10) 4087.343 4344.936 4910.299     6   b
-#'   #}
-#' }
 thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   UseMethod("thin")
 }
 
-#' @export
 #' @rdname thin
 thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 1e5,
                                  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...) {
@@ -3020,4 +2890,8 @@ speedupScale <- function(grobToPlot, lonlatSU, SU) {
       SU
   }
   speedupScale
+}
+
+gArea <- function(x) {
+  sf::st_area(sf::st_as_sf(terra::as.polygons(terra::ext(x))))
 }

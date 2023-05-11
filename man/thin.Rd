@@ -2,22 +2,22 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{thin}
 \alias{thin}
-\alias{thin.SpatialPolygons}
+\alias{thnSpatialPolygons}
 \alias{thin.default}
 \title{Thin a polygon using \code{fastshp::thin}}
 \usage{
 thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
 
-\method{thin}{SpatialPolygons}(
+thnSpatialPolygons(
   x,
   tolerance = NULL,
   returnDataFrame = FALSE,
-  minCoordsToThin = 0,
+  minCoordsToThin = 1e+05,
   maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000),
   ...
 )
 
-\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, ...)
+\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, maxNumPolygons, ...)
 }
 \arguments{
 \item{x}{A \verb{Spatial*} object}

@@ -7,17 +7,20 @@ skip_on_ci() ## August 2022 -- GitHub actions fingerprints differ by system + R 
 test_that("Plot 1 is not error-free", {
   # skip_if_not_installed("fastshp")
 
-  library(terra)
+  tmpdir <- withr::local_tempdir()
+  withr::local_dir(new = tmpdir)
+  withr::local_package("terra")
+  # library(terra)
 
-  tmpdir <- file.path(tempdir(), "test_Plot1")
-  dir.create(tmpdir)
+  # tmpdir <- file.path(tempdir(), "test_Plot1")
+  # dir.create(tmpdir)
 
-  cwd <- getwd()
+  # cwd <- getwd()
 
   on.exit({
     if (length(dev.list()) > 0) dev.off()
     if (file.exists("Rplots.pdf")) file.remove("Rplots.pdf")
-    unlink(tmpdir, recursive = TRUE)
+  #   unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
   ras <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
@@ -259,8 +262,8 @@ test_that("Plot 1 is not error-free", {
 test_that("Unit tests for image content is not error-free", {
   skip_if_not_installed("visualTest")
 
-  library(terra)
-  library(visualTest)
+  # library(terra)
+  # library(visualTest)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot_imageContent")
@@ -350,8 +353,8 @@ test_that("Unit tests for image content is not error-free", {
 test_that("Unit tests for plotting colors", {
   skip_if_not_installed("visualTest")
 
-  library(terra)
-  library(visualTest)
+  # library(terra)
+  # library(visualTest)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot_colors")
@@ -449,8 +452,8 @@ test_that("Unit tests for plotting colors", {
 test_that("Unit tests for internal functions in Plot", {
   skip_if_not_installed("visualTest")
 
-  library(terra)
-  library(visualTest)
+  # library(terra)
+  # library(visualTest)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot_internal")
@@ -530,8 +533,8 @@ test_that("Unit tests for internal functions in Plot", {
 test_that("Plot 2 is not error-free", {
   skip_if_not_installed("visualTest")
 
-  library(terra)
-  library(visualTest)
+  # library(terra)
+  # library(visualTest)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot2")
@@ -699,7 +702,7 @@ test_that("Plot 2 is not error-free", {
 test_that("setColors is not error-free", {
   skip("Apparently color palettes are not universal")
 
-  library(raster)
+  # library(raster)
 
   tmpdir <- file.path(tempdir(), "test_setColors")
   dir.create(tmpdir)
@@ -756,10 +759,10 @@ test_that("setColors is not error-free", {
 test_that("Plot with base is not error-free", {
   skip_if_not_installed("visualTest")
 
-  library(raster)
-  library(visualTest)
-  library(ggplot2)
-  library(igraph)
+  # library(raster)
+  # library(visualTest)
+  # library(ggplot2)
+  # library(igraph)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
@@ -957,7 +960,7 @@ test_that("Plot with base is not error-free", {
 
 ## block H
 test_that("Plot messages and warnings and errors", {
-  library(raster)
+  # library(raster)
 
   on.exit(detach("package:raster"), add = TRUE)
 
@@ -970,8 +973,8 @@ test_that("Plot messages and warnings and errors", {
 test_that("rePlot doesn't work", {
   skip_if_not_installed("visualTest")
 
-  library(raster);
-  library(visualTest)
+  # library(raster);
+  # library(visualTest)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot1")
@@ -1006,7 +1009,7 @@ test_that("rePlot doesn't work", {
 
 ## block J
 test_that("Plot - going through package coverage", {
-  library(raster)
+  # library(raster)
 
   tmpdir <- file.path(tempdir(), "test_Plot2")
   dir.create(tmpdir)
@@ -1038,9 +1041,9 @@ test_that("Plot - going through package coverage", {
 test_that("Plot lists", {
   skip_if_not_installed("visualTest")
 
-  library(ggplot2)
-  library(raster)
-  library(visualTest)
+  # library(ggplot2)
+  # library(raster)
+  # library(visualTest)
   fingerprints <- setupTestFingerprints()
 
   tmpdir <- file.path(tempdir(), "test_Plot3")
@@ -1120,7 +1123,7 @@ test_that("Plot lists", {
 
 ## block L
 test_that("Plot non-complicated object names", {
-  library(raster)
+  # library(raster)
 
   a <- list()
   a$e <- new.env()
@@ -1142,7 +1145,7 @@ test_that("Plot non-complicated object names", {
 
 ## block M
 test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
-  library(raster)
+  # library(raster)
 
   Plot <- function(x) {
     quickPlot::Plot(x)
