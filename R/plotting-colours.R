@@ -15,42 +15,27 @@
 #' @example inst/examples/example_setColors.R
 #'
 getColors <- function(object) {
-  browser()
-  if (isGridded(object)) {
-    browser()
+  if (isRaster(object)) {
     nams <- names(object)
     if (isRaster(object)) {
       cols <- lapply(nams, function(x) {
         as.character(object[[x]]@legend@colortable)
       })
-    } else {
-      cols <- terra::coltab(object)
+      names(cols) <- nams
     }
-    names(cols) <- nams
+  } else if (isSpat(object)) {
+    cols <- terra::coltab(object)
+    noCols <- vapply(cols, is.null, FUN.VALUE = logical(1))
+    if (any(noCols)) {
+      # theSeq <- minFn(object):maxFn(object)
+      cols <- lapply(cols, function(x) rev(grDevices::terrain.colors(50)))
+      # df <- data.frame(value = theSeq, color =  cols)
+    }
   } else if (isSpatial(object)) {
     cols <- list(object@data$color)
   } else {
-    browser()
     NULL
   }
-
-          # signature = "Raster",
-          # definition = function(object) {
-          #   nams <- names(object)
-          #   cols <- lapply(nams, function(x) {
-          #     as.character(object[[x]]@legend@colortable)
-          #   })
-          #   names(cols) <- nams
-          #   return(cols)
-
-          # signature = "ANY",
-          # definition = function(object) {
-          #   return(NULL)
-
-          # signature = "SpatialPoints",
-          # definition = function(object) {
-          #   cols <- list(object@data$color)
-          #   return(cols)
 }
 
 #' `setColors` works as a replacement method or a normal function call.
@@ -130,7 +115,7 @@ setReplaceMethod(
 })
 
 #' @export
-#' @importFrom raster is.factor maxValue
+#' @importFrom raster is.factor
 #' @rdname getSetColors
 setReplaceMethod(
   "setColors",
@@ -148,7 +133,7 @@ setReplaceMethod(
     }
 
     if (!isFac) {
-      n <- round(maxValue(object) - minValue(object)) + 1
+      n <- round(maxFn(object) - minFn(object)) + 1
     } else {
       n <- length(value)
     }
@@ -270,7 +255,7 @@ setMethod(
 #' @aliases makeColourMatrix
 #' @author Eliot McIntire
 #' @importFrom grDevices colorRampPalette terrain.colors
-#' @importFrom raster minValue getValues sampleRegular is.factor levels
+#' @importFrom raster getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
 #' @importFrom utils tail head
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
@@ -279,6 +264,7 @@ setMethod(
 #' @rdname makeColorMatrix
 #'
 .makeColorMatrix <- function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
+                             prevMinMax,
             na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE) {
 
   # signature = c("griddedClasses", "Extent", "numeric", "ANY"),
@@ -292,15 +278,33 @@ setMethod(
     # calculate it, but it is also often wrong... it is only metadata
     # on the raster, so it is possible that it is incorrect.
     if (!skipSample) {
-      browser()
       colorTable <- getColors(grobToPlot)[[1]]
-      if (!inherits(try(minValue(grobToPlot)), "try-error")) {
-        minz <- minValue(grobToPlot)
+      if (is.null(prevMinMax$minz)) {
+        mn <- minFn(grobToPlot)
+      } else {
+        mn <- prevMinMax$minz
       }
-      grobToPlot <- sampleRegular(
-        x = grobToPlot, size = maxpixels,
-        ext = zoom, asRaster = TRUE, useGDAL = TRUE
-      )
+      if (!inherits(try(mn), "try-error")) {
+        minz <- mn
+      }
+      if (is.null(prevMinMax$maxz)) {
+        mx <- maxFn(grobToPlot)
+      } else {
+        mx <- prevMinMax$maxz
+      }
+      if (!inherits(try(mx), "try-error")) {
+        maxz <- mx
+      }
+
+      grobToPlot <- terra::crop(grobToPlot, zoom)
+      if (terra::ncell(grobToPlot) > maxpixels)
+        # This appears to be modify-in-place on grobToPlot ... that seems bad
+        terra::spatSample(grobToPlot, method = "regular", size = maxpixels,
+                               as.raster = TRUE)
+      # grobToPlot <- sampleRegular(
+      #   x = grobToPlot, size = maxpixels,
+      #   ext = zoom, asRaster = TRUE, useGDAL = TRUE
+      # )
       if (length(colorTable) > 0) {
         cols <- colorTable
       }
@@ -311,11 +315,11 @@ setMethod(
       z <- grobToPlot[]
     }
 
-    # If minValue is defined, then use it, otherwise, calculate them.
+    # If minFn is defined, then use it, otherwise, calculate them.
     #  This is different than maxz because of the sampleRegular.
     # If the low values in the raster are missed in the sampleRegular,
     #  then the legend will be off by as many as are missing at the bottom;
-    #  so, use the metadata version of minValue, but use the max(z) to
+    #  so, use the metadata version of minFn, but use the max(z) to
     #  accomodate cases where there are too many legend values for the
     # number of raster values.
   #if (!raster::is.factor(grobToPlot)) {
@@ -329,8 +333,12 @@ setMethod(
       if (is.infinite(minz)) {
         minz <- 0
       }
-      #
-      maxz <- suppressWarnings(max(z, na.rm = TRUE))
+      if (!exists("maxz")) {
+        maxz <- suppressWarnings(max(z, na.rm = TRUE))
+      }
+      if (is.na(maxz)) {
+        maxz <- suppressWarnings(max(z, na.rm = TRUE))
+      }
       if (is.infinite(maxz)) {
         maxz <- 0
       }
@@ -361,8 +369,9 @@ setMethod(
     colTable <- NULL
     if (is.null(cols)) {
       # i.e., contained within raster or nothing
-      if (length(getColors(grobToPlot)[[1]]) > 0) {
-        colTable <- getColors(grobToPlot)[[1]]
+      theCols <- getColors(grobToPlot)[[1]]
+      if (length(theCols) > 0) {
+        colTable <- theCols
         lenColTable <- length(colTable)
 
         cols <- if ((nValues > lenColTable) & !isFac) { # nolint
@@ -432,7 +441,7 @@ setMethod(
 
     # colours are indexed from 1, as with all objects in R, but there
     # are generally zero values on the rasters, so shift according to
-    # the minValue value, if it is below 1.
+    # the minFn value, if it is below 1.
     # Shift it by 2, 1 to make the zeros into two, the other for the
     # NAs to be ones.
 
@@ -492,6 +501,7 @@ setMethod(
       if ((max(legendRange) - min(legendRange) + 1) < length(cols)) { # nolint
       } else {
         if (!is.null(colTable)) {
+          browser()
           if (length(getColors(grobToPlot)[[1]]) > 0) {
             cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
           } else {
@@ -557,11 +567,11 @@ setMethod(
 #'
 #' @param min.value    Numeric minimum value corresponding to `start.colour`.
 #'                     If attempting to change the colour of a `RasterLayer`,
-#'                     this can be set to `minValue(RasterObject)`.
+#'                     this can be set to `minFn(RasterObject)`.
 #'
 #' @param max.value    Numeric maximum value corresponding to `end.colour`.
 #'                     If attempting to change the colour of a `RasterLayer`,
-#'                     this can be set to `maxValue(RasterObject)`.
+#'                     this can be set to `maxFn(RasterObject)`.
 #' @param mid.value    Numeric middle value corresponding to `mid.colour`.
 #'                     Default is `0`.
 #'

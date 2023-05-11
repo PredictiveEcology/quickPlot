@@ -998,13 +998,13 @@ setMethod("gpar",
 #' @name .preparePlotGrob
 #' @rdname Plot-internal
 #'
-.preparePlotGrob <- function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+.preparePlotGrob <- function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr, prevMinMax,
                                         quickPlotGrobCounter, subPlots, cols) {
   UseMethod(".preparePlotGrob")
 }
 
 .preparePlotGrob.default <-
-  function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
+  function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr, prevMinMax,
                         quickPlotGrobCounter, subPlots, cols) {
 
     if (is(grobToPlot, "SpatialLines")) {
@@ -1023,6 +1023,7 @@ setMethod("gpar",
 
 
       # This handles SpatialPointsDataFrames with column "colour"
+      browser()
       if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
         sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
 
@@ -1037,6 +1038,7 @@ setMethod("gpar",
                            arr, sGrob@plotArgs$speedup, newArr = newArr)
       zMat <- .makeColorMatrix(grobToPlot, pR$zoom, pR$maxpixels,
                                pR$legendRange,
+                               prevMinMax = prevMinMax,
                                na.color = sGrob@plotArgs$na.color,
                                zero.color = sGrob@plotArgs$zero.color,
                                cols = sGrob@plotArgs$cols,
@@ -1072,7 +1074,6 @@ setMethod("gpar",
 #         extPolygon <- list(extPolygon)
 #         names(extPolygon) <- sGrob@plotName
 #
-#         browser()
 #         fullArea <-
 #           rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
 #         zoomArea <-
@@ -1089,7 +1090,6 @@ setMethod("gpar",
 #
 #         }
 #         message("Cropping to new extent")
-#         browser()
 #         a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
 #         grobToPlot <- grobToPlot[a[1,],]
 #       } else {
@@ -2914,4 +2914,34 @@ speedupScale <- function(grobToPlot, lonlatSU, SU) {
 
 gArea <- function(x) {
   sf::st_area(sf::st_as_sf(terra::as.polygons(terra::ext(x))))
+}
+
+
+minFn <- function(x) {
+  minmaxFn(x, "min")
+}
+
+maxFn <- function(x) {
+  minmaxFn(x, "max")
+}
+
+#' @importFrom utils head tail
+minmaxFn <- function(x, which = "max") {
+  out <- NULL
+  if (is(x, "Raster")) {
+    if (!requireNamespace("raster")) stop()
+    fn <- get(paste0(which, "Value"), envir = asNamespace("raster"))
+    out <- fn(x)
+
+  } else {
+    if (!(requireNamespace("terra"))) stop()
+    fn <- ifelse(identical(which, "max"), "tail", "head")
+    fn <- getFromNamespace(fn, ns = "utils")
+    out <- fn(terra::minmax(x), 1)[1, ]
+
+  }
+  if (is.null(out))
+    stop("To use maxFn or minFn, you need either terra or raster package installed")
+
+  out
 }

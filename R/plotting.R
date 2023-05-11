@@ -670,9 +670,16 @@ setMethod(
 
           sGrob <- .updateGrobGPTextAxis(sGrob, arr = updated$curr@arr, newArr = newArr)
 
+
+          prevMinMax <- tryCatch(updated$curr@quickPlotGrobList[[subPlots]][[subPlots]]@plotArgs[c("minz", "maxz")],
+                                 error = function(x) list(minz = NULL, maxz = NULL))
           zMat <- .preparePlotGrob(grobToPlot, sGrob, layerFromPlotObj,
                                    arr = updated$curr@arr, newArr,
+                                   prevMinMax = prevMinMax,
                                    quickPlotGrobCounter, subPlots, cols)
+          sGrob@plotArgs$minz <- zMat$minz
+          sGrob@plotArgs$maxz <- zMat$maxz
+
           # Add legendRange if not provided
           if (inherits(grobToPlot, "Raster")) {
             if (is.null(sGrob@plotArgs$legendRange)) {

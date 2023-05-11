@@ -217,10 +217,10 @@ clickValues <- function(n = 1) {
 #' @details
 #' `clickExtent` will place the new, zoomed in plot over top of the existing
 #' object. To recover original full object, double click anywhere during an
-#' active `clickExtent`. See example.
+#' active `clickExtent`. Currently, subsequent `clickExtent` is a click on the
+#' original map extent, not the "zoomed in" map extent. See example.
 #'
 clickExtent <- function(devNum = NULL, plot.it = TRUE) {
-  browser()
   corners <- clickCoordinates(2)
   zoom <- terra::ext(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
 
@@ -246,7 +246,7 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
     theObj <- list(theObj)
     names(theObj) <- objNames
     if (sum(corners$coords[1,] - corners$coords[2,]) %==% 0) {
-      Plot(theObj, addTo = theName, title = theName, new = TRUE, zoomExtent = extent(theObj[[1]]))
+      Plot(theObj, addTo = theName, title = theName, new = TRUE)
     } else {
       Plot(theObj, addTo = theName, title = theName, zoomExtent = zoom, new = TRUE)
     }
