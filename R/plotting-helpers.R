@@ -1023,7 +1023,6 @@ setMethod("gpar",
 
 
       # This handles SpatialPointsDataFrames with column "colour"
-      browser()
       if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
         sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
 

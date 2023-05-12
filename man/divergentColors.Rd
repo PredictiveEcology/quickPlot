@@ -31,11 +31,11 @@ divergentColors(
 
 \item{min.value}{Numeric minimum value corresponding to \code{start.colour}.
 If attempting to change the colour of a \code{RasterLayer},
-this can be set to \code{minValue(RasterObject)}.}
+this can be set to \code{minFn(RasterObject)}.}
 
 \item{max.value}{Numeric maximum value corresponding to \code{end.colour}.
 If attempting to change the colour of a \code{RasterLayer},
-this can be set to \code{maxValue(RasterObject)}.}
+this can be set to \code{maxFn(RasterObject)}.}
 
 \item{mid.value}{Numeric middle value corresponding to \code{mid.colour}.
 Default is \code{0}.}

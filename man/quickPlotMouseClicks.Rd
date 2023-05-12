@@ -58,20 +58,18 @@ clicked on and passes this plot name and the clicked coordinates to \code{.click
 
 \code{clickExtent} will place the new, zoomed in plot over top of the existing
 object. To recover original full object, double click anywhere during an
-active \code{clickExtent}. See example.
+active \code{clickExtent}. Currently, subsequent \code{clickExtent} is a click on the
+original map extent, not the "zoomed in" map extent. See example.
 }
 \examples{
-\dontrun{
-  library(igraph)
-  library(raster)
-
+\donttest{
   files <- system.file("maps", package = "quickPlot") \%>\%
     dir(., full.names = TRUE, pattern = "tif")
-  maps <- lapply(files, function(x) raster(x))
+  maps <- lapply(files, function(x) terra::rast(x))
   names(maps) <- sapply(basename(files), function(x) {
     strsplit(x, split = "\\\\.")[[1]][1]
   })
-  landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
+  landscape <- c(maps$DEM, maps$forestCover, maps$habitatQuality)
 
   clearPlot()
   Plot(landscape)

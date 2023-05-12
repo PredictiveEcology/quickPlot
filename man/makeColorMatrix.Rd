@@ -11,6 +11,7 @@
   maxpixels,
   legendRange,
   cols = NULL,
+  prevMinMax,
   na.color = "#FFFFFF00",
   zero.color = NULL,
   skipSample = TRUE

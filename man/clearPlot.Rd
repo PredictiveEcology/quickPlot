@@ -37,16 +37,15 @@ a new \code{Plot} call.
 Use \code{clearPlot} to clear the device and all the associated metadata manually.
 }
 \examples{
-library(sp)
-library(raster)
-library(RColorBrewer)
+library(terra)
+# RColorBrewer
 
 files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
-maps <- lapply(files, raster)
+maps <- lapply(files, rast)
 names(maps) <- lapply(maps, names)
 
 # put layers into a single stack for convenience
-landscape <- stack(maps$DEM, maps$forestCover, maps$forestAge,
+landscape <- c(maps$DEM, maps$forestCover, maps$forestAge,
                    maps$habitatQuality, maps$percentPine)
 
 # can change color palette

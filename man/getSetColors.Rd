@@ -3,15 +3,8 @@
 \name{getColors}
 \alias{getColors}
 \alias{getColours}
-\alias{getColors,Raster-method}
-\alias{getColors,ANY-method}
-\alias{getColors,SpatialPoints-method}
 \alias{setColors<-}
 \alias{setColours}
-\alias{setColors<-,RasterLayer,numeric,character-method}
-\alias{setColors<-,RasterLayer,missing,character-method}
-\alias{setColors<-,RasterStack,numeric,list-method}
-\alias{setColors<-,Raster,missing,list-method}
 \alias{setColors}
 \alias{setColors,RasterLayer,character,numeric-method}
 \alias{setColors,RasterLayer,character,missing-method}
@@ -19,21 +12,7 @@
 \usage{
 getColors(object)
 
-\S4method{getColors}{Raster}(object)
-
-\S4method{getColors}{ANY}(object)
-
-\S4method{getColors}{SpatialPoints}(object)
-
 setColors(object, ..., n) <- value
-
-\S4method{setColors}{RasterLayer,numeric,character}(object, ..., n) <- value
-
-\S4method{setColors}{RasterLayer,missing,character}(object, ..., n) <- value
-
-\S4method{setColors}{RasterStack,numeric,list}(object, ..., n) <- value
-
-\S4method{setColors}{Raster,missing,list}(object, ..., n) <- value
 
 setColors(object, value, n)
 

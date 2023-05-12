@@ -19,6 +19,7 @@
   takeFromPlotObj,
   arr,
   newArr,
+  prevMinMax,
   quickPlotGrobCounter,
   subPlots,
   cols

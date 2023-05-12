@@ -19,11 +19,11 @@ getColors <- function(object) {
     nams <- names(object)
     if (isRaster(object)) {
       cols <- lapply(nams, function(x) {
-        as.character(object[[x]]@legend@colortable)
+        raster::colortable(object[[x]])
       })
       names(cols) <- nams
     }
-  } else if (isSpat(object)) {
+  } else if (isSpat(object) && isGridded(object)) {
     cols <- terra::coltab(object)
     noCols <- vapply(cols, is.null, FUN.VALUE = logical(1))
     if (any(noCols)) {
@@ -34,8 +34,9 @@ getColors <- function(object) {
   } else if (isSpatial(object)) {
     cols <- list(object@data$color)
   } else {
-    NULL
+    cols <- NULL
   }
+  return(cols)
 }
 
 #' `setColors` works as a replacement method or a normal function call.
@@ -61,18 +62,66 @@ getColors <- function(object) {
 #' @seealso [`brewer.pal()`][RColorBrewer::ColorBrewer],
 #'          [`colorRampPalette()`][grDevices::colorRamp].
 #'
-setGeneric("setColors<-",
-           function(object, ..., n, value) {
-             standardGeneric("setColors<-")
-})
-
-#' @export
-#' @importFrom raster is.factor
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-  signature("RasterLayer", "numeric", "character"),
+`setColors<-`  <-
+  # setGeneric("setColors<-",
+#            function(object, ..., n, value) {
+#              standardGeneric("setColors<-")
+# })
+# @export
+# @importFrom raster is.factor
+# @rdname getSetColors
+# setReplaceMethod(
+  # signature("RasterLayer", "numeric", "character"),
   function(object, ..., n, value) {
+    if (dim(object)[[3]] > 1) { # Multi-layer RasterStack or SpatRaster
+      if (!is(value, "list")) {
+        value <- lapply(seq(numLayers(object)), function(x) value)
+      }
+      object <- Map(lay = seq(numLayers(object)), ..., value = value, MoreArgs = list(n = n),
+                 f = function(lay, ..., n, value) {
+                   # this allows same code for SpatRaster and RasterStack; don't pass object = object
+                   `setColors<-`(object[[lay]], ..., n = n, value = value)
+                 })
+      if (is(object[[1]], "Raster")) object <- raster::stack(object)
+      if (is(object[[1]], "SpatRaster")) object <- terra::rast(object)
+      return(object)
+    }
+
+    if (is(value, "list")) { # value = "list"
+      browser()
+      nams <- names(object)
+      i <- which(nams %in% names(value))
+      for (x in nams[i]) {
+        setColors(object[[x]], ...) <- value[[x]]
+      }
+      return(object)
+    }
+
+    browser()
+    #if (missing(n)) {
+      isFac <- if (!raster::is.factor(object)) {
+        FALSE
+      } else {
+        if (all(na.omit(object[]) %% 1 == 0)) {
+          ## some factor rasters are actually real number -- makes no sense
+          TRUE
+        } else {
+          FALSE
+        }
+      }
+
+      if (!isFac) {
+        n1 <- round(maxFn(object) - minFn(object)) + 1
+      } else {
+        n1 <- length(value)
+      }
+
+      if (!identical(n1,  n)) {
+        setColors(object, n = n1) <- value
+        return(object)
+      }
+    #}
+
     if (is.na(n)) {
       object <- setColors(object = object, value = value)
       return(object)
@@ -98,8 +147,9 @@ setReplaceMethod(
       }
       value <- RColorBrewer::brewer.pal(ntmp, value)
     }
-    if (raster::is.factor(object)) {
+    if (terra::is.factor(object)) {
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
+        browser()
         if (n != NROW(object@data@attributes[[1]])) {
           object@legend@colortable <- pal(n)
         } else {
@@ -108,88 +158,93 @@ setReplaceMethod(
       }
     } else {
       pal <- colorRampPalette(value, alpha = TRUE, ...)
-      object@legend@colortable <- pal(n)
-    }
-    if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
-    return(object)
-})
-
-#' @export
-#' @importFrom raster is.factor
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-  signature("RasterLayer", "missing", "character"),
-  function(object, ..., value) {
-    isFac <- if (!raster::is.factor(object)) {
-      FALSE
-    } else {
-      if (all(na.omit(object[]) %% 1 == 0)) {
-        ## some factor rasters are actually real number -- makes no sense
-        TRUE
+      if (isRaster(object)) {
+        raster::colortable(object) <- pal(n)
       } else {
-        FALSE
+        browser()
+        coltab(object) <- pal(n)
       }
-    }
 
-    if (!isFac) {
-      n <- round(maxFn(object) - minFn(object)) + 1
-    } else {
-      n <- length(value)
     }
-
-    setColors(object, n = n) <- value
-    if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
     return(object)
-})
+}
 
-#' @export
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-   signature("RasterStack", "numeric", "list"),
-   function(object, ..., n, value) {
-     i <- which(names(object) %in% names(value))
-     if (length(i) == 0) stop("Layer names do not match stack layer names")
-     whValNamed <- names(value)[i] %in% names(n)
-     whNNamed <- names(n) %in% names(value)[i]
-     nFull <- n
-     if (length(n) != length(i)) {
-       # not enough n values
-       if (sum(!nzchar(names(n), keepNA = TRUE)) > 0) {
-         # are there unnamed ones
-         nFull <- rep(n[!whNNamed], length.out = length(i))
-         nFull[whValNamed] <- n[whNNamed]
-         names(nFull)[whValNamed] <- names(n)[whNNamed]
-       } else if (is.null(names(n))) {
-         nFull <- rep(n, length.out = length(i))
-       }
-     }
+# @export
+# @importFrom raster is.factor
+# @rdname getSetColors
+# setReplaceMethod(
+#  "setColors",
+#  signature("RasterLayer", "missing", "character"),
+#   function(object, ..., value) {
+    # isFac <- if (!raster::is.factor(object)) {
+    #   FALSE
+    # } else {
+    #   if (all(na.omit(object[]) %% 1 == 0)) {
+    #     ## some factor rasters are actually real number -- makes no sense
+    #     TRUE
+    #   } else {
+    #     FALSE
+    #   }
+    # }
+    #
+    # if (!isFac) {
+    #   n <- round(maxFn(object) - minFn(object)) + 1
+    # } else {
+    #   n <- length(value)
+    # }
+    #
+    # setColors(object, n = n) <- value
+    # if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
+    # return(object)
+# }#)
 
-     for (x in i) {
-       if (x %in% i[whValNamed]) {
-         setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <-
-           value[[names(value)[x]]]
-       } else {
-         setColors(object[[names(value)[x]]], ..., n = nFull[x]) <- value[[names(value)[x]]]
-       }
-     }
-     return(object)
-})
+# @export
+# @rdname getSetColors
+# setReplaceMethod(
+  # "setColors",
+  #  signature("RasterStack", "numeric", "list"),
+  #  function(object, ..., n, value) {
+#      i <- which(names(object) %in% names(value))
+#      if (length(i) == 0) stop("Layer names do not match stack layer names")
+#      whValNamed <- names(value)[i] %in% names(n)
+#      whNNamed <- names(n) %in% names(value)[i]
+#      nFull <- n
+#      if (length(n) != length(i)) {
+#        # not enough n values
+#        if (sum(!nzchar(names(n), keepNA = TRUE)) > 0) {
+#          # are there unnamed ones
+#          nFull <- rep(n[!whNNamed], length.out = length(i))
+#          nFull[whValNamed] <- n[whNNamed]
+#          names(nFull)[whValNamed] <- names(n)[whNNamed]
+#        } else if (is.null(names(n))) {
+#          nFull <- rep(n, length.out = length(i))
+#        }
+#      }
+#
+#      for (x in i) {
+#        if (x %in% i[whValNamed]) {
+#          setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <-
+#            value[[names(value)[x]]]
+#        } else {
+#          setColors(object[[names(value)[x]]], ..., n = nFull[x]) <- value[[names(value)[x]]]
+#        }
+#      }
+#      return(object)
+# }# )
 
-#' @export
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-   signature("Raster", "missing", "list"),
-   function(object, ..., value) {
-     nams <- names(object)
-     i <- which(nams %in% names(value))
-     for (x in nams[i]) {
-       setColors(object[[x]], ...) <- value[[x]]
-     }
-     return(object)
-})
+# @export
+# @rdname getSetColors
+# setReplaceMethod(
+#   "setColors",
+#    signature("Raster", "missing", "list"),
+#    function(object, ..., value) {
+     # nams <- names(object)
+     # i <- which(nams %in% names(value))
+     # for (x in nams[i]) {
+     #   setColors(object[[x]], ...) <- value[[x]]
+     # }
+     # return(object)
+# })
 
 #' @export
 #' @export
@@ -376,7 +431,9 @@ setMethod(
 
         cols <- if ((nValues > lenColTable) & !isFac) { # nolint
           # not enough colours, use colorRamp
-          colorRampPalette(colTable)(nValues)
+          # browser()
+          colTable
+          # colorRampPalette(colTable)(nValues)
         } else if ((nValues <= lenColTable) | isFac) { # nolint
           # one more colour than needed:
           #   assume bottom is NA
