@@ -28,10 +28,11 @@ getColors <- function(object) {
     noCols <- vapply(cols, is.null, FUN.VALUE = logical(1))
     if (any(noCols)) {
       # theSeq <- minFn(object):maxFn(object)
-      cols <- lapply(cols, function(x) rev(grDevices::terrain.colors(50)))
+      cols <- lapply(cols, function(x) rev(grDevices::terrain.colors(50))) # default in SpatRaster
       # df <- data.frame(value = theSeq, color =  cols)
     }
   } else if (isSpatial(object)) {
+    browser()
     cols <- list(object@data$color)
   } else {
     cols <- NULL
@@ -97,7 +98,6 @@ getColors <- function(object) {
       return(object)
     }
 
-    browser()
     #if (missing(n)) {
       isFac <- if (!raster::is.factor(object)) {
         FALSE
@@ -126,15 +126,18 @@ getColors <- function(object) {
       object <- setColors(object = object, value = value)
       return(object)
     }
-    if (raster::is.factor(object)) {
+    if (terra::is.factor(object)) {
       a <- object[];
       a <- a[!is.na(a)]
       isInteger <- !any(a != as.integer(a))
       # isInteger <- all(na.omit(object[])%%1==0)
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
-        if (n != NROW(object@data@attributes[[1]])) {
+        levs <- terra::levels(object)[[1]]
+        nrLevs <- NROW(levs)
+        if (n != nrLevs) {
+        # if (n != NROW(object@data@attributes[[1]])) {
           message("Number of colours not equal number of values: interpolating")
-          n <- NROW(object@data@attributes[[1]])
+          n <- nrLevs
         }
       }
     }
@@ -149,12 +152,19 @@ getColors <- function(object) {
     }
     if (terra::is.factor(object)) {
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
-        browser()
-        if (n != NROW(object@data@attributes[[1]])) {
-          object@legend@colortable <- pal(n)
+        levs <- terra::levels(object)[[1]]
+        nrLevs <- NROW(levs)
+
+        if (n != nrLevs) {
+          vals <- pal(n)
         } else {
-          object@legend@colortable <- value
+          vals <- value
         }
+        if (isRaster(object))
+          object@legend@colortable <- pal(n)
+        else
+          coltab(object) <- vals
+
       }
     } else {
       pal <- colorRampPalette(value, alpha = TRUE, ...)
@@ -246,32 +256,35 @@ getColors <- function(object) {
      # return(object)
 # })
 
-#' @export
-#' @export
-#' @rdname getSetColors
-setGeneric("setColors", function(object, value, n) {
-  standardGeneric("setColors")
-})
+# @export
+# @rdname getSetColors
+# setGeneric("setColors", function(object, value, n) {
+#   standardGeneric("setColors")
+# })
 
 #' @export
 #' @rdname getSetColors
-setMethod(
-  "setColors",
-  signature("RasterLayer", "character", "numeric"),
+# setMethod(
+  setColors <-
+  # signature("RasterLayer", "character", "numeric"),
   function(object, value, n) {
-    setColors(object = object, n = n) <- value
+    if (missing(n)) {
+      setColors(object = object) <- value
+    } else {
+      setColors(object = object, n = n) <- value
+    }
     return(object)
-})
+}
 
-#' @export
-#' @rdname getSetColors
-setMethod(
-  "setColors",
-  signature("RasterLayer", "character", "missing"),
-  function(object, value) {
-    setColors(object = object) <- value
-    return(object)
-})
+# @export
+# @rdname getSetColors
+# setMethod(
+#   "setColors",
+#   signature("RasterLayer", "character", "missing"),
+#   function(object, value) {
+#     setColors(object = object) <- value
+#     return(object)
+# })
 
 ################################################################################
 #' Convert Raster to colour matrix usable by raster function for plotting
@@ -310,6 +323,7 @@ setMethod(
 #' @aliases makeColourMatrix
 #' @author Eliot McIntire
 #' @importFrom grDevices colorRampPalette terrain.colors
+#' @importFrom fpCompare %>>%
 #' @importFrom raster getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
 #' @importFrom utils tail head
@@ -438,10 +452,11 @@ setMethod(
           # one more colour than needed:
           #   assume bottom is NA
           if (isFac) {
-            factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
-              unique() %>%
-              na.omit() %>%
-              sort()
+            factorValues <- terra::levels(grobToPlot)[[1]][["ID"]]
+            # factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
+            #   unique() %>%
+            #   na.omit() %>%
+            #   sort()
             if (length(factorValues) == length(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {
@@ -576,9 +591,9 @@ setMethod(
     if (minz < 0) z[z < 0] <- 0
     if (!isFac) {
       if (real) {
-        if (maxz > maxNumCols) z[z > maxNumCols] <- 0
+        if (maxz %>>% maxNumCols) z[z %>>% maxNumCols] <- 0
       } else {
-        if (maxz > nValues) z[z > nValues] <- 0
+        if (maxz %>>% nValues) z[z %>>% nValues] <- 0
       }
     }
 
@@ -599,9 +614,14 @@ setMethod(
     }
     cols <- c(na.color, cols) # make first index of colours be transparent
 
+    minzToMaxz <- seq(minz, maxz)
+    lenMinzToMaxz <- length(minzToMaxz)
+    if (length(cols) < lenMinzToMaxz)
+      cols <- colorRampPalette(cols)(lenMinzToMaxz)
+
     # Convert numeric z to a matrix of hex colours
     z <- matrix(
-      cols[z], nrow = NROW(grobToPlot),
+      cols[round(z, digits = 0)], nrow = NROW(grobToPlot),
       ncol = ncol(grobToPlot), byrow = TRUE
     )
 

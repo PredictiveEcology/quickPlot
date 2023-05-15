@@ -2168,7 +2168,7 @@ pgSpatialPolygons <- function(grobToPlot, col, size,
   # }
 
   # For speed of plotting
-  xyOrd <- quickPlot::thin(grobToPlot, tolerance = speedupScale * speedup,
+  xyOrd <- thin(grobToPlot, tolerance = speedupScale * speedup,
                            returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
 
   numPolys <- length(unique(xyOrd$xyOrd$poly))

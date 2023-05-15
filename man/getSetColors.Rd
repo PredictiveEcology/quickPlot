@@ -6,8 +6,6 @@
 \alias{setColors<-}
 \alias{setColours}
 \alias{setColors}
-\alias{setColors,RasterLayer,character,numeric-method}
-\alias{setColors,RasterLayer,character,missing-method}
 \title{Get and set colours for plotting \verb{Raster*} objects}
 \usage{
 getColors(object)
@@ -15,10 +13,6 @@ getColors(object)
 setColors(object, ..., n) <- value
 
 setColors(object, value, n)
-
-\S4method{setColors}{RasterLayer,character,numeric}(object, value, n)
-
-\S4method{setColors}{RasterLayer,character,missing}(object, value)
 }
 \arguments{
 \item{object}{A \verb{Raster*} object.}

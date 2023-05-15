@@ -178,7 +178,6 @@ setMethod("clearPlot",
 #' }
 #'
 clickValues <- function(n = 1) {
-  browser()
   coords <- clickCoordinates(n = n)
   objLay <- strsplit(coords$map, "\\$")
   objNames <- unlist(lapply(objLay, function(x) x[1]))
@@ -314,9 +313,15 @@ clickCoordinates <- function(n = 1) {
 
   grobLoc <- list()
 
+  if (isRstudioDevice())
+    warning(RstudioDeviceWarning())
+
   for (i in 1:n) {
     seekViewport("top", recording = FALSE)
     gloc <- grid.locator(unit = "npc")
+    if (isRstudioDevice()) {
+      gloc$y <- grid::unit(as.numeric(gloc$y) + 0.2, "npc")
+    }
     xInt <- findInterval(as.numeric(strsplit(as.character(gloc$x), "npc")[[1]]),
                          c(0, cumsum(widthNpcs)))
     # for the y, grid package treats bottom left as origin, Plot treats top left
@@ -573,3 +578,14 @@ assign(
                        "tck", "tcl", "usr", "xaxp", "xaxs", "xaxt", "xpd", "yaxp", "yaxs",
                        "yaxt", "ylbias")
   ))
+
+isRstudioDevice <- function(dev = dev.cur()) {
+  namesDevList <- names(dev)
+  isRstudioDev <- namesDevList == "RStudioGD"
+  return(isRstudioDev)
+}
+
+RstudioDeviceWarning <- function()
+  paste0("Rstudio device may give inappropriate coordinates; values may be wrong. ",
+          "Try using an external device?",
+          "\nrePlot(toDev = dev(noRStudioGD = TRUE))")

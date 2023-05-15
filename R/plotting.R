@@ -529,6 +529,11 @@ setMethod(
     # Create a .quickPlot object from the plotObjs and plotArgs
     newQuickPlots <- .makeQuickPlot(plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
+    # names sanity check
+    nams1 <- names(newQuickPlots@quickPlotGrobList)
+    if (!identical(nams1, unique(nams1)))
+      stop("quickPlot cannot currently plot objects where `names(obj)` != unique(names(obj)); maybe rename layer(s)?")
+
     if (exists(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv)) {
       currQuickPlots <- .getQuickPlot(paste0("quickPlot", dev.cur()))
 

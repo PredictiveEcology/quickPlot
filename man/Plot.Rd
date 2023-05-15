@@ -309,8 +309,7 @@ maps <- lapply(files, rast)
 names(maps) <- lapply(maps, names)
 
 # put layers into a single stack for convenience
-landscape <- c(maps$DEM, maps$forestCover, maps$forestAge,
-                   maps$habitatQuality, maps$percentPine)
+landscape <- rast(maps)
 
 # can change color palette
 setColors(landscape, n = 50) <- list(DEM = topo.colors(50),
