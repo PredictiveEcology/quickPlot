@@ -38,7 +38,6 @@ Get and set colours for plotting \verb{Raster*} objects
 This function can accept \code{RColorBrewer} colours by name. See examples.
 }
 \examples{
-library(igraph)
 library(raster)
 
 ras <- raster(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))
