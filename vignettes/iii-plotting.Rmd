@@ -10,11 +10,13 @@ output:
     self_contained: yes
     toc: yes
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{03 Plotting with `quickPlot`}
   %\VignetteDepends{data.table, ggplot2, grDevices, igraph, RColorBrewer, quickPlot, stats}
   %\VignetteKeyword{visualization, plotting, mapping}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r initial-clearPlot, eval=TRUE, echo=FALSE, fig.keep='none', message=FALSE}
@@ -56,13 +58,13 @@ filelist <- data.frame(file = files[-c(2, 5) ], stringsAsFactors = FALSE)
 print(filelist)
 
 # Load files to memory (using rasterToMemory), assign to a simList we call maps 
-maps <- lapply(filelist$file, function(x) raster(x))
+maps <- lapply(filelist$file, function(x) rast(x))
 names(maps) <- sapply(basename(filelist$file), function(x) {
   strsplit(x, split = "\\.")[[1]][1]
 })
 
 # put into a single stack object in the simulation environment for ease of use below
-landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
+landscape <- c(maps$DEM, maps$forestCover, maps$habitatQuality)
 ```
 
 # The `Plot` function
@@ -80,32 +82,31 @@ See `?gpar` for options.
 ```{r first_plot, eval=TRUE, echo=TRUE, fig.height=2}
 Plot(landscape, new = TRUE)
 # make a SpatialPoints object
-caribou <- SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
-                                        y = stats::runif(1e2, -50, 50)))
+caribou <- terra::vect(cbind(x = stats::runif(1e2, -50, 50),
+                             y = stats::runif(1e2, -50, 50)))
 Plot(caribou)
 Plot(caribou, addTo = "landscape$habitatQuality")
 
-# from SpatialPolygons help file
-sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
-sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
+# from ?vect help file
+x1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60))
+x2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55))
+x3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45))
+hole <- rbind(c(80,0), c(105,13), c(120,2), c(105,-13))
+z <- rbind(cbind(object=1, part=1, x1, hole=0), cbind(object=2, part=1, x3, hole=0),
+			cbind(object=3, part=1, x2, hole=0), cbind(object=3, part=1, hole, hole=1))
+colnames(z)[3:4] <- c('x', 'y')
+spP <- terra::vect(z, "polygons")
 
-srs1 <- Polygons(list(sr1), "s1")
-srs2 <- Polygons(list(sr2), "s2")
-spP <- SpatialPolygons(list(srs1, srs2), 1:2)
 Plot(spP)
 Plot(spP, addTo = "landscape$habitatQuality", gp = gpar(lwd = 2))
 
-# from SpatialLines help file
-l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
-l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
-l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
-sl1 <- Line(l1)
-sl1a <- Line(l1a)
-sl2 <- Line(l2)
-s1 <- Lines(list(sl1, sl1a), ID = "a")
-s2 <- Lines(list(sl2), ID = "b")
-sl <- SpatialLines(list(s1, s2))
-Plot(sl, gp = gpar(col = c("red", "blue"), lwd = 2), addTo = "landscape$DEM")
+
+
+# from ?vect help file
+z[z[, "hole"]==1, "object"] <- 4
+lns <- vect(z[,1:4], "lines")
+
+Plot(lns, gp = gpar(col = c("red", "blue"), lwd = 2), addTo = "landscape$DEM")
 ```
 
 Any combination of `RasterStack`, `RasterLayer`, `SpatialPoints*`, and `SpatialPolygons*` objects can be plotted from a single invocation of `Plot`:
@@ -125,7 +126,8 @@ These can be combined with spatial objects as well.
 
 ```{r ggplot, eval=TRUE, echo=TRUE, cache=FALSE, fig.height=2}
 if (requireNamespace("ggplot2")) {
-  ggObj <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.1)
+  ggObj <- data.frame(x = stats::rnorm(1e3)) |> ggplot2::ggplot(ggplot2::aes(x = x)) +
+    ggplot2::geom_histogram()
   clearPlot()
   Plot(caribou, axes = "L", new = TRUE) 
   Plot(ggObj) 
