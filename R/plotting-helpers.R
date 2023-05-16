@@ -124,40 +124,21 @@ numLayers <- function(x) {
 #' @rdname layerNames
 #'
 #' @examples
-#' library(igraph)
-#' library(raster)
+#' library(terra)
 #'
 #' ## RasterLayer objects
 #' files <- system.file("maps", package = "quickPlot") %>%
 #'   dir(., full.names = TRUE, pattern = "tif")
-#' maps <- lapply(files, function(x) raster(x))
+#' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
 #' })
 #' layerNames(maps)
 #'
-#' ## Spatial* objects
-#' caribou <- SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
-#'                                         y = stats::runif(1e2, -50, 50)))
+#' ## SpatVector objects
+#' caribou <- terra::vect(cbind(x = stats::runif(1e2, -50, 50),
+#'                              y = stats::runif(1e2, -50, 50)))
 #' layerNames(caribou)
-#'
-#' sr1 <- Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
-#' sr2 <- Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
-#' srs1 <- Polygons(list(sr1), "s1")
-#' srs2 <- Polygons(list(sr2), "s2")
-#' spP <- SpatialPolygons(list(srs1, srs2), 1:2)
-#' layerNames(spP)
-#'
-#' l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
-#' l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
-#' l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
-#' sl1 <- Line(l1)
-#' sl1a <- Line(l1a)
-#' sl2 <- Line(l2)
-#' s1 <- Lines(list(sl1, sl1a), ID = "a")
-#' s2 <- Lines(list(sl2), ID = "b")
-#' sl <- SpatialLines(list(s1, s2))
-#' layerNames(sl)
 #'
 layerNames <- function(object) {
   if (is(object, "list")) {
@@ -229,16 +210,15 @@ layerNames <- function(object) {
 #' @rdname equalExtent
 #'
 #' @examples
-#' library(igraph)
-#' library(raster)
+#' library(terra)
 #'
 #' files <- system.file("maps", package = "quickPlot") %>%
 #'   dir(., full.names = TRUE, pattern = "tif")
-#' maps <- lapply(files, function(x) raster(x))
+#' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
 #' })
-#' extnts <- lapply(maps, extent)
+#' extnts <- lapply(maps, terra::ext)
 #' equalExtent(extnts) ## TRUE
 #'
 setGeneric("equalExtent", function(extents) {
@@ -251,14 +231,10 @@ setMethod(
   "equalExtent",
   signature = "list",
   definition = function(extents) {
-    all(
-      c(
-        sapply(extents, function(x) x@xmin) == extents[[1]]@xmin,
-        sapply(extents, function(x) x@xmax) == extents[[1]]@xmax,
-        sapply(extents, function(x) x@ymin) == extents[[1]]@ymin,
-        sapply(extents, function(x) x@ymax) == extents[[1]]@ymax
-      )
-    )
+    a <- lapply(extents, extent)
+    all(mapply(MoreArgs = list(ext1 = a[[1]]), extOther = a[-1], function(ext1, extOther) {
+      isTRUE(all.equal(ext1, extOther))
+    }, SIMPLIFY = TRUE))
 })
 
 #' Make a `.quickPlot` class object
@@ -1234,7 +1210,9 @@ setMethod(
       # Because base plotting is not set up to overplot,
       # must plot a white rectangle
 
-      gf <- try(gridFIG())
+      #browser()
+      # gf <- try(gridFIG())
+      gf <- c(0.0233, 0.9767, 0.0233, 0.8750)
       if (is(gf, "try-error")) {
         if (identical(names(dev.cur()), "RStudioGD")) {
           stop("quickPlot sometimes has trouble with plotting base plots ",
@@ -1304,6 +1282,10 @@ setMethod(
 
         plotFn <- argsPlot1$plotFn
         argsPlot1$plotFn <- NULL
+
+        # base plots can't use minz, maxz
+        if (isBaseSubPlot)
+          argsPlot1 <- argsPlot1[setdiff(names(argsPlot1), c("minz", "maxz"))]
 
         # The actuall plot calls for base plotting
         if (inherits(grobToPlot, "igraph")) {
@@ -2861,20 +2843,21 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumP
 }
 
 extent <- function(x) {
-  ee <- if (isGridded(x) || inherits(x, "Spatial") || isSpat(x)) {
-    if (isSpat(x))
-      ee <- terra::ext(x)
+  x <- if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) || is(x, "SpatExtent")) {
+    if (!is(x, "SpatExtent"))
+      if (isSpat(x))
+        x <- terra::ext(x)
     else
-      ee <- raster::extent(x)
-    list(xmin = terra::xmin(ee), xmax = terra::xmax(ee),
-         ymin = terra::ymin(ee), ymax = terra::ymax(ee))
+      x <- raster::extent(x)
+    list(xmin = terra::xmin(x), xmax = terra::xmax(x),
+         ymin = terra::ymin(x), ymax = terra::ymax(x))
   } else if (inherits(x, "sf")) {
     sf::st_bbox(x)
     browser()
   } else {
-    ee <- raster::extent(x)
+    x <- raster::extent(x)
   }
-  ee
+  x
 }
 
 

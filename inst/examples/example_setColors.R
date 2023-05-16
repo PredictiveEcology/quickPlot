@@ -1,4 +1,3 @@
-library(igraph)
 library(raster)
 
 ras <- raster(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))

@@ -239,10 +239,8 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom ggplot2 ggplot
 #' @importFrom grDevices dev.cur dev.size
 #' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar pushViewport upViewport
-#' @importFrom gridBase gridFIG
 #' @importFrom raster crop is.factor
 #' @include environment.R
 #' @include plotting-classes.R

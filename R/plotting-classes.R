@@ -1,15 +1,6 @@
-### Allow gg S3 class to be used with Plot, an S4 function
-# @importFrom ggplot2 ggplot
-# setOldClass("gg")
-# selectMethod("show", "gg")
-
 ### Allow histogram S3 class to be used with Plot, an S4 function
 setOldClass("histogram")
 selectMethod("show", "histogram")
-
-### Allow igraph S3 class to be used with Plot, an S4 function
-# setOldClass("igraph")
-# selectMethod("show", "igraph")
 
 ### Allow gpar S3 class to be used with Plot, an S4 function
 setOldClass("gpar")
@@ -109,7 +100,6 @@ setAs(from = "list", to = "gpar", function(from) {
 # `SpatialLines*`, `RasterLayer`, `RasterStack`, and `ggplot` objects.
 # These are the object classes that the [Plot()] function can handle.
 #
-# @importFrom ggplot2 ggplot
 # @aliases .quickPlotObjects
 # @author Eliot McIntire
 # @name .quickPlotObjects-class

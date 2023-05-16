@@ -237,9 +237,11 @@ test_that("Plot 1 is not error-free", {
   clearPlot()
 
 
-  suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
-                                geom = "histogram")) # warning is about deprecation
-  expect_silent(Plot(ggplot87654))
+  if (requireNamespace("ggplot2")) {
+    suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
+                                                   geom = "histogram")) # warning is about deprecation
+    expect_silent(Plot(ggplot87654))
+  }
 
   for (i in seq_along(Sls)) {
     land <- lands[[sample(2, 1)]]
@@ -886,8 +888,11 @@ test_that("Plot with base is not error-free", {
   ras2 <- raster(ras)
   ras2[] <- sample(1:8)
   Plot(ras2)
-  gg1 <- qplot(1:10)
-  suppressMessages(Plot(gg1))
+
+  if (requireNamespace("ggplot2")) {
+    gg1 <- ggplot2::qplot(1:10)
+    suppressMessages(Plot(gg1))
+  }
   suppressMessages(Plot(rnorm(10), ylab = "hist", new = TRUE))
   Plot(ras2)
   Plot(rnorm(10), ylab = "hist")
@@ -1102,13 +1107,15 @@ test_that("Plot lists", {
     expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
     set.seed(123)
-    gg <- qplot(1:10, sample(1:10))
-    gg1 <- qplot(1:10, sample(1:10))
-    b <- list(gg = gg, gg1 = gg1)
-    png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
-    clearPlot()
-    Plot(a, b)
-    dev.off()
+    if (requireNamespace("ggplot2")) {
+      gg <- qplot(1:10, sample(1:10))
+      gg1 <- qplot(1:10, sample(1:10))
+      b <- list(gg = gg, gg1 = gg1)
+      png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
+      clearPlot()
+      Plot(a, b)
+      dev.off()
+    }
 
     test_id <- "K3"
     if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {

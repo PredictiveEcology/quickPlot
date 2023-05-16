@@ -26,10 +26,8 @@ Imports:
     backports,
     data.table (>= 1.10.4),
     fpCompare,
-    ggplot2,
     grDevices,
     grid,
-    gridBase,
     igraph,
     methods,
     RColorBrewer,
@@ -37,6 +35,7 @@ Imports:
 Suggests:
     covr,
     fastshp,
+    ggplot2,
     knitr,
     png,
     raster,

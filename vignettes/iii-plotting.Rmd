@@ -46,8 +46,7 @@ Then we load that list of files.
 ```{r load_files, eval=TRUE, echo=TRUE, message=FALSE, fig.height=2}
 #  Make list of maps from package database to load, and what functions to use to load them
 library(data.table)
-library(igraph)
-library(raster)
+library(terra)
 library(quickPlot)
 
 # omit forestAge and percentPine maps for simplicity
@@ -125,12 +124,12 @@ Plot(landscape, caribou, maps$DEM, spP, axes = TRUE,
 These can be combined with spatial objects as well.
 
 ```{r ggplot, eval=TRUE, echo=TRUE, cache=FALSE, fig.height=2}
-library(ggplot2)
-
-ggObj <- qplot(stats::rnorm(1e3), binwidth = 0.1)
-clearPlot()
-Plot(caribou, axes = "L", new = TRUE) 
-Plot(ggObj) 
+if (requireNamespace("ggplot2")) {
+  ggObj <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.1)
+  clearPlot()
+  Plot(caribou, axes = "L", new = TRUE) 
+  Plot(ggObj) 
+}
 ```
 
 ### `base` plotting
