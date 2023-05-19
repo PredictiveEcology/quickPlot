@@ -639,7 +639,6 @@ setMethod(
           } else {
             grobToPlot <- plotObjs[[whPlotObj]]
           }
-          browser()
           grobToPlot <- .identifyGrobToPlot(grobToPlot, sGrob, layerFromPlotObj)
 
           isPlotFnAddable <- FALSE
