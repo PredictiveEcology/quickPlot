@@ -17,6 +17,7 @@ test_that("clickExtent works", {
   files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
 
   a <- terra::rast(files)
+  dev()
   clearPlot()
   Plot(a)
 

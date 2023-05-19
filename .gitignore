@@ -44,4 +44,4 @@ vignettes/*.R
 *.vrb
 *.xdy
 *.tdo
-
+modules/*

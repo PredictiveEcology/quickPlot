@@ -77,3 +77,5 @@ test_that("setColors with an NA", {
     ras <- setColors(ras, n = 4, value = c("red", "orange", "blue", "yellow"))
   })
 })
+
+

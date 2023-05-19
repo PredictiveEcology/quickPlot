@@ -7,8 +7,6 @@
   toset <- !(names(opts.quickPlot) %in% names(opts))
   if (any(toset)) options(opts.quickPlot[toset])
 
-  backports::import(pkgname, obj = "isFALSE")
-
   invisible()
 }
 

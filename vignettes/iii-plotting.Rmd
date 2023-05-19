@@ -11,7 +11,7 @@ output:
     toc: yes
 vignette: >
   %\VignetteIndexEntry{03 Plotting with `quickPlot`}
-  %\VignetteDepends{data.table, ggplot2, grDevices, igraph, RColorBrewer, quickPlot, stats}
+  %\VignetteDepends{data.table, ggplot2, grDevices, RColorBrewer, quickPlot, stats}
   %\VignetteKeyword{visualization, plotting, mapping}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
@@ -26,7 +26,7 @@ quickPlot::clearPlot()
 # Plotting in `quickPlot`
 
 Most visualization approaches in R  (*e.g.*, `base`, `RgoogleVis`, `ggplot2`, `rgl`) are not optimized for speed or modularity.
-Rather, they are designed to build publication-quality or interactive figures that do not need to be redrawn hundreds or more times in rapid succession.
+Rather, they are designed to build publication-quality or interactive figures that do not need to be redrawn hundreds or more times, maybe even in rapid succession.
 Plotting requirements for many other uses, including simulation modelling, are different.
 Changes to data, maps, objects can happen rapidly and repeatedly.
 Visualizing this can be critical, especially during the model building phase.
@@ -52,8 +52,8 @@ library(terra)
 library(quickPlot)
 
 # omit forestAge and percentPine maps for simplicity
-files <- system.file("maps", package = "quickPlot") %>%
-  dir(., full.names = TRUE, pattern = "tif")
+files <- system.file("maps", package = "quickPlot") |>
+  dir(full.names = TRUE, pattern = "tif")
 filelist <- data.frame(file = files[-c(2, 5) ], stringsAsFactors = FALSE)
 print(filelist)
 
@@ -88,10 +88,10 @@ Plot(caribou)
 Plot(caribou, addTo = "landscape$habitatQuality")
 
 # from ?vect help file
-x1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60))
-x2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55))
-x3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45))
-hole <- rbind(c(80,0), c(105,13), c(120,2), c(105,-13))
+x1 <- rbind(c(-18,-2), c(-14,5.5), c(1, 0), c(-14,-6))
+x2 <- rbind(c(-1,0), c(14,6), c(16,0), c(14,-5.5))
+x3 <- rbind(c(-12.5,0), c(0,6), c(4,0.5), c(1.5,-4.5))
+hole <- rbind(c(8,0), c(10.5,1.3), c(12,0.2), c(10.5,-1.3))
 z <- rbind(cbind(object=1, part=1, x1, hole=0), cbind(object=2, part=1, x3, hole=0),
 			cbind(object=3, part=1, x2, hole=0), cbind(object=3, part=1, hole, hole=1))
 colnames(z)[3:4] <- c('x', 'y')
@@ -104,9 +104,9 @@ Plot(spP, addTo = "landscape$habitatQuality", gp = gpar(lwd = 2))
 
 # from ?vect help file
 z[z[, "hole"]==1, "object"] <- 4
-lns <- vect(z[,1:4], "lines")
+sl <- vect(z[,1:4], "lines")
 
-Plot(lns, gp = gpar(col = c("red", "blue"), lwd = 2), addTo = "landscape$DEM")
+Plot(sl, gp = gpar(col = c("red", "blue"), lwd = 2), addTo = "landscape$DEM")
 ```
 
 Any combination of `RasterStack`, `RasterLayer`, `SpatialPoints*`, and `SpatialPolygons*` objects can be plotted from a single invocation of `Plot`:
@@ -151,7 +151,7 @@ If using `addTo`, and there are both x and y arguments, it will *add* points to 
 baseObj <- rnorm(1e3)
 baseObj2 <- baseObj * 1.2 + rnorm(1e3)
 clearPlot()
-Plot(baseObj, axes = "L", ylab = "Something meaningful") 
+# Plot(baseObj, axes = "L", ylab = "Something meaningful") 
 Plot(baseObj, baseObj2, addTo = "scatterplot", axes = TRUE) 
 newPoints <- rnorm(10)
 newPoints2 <- newPoints * 1.2 + rnorm(10)
@@ -258,7 +258,7 @@ Then call `Plot(obj, zoomExtent=newZoom)`.
 This new zoom will persist with rearrangements.
 
 ```{r zoomExtent, eval=TRUE, echo=TRUE, fig.height=2}
-Plot(maps$DEM, zoomExtent = extent(c(-1, 10, -1, 20)), new = TRUE)
+Plot(maps$DEM, zoomExtent = terra::ext(c(-1, 10, -1, 20)), new = TRUE)
 ```
 
 ### `length`

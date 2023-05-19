@@ -993,6 +993,7 @@ setMethod("gpar",
     } else if (isSpatial(grobToPlot) || isSpatVector(grobToPlot)) {
       if (!is.null(sGrob@plotArgs$zoomExtent) &&
           !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
+        browser()
         grobToPlot <- terra::crop(grobToPlot, sGrob@plotArgs$zoomExtent)
       }
 
@@ -1205,12 +1206,11 @@ setMethod(
 
     seekViewport(subPlots, recording = FALSE)
 
-    if (is.list(grobToPlot)) {
+    if (is(grobToPlot, "list")) {
       # This is for base plot calls... the grobToPlot is a call i.e,. a name
       # Because base plotting is not set up to overplot,
       # must plot a white rectangle
 
-      #browser()
       # gf <- try(gridFIG())
       gf <- c(0.0233, 0.9767, 0.0233, 0.8750)
       if (is(gf, "try-error")) {
@@ -1270,7 +1270,8 @@ setMethod(
                                          "zoomExtent", "gpText", "speedup", "size",
                                          "cols", "visualSqueeze", "legend", "legendRange",
                                          "legendText", "zero.color", "length", "arr",
-                                         "na.color", "title", "userProvidedPlotFn"))]
+                                         "na.color", "title", "userProvidedPlotFn",
+                                         "minz", "maxz"))]
         argsPlot1$axes <- isTRUE(sGrob@plotArgs$axes)
         makeSpaceForAxes <- as.numeric(
           !identical(FALSE, quickSubPlots[[subPlots]][[1]]@plotArgs$axes)
@@ -1284,8 +1285,8 @@ setMethod(
         argsPlot1$plotFn <- NULL
 
         # base plots can't use minz, maxz
-        if (isBaseSubPlot)
-          argsPlot1 <- argsPlot1[setdiff(names(argsPlot1), c("minz", "maxz"))]
+        # if (isBaseSubPlot)
+        # argsPlot1 <- argsPlot1[setdiff(names(argsPlot1), c("minz", "maxz"))]
 
         # The actuall plot calls for base plotting
         if (inherits(grobToPlot, "igraph")) {
@@ -1548,7 +1549,7 @@ setMethod(
       }
     } else {
       if (takeFromPlotObj) {
-        if (!inherits(toPlot, "gg") & !inherits(toPlot, "igraph")) {
+        if (!inherits(toPlot, "gg") && !inherits(toPlot, "igraph") && is(toPlot, "list")) {
           grobToPlot <- unlist(toPlot, recursive = FALSE)
         } else {
           grobToPlot <- toPlot
@@ -1595,7 +1596,8 @@ setMethod(
     npixels <- ncell(grobToPlot)
   } else {
     zoom <- zoomExtent
-    npixels <- ncell(crop(grobToPlot, zoom))
+    if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) browser() # need to convert to SpatExtent
+    npixels <- terra::ncell(terra::crop(grobToPlot, zoom))
   }
   if (is.null(legendRange)) {
     legendRange <- NA
@@ -1869,7 +1871,8 @@ setMethod(
 #' plotting down.
 #'
 #' The suggested package `fastshp` can be installed with:
-#' `install.packages("fastshp", repos = "https://rforge.net", type = "source")`.
+#' `install.packages("fastshp", repos = "https://rforge.net", type = "source")` or
+#' for binary `install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")`
 #'
 #' NOTE: you may get errors relating to not having installed the software tools
 #' required for building R packages on your system.
@@ -1945,11 +1948,16 @@ setMethod(
 .plotGrob.default <- function(grobToPlot, col, real, size, minv, maxv,
                               legend, legendText, length, gp = gpar(), gpText,
                               pch, speedup, name, vp, ...) {
+  isPolygon <- if (isSF(grobToPlot)) {
+    any(grepl("POLYGON", sf::st_geometry_type(grobToPlot))) # also capture MULTIPOLYGON
+  } else {
+    is(grobToPlot, "SpatialPolygons") ||
+      (is(grobToPlot, "SpatVector") && identical("polygons", terra::geomtype(grobToPlot)))
+  }
   if (is.matrix(grobToPlot)) {
     outGrob <- pgmatrix(grobToPlot, col, real, size, minv, maxv,
                         legend, legendText, gp, gpText, pch, name, vp, ...)
-  } else if (is(grobToPlot, "SpatialPolygons") ||
-             (is(grobToPlot, "SpatVector") && identical("polygons", terra::geomtype(grobToPlot)))) {
+  } else if (isPolygon) {
     outGrob <- pgSpatialPolygons(grobToPlot, col, size,
                                  legend, gp = gpar(), pch, speedup, name, vp, ...)
   } else if (is(grobToPlot, "SpatialLines") ||
@@ -1959,19 +1967,6 @@ setMethod(
   } else { # for SpatialPoints and points SpatVector
 
     speedupScale <- speedupScale(grobToPlot, lonlatSU = 40 * 4.8e5, SU = 40)
-    # speedupScale <- 40
-    # extGTP <- extent(grobToPlot)
-    # speedupScale <- if (isTRUE(isLonLat(grobToPlot))) {
-    #   pointDistance(
-    #     p1 = c(extGTP$xmax, extGTP$ymax),
-    #     p2 = c(extGTP$xmin, extGTP$ymin),
-    #     lonlat = TRUE
-    #   ) / (4.8e5 * speedupScale)
-    # } else {
-    #   max(extGTP$ymax - extGTP$ymin,
-    #       extGTP$xmax - extGTP$xmin) /
-    #     speedupScale
-    # }
     xyOrd <- coordinates(grobToPlot)
 
     if (!is.null(col)) {
@@ -1986,18 +1981,14 @@ setMethod(
       # thin if greater than 1000 pts
       if (speedup > 0.1) {
         if (requireNamespace("fastshp", quietly = TRUE)) {
+          browser()
           thinned <- data.table(
             thin = fastshp::thin(xyOrd[, 1], xyOrd[, 2],
                                  tolerance = speedupScale * speedup)
           )
           xyOrd <- xyOrd[thinned$thin, ]
         } else {
-          message(
-            paste(
-              "To speed up Polygons plotting using Plot install the fastshp package:\n",
-              "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")."
-            )
-          )
+          message(messFastshape("polygon"))
           if (Sys.info()[["sysname"]] == "Windows") {
             message(
               paste(
@@ -2137,18 +2128,6 @@ pgSpatialPolygons <- function(grobToPlot, col, size,
                               legend, gp = gpar(), pch, speedup, name, vp, ...) {
   speedupScale <- speedupScale(grobToPlot, lonlatSU = 1.2e10, SU = 2.4e4)
 
-  # extGTP <- extent(grobToPlot)
-  # speedupScale <- if (isLonLat(grobToPlot)) {
-  #   pointDistance(
-  #     p1 = c(extGTP$xmax, extGTP$ymax),
-  #     p2 = c(extGTP$xmin, extGTP$ymin),
-  #     lonlat = TRUE
-  #   ) / 1.2e10
-  # } else {
-  #   max(extGTP$ymax - extGTP$ymin,
-  #       extGTP$xmax - extGTP$xmin) / 2.4e4
-  # }
-
   # For speed of plotting
   xyOrd <- thin(grobToPlot, tolerance = speedupScale * speedup,
                            returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
@@ -2246,12 +2225,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
         xy <- xy[thinned, ]
         idLength <- tapply(thinned, rep(1:length(idLength), idLength), sum)
       } else {
-        message(
-          paste(
-            "To speed up Lines plotting using Plot, install the fastshp package:\n",
-            "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")"
-          )
-        )
+        message(messFastshape("lines"))
         if (Sys.info()[["sysname"]] == "Windows") {
           message(
             paste(
@@ -2384,7 +2358,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
       if (z == TRUE) {
         # for spatial objects
         if (!is.null(x[[1]]@plotArgs$zoomExtent)) {
-          x[[1]]@plotArgs$zoomExtent
+          extent(x[[1]]@plotArgs$zoomExtent) # convert to list
         } else {
           ## TODO: temporary workaround to enable Plotting terra rasters
           obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
@@ -2630,7 +2604,7 @@ thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
 thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 1e5,
                                  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...) {
   # For speed of plotting
-  xyOrd <- .fortify(x, matchFortify = FALSE,
+  xyOrd <- ffortify(x, matchFortify = FALSE,
                     simple = returnDataFrame, maxNumPolygons) # a list: out, hole, idLength
   if (is.null(tolerance)) {
     tolerance <- (raster::xmax(x) - raster::xmin(x)) * 0.0001
@@ -2638,9 +2612,10 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
   }
   if (requireNamespace("fastshp", quietly = TRUE)) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
-      message("Some polygons have been simplified")
-      thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y,
+      thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y, # can't use x or y because sometimes (sf) it is capitalized
                              tolerance = tolerance, id = xyOrd[["out"]]$groups)
+      if (any(thinRes))
+        message("Some polygons have been simplified")
 
       set(xyOrd[["out"]], NULL, "thinRes", thinRes)
       xyOrd[["out"]][, keepAll := sum(thinRes) < 4, by = groups]
@@ -2655,8 +2630,9 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
         set(xyOrd[["out"]], NULL, "order", NULL)
         set(xyOrd[["out"]], NULL, "groups", NULL)
 
-        polyList <- split(xyOrd[["out"]], by = c("Polygons", "Polygon"),
-                           flatten = FALSE, keep.by = FALSE)
+        polyList <- split(xyOrd[["out"]],
+                          by = grep("poly|Polygon|Polygons", value = TRUE, colnames(xyOrd[["out"]])),
+                          flatten = FALSE, keep.by = FALSE)
         bb <- lapply(unique(xyOrd$out$Polygons), function(outerI) {
           poly <- lapply(seq(polyList[[outerI]]), function(innerI) {
             #Polygon(as.matrix(polyList[[outerI]][[innerI]][, c("x", "y")]),
@@ -2671,7 +2647,6 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
         if (is(x, "SpatialPolygonsDataFrame")) {
           if (length(x) > maxNumPolygons) {
             dat <- x@data[as.numeric(names1) + 1,]
-            #row.names(dat) <- as.character(seq_len(length(xyOrd)))
           } else {
             dat <- x@data
           }
@@ -2682,12 +2657,7 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
       }
     }
   } else {
-    message(
-      paste(
-        "To speed up Polygons plotting using Plot install the fastshp package:\n",
-        "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")."
-      )
-    )
+    message(messFastshape("polygon"))
     if (Sys.info()[["sysname"]] == "Windows") {
       message(
         paste(
@@ -2699,12 +2669,14 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
   }
   xyOrd <- list(xyOrd = xyOrd[["out"]], hole = xyOrd[["hole"]],
                 idLength = xyOrd[["idLength"]])
+  return(xyOrd)
 }
 
 #' @export
 #' @rdname thin
 thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumPolygons, ...) {
-  if (is(x, "SpatialPolygons") || (isSpatVector(x) && identical("polygons", terra::geomtype(x)))) {
+  if (is(x, "SpatialPolygons") || (isSpatVector(x) && identical("polygons", terra::geomtype(x))) ||
+      isSF(x)) {
     x <- thnSpatialPolygons(x, tolerance = tolerance, returnDataFrame = returnDataFrame,
                             minCoordsToThin = minCoordsToThin,
                             maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...)
@@ -2724,13 +2696,43 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumP
 #' @name fortify
 #' @importFrom data.table setDT set
 #' @keywords internal
-.fortify <- function(x, matchFortify = TRUE, simple = FALSE,
+ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
                      maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
-  if (isSpatVector(x)) {
-    dt <- as.data.table(terra::geom(x))
-    hole <- dt[, any(hole == 1), by = "geom"]$V1
-    idLength <- dt[, list(V1 = .N), by = "geom"][, "V1"]
-    data.table::setnames(dt, "geom", new = "groups")
+  if (isSpatVector(x) || isSF(x)) {
+    if (isSpatVector(x)) {
+      gg <- terra::geom(x)
+      dt <- as.data.table(gg)
+      colNameForGeom <- "geom"
+      rmCols <- c("geom", "part", "hole")
+      aa <- unique(dt[, c("geom", "hole")])
+      set(aa, NULL, "group", seq(NROW(aa)))
+      groups <- dt[aa, on = c("geom", "hole")]$group
+      hole <- dt[, any(hole > 0), by = groups]$V1
+    } else {
+      cc <- sf::st_coordinates(x)
+      dt <- as.data.table(cc)
+      colNameForGeom <- "L2"
+      rmCols <- c("L1", "L2")
+      data.table::setnames(dt, old = c("X", "Y"), new = c("x", "y"))
+      aa <- unique(dt[, ..rmCols])
+      set(aa, NULL, "group", seq(NROW(aa)))
+      groups <- dt[aa, on = rmCols]$group
+      # groups <- as.integer(factor(paste0(dt[["L1"]], "_", dt[["L2"]])))
+      hole <- dt[, any(L1 > 1), by = groups]$V1
+
+    }
+    idLength <- dt[, list(V1 = .N), by = groups][, "V1"]
+    data.table::set(dt, NULL, "groups", groups)
+    # data.table::setnames(dt, colNameForGeom, new = "groups")
+    data.table::set(dt, NULL, "poly", dt[[colNameForGeom]])
+    if (exists("rmCols", inherits = FALSE))
+      set(dt, NULL, rmCols, NULL)
+    out <- list(out = dt, hole = hole, idLength = idLength)
+  } else if (isSF(x)) {
+    browser()
+    # st_sfc(st_polygon(lapply(split(a, by = "L1"), function(y) as.matrix(y)[, 1:2]), dim = "XY"))
+    idLength <- dt[, list(V1 = .N), by = "L2"][, "V1"]
+    data.table::setnames(dt, "L2", new = "groups")
     data.table::set(dt, NULL, "poly", dt$groups)
     out <- list(out = dt, hole = hole, idLength = idLength)
   } else {
@@ -2809,6 +2811,7 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumP
         set(out, NULL, "Polygons", Polygons)
         set(out, NULL, "Polygon", Polygon)
       }
+      browser()
       out <- list(out = out, hole = hole, idLength = idLength)
 
     }
@@ -2825,7 +2828,8 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumP
 }
 
 .createPolygonGrob <- function(gp, xyOrd) {
-  gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
+  # gp$fill[xyOrd[["hole"]]] <- "#FFFFFF00"
+  gp$fill[xyOrd[["hole"]]] <- "white"
   polyGrob <- gTree(children = gList(
     polygonGrob(
       x = xyOrd[["xyOrd"]]$x, y = xyOrd[["xyOrd"]]$y,
@@ -2843,7 +2847,10 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumP
 }
 
 extent <- function(x) {
-  x <- if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) || is(x, "SpatExtent")) {
+  x <- if (inherits(x, "sf")) {
+    x <- as.list(sf::st_bbox(x))
+  } else { #if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
+           # is(x, "SpatExtent") || is(x, "Extent")) {
     if (!is(x, "SpatExtent"))
       if (isSpat(x))
         x <- terra::ext(x)
@@ -2851,11 +2858,6 @@ extent <- function(x) {
       x <- raster::extent(x)
     list(xmin = terra::xmin(x), xmax = terra::xmax(x),
          ymin = terra::ymin(x), ymax = terra::ymax(x))
-  } else if (inherits(x, "sf")) {
-    sf::st_bbox(x)
-    browser()
-  } else {
-    x <- raster::extent(x)
   }
   x
 }
@@ -2864,6 +2866,8 @@ extent <- function(x) {
 coordinates <- function(x) {
   if (isSpat(x) && isVector(x)) {
     terra::crds(x)
+  } else if (isSF(x)) {
+    sf::st_coordinates(x)
   } else {
     raster::coordinates(x)
   }
@@ -2874,7 +2878,11 @@ isLonLat <- function(x) {
   if (isSpat(x)) {
     isTRUE(terra::is.lonlat(x))
   } else {
-    isTRUE(raster::isLonLat(x))
+    if (is(x, "Spatial")) {
+      terra::is.lonlat(sp::proj4string(x))
+    } else {
+      terra::is.lonlat(terra::crs(x)  )
+    }
   }
 }
 
@@ -2926,4 +2934,17 @@ minmaxFn <- function(x, which = "max") {
     stop("To use maxFn or minFn, you need either terra or raster package installed")
 
   out
+}
+
+isFALSE <- function (x)
+  is.logical(x) && length(x) == 1L && !is.na(x) && !x
+
+messFastshape <- function(shape) {
+  paste0(
+    "To speed up ", shape, " plotting using Plot install the fastshp package:\n",
+    "install.packages(\"fastshp\", repos=\"https://rforge.net\", type=\"source\")\n",
+    "or for binary:\n",
+    "install.packages('fastshp', repos = 'https://PredictiveEcology.r-universe.dev')"
+  )
+
 }

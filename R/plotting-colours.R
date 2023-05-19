@@ -171,7 +171,6 @@ getColors <- function(object) {
       if (isRaster(object)) {
         raster::colortable(object) <- pal(n)
       } else {
-        browser()
         coltab(object) <- pal(n)
       }
 
@@ -365,6 +364,11 @@ getColors <- function(object) {
         maxz <- mx
       }
 
+      if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) {
+        zoom <- zoom[c("xmin", "xmax", "ymin", "ymax")] # get in correct SpatExtent order
+        zoom <- unlist(zoom)
+        zoom <- terra::ext(zoom)
+      }
       grobToPlot <- terra::crop(grobToPlot, zoom)
       if (terra::ncell(grobToPlot) > maxpixels)
         # This appears to be modify-in-place on grobToPlot ... that seems bad
@@ -374,7 +378,7 @@ getColors <- function(object) {
       #   x = grobToPlot, size = maxpixels,
       #   ext = zoom, asRaster = TRUE, useGDAL = TRUE
       # )
-      if (length(colorTable) > 0) {
+      if (NROW(colorTable) > 0) {
         cols <- colorTable
       }
     }
@@ -436,16 +440,21 @@ getColors <- function(object) {
     }
 
     colTable <- NULL
+
+    # Coming out of SpatRaster, it may be in rgb matrix
+    if (is.data.frame(cols))
+      cols <- colorsRGBtoHex(cols)
+      # cols <- rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
+
     if (is.null(cols)) {
       # i.e., contained within raster or nothing
       theCols <- getColors(grobToPlot)[[1]]
-      if (length(theCols) > 0) {
+      if (NROW(theCols) > 0) {
         colTable <- theCols
-        lenColTable <- length(colTable)
+        lenColTable <- NROW(colTable)
 
         cols <- if ((nValues > lenColTable) & !isFac) { # nolint
           # not enough colours, use colorRamp
-          # browser()
           colTable
           # colorRampPalette(colTable)(nValues)
         } else if ((nValues <= lenColTable) | isFac) { # nolint
@@ -457,10 +466,10 @@ getColors <- function(object) {
             #   unique() %>%
             #   na.omit() %>%
             #   sort()
-            if (length(factorValues) == length(colTable)) {
+            if (length(factorValues) == NROW(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {
-              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (length(colTable) - 1)) {
+              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (NROW(colTable) - 1)) {
                 # The case where the IDs are numeric representations
                 colTable[factorValues + 1]
               } else {
@@ -490,17 +499,17 @@ getColors <- function(object) {
         cols <- rev(terrain.colors(nValues))
       }
     } else {
-      if (is.character(cols) & (length(cols) == 1)) {
+      if (is.character(cols) & (NROW(cols) == 1)) {
         if (cols %in% rownames(brewer.pal.info)) {
           suppressWarnings({
             cols <- brewer.pal(nValues, cols)
           })
         }
       }
-      cols <- if (nValues > length(cols)) {
+      cols <- if (nValues > NROW(cols)) {
         colorRampPalette(cols)(nValues)
-      } else if (nValues < length(cols)) {
-        if ((minz + nValues - 1)  > length(cols)) { # nolint
+      } else if (nValues < NROW(cols)) {
+        if ((minz + nValues - 1)  > NROW(cols)) { # nolint
           # there are enough colours, but they don't start at 1
           cols[minz:maxz - minz + 1 + max(0, 1 - minz)]
         } else {
@@ -570,11 +579,10 @@ getColors <- function(object) {
     }
 
     if (any(!is.na(legendRange))) {
-      if ((max(legendRange) - min(legendRange) + 1) < length(cols)) { # nolint
+      if ((max(legendRange) - min(legendRange) + 1) < NROW(cols)) { # nolint
       } else {
         if (!is.null(colTable)) {
-          browser()
-          if (length(getColors(grobToPlot)[[1]]) > 0) {
+          if (NROW(getColors(grobToPlot)[[1]]) > 0) {
             cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
           } else {
             # default colour if nothing specified
@@ -583,6 +591,10 @@ getColors <- function(object) {
         }
       }
     }
+
+    # Coming out of SpatRaster, it may be in rgb matrix
+    if (is.data.frame(cols))
+      cols <- colorsRGBtoHex(cols)
 
     # here, the default colour (transparent) for zero:
     # if it is the minimum value, can be overridden.
@@ -604,7 +616,7 @@ getColors <- function(object) {
       # changed from max to length to accommodate zeros or factors not starting at 1
       cols <- rep(na.color, length(factorValues))
       resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
-      if (length(colTable) == length(resequence))
+      if (NROW(colTable) == length(resequence))
         cols[resequence] <- colTable
       else
         cols[resequence] <- colTable[resequence]
@@ -698,3 +710,6 @@ setMethod(
 
   return(myColors)
 })
+
+colorsRGBtoHex <- function(cols)
+  rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)

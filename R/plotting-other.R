@@ -184,15 +184,36 @@ clickValues <- function(n = 1) {
   layNames <- unlist(lapply(objLay, function(x) x[2]))
   for (i in 1:n) {
     ras1 <- eval(parse(text = objNames[i]), envir = coords$envir[[i]])
-    if (!is.na(layNames[i])) {
-      coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-        ras1[[layNames[i]]][cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
-      }))
+    xyCols <- c("x", "y")
+    if (isSF(ras1) || isSpat(ras1)) {
+      crds <- coords$coords[i, xyCols]
+      if (isSF(ras1)) {
+        a <- sf::st_sfc(sf::st_point(as.matrix(crds)))
+        sf::st_crs(a) <- sf::st_crs(ras1)
+        b <- sf::st_intersection(ras1, a)
+        d <- sf::st_drop_geometry(b)
+      } else if (isSpat(ras1)) {
+        a <- terra::vect(crds, geom = xyCols)
+        b <- terra::intersect(ras1, a)
+        d <- as.data.frame(b)
+      }
+      df <- cbind(crds, d)
+      df1 <- merge(df, coords$coords, all = TRUE, sort = FALSE)
+      coords$coords <- df1[!duplicated(df1[, xyCols]), ]
+
+
     } else {
-      coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-        ras1[cellFromXY(ras1, coords$coords[i, 1:2])]
-      }))
+      if (!is.na(layNames[i])) {
+        coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
+          ras1[[layNames[i]]][cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
+        }))
+      } else {
+        coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
+          ras1[cellFromXY(ras1, coords$coords[i, 1:2])]
+        }))
+      }
     }
+
   }
   if (any(raster::is.factor(ras1))) {
     for (i in which(raster::is.factor(ras1)))

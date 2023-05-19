@@ -295,11 +295,12 @@ setMethod(
     isDoCall <- grepl("^do.call", scalls) & grepl("\\<Plot\\>", scalls) & !grepl("test_that", scalls)
 
     dots <- list(...)
-    if (is.list(dots[[1]]) & !isQuickPlottables(dots[[1]]) &
+    if (is(dots[[1]], "list") & !isQuickPlottables(dots[[1]]) &
         # some reason, `inherits` doesn't work here for ggplot
         !inherits(dots[[1]], "communities") & !inherits(dots[[1]], "igraph") &
         !inherits(dots[[1]], "histogram")) {
-      dots <- unlist(dots, recursive = FALSE)
+      dots <- dots[[1]]
+      # dots <- unlist(dots, recursive = FALSE)
       listNames <- names(dots)
       isList <- TRUE
       if (is.null(names(dots)))
@@ -333,17 +334,6 @@ setMethod(
     } else {
       dotObjs <- dots
     }
-
-    ## TODO: temporary workaround to enable Plotting terra rasters
-    # useNames <- names(dotObjs)
-    # dotObjs <- lapply(dotObjs, function(x) {
-    #   if (requireNamespace("terra", quietly = TRUE) && is(x, "SpatRaster")) {
-    #     x <- terra::rast(x)
-    #   }
-    #   x
-    # })
-    # names(dotObjs) <- useNames
-    ## END WORKAROUND
 
     whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
 
@@ -435,7 +425,7 @@ setMethod(
         if (!any(unlist(lapply(dotObjs, function(x) {
           any(unlist(lapply(c("histogram", "igraph", "communities"), function(y) inherits(x, y))))
         })))) #default for histogram is NULL
-          plotArgs$col <- "black"
+          plotArgs$col <- NULL#"black"
       }
       plotArgs$main <- ""
       plotObjs[[1]][[1]]$main <- plotArgs$main
@@ -544,10 +534,11 @@ setMethod(
       updated <- .updateQuickPlot(newQuickPlots, currQuickPlots)
 
       # Do all the plots fit into the device?
+      devResized <- !identical(currQuickPlots$curr@arr@ds, dev.size())
       newArr <- (
         length(updated$curr@quickPlotGrobList) >
           prod(currQuickPlots$curr@arr@columns, currQuickPlots$curr@arr@rows)
-      ) | !identical(currQuickPlots$curr@arr@ds, dev.size())
+      ) | devResized
 
       if (newArr) {
         updated$needPlotting <- lapply(updated$needPlotting, function(x) {
@@ -556,6 +547,8 @@ setMethod(
         updated$isReplot <- lapply(updated$isReplot, function(x) {
           sapply(x, function(y) TRUE)
         })
+        if (devResized)
+          message("Device resized, replotting")
         clearPlot(removeData = FALSE)
       }
     } else if (all(isQuickPlot)) {
@@ -646,6 +639,7 @@ setMethod(
           } else {
             grobToPlot <- plotObjs[[whPlotObj]]
           }
+          browser()
           grobToPlot <- .identifyGrobToPlot(grobToPlot, sGrob, layerFromPlotObj)
 
           isPlotFnAddable <- FALSE
@@ -676,6 +670,7 @@ setMethod(
 
           prevMinMax <- tryCatch(updated$curr@quickPlotGrobList[[subPlots]][[subPlots]]@plotArgs[c("minz", "maxz")],
                                  error = function(x) list(minz = NULL, maxz = NULL))
+          if (exists("a") && subPlots == "landscape$habitatQuality") browser()
           zMat <- .preparePlotGrob(grobToPlot, sGrob, layerFromPlotObj,
                                    arr = updated$curr@arr, newArr,
                                    prevMinMax = prevMinMax,
@@ -853,7 +848,7 @@ isQuickPlotObject <- function(x) {
 }
 
 isQuickPlottables <- function(x) {
-  isQuickPlotObject(x) || inherits(x, ".quickPlot")
+  (isQuickPlotObject(x) || inherits(x, ".quickPlot")) # && !is(x, "SpatVector") && !isSF(x)
 }
 
 isSpatial <- function(x) inherits(x, "Spatial")

@@ -23,12 +23,10 @@ Authors@R: c(
 Depends:
     R (>= 4.0)
 Imports:
-    backports,
     data.table (>= 1.10.4),
     fpCompare,
     grDevices,
     grid,
-    igraph,
     methods,
     RColorBrewer,
     stats
