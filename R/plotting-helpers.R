@@ -666,22 +666,32 @@ setMethod(
 #'
 #' @example inst/examples/example_makeLines.R
 #'
-setGeneric("makeLines", function(from, to) {
-  standardGeneric("makeLines")
-})
+makeLines <- function(from, to) {
+  UseMethod("makeLines")
+}
 
 #' @export
-#' @rdname makeLines
-setMethod(
-  "makeLines",
-  signature = c("SpatialPoints", "SpatialPoints"),
-  definition = function(from, to) {
-    SpatialLines(lapply(seq_len(length(from)), function(x) {
-      Lines(list(Line(
-        coords = rbind(coordinates(from)[x, ], coordinates(to)[x, ])
-      )), ID = x)
-    }), proj4string = crs(from)) # nolint
-})
+makeLines.default <-
+  #signature = c("SpatialPoints", "SpatialPoints"),
+  # definition =
+  function(from, to) {
+    if (is(from, "Spatial") || is(to, "Spatial")) {
+      if (!requireNamespace("sp"))
+        stop("Need to `install.packages('sp') or use SpatVector class")
+      ccrds <- rbind(sp::coordinates(from)[x, ], sp::coordinates(to)[x, ])
+      SpatialLines(lapply(seq_len(length(from)), function(x) {
+        Lines(list(Line(
+          coords = ccrrds
+        )), ID = x)
+      }), proj4string = crs(from)) # nolint
+    } else {
+      ccrds <- rbind(cbind(object = seq(NROW(from)), terra::crds(from)),
+                     cbind(object = seq(NROW(to)), terra::crds(to)))
+      ccrds <- ccrds[order(ccrds[, "object"]), ]
+      terra::vect(ccrds, type = "lines", crs = crs(from))
+    }
+  }
+
 
 #' Parse arguments and find environments
 #'
