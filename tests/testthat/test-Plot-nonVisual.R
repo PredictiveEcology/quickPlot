@@ -1,5 +1,5 @@
 test_that("Plotting types without visual checking works", {
-  withr::local_package("terra")
+  testInit("terra")
   r1 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
                        vals = sample(1:4, replace = TRUE, size = 100), res = 1)
   r2 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,

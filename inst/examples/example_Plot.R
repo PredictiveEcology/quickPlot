@@ -20,11 +20,11 @@ habitatQuality2 <- landscape$habitatQuality ^ 0.3
 names(habitatQuality2) <- "habitatQuality2"
 
 # make a SpatialPoints object
-caribou <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e2, -50, 50),
-                                            y = stats::runif(1e2, -50, 50)))
+caribou <- terra::vect(cbind(x = stats::runif(1e2, -50, 50),
+                             y = stats::runif(1e2, -50, 50)))
 
 # use factor raster to give legends as character strings
-ras <- raster(extent(0, 3, 0, 4), vals = sample(1:4, size = 12, replace = TRUE), res = 1)
+ras <- rast(ext(0, 3, 0, 4), vals = sample(1:4, size = 12, replace = TRUE), res = 1)
 
 # needs to have a data.frame with ID as first column - see ?raster::ratify
 levels(ras) <- data.frame(ID = 1:4, Name = paste0("Level", 1:4))
@@ -32,22 +32,20 @@ Plot(ras, new = TRUE)
 
 # Arbitrary values for factors, including zero and not all levels represented in raster
 levs <- c(0:5, 7:12)
-ras <- raster(extent(0, 3, 0, 2), vals = c(1, 1, 3, 5, 8, 9), res = 1)
+ras <- rast(ext(0, 3, 0, 2), vals = c(1, 1, 3, 5, 8, 9), res = 1)
 levels(ras) <- data.frame(ID = levs, Name = LETTERS[c(1:3, 8:16)])
 Plot(ras, new = TRUE)
 
 # Arbitrary values for factors, including zero and not all levels represented in raster
 levs <- c(0:5, 7:23)
-ras <- raster(extent(0, 3, 0, 2), vals = c(1, 1, 3, 5, 8, 9), res = 1)
+ras <- rast(ext(0, 3, 0, 2), vals = c(1, 1, 3, 5, 8, 9), res = 1)
 levels(ras) <- data.frame(ID = levs, Name = LETTERS[1:23])
 Plot(ras, new = TRUE)
 
 # SpatialPolygons
-sr1 <- sp::Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
-sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
-srs1 <- sp::Polygons(list(sr1), "s1")
-srs2 <- sp::Polygons(list(sr2), "s2")
-spP <- sp::SpatialPolygons(list(srs1, srs2), 1:2)
+sr1 <- cbind(object = 1, cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
+sr2 <- cbind(objectx = 2, cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
+spP <- vect(rbind(sr1, sr2))
 
 clearPlot()
 Plot(ras)
@@ -65,7 +63,7 @@ Plot(caribou, new = FALSE)
 #  unique names based on object name
 Plot(landscape, caribou, maps$DEM)
 
-# can mix stacks, rasters, SpatialPoint*
+# can mix SpatRaster, SpatVector, RasterStack, RasterLayer, Spatial*
 Plot(landscape, habitatQuality2, caribou)
 
 # can mix stacks, rasters, SpatialPoint*, and SpatialPolygons*

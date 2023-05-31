@@ -215,8 +215,8 @@ clickValues <- function(n = 1) {
     }
 
   }
-  if (any(raster::is.factor(ras1))) {
-    for (i in which(raster::is.factor(ras1)))
+  if (any(terra::is.factor(ras1))) {
+    for (i in which(terra::is.factor(ras1)))
       coords$coords$value <- factorValues(ras1[[i]], coords$coords$value)
   }
   return(coords$coords)

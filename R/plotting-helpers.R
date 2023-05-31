@@ -1216,7 +1216,7 @@ setMethod(
 
     seekViewport(subPlots, recording = FALSE)
 
-    if (is(grobToPlot, "list")) {
+    if (is(grobToPlot, "list") || is(grobToPlot, "gg")) {
       # This is for base plot calls... the grobToPlot is a call i.e,. a name
       # Because base plotting is not set up to overplot,
       # must plot a white rectangle
@@ -1356,9 +1356,9 @@ setMethod(
       # Extract legend text if the raster is a factored raster
       if (is.null(legendText)) {
         if (is.null(sGrob@plotArgs$legendTxt)) {
-          if (any(raster::is.factor(grobToPlot))) {
+          if (any(terra::is.factor(grobToPlot))) {
             if (all(na.omit(grobToPlot[]%%1)==0)) {
-              sGrob@plotArgs$legendTxt <- raster::levels(grobToPlot)[[1]]
+              sGrob@plotArgs$legendTxt <- terra::levels(grobToPlot)[[1]]
             }
           }
         }
@@ -1991,7 +1991,6 @@ setMethod(
       # thin if greater than 1000 pts
       if (speedup > 0.1) {
         if (requireNamespace("fastshp", quietly = TRUE)) {
-          browser()
           thinned <- data.table(
             thin = fastshp::thin(xyOrd[, 1], xyOrd[, 2],
                                  tolerance = speedupScale * speedup)
@@ -2617,7 +2616,7 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
   xyOrd <- ffortify(x, matchFortify = FALSE,
                     simple = returnDataFrame, maxNumPolygons) # a list: out, hole, idLength
   if (is.null(tolerance)) {
-    tolerance <- (raster::xmax(x) - raster::xmin(x)) * 0.0001
+    tolerance <- (terra::xmax(x) - terra::xmin(x)) * 0.0001
     message("tolerance set to ", tolerance)
   }
   if (requireNamespace("fastshp", quietly = TRUE)) {
@@ -2821,7 +2820,6 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
         set(out, NULL, "Polygons", Polygons)
         set(out, NULL, "Polygon", Polygon)
       }
-      browser()
       out <- list(out = out, hole = hole, idLength = idLength)
 
     }
