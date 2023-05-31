@@ -29,7 +29,9 @@ Imports:
     grid,
     methods,
     RColorBrewer,
-    stats
+    Require,
+    stats,
+    terra
 Suggests:
     covr,
     fastshp,
@@ -41,7 +43,6 @@ Suggests:
     sf,
     sp,
     spelling,
-    terra,
     testthat (>= 1.0.2),
     visualTest
 Remotes:
@@ -67,3 +68,4 @@ Collate:
     'quickPlot-package.R'
     'testing-helpers.R'
     'zzz.R'
+Config/testthat/edition: 3

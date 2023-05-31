@@ -99,7 +99,7 @@ getColors <- function(object) {
     }
 
     #if (missing(n)) {
-      isFac <- if (!raster::is.factor(object)) {
+      isFac <- if (!terra::is.factor(object)) {
         FALSE
       } else {
         if (all(na.omit(object[]) %% 1 == 0)) {
@@ -442,6 +442,7 @@ getColors <- function(object) {
     colTable <- NULL
 
     # Coming out of SpatRaster, it may be in rgb matrix
+    browser()
     if (is.data.frame(cols))
       cols <- colorsRGBtoHex(cols)
       # cols <- rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
@@ -467,13 +468,16 @@ getColors <- function(object) {
             #   na.omit() %>%
             #   sort()
             if (length(factorValues) == NROW(colTable)) {
-              colTable[seq.int(length(factorValues))]
+              if (!is.data.frame(colTable)) browser()
+              colTable[seq.int(length(factorValues)), , drop = FALSE]
             } else {
               if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (NROW(colTable) - 1)) {
                 # The case where the IDs are numeric representations
-                colTable[factorValues + 1]
+                if (!is.data.frame(colTable)) browser()
+                colTable[factorValues + 1, ]
               } else {
-                colTable[c(1, 1 + factorValues)] # CHANGE HERE
+                if (!is.data.frame(colTable)) browser()
+                colTable[c(1, 1 + factorValues), ] # CHANGE HERE
               }
 
             }
@@ -483,11 +487,14 @@ getColors <- function(object) {
         } else if (nValues <= (lenColTable - 1)) {
           # one more colour than needed:
           #  assume bottom is NA
+          if (!is.data.frame(colTable)) browser()
+
           na.color <- colTable[1] # nolint
           colTable[minz:maxz - minz + 2]
         } else if (nValues <= (lenColTable - 2)) {
           # two more colours than needed,
           #  assume bottom is NA, second is white
+          if (!is.data.frame(colTable)) browser()
           na.color <- colTable[1] # nolint
           zero.color <- colTable[2] # nolint
           colTable[minz:maxz - minz + 3]
@@ -583,6 +590,7 @@ getColors <- function(object) {
       } else {
         if (!is.null(colTable)) {
           if (NROW(getColors(grobToPlot)[[1]]) > 0) {
+            if (!is.data.frame(colTable)) browser()
             cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
           } else {
             # default colour if nothing specified
@@ -711,5 +719,10 @@ setMethod(
   return(myColors)
 })
 
-colorsRGBtoHex <- function(cols)
-  rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
+colorsRGBtoHex <- function(cols) {
+  browser()
+  if ("alpha" %in% colnames(cols))
+    rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
+  else
+    rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255)
+}

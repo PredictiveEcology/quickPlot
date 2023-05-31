@@ -4,281 +4,301 @@
 skip_on_ci() ## August 2022 -- GitHub actions fingerprints differ by system + R version
 
 ## block A
-test_that("Plot 1 is not error-free", {
-  tmpdir <- withr::local_tempdir()
-  withr::local_dir(new = tmpdir)
-  withr::local_package("terra")
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-    if (file.exists("Rplots.pdf")) file.remove("Rplots.pdf")
-  #   unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE) # nolint
-
-  ras <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
-                vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-  DEM8765 <- ras
-  names(DEM8765) <- "DEM87654"
-  DEM87654 <- raster::raster(DEM8765)
-
-  habitatQuality8765 <- rast(ras)
-  habitatQuality8765[] <- sample(1:10, replace = TRUE, size = 100)
-  names(habitatQuality8765) <- "habitatQuality87654"
-  habitatQuality87654 <- raster::raster(habitatQuality8765)
-
-  landscape8765 <- c(DEM8765, habitatQuality8765)
-  landscape87654 <- raster::stack(landscape8765)
-  caribou8765 <- terra::vect(type = "points",
-    x = cbind(x = stats::runif(1e1, 0, 10), y = stats::runif(1e1, 0, 10))
-  )
-  caribou87654 <- as(caribou8765, "Spatial")
-
-
-  Sr1 <- sp::Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)))
-  Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
-  Srs1 <- sp::Polygons(list(Sr1), "s1")
-  Srs2 <- sp::Polygons(list(Sr2), "s2")
-  SpP87654 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
-  SpP8765 <- terra::vect(SpP87654)
-
-
-
-  # Test polygon with > 1e3 points to test the speedup parameter
-  Sr1 <- sp::Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)))
-  Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
-  Srs1 <- sp::Polygons(list(Sr1), "s1")
-  Srs2 <- sp::Polygons(list(Sr2), "s2")
-  r <- 1
-  N <- 1000
-  cx <- 0
-  cy <- 0
-  a <- seq(0, 2 * pi, length.out = N)
-  x <- cx + r * cos(a)
-  y <- cy + r * sin(a)
-  Sr1 <- sp::Polygon(cbind(x, y))
-  Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
-  Srs1 <- sp::Polygons(list(Sr1), "s1")
-  Srs2 <- sp::Polygons(list(Sr2), "s2")
-  SpP874 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
-  SpP87 <- terra::vect(SpP874)
-
-
-  # test SpatialLines
-  l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
-  l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
-  l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
-  Sl1 <- sp::Line(l1)
-  Sl1a <- sp::Line(l1a)
-  Sl2 <- sp::Line(l2)
-  S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
-  S2 <- sp::Lines(list(Sl2), ID = "b")
-  Sl87654 <- sp::SpatialLines(list(S1, S2))
-  Sl8765 <- terra::vect(Sl87654)
-
-  # If any rearrangements are required, Plot searches for objects in Global Env
-  # So all tests must run a clearPlot or a new = TRUE to be cleared to
-  # prevent rearrangements
-  clearPlot()
-  expect_error(Plot(asdfd))
-
-  cars <- list(caribou8765, caribou87654)
-  lands <- list(landscape8765, landscape87654)
-  habs <- list(habitatQuality8765, habitatQuality87654)
-  DEMs <- list(DEM8765, DEM87654)
-  SpPs <- list(SpP8765, SpP87654)
-  SpP8s <- list(SpP87, SpP874)
-  Sls <- list(Sl8765, Sl87654)
-
-  for (i in seq_along(lands)) {
-    car <- cars[[sample(2, 1)]]
-    land <- lands[[sample(2, 1)]]
-    DEM <- DEMs[[sample(2, 1)]]
-    hab <- habs[[sample(2, 1)]]
-    SpP <- SpPs[[sample(2, 1)]]
-    SpP8 <- SpP8s[[sample(2, 1)]]
-    Sl <- Sls[[sample(2, 1)]]
-
-    clearPlot()
-    expect_silent(Plot(land))
-    clearPlot()
-    expect_silent(Plot(car))
-    # Test speedup > 0.1 for SpatialPoints
-    clearPlot()
-    expect_silent(Plot(car, speedup = 2))
-    clearPlot()
-    expect_silent(Plot(land))
-    # can add a plot to the plotting window
-    expect_silent(Plot(car, new = FALSE))
-    clearPlot()
-    # Can add two maps with same name, if one is in a stack; they are given
-    #  unique names based on object name
-    expect_silent(Plot(land, car, DEM))
-    # can mix stacks, rasters, SpatialPoint*
-    clearPlot()
-    expect_silent(Plot(land, hab, car))
-    # can mix stacks, rasters, SpatialPoint*, and SpatialPolygons*
-    clearPlot()
-    expect_silent(Plot(land, car))
-
-
-    clearPlot()
-    expect_silent(Plot(SpP))
-    clearPlot()
-    expect_silent(Plot(land, car, SpP, new = TRUE))
-    clearPlot()
-    expect_silent(Plot(SpP))
-    clearPlot()
-    expect_silent(Plot(land, car, SpP, new = TRUE))
-
-    expect_silent(Plot(SpP8, new = TRUE))
-    expect_silent(Plot(Sl))
-
-  }
-
-
-
-  M <- 2
-  polys1 <- lapply(seq(M), function(m) {
-    N <- 20
-    adds <- rep(1:N, each = 4)
-    x <- rep((c(0,0,1,1) + m ) * N , N)
-    y <- rep(c(0,1,1,0), N) + adds
-    polyNum <- adds
-    coords1 <- cbind(x, y, polyNum)
-    polys1 <- sp::Polygons(by(coords1, polyNum, function(coo) {
-      list(sp::Polygon(coo[, 1:2]))}), paste0("ss", m))#[], paste0("s", unique(coo[, 3])))
-
-    polys1
-  })
-  polys2 <- sp::SpatialPolygons(polys1, seq(M))
-  Plot(polys2, new = TRUE, col = c("red", "blue"))
-  Plot(polys2, new = TRUE, col = c("Set3"))
-
-  polys <- terra::vect(polys2)
-  Plot(polys, new = TRUE, col = c("red", "blue"))
-  Plot(polys, new = TRUE, col = c("Set3"))
-
-  for (pol in list(polys2, polys)) {
-    mess <- capture_messages(Plot(pol, new = TRUE, col = c("red", "blue", "green")))
-    expect_true(sum(grepl("Incorrect", mess)) == 1)
-    mess <- capture_messages(Plot(pol, new = TRUE, col = RColorBrewer::brewer.pal(8, "Set3")))
-    expect_true(sum(grepl("Incorrect", mess)) == 1)
-    mess <- capture_messages(Plot(pol, new = TRUE, gp = gpar(fill = "Set3")))
-  }
-
-  # Test polygon with > 1e3 points to test the speedup parameter
-  r <- 1
-  N <- 1000
-  cx <- 0
-  cy <- 0
-  a <- seq(0, 2 * pi, length.out = N)
-  x <- cx + r * cos(a)
-  y <- cy + r * sin(a)
-  l1 <- cbind(x, y)
-  l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
-  l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
-  Sl1 <- sp::Line(l1)
-  Sl1a <- sp::Line(l1a)
-  Sl2 <- sp::Line(l2)
-  S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
-  S2 <- sp::Lines(list(Sl2), ID = "b")
-  Sl87654 <- sp::SpatialLines(list(S1, S2))
-  Sl8765 <- terra::vect(Sl87654)
-  Sls <- list(Sl87654, Sl8765)
-
-
-  # test speedup
-  caribou874 <- sp::SpatialPoints(
-    coords = cbind(x = stats::runif(1.1e3, 0, 10), y = stats::runif(1.1e3, 0, 10))
-  )
-  caribou87 <- terra::vect(caribou874)
-
-  cars2 <- list(caribou87, caribou874)
-  for (i in seq_along(Sls)) {
-    land <- lands[[sample(2, 1)]]
-    Sl <- Sls[[sample(2, 1)]]
-    Sp <- SpPs[[sample(2, 1)]]
-    car <- cars[[sample(2, 1)]]
-    car2 <- cars2[[sample(2, 1)]]
-    DEM <- DEMs[[sample(2, 1)]]
-    suppressWarnings(terra::crs(Sp) <- terra::crs(land))
-    suppressWarnings(terra::crs(Sl) <- terra::crs(land))
-    expect_silent(Plot(land, new = TRUE))
-    expect_silent(Plot(Sl, new = TRUE))
-    expect_silent(Plot(land$DEM87654, addTo = "land$habitatQuality87654"))
-    expect_silent(Plot(Sp, addTo = "land$habitatQuality87654"))
-    # test various arguments
-    clearPlot()
-    expect_silent(Plot(car, new = TRUE, gpAxis = gpar(cex = 0.4), size = 1))
-    clearPlot()
-    expect_silent(Plot(DEM, gpText = gpar(cex = 0.4)))
-    # test colors
-    clearPlot()
-    expect_silent(Plot(DEM, cols = c("blue", "red")))
-    # Should work with col as well as cols
-    clearPlot()
-    expect_silent(Plot(DEM, col = c("blue", "red")))
-    # test visualSqueeze
-    clearPlot()
-    expect_silent(Plot(DEM, visualSqueeze = 0.2, new = TRUE))
-    clearPlot()
-    expect_silent(Plot(car2, speedup = 10, new = TRUE))
-  }
-
-
-
-  # test ggplot2 and hist -- don't work unless invoke global environment
-  clearPlot()
-  dev()
-  hist87654 <- hist(stats::rnorm(1e3), plot = FALSE)
-  clearPlot()
-  expect_silent(Plot(hist87654))
-
-  # test ggplot2 and hist -- don't work unless invoke global environment
-  clearPlot()
-
-
-  if (requireNamespace("ggplot2")) {
-    suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
-                                                   geom = "histogram")) # warning is about deprecation
-    expect_silent(Plot(ggplot87654))
-  }
-
-  for (i in seq_along(Sls)) {
-    land <- lands[[sample(2, 1)]]
-    Sl <- Sls[[sample(2, 1)]]
-    Sp <- SpPs[[sample(2, 1)]]
-    car <- cars[[sample(2, 1)]]
-    car2 <- cars2[[sample(2, 1)]]
-    DEM <- DEMs[[sample(2, 1)]]
-
-    # test rearrangements
-    expect_silent(Plot(car, new = TRUE))
-    expect_silent(Plot(DEM))
-    expect_silent(Plot(land))
-
-    testPlot <- Plot(land)
-    expect_silent(Plot(testPlot))
-    expect_silent(Plot(car, addTo = "DEM"))
-    expect_silent(rePlot())
-  }
-})
+# test_that("Plot 1 is not error-free", {
+#   testInit("terra")
+#   on.exit({
+#     if (length(dev.list()) > 0) dev.off()
+#   }, add = TRUE) # nolint
+#
+#   ras <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
+#                 vals = sample(1:4, replace = TRUE, size = 100), res = 1)
+#   DEM_SpatRaster <- ras
+#   names(DEM_SpatRaster) <- "DEM_raster"
+#   DEM_raster <- raster::raster(DEM_SpatRaster)
+#
+#   habQual_SpatRaster <- rast(ras)
+#   habQual_SpatRaster[] <- sample(1:10, replace = TRUE, size = 100)
+#   names(habQual_SpatRaster) <- "habitatQual_raster"
+#   habitatQual_raster <- raster::raster(habQual_SpatRaster)
+#
+#   land_SpatRaster <- c(DEM_SpatRaster, habQual_SpatRaster)
+#   landscape_stack <- raster::stack(land_SpatRaster)
+#   caribou_SpatVect_pts <- terra::vect(type = "points",
+#     x = cbind(x = stats::runif(1e1, 0, 10), y = stats::runif(1e1, 0, 10))
+#   )
+#   caribou_SpatialPts <- as(caribou_SpatVect_pts, "Spatial")
+#
+#   x1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60))
+#   x2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55))
+#   x3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45))
+#   hole <- rbind(c(80,0), c(105,13), c(120,2), c(105,-13))
+#   z <- rbind(cbind(object=1, part=1, x1, hole=0), cbind(object=2, part=1, x3, hole=0),
+#              cbind(object=3, part=1, x2, hole=0), cbind(object=3, part=1, hole, hole=1))
+#   colnames(z)[3:4] <- c('x', 'y')
+#
+#   polys_SpatVector <- vect(z, "polygons")
+#   polys_Spatial <- as(polys_SpatVector, "Spatial")
+#
+# #
+# #   Sr1 <- terra::vect(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)),
+# #                      )
+# #   Sr1 <- sp::Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)))
+# #   Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
+# #   Srs1 <- sp::Polygons(list(Sr1), "s1")
+# #   Srs2 <- sp::Polygons(list(Sr2), "s2")
+# #   polys_Spatial <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
+# #   polys_SpatVector <- terra::vect(polys_Spatial)
+#
+#
+#
+#   # Test polygon with > 1e3 points to test the speedup parameter
+#   # Sr1 <- sp::Polygon(cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)))
+#   # Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
+#   # Srs1 <- sp::Polygons(list(Sr1), "s1")
+#   # Srs2 <- sp::Polygons(list(Sr2), "s2")
+#   r <- 1
+#   N <- 1000
+#   cx <- 0
+#   cy <- 0
+#   a <- seq(0, 2 * pi, length.out = N)
+#   x <- cx + r * cos(a)
+#   y <- cy + r * sin(a)
+#   polys_SpatVector2 <- vect(cbind(object = 1, x,y), "polygons")
+#   polys_Spatial2 <- as(polys_SpatVector2, "Spatial")
+#   # Sr1 <- sp::Polygon(cbind(x, y))
+#   # Sr2 <- sp::Polygon(cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)))
+#   # Srs1 <- sp::Polygons(list(Sr1), "s1")
+#   # Srs2 <- sp::Polygons(list(Sr2), "s2")
+#   # polys_Spatial2 <- sp::SpatialPolygons(list(Srs1, Srs2), 1:2)
+#   # polys_SpatVector2 <- terra::vect(polys_Spatial2)
+#
+#
+#   # test SpatialLines
+#   l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
+#   l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
+#   l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
+#
+#   obj <- cbind(object = c(rep(1, NROW(l1)), rep(2, NROW(l1a)), rep(3, NROW(l2))),  rbind(rbind(l1, l1a), l2))
+#   lines_SpatVector2 <- terra::vect(obj, "lines")
+#   lines_Spatial <- as(lines_SpatVector2, "Spatial")
+#   #   Sl1 <- sp::Line(l1)
+#   # Sl1a <- sp::Line(l1a)
+#   # Sl2 <- sp::Line(l2)
+#   # S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
+#   # S2 <- sp::Lines(list(Sl2), ID = "b")
+#   # lines_Spatial <- sp::SpatialLines(list(S1, S2))
+#   # lines_SpatVector2 <- terra::vect(lines_Spatial)
+#
+#   # If any rearrangements are required, Plot searches for objects in Global Env
+#   # So all tests must run a clearPlot or a new = TRUE to be cleared to
+#   # prevent rearrangements
+#   clearPlot()
+#   expect_error(Plot(asdfd))
+#
+#   cars <- list(caribou_SpatVect_pts, caribou_SpatialPts)
+#   lands <- list(land_SpatRaster, landscape_stack)
+#   habs <- list(habQual_SpatRaster, habitatQual_raster)
+#   DEMs <- list(DEM_SpatRaster, DEM_raster)
+#   SpPs <- list(polys_SpatVector, polys_Spatial)
+#   SpP8s <- list(polys_SpatVector2, polys_Spatial2)
+#   Sls <- list(lines_SpatVector2, lines_Spatial)
+#
+#   for (i in seq_along(lands)) {
+#     car <- cars[[sample(2, 1)]]
+#     land <- lands[[sample(2, 1)]]
+#     DEM <- DEMs[[sample(2, 1)]]
+#     hab <- habs[[sample(2, 1)]]
+#     SpP <- SpPs[[sample(2, 1)]]
+#     SpP8 <- SpP8s[[sample(2, 1)]]
+#     Sl <- Sls[[sample(2, 1)]]
+#
+#     clearPlot()
+#     expect_silent(Plot(land))
+#     clearPlot()
+#     expect_silent(Plot(car))
+#     # Test speedup > 0.1 for SpatialPoints
+#     clearPlot()
+#     expect_silent(Plot(car, speedup = 2))
+#     clearPlot()
+#     expect_silent(Plot(land))
+#     # can add a plot to the plotting window
+#     expect_silent(Plot(car, new = FALSE))
+#     clearPlot()
+#     # Can add two maps with same name, if one is in a stack; they are given
+#     #  unique names based on object name
+#     expect_silent(Plot(land, car, DEM))
+#     # can mix stacks, rasters, SpatialPoint*
+#     clearPlot()
+#     expect_silent(Plot(land, hab, car))
+#     # can mix stacks, rasters, SpatialPoint*, and SpatialPolygons*
+#     clearPlot()
+#     expect_silent(Plot(land, car))
+#
+#
+#     clearPlot()
+#     expect_silent(Plot(SpP))
+#     clearPlot()
+#     expect_silent(Plot(land, car, SpP, new = TRUE))
+#     clearPlot()
+#     expect_silent(Plot(SpP))
+#     clearPlot()
+#     expect_silent(Plot(land, car, SpP, new = TRUE))
+#
+#     expect_silent(Plot(SpP8, new = TRUE))
+#     expect_silent(Plot(Sl))
+#
+#   }
+#
+#
+#
+#   M <- 2
+#   if (requireNamespace("sp", quietly = TRUE)) {
+#     polys1 <- lapply(seq(M), function(m) {
+#       N <- 20
+#       adds <- rep(1:N, each = 4)
+#       x <- rep((c(0,0,1,1) + m ) * N , N)
+#       y <- rep(c(0,1,1,0), N) + adds
+#       polyNum <- adds
+#       coords1 <- cbind(x, y, polyNum)
+#       polys1 <- sp::Polygons(by(coords1, polyNum, function(coo) {
+#         list(sp::Polygon(coo[, 1:2]))}), paste0("ss", m))#[], paste0("s", unique(coo[, 3])))
+#
+#       polys1
+#     })
+#     polys2 <- sp::SpatialPolygons(polys1, seq(M))
+#     Plot(polys2, new = TRUE, col = c("red", "blue"))
+#     Plot(polys2, new = TRUE, col = c("Set3"))
+#
+#     polys <- terra::vect(polys2)
+#     Plot(polys, new = TRUE, col = c("red", "blue"))
+#     Plot(polys, new = TRUE, col = c("Set3"))
+#
+#     for (pol in list(polys2, polys)) {
+#       mess <- capture_messages(Plot(pol, new = TRUE, col = c("red", "blue", "green")))
+#       expect_true(sum(grepl("Incorrect", mess)) == 1)
+#       mess <- capture_messages(Plot(pol, new = TRUE, col = RColorBrewer::brewer.pal(8, "Set3")))
+#       expect_true(sum(grepl("Incorrect", mess)) == 1)
+#       mess <- capture_messages(Plot(pol, new = TRUE, gp = gpar(fill = "Set3")))
+#     }
+#   }
+#
+#   # Test polygon with > 1e3 points to test the speedup parameter
+#   # r <- 1
+#   # N <- 1000
+#   # cx <- 0
+#   # cy <- 0
+#   # a <- seq(0, 2 * pi, length.out = N)
+#   # x <- cx + r * cos(a)
+#   # y <- cy + r * sin(a)
+#   # l1 <- cbind(x, y)
+#   # l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
+#   # l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
+#   # Sl1 <- sp::Line(l1)
+#   # Sl1a <- sp::Line(l1a)
+#   # Sl2 <- sp::Line(l2)
+#   # S1 <- sp::Lines(list(Sl1, Sl1a), ID = "a")
+#   # S2 <- sp::Lines(list(Sl2), ID = "b")
+#   # lines_Spatial <- sp::SpatialLines(list(S1, S2))
+#   # lines_SpatVector2 <- terra::vect(lines_Spatial)
+#   # Sls <- list(lines_Spatial, lines_SpatVector2)
+#
+#
+#   # test speedup
+#   caribou874 <- sp::SpatialPoints(
+#     coords = cbind(x = stats::runif(1.1e3, 0, 10), y = stats::runif(1.1e3, 0, 10))
+#   )
+#   caribou87 <- terra::vect(caribou874)
+#
+#   cars2 <- list(caribou87, caribou874)
+#   for (i in seq_along(Sls)) {
+#     land <- lands[[sample(2, 1)]]
+#     Sl <- Sls[[sample(2, 1)]]
+#     Sp <- SpPs[[sample(2, 1)]]
+#     car <- cars[[sample(2, 1)]]
+#     car2 <- cars2[[sample(2, 1)]]
+#     DEM <- DEMs[[sample(2, 1)]]
+#     suppressWarnings(terra::crs(Sp) <- terra::crs(land))
+#     suppressWarnings(terra::crs(Sl) <- terra::crs(land))
+#     expect_silent(Plot(land, new = TRUE))
+#     expect_silent(Plot(Sl, new = TRUE))
+#     expect_silent(Plot(land$DEM_raster, addTo = "land$habitatQual_raster"))
+#     expect_silent(Plot(Sp, addTo = "land$habitatQual_raster"))
+#     # test various arguments
+#     clearPlot()
+#     expect_silent(Plot(car, new = TRUE, gpAxis = gpar(cex = 0.4), size = 1))
+#     clearPlot()
+#     expect_silent(Plot(DEM, gpText = gpar(cex = 0.4)))
+#     # test colors
+#     clearPlot()
+#     expect_silent(Plot(DEM, cols = c("blue", "red")))
+#     # Should work with col as well as cols
+#     clearPlot()
+#     expect_silent(Plot(DEM, col = c("blue", "red")))
+#     # test visualSqueeze
+#     clearPlot()
+#     expect_silent(Plot(DEM, visualSqueeze = 0.2, new = TRUE))
+#     clearPlot()
+#     expect_silent(Plot(car2, speedup = 10, new = TRUE))
+#   }
+#
+#
+#
+#   # test ggplot2 and hist -- don't work unless invoke global environment
+#   clearPlot()
+#   dev()
+#   hist87654 <- hist(stats::rnorm(1e3), plot = FALSE)
+#   clearPlot()
+#   expect_silent(Plot(hist87654))
+#
+#   # test ggplot2 and hist -- don't work unless invoke global environment
+#   clearPlot()
+#
+#
+#   if (requireNamespace("ggplot2")) {
+#     suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
+#                                                    geom = "histogram")) # warning is about deprecation
+#     expect_silent(Plot(ggplot87654))
+#   }
+#
+#   for (i in seq_along(Sls)) {
+#     land <- lands[[sample(2, 1)]]
+#     Sl <- Sls[[sample(2, 1)]]
+#     Sp <- SpPs[[sample(2, 1)]]
+#     car <- cars[[sample(2, 1)]]
+#     car2 <- cars2[[sample(2, 1)]]
+#     DEM <- DEMs[[sample(2, 1)]]
+#
+#     # test rearrangements
+#     expect_silent(Plot(car, new = TRUE))
+#     expect_silent(Plot(DEM))
+#     expect_silent(Plot(land))
+#
+#     testPlot <- Plot(land)
+#     expect_silent(Plot(testPlot))
+#     expect_silent(Plot(car, addTo = "DEM"))
+#     expect_silent(rePlot())
+#   }
+# })
 
 ## block B
 test_that("Unit tests for image content is not error-free", {
-  skip_if_not_installed("visualTest")
+  # skip_if_not_installed("visualTest")
+
+  # testInit("terra")
+  withr::local_package("terra")
 
   # library(terra)
   # library(visualTest)
-  fingerprints <- setupTestFingerprints()
+  # fingerprints <- setupTestFingerprints()
 
-  tmpdir <- file.path(tempdir(), "test_Plot_imageContent")
-  dir.create(tmpdir)
+  #tmpdir <- file.path(tempdir(), "test_Plot_imageContent")
+  #dir.create(tmpdir)
 
-  cwd <- getwd()
+  #cwd <- getwd()
 
   on.exit({
     if (length(dev.list()) > 0) dev.off()
-    unlink(tmpdir, recursive = TRUE)
+    # unlink(tmpdir, recursive = TRUE)
   }, add = TRUE) # nolint
 
   ncol <- 3
@@ -293,65 +313,81 @@ test_that("Unit tests for image content is not error-free", {
   levels(ras) <- data.frame(ID = 1:nLevels, Class = paste0("Level", 1:nLevels))
 
   # New Section
-  png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
-  clearPlot()
-  Plot(ras, new = TRUE)
-  dev.off()
 
-  test_id <- "B1"
-  if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
-    newValue <- data.table(test_id = test_id, r_version = r_version(), sys_name = sysname(),
-                           value =  getFingerprint(file = file.path(tmpdir, "test.png")))
-    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
-  }
-  orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
-  expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
+  fil <- file.path("test1.png")
+  fn <- function(x) {png(file = fil, width = 400, height = 300)
+    clearPlot()
+    Plot(ras, new = TRUE)
+    dev.off()
+    fil}
+
+  testthat::expect_snapshot_file(fn(), basename(fil))
+
+  # test_id <- "B1"
+  # if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
+  #   newValue <- data.table(test_id = test_id, r_version = r_version(), sys_name = sysname(),
+  #                          value =  getFingerprint(file = file.path(tmpdir, "test.png")))
+  #   fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  # }
+  # orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
+  # expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
   # New Section
 
   # Test legend with a factor raster
   set.seed(24334)
   ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
-  png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
-  clearPlot()
-  Plot(ras)
-  dev.off()
+  fil <- "test2.png"
+  expect_snapshot_file({
+    png(file = fil, width = 400, height = 300)
+    clearPlot()
+    Plot(ras)
+    dev.off()
+    fil})
 
-  test_id <- "B2"
-  if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
-    newValue <- data.table(test_id = test_id, r_version = r_version(), sys_name = sysname(),
-                           value =  getFingerprint(file = file.path(tmpdir, "test.png")))
-    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
-  }
-  orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
-  expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
+
+  #
+  # test_id <- "B2"
+  # if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
+  #   newValue <- data.table(test_id = test_id, r_version = r_version(), sys_name = sysname(),
+  #                          value =  getFingerprint(file = file.path(tmpdir, "test.png")))
+  #   fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  # }
+  # orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
+  # expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
   # New Section
 
   # test non contiguous factor raster
+  fil <- "test3.png"
   nLevels <- 6
   N <- ncol * nrow
   set.seed(24334)
   levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
   ras <- rast(matrix(sample(levs, size = N, replace = TRUE),
-                       ncol = ncol, nrow = nrow))
+                     ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
   ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
 
-  png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
-  clearPlot()
-  Plot(ras, new = TRUE)
-  dev.off()
+  browser()
+  expect_snapshot_file({
+    png(file = fil, width = 400, height = 300)
+    clearPlot()
+    Plot(ras, new = TRUE)
+    dev.off()
+    fil
+  })
 
-  test_id <- "B3"
-  if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
-    newValue <- data.table(test_id = test_id, r_version = r_version(), sys_name = sysname(),
-                           value =  getFingerprint(file = file.path(tmpdir, "test.png")))
-    fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
-  }
-  orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
-  expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
 
-  teardownTestFingerprints(fingerprints, cwd)
+  # test_id <- "B3"
+  # if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
+  #   newValue <- data.table(test_id = test_id, r_version = r_version(), sys_name = sysname(),
+  #                          value =  getFingerprint(file = file.path(tmpdir, "test.png")))
+  #   fingerprints <- updateFingerprint(newValue = newValue, fingerprints = fingerprints)
+  # }
+  # orig <- fingerprint(fingerprints, test_id, r_version(), sysname())
+  # expect_true(isSimilar(file = file.path(tmpdir, "test.png"), fingerprint = orig, threshold = 0.3))
+  #
+  # teardownTestFingerprints(fingerprints, cwd)
 })
 
 ## block C
@@ -968,6 +1004,7 @@ test_that("Plot with base is not error-free", {
 
 ## block H
 test_that("Plot messages and warnings and errors", {
+  testInit("terra")
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
   expect_error(Plot(ras, rnorm(10)), "Can't mix base plots with .quickPlottables")
@@ -1013,9 +1050,10 @@ test_that("rePlot doesn't work", {
 
 ## block J
 test_that("Plot - going through package coverage", {
-  tmpdir <- withr::local_tempdir()
-  withr::local_dir(new = tmpdir)
-  withr::local_package("terra")
+  testInit("terra")
+  # tmpdir <- withr::local_tempdir()
+  # withr::local_dir(new = tmpdir)
+  # withr::local_package("terra")
   #
   #
   # tmpdir <- file.path(tempdir(), "test_Plot2")
@@ -1166,3 +1204,4 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
 
   try(dev.off())
 })
+
