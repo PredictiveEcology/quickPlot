@@ -1,17 +1,12 @@
 test_that("clickExtent works", {
   skip_if_not(interactive(), message = "clickExtent tests must be run manually.")
 
-  withr::local_package("terra")
-  tmpdir <- withr::local_tempdir()
-  withr::local_dir(tmpdir)
+  testInit("terra")
 
   # make a SpatialPolygon
   coords1 <- structure(c(-123.98, -117.1, -80.2, -100, -123.98, 60.9, 67.73, 65.58, 51.79, 60.9),
                        .Dim = c(5L, 2L))
   shpEcozone <- terra::vect(coords1, type = "polygon")
-  # Sr1 <- Polygon(coords1)
-  # Srs1 <- Polygons(list(Sr1), "s1")
-  # shpEcozone <- SpatialPolygons(list(Srs1), 1L)
   terra::crs(shpEcozone) <- "+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
   files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")

@@ -365,6 +365,7 @@ setMethod(
         quickPlotGrobList[[lN[x]]]@layerName <- lNamesPlotObj[x]
 
         theObj <- try(eval(parse(text = objectNamesLong[x]), lEnvs[[x]]), silent = TRUE)
+
         if (is(theObj, "try-error"))
           theObj <- get(objectNamesLong[x], lEnvs[[x]])
 
@@ -1190,6 +1191,7 @@ setMethod(
 #' @param vps A viewport tree resulting from `.makeViewports`
 #' @param nonPlotArgs Arguments passed to `Plot` that are not `.quickPlottables`,
 #'                    but are passed along with `.quickPlottables`.
+#' @param arr An arragement object.
 #'
 #' @include plotting-classes.R
 #' @importFrom grid seekViewport grid.text
@@ -1200,7 +1202,7 @@ setMethod(
 #'
 setGeneric(".Plot", function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                              isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
-                             vps, nonPlotArgs) {
+                             vps, nonPlotArgs, arr) {
   standardGeneric(".Plot")
 })
 
@@ -1212,7 +1214,7 @@ setMethod(
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                         isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
-                        vps, nonPlotArgs) {
+                        vps, nonPlotArgs, arr) {
 
     seekViewport(subPlots, recording = FALSE)
 
@@ -1221,8 +1223,11 @@ setMethod(
       # Because base plotting is not set up to overplot,
       # must plot a white rectangle
 
-      # gf <- try(gridFIG())
-      gf <- c(0.0233, 0.9767, 0.0233, 0.8750)
+      #gf <- try(gridBase::gridFIG())
+      gf <- c(0.0033, 0.9767, 0.0233, 0.8750)
+      gf <- adjustGridFIG(gf, arr, subPlots)
+
+
       if (is(gf, "try-error")) {
         if (identical(names(dev.cur()), "RStudioGD")) {
           stop("quickPlot sometimes has trouble with plotting base plots ",
@@ -2955,4 +2960,23 @@ messFastshape <- function(shape) {
     "install.packages('fastshp', repos = 'https://PredictiveEcology.r-universe.dev')"
   )
 
+}
+
+adjustGridFIG <- function(gf, arr, subPlots) {
+  wh <- which(names(arr) %in% subPlots)
+  whR <- ceiling(wh / arr@columns)
+  whC <- (wh - 1) %% arr@columns + 1
+  if (arr@rows > 1) {
+    interRange <- (gf[4] - gf[3])
+    each <- interRange / arr@rows
+    gf[3] <- gf[4] - each * (whR)
+    gf[4] <- gf[4] - each * (whR - 1)
+  }
+  if (arr@columns > 1) {
+    interRange <- (gf[2] - gf[1])
+    each <- interRange / arr@columns
+    gf[2] <- gf[1] + each * (whC)
+    gf[1] <- gf[1] + each * (whC - 1)
+  }
+  gf
 }

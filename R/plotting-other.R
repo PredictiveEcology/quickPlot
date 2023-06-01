@@ -174,7 +174,8 @@ setMethod("clearPlot",
 #'   print(e)
 #'
 #'   # repeated zooming to try various places on the original device
-#'   for(i in 1:4) clickExtent() # click at two locations on the Plot device
+#'   if (interactive())
+#'     for(i in 1:4) clickExtent() # click at two locations on the Plot device
 #' }
 #'
 clickValues <- function(n = 1) {

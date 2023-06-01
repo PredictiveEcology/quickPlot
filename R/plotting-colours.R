@@ -15,16 +15,16 @@
 #' @example inst/examples/example_setColors.R
 #'
 getColors <- function(object) {
+  nams <- names(object)
   if (isRaster(object)) {
-    nams <- names(object)
     if (isRaster(object)) {
       cols <- lapply(nams, function(x) {
         raster::colortable(object[[x]])
       })
-      names(cols) <- nams
     }
   } else if (isSpat(object) && isGridded(object)) {
     cols <- terra::coltab(object)
+    cols <- lapply(cols, colorsRGBtoHex)
     noCols <- vapply(cols, is.null, FUN.VALUE = logical(1))
     if (any(noCols)) {
       # theSeq <- minFn(object):maxFn(object)
@@ -37,6 +37,9 @@ getColors <- function(object) {
   } else {
     cols <- NULL
   }
+  if (!is.null(nams))
+    names(cols) <- nams
+
   return(cols)
 }
 
@@ -78,7 +81,10 @@ getColors <- function(object) {
       if (!is(value, "list")) {
         value <- lapply(seq(numLayers(object)), function(x) value)
       }
-      object <- Map(lay = seq(numLayers(object)), ..., value = value, MoreArgs = list(n = n),
+      if (isTRUE(1 == length(n))) {
+        n <- rep(n, numLayers(object))
+      }
+      object <- Map(lay = seq(numLayers(object)), ..., value = value, n = n,
                  f = function(lay, ..., n, value) {
                    # this allows same code for SpatRaster and RasterStack; don't pass object = object
                    `setColors<-`(object[[lay]], ..., n = n, value = value)
@@ -89,7 +95,6 @@ getColors <- function(object) {
     }
 
     if (is(value, "list")) { # value = "list"
-      browser()
       nams <- names(object)
       i <- which(nams %in% names(value))
       for (x in nams[i]) {
@@ -98,7 +103,7 @@ getColors <- function(object) {
       return(object)
     }
 
-    #if (missing(n)) {
+    if (missing(n)) {
       isFac <- if (!terra::is.factor(object)) {
         FALSE
       } else {
@@ -116,13 +121,11 @@ getColors <- function(object) {
         n1 <- length(value)
       }
 
-      if (!identical(n1,  n)) {
-        setColors(object, n = n1) <- value
-        return(object)
-      }
-    #}
+      setColors(object, n = n1) <- value
+      return(object)
+    }
 
-    if (is.na(n)) {
+    if (any(is.na(n))) {
       object <- setColors(object = object, value = value)
       return(object)
     }
@@ -155,6 +158,7 @@ getColors <- function(object) {
         levs <- terra::levels(object)[[1]]
         nrLevs <- NROW(levs)
 
+        pal <- colorRampPalette(value, alpha = TRUE, ...)
         if (n != nrLevs) {
           vals <- pal(n)
         } else {
@@ -365,15 +369,24 @@ getColors <- function(object) {
       }
 
       if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) {
-        zoom <- zoom[c("xmin", "xmax", "ymin", "ymax")] # get in correct SpatExtent order
         zoom <- unlist(zoom)
-        zoom <- terra::ext(zoom)
+        if (isRaster(grobToPlot)) {
+          zoom <- raster::extent(zoom)
+        } else {
+          zoom <- zoom[c("xmin", "xmax", "ymin", "ymax")] # get in correct SpatExtent order
+          zoom <- terra::ext(zoom)
+        }
       }
       grobToPlot <- terra::crop(grobToPlot, zoom)
-      if (terra::ncell(grobToPlot) > maxpixels)
+      if (terra::ncell(grobToPlot) > maxpixels) {
+        if (isRaster(grobToPlot)) {
+          grobToPlot <- raster::sampleRegular(grobToPlot, size = maxpixels, asRaster = TRUE)
+        } else {
+          grobToPlot <- terra::spatSample(grobToPlot, method = "regular", size = maxpixels,
+                            as.raster = TRUE)
+        }
         # This appears to be modify-in-place on grobToPlot ... that seems bad
-        terra::spatSample(grobToPlot, method = "regular", size = maxpixels,
-                               as.raster = TRUE)
+      }
       # grobToPlot <- sampleRegular(
       #   x = grobToPlot, size = maxpixels,
       #   ext = zoom, asRaster = TRUE, useGDAL = TRUE
@@ -442,7 +455,6 @@ getColors <- function(object) {
     colTable <- NULL
 
     # Coming out of SpatRaster, it may be in rgb matrix
-    browser()
     if (is.data.frame(cols))
       cols <- colorsRGBtoHex(cols)
       # cols <- rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
@@ -451,7 +463,7 @@ getColors <- function(object) {
       # i.e., contained within raster or nothing
       theCols <- getColors(grobToPlot)[[1]]
       if (NROW(theCols) > 0) {
-        colTable <- theCols
+        colTable <- theCols # This is a vector for RasterLayer, but a data.frame for terra
         lenColTable <- NROW(colTable)
 
         cols <- if ((nValues > lenColTable) & !isFac) { # nolint
@@ -468,16 +480,13 @@ getColors <- function(object) {
             #   na.omit() %>%
             #   sort()
             if (length(factorValues) == NROW(colTable)) {
-              if (!is.data.frame(colTable)) browser()
-              colTable[seq.int(length(factorValues)), , drop = FALSE]
+              colTable[seq.int(length(factorValues))]
             } else {
               if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (NROW(colTable) - 1)) {
                 # The case where the IDs are numeric representations
-                if (!is.data.frame(colTable)) browser()
-                colTable[factorValues + 1, ]
+                colTable[factorValues + 1]
               } else {
-                if (!is.data.frame(colTable)) browser()
-                colTable[c(1, 1 + factorValues), ] # CHANGE HERE
+                colTable[c(1, 1 + factorValues)]
               }
 
             }
@@ -487,14 +496,11 @@ getColors <- function(object) {
         } else if (nValues <= (lenColTable - 1)) {
           # one more colour than needed:
           #  assume bottom is NA
-          if (!is.data.frame(colTable)) browser()
-
           na.color <- colTable[1] # nolint
           colTable[minz:maxz - minz + 2]
         } else if (nValues <= (lenColTable - 2)) {
           # two more colours than needed,
           #  assume bottom is NA, second is white
-          if (!is.data.frame(colTable)) browser()
           na.color <- colTable[1] # nolint
           zero.color <- colTable[2] # nolint
           colTable[minz:maxz - minz + 3]
@@ -590,7 +596,6 @@ getColors <- function(object) {
       } else {
         if (!is.null(colTable)) {
           if (NROW(getColors(grobToPlot)[[1]]) > 0) {
-            if (!is.data.frame(colTable)) browser()
             cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
           } else {
             # default colour if nothing specified
@@ -720,7 +725,6 @@ setMethod(
 })
 
 colorsRGBtoHex <- function(cols) {
-  browser()
   if ("alpha" %in% colnames(cols))
     rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
   else

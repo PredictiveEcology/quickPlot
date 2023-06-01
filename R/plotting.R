@@ -335,7 +335,8 @@ setMethod(
       dotObjs <- dots
     }
 
-    whFrame <- grep(scalls, pattern = "standardGeneric.*Plot")
+    whFrame <- max(1, grep(scalls, pattern = "standardGeneric.*Plot"))
+    whFramePlot <- max(1, grep(scalls, pattern = "standardGeneric.*Plot") - 1)
 
     for (fr in rev(whFrame)) {
       plotFrame <- sys.frame(fr - 1)
@@ -391,7 +392,7 @@ setMethod(
         .assignQuickPlot(paste0("basePlots_", dev.cur()),
                          new.env(hash = FALSE, parent = .quickPlotEnv))
       mc <- match.call(get(plotArgs$plotFn), call(plotArgs$plotFn, quote(...)))
-      mcPlot <- match.call(Plot, call = sys.call(whFrame))
+      mcPlot <- match.call(Plot, call = sys.call(whFramePlot))
       plotArgs$userProvidedPlotFn <- ("plotFn" %in% names(mcPlot))
 
       basePlotDots <- list()
@@ -481,6 +482,11 @@ setMethod(
                              deparse, backtick = TRUE)
         }
         objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
+        # sanity check -- maybe won't exist
+        allGood <- try(eval(parse(text = objNames[[1]]), envir = objFrame), silent = TRUE)
+        if (is(allGood, "try-error"))
+          objFrame <- try(whereInStack2(objNames[[1]]), silent = TRUE)
+
         if (is(objFrame, "try-error")) {
           if (is.null(devCurEnv)) {
             devCurEnv <- new.env(hash = FALSE, parent = .quickPlotEnv)
@@ -687,7 +693,7 @@ setMethod(
           # Plot any grobToPlot to device, given all the parameters
           sGrob2 <- try(.Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                          isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
-                         vps, nonPlotArgs))
+                         vps, nonPlotArgs, arr = updated$curr@arr))
           if (!is(sGrob2, "try-error")) {
             sGrob <- sGrob2
           } else {
@@ -834,7 +840,22 @@ whereInStack <- function(name, whFrame = -1) {
 }
 
 
-
+whereInStack2 <- function(name, whFrame = -1) {
+  snframe <- sys.nframe()
+  keepGoing <- TRUE
+  while (keepGoing) {
+    frm <- try(eval(parse(text = name), envir = sys.frame(whFrame)), silent = TRUE)
+    keepGoing <- is(frm, "try-error")
+    if (isFALSE(keepGoing))
+      break
+    whFrame <- whFrame - 1
+    if (snframe < (-whFrame)) {
+      stop(name, " is not on the call stack.", call. = FALSE)
+    }
+  }
+  # Success case
+  sys.frame(whFrame)
+}
 
 
 
