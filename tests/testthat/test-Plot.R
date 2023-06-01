@@ -270,17 +270,7 @@ test_that("Plot 1 is not error-free", {
 test_that("Unit tests for image content is not error-free", {
   # skip_if_not_installed("visualTest")
 
-  # testInit("terra")
-  withr::local_package("terra")
-
-  # library(terra)
-  # library(visualTest)
-  # fingerprints <- setupTestFingerprints()
-
-  #tmpdir <- file.path(tempdir(), "test_Plot_imageContent")
-  #dir.create(tmpdir)
-
-  #cwd <- getwd()
+  testInit("terra")
 
   on.exit({
     if (length(dev.list()) > 0) dev.off()
@@ -301,13 +291,14 @@ test_that("Unit tests for image content is not error-free", {
   # New Section
 
   fil <- file.path(tmpdir, "test1.png")
-  fn <- function(x) {png(file = fil, width = 400, height = 300)
-    clearPlot()
-    Plot(ras, new = TRUE)
-    dev.off()
-    fil}
 
-  testthat::expect_snapshot_file(fn(), basename(fil))
+  testthat::expect_snapshot_file(
+    {png(file = fil, width = 400, height = 300)
+      clearPlot()
+      Plot(ras, new = TRUE)
+      dev.off()
+      fil},
+    basename(fil))
 
   # test_id <- "B1"
   # if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
@@ -379,7 +370,7 @@ test_that("Unit tests for image content is not error-free", {
 test_that("Unit tests for plotting colors", {
   # skip_if_not_installed("visualTest")
 
-  withr::local_package("terra")
+  testInit("terra")
   on.exit({
     if (length(dev.list()) > 0) dev.off()
   }, add = TRUE) # nolint
@@ -418,8 +409,7 @@ test_that("Unit tests for plotting colors", {
 
 ## block D
 test_that("Unit tests for internal functions in Plot", {
-  withr::local_package("terra")
-
+  testInit("terra")
   prevLastPlotNumber <- 9
 
   on.exit({
@@ -485,7 +475,6 @@ test_that("Unit tests for internal functions in Plot", {
 ## block E
 test_that("Plot 2 is not error-free", {
   testInit("terra")
-  # withr::local_package("terra")
 
   prevLastPlotNumber <- 14
 
@@ -587,7 +576,6 @@ test_that("Plot 2 is not error-free", {
     if (val %in% c(7,8,10,11,12,14)) {
       fn <- if (testNum == 5) 5 else val
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
-      fil <- file.path(tmpdir, fil)
       expect_snapshot_file({
         png(file = fil, width = 400, height = 300)
         clearPlot()
@@ -674,15 +662,6 @@ test_that("setColors is not error-free", {
   # skip("Apparently color palettes are not universal")
 
   testInit("terra")
-  # withr::local_package("terra")
-
-  # tmpdir <- file.path(tempdir(), "test_setColors")
-  # dir.create(tmpdir)
-  # cwd <- getwd()
-  #
-  # on.exit({
-  #   unlink(tmpdir, recursive = TRUE)
-  # }, add = TRUE) # nolint
 
   set.seed(1234)
   ras1 <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -888,18 +867,6 @@ test_that("rePlot doesn't work", {
 ## block J
 test_that("Plot - going through package coverage", {
   testInit("terra")
-  # tmpdir <- withr::local_tempdir()
-  # withr::local_dir(new = tmpdir)
-  # withr::local_package("terra")
-  #
-  #
-  # tmpdir <- file.path(tempdir(), "test_Plot2")
-  # dir.create(tmpdir)
-  # cwd <- getwd()
-  #
-  # on.exit({
-  #   unlink(tmpdir, recursive = TRUE)
-  # }, add = TRUE) # nolint
 
   set.seed(123)
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
@@ -1008,8 +975,7 @@ test_that("Plot non-complicated object names", {
 
 ## block M
 test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
-  # library(raster)
-  withr::local_package("terra")
+  testInit("terra")
 
   Plot <- function(x) {
     quickPlot::Plot(x)
