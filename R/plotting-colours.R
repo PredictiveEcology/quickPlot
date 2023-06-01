@@ -32,7 +32,6 @@ getColors <- function(object) {
       # df <- data.frame(value = theSeq, color =  cols)
     }
   } else if (isSpatial(object)) {
-    browser()
     cols <- list(object@data$color)
   } else {
     cols <- NULL

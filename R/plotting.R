@@ -674,7 +674,6 @@ setMethod(
 
           prevMinMax <- tryCatch(updated$curr@quickPlotGrobList[[subPlots]][[subPlots]]@plotArgs[c("minz", "maxz")],
                                  error = function(x) list(minz = NULL, maxz = NULL))
-          if (exists("a") && subPlots == "landscape$habitatQuality") browser()
           zMat <- .preparePlotGrob(grobToPlot, sGrob, layerFromPlotObj,
                                    arr = updated$curr@arr, newArr,
                                    prevMinMax = prevMinMax,

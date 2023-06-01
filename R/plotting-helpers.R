@@ -1611,7 +1611,7 @@ setMethod(
     npixels <- terra::ncell(grobToPlot)
   } else {
     zoom <- zoomExtent
-    if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) browser() # need to convert to SpatExtent
+    # if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) browser() # need to convert to SpatExtent
     npixels <- terra::ncell(terra::crop(grobToPlot, zoom))
   }
   if (is.null(legendRange)) {
@@ -2513,8 +2513,9 @@ pgSpatialLines <- function(grobToPlot, col, size,
 
     # ## TODO: temporary workaround to enable Plotting terra rasters
     theObj <- try(eval(parse(text = objName), envir = objEnv), silent = TRUE)
-    if (is(theObj, "try-error"))
+    if (is(theObj, "try-error")) {
       theObj <- get(objName, envir = objEnv)
+    }
     # if (is(theObj, "SpatRaster")) {
     #   theObj <- terra::rast(theObj)
     # }
@@ -2561,7 +2562,10 @@ xyRange <- function(obj) {
 #' caribouFrom <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
 #'                                         y = stats::runif(1e1, -50, 50)))
 #' caribouLines <- sp2sl(caribou, caribouFrom)
-#' Plot(caribouLines, length = 0.1)
+#' if (interactive()) {
+#'   clearPlot()
+#'   Plot(caribouLines, length = 0.1)
+#' }
 sp2sl <- function(sp1, from) {
   l <- vector("list", NROW(sp1))
   beginCoord <- coordinates(sp1)
