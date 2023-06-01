@@ -30,7 +30,8 @@ Imports:
     methods,
     Require,
     stats,
-    terra
+    terra,
+    utils
 Suggests:
     covr,
     fastshp,

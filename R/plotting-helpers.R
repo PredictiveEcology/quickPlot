@@ -391,7 +391,6 @@ setMethod(
   ".makeQuickPlot",
   signature = c(plotObjects = "list", plotArgs = "missing"),
   definition = function(plotObjects, ...) {
-    browser()
     plotArgs <- formals("Plot")[-1]
     newPlots <- .makeQuickPlot(plotObjects, plotArgs, ...)
     return(newPlots)
@@ -681,20 +680,26 @@ makeLines.default <-
   #signature = c("SpatialPoints", "SpatialPoints"),
   # definition =
   function(from, to) {
-    if (is(from, "Spatial") || is(to, "Spatial")) {
-      if (!requireNamespace("sp"))
-        stop("Need to `install.packages('sp') or use SpatVector class")
-      SpatialLines(lapply(seq_len(length(from)), function(x) {
+    fromSpatial <- isSpatial(from)
+    toSpatial <- isSpatial(to)
+    # If one is Spatial, convert to SpatVector; if both Spatial, then leave
+    if (fromSpatial && !toSpatial)
+      from <- terra::vect(from)
+    if (!fromSpatial && toSpatial)
+      to <- terra::vect(to)
+
+    if (fromSpatial && toSpatial) {
+      sp::SpatialLines(lapply(seq_len(length(from)), function(x) {
         ccrds <- rbind(sp::coordinates(from)[x, ], sp::coordinates(to)[x, ])
-        Lines(list(Line(
+        sp::Lines(list(sp::Line(
           coords = ccrds
         )), ID = x)
-      }), proj4string = crs(from)) # nolint
+      }), proj4string = terra::crs(from)) # nolint
     } else {
       ccrds <- rbind(cbind(object = seq(NROW(from)), terra::crds(from)),
                      cbind(object = seq(NROW(to)), terra::crds(to)))
       ccrds <- ccrds[order(ccrds[, "object"]), ]
-      terra::vect(ccrds, type = "lines", crs = crs(from))
+      terra::vect(ccrds, type = "lines", crs = terra::crs(from))
     }
   }
 
@@ -1007,7 +1012,6 @@ setMethod("gpar",
 
     if (is(grobToPlot, "SpatialLines")) {
       if (!is.null(sGrob@plotArgs$zoomExtent)) {
-        browser()
         grobToPlot <- terra::crop(grobToPlot, sGrob@plotArgs$zoomExtent)
       }
       zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
@@ -1015,7 +1019,6 @@ setMethod("gpar",
     } else if (isSpatial(grobToPlot) || isSpatVector(grobToPlot)) {
       if (!is.null(sGrob@plotArgs$zoomExtent) &&
           !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
-        browser()
         grobToPlot <- terra::crop(grobToPlot, sGrob@plotArgs$zoomExtent)
       }
 
@@ -1616,7 +1619,7 @@ setMethod(
                            takeFromPlotObj, arr, speedup, newArr) {
   if (is.null(zoomExtent)) {
     zoom <- extent(grobToPlot)
-    npixels <- ncell(grobToPlot)
+    npixels <- terra::ncell(grobToPlot)
   } else {
     zoom <- zoomExtent
     if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) browser() # need to convert to SpatExtent
@@ -1979,7 +1982,7 @@ setMethod(
   isPolygon <- if (isSF(grobToPlot)) {
     any(grepl("POLYGON", sf::st_geometry_type(grobToPlot))) # also capture MULTIPOLYGON
   } else {
-    is(grobToPlot, "SpatialPolygons") ||
+    isSpatialPolygons(grobToPlot) ||
       (is(grobToPlot, "SpatVector") && identical("polygons", terra::geomtype(grobToPlot)))
   }
   if (is.matrix(grobToPlot)) {
@@ -2221,7 +2224,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
   # }
 
   if (isSpat(grobToPlot)) {
-    xy <- geom(grobToPlot)
+    xy <- terra::geom(grobToPlot)
     idLength <- as.data.table(xy)[, .N, by = c("geom", "part")]$N
     xy <- xy[, c("x", "y")]
   } else {
@@ -2542,7 +2545,8 @@ xyRange <- function(obj) {
     bb <- sf::st_bbox(obj)
     c(bb["xmax"] - bb["xmin"], bb["ymax"] - bb["ymin"])
   } else {
-    apply(bbox(obj), 1, function(y) {
+    iss <- isSpatial(obj) # just checks for sp package
+    apply(sp::bbox(obj), 1, function(y) {
       diff(range(y))
     })
   }
@@ -2580,9 +2584,9 @@ sp2sl <- function(sp1, from) {
 
   if (is(sp1, "Spatial")) {
     for (i in seq_along(l)) {
-      l[[i]] <- Lines(list(Line(rbind(beginCoord[i, ], endCoord[i, ]))), as.character(i))
+      l[[i]] <- sp::Lines(list(sp::Line(rbind(beginCoord[i, ], endCoord[i, ]))), as.character(i))
     }
-    SpatialLines(l)
+    sp::SpatialLines(l)
   } else {
     mat <- cbind(object = rep(seq(NROW(sp1)), 2),
                  part = 1,
@@ -2659,21 +2663,21 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
         bb <- lapply(unique(xyOrd$out$Polygons), function(outerI) {
           poly <- lapply(seq(polyList[[outerI]]), function(innerI) {
             #Polygon(as.matrix(polyList[[outerI]][[innerI]][, c("x", "y")]),
-            Polygon(cbind(polyList[[outerI]][[innerI]]$x, polyList[[outerI]][[innerI]]$y),
+            sp::Polygon(cbind(polyList[[outerI]][[innerI]]$x, polyList[[outerI]][[innerI]]$y),
                     hole = unique(as.logical(polyList[[outerI]][[innerI]]$hole)))
           })
-          Polygons(poly, ID = outerI)
+          sp::Polygons(poly, ID = outerI)
         })
 
         names1 <- unique(xyOrd$out$Polygons)
-        xyOrd <- SpatialPolygons(bb, proj4string = CRS(proj4string(x)))
+        xyOrd <- sp::SpatialPolygons(bb, proj4string = sp::CRS(sp::proj4string(x)))
         if (is(x, "SpatialPolygonsDataFrame")) {
           if (length(x) > maxNumPolygons) {
             dat <- x@data[as.numeric(names1) + 1,]
           } else {
             dat <- x@data
           }
-          xyOrd <- SpatialPolygonsDataFrame(xyOrd, data = dat)
+          xyOrd <- sp::SpatialPolygonsDataFrame(xyOrd, data = dat)
         }
 
         return(xyOrd)
@@ -2698,7 +2702,7 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
 #' @export
 #' @rdname thin
 thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumPolygons, ...) {
-  if (is(x, "SpatialPolygons") || (isSpatVector(x) && identical("polygons", terra::geomtype(x))) ||
+  if ( isSpatialPolygons(x) || (isSpatVector(x) && identical("polygons", terra::geomtype(x))) ||
       isSF(x)) {
     x <- thnSpatialPolygons(x, tolerance = tolerance, returnDataFrame = returnDataFrame,
                             minCoordsToThin = minCoordsToThin,
@@ -2752,7 +2756,6 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
       set(dt, NULL, rmCols, NULL)
     out <- list(out = dt, hole = hole, idLength = idLength)
   } else if (isSF(x)) {
-    browser()
     # st_sfc(st_polygon(lapply(split(a, by = "L1"), function(y) as.matrix(y)[, 1:2]), dim = "XY"))
     idLength <- dt[, list(V1 = .N), by = "L2"][, "V1"]
     data.table::setnames(dt, "L2", new = "groups")
@@ -2911,11 +2914,11 @@ isLonLat <- function(x) {
 speedupScale <- function(grobToPlot, lonlatSU, SU) {
   extGTP <- extent(grobToPlot)
   speedupScale <- if (isTRUE(isLonLat(grobToPlot))) {
-    pointDistance(
-      p1 = c(extGTP$xmax, extGTP$ymax),
-      p2 = c(extGTP$xmin, extGTP$ymin),
-      lonlat = TRUE
-    ) / (lonlatSU)
+    as.numeric(terra::distance(
+      x = cbind(extGTP$xmax, extGTP$ymax),
+      y = cbind(extGTP$xmin, extGTP$ymin),
+      lonlat = FALSE
+    )) / (lonlatSU)
   } else {
     max(extGTP$ymax - extGTP$ymin,
         extGTP$xmax - extGTP$xmin) /
@@ -2937,7 +2940,7 @@ maxFn <- function(x) {
   minmaxFn(x, "max")
 }
 
-#' @importFrom utils head tail
+#' @importFrom utils head tail getFromNamespace
 minmaxFn <- function(x, which = "max") {
   out <- NULL
   if (isRaster(x)) {
@@ -2948,7 +2951,7 @@ minmaxFn <- function(x, which = "max") {
   } else {
     if (!(requireNamespace("terra"))) stop()
     fn <- ifelse(identical(which, "max"), "tail", "head")
-    fn <- getFromNamespace(fn, ns = "utils")
+    fn <- utils::getFromNamespace(fn, ns = "utils")
     out <- fn(terra::minmax(x), 1)[1, ]
 
   }

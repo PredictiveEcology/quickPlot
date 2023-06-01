@@ -876,6 +876,11 @@ isSpatial <- function(x) {
     if (!requireNamespace("sp", quietly = TRUE)) stop("Please install.packages('sp') to use sp objects")
   res
 }
+
+isSpatialPolygons <- function(x) {
+  res <- isSpatial(x) && is(x, "SpatialPolygons")
+}
+
 isSpatVector <- function(x) inherits(x, "SpatVector")
 isSpat <- function(x) inherits(x, c("SpatRaster", "SpatVector"))
 isGridded <- function(x) inherits(x, "SpatRaster") || isRaster(x)
