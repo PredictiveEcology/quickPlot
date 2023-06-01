@@ -2,21 +2,19 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{numLayers}
 \alias{numLayers}
-\title{Find the number of layers in a Spatial Object}
+\title{Find the number of layers in an object}
 \usage{
 numLayers(x)
 }
 \arguments{
-\item{x}{A \code{.quickPlotObjects} object or list of these.}
+\item{x}{An object or list of objects.}
 }
 \value{
 The number of layers in the object.
 }
 \description{
-There are already methods for \verb{Raster*} in the raster package.
-Adding methods for \code{list}, \code{SpatialPolygons}, \code{SpatialLines},
-and \code{SpatialPoints}, \code{gg}, \code{histogram}, \code{igraph}.
-These latter classes return \code{1}.
+A unified function for \code{raster::nlayers}, \code{terra::nlyrs}, or lists of these.
+Default function returns \code{1L} for all other classes.
 }
 \examples{
 library(terra)

@@ -3,14 +3,12 @@ if (getRversion() >= "3.1.0") {
   utils::globalVariables(c(".", ".N", "keepAll", "..rmCols", "L1"))
 }
 
-#' Find the number of layers in a Spatial Object
+#' Find the number of layers in an object
 #'
-#' There are already methods for `Raster*` in the raster package.
-#' Adding methods for `list`, `SpatialPolygons`, `SpatialLines`,
-#' and `SpatialPoints`, `gg`, `histogram`, `igraph`.
-#' These latter classes return `1`.
+#' A unified function for `raster::nlayers`, `terra::nlyrs`, or lists of these.
+#' Default function returns `1L` for all other classes.
 #'
-#' @param x A `.quickPlotObjects` object or list of these.
+#' @param x An object or list of objects.
 #'
 #' @return The number of layers in the object.
 #'
