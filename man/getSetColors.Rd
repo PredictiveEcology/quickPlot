@@ -95,9 +95,9 @@ clearPlot()
 Plot(ras)
 }
 \seealso{
-\code{\link[=setColors<-]{setColors<-()}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}}
+\code{\link[=setColors<-]{setColors<-()}}, \code{brewer.pal()}, RColorBrewer::ColorBrewer
 
-\code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}},
+\code{brewer.pal()}, \code{RColorBrewer::ColorBrewer},
 \code{\link[grDevices:colorRamp]{colorRampPalette()}}.
 }
 \author{

@@ -184,19 +184,23 @@ Use `"white"` or another colour if this default is not desired.
 See text about `na.color` below after raster values have changed.
 
 ```{r set_colours, eval=TRUE, echo=TRUE, fig.height=2}
-library(RColorBrewer)
-
-# can change colour palette
-clearPlot()
-Plot(landscape) # original
-
-mapColours <- list(
-  DEM = topo.colors(50),
-  forestCover = colorRampPalette(c("blue", "orange", "purple", "red"))(50),
-  habitatQuality = brewer.pal(9, "Spectral")
-)
-setColors(landscape, n = 50) <- mapColours
-Plot(landscape, new = TRUE) # oh, how pretty!
+  
+  # can change colour palette
+  clearPlot()
+  Plot(landscape) # original
+  
+  cols <- if (requireNamespace("RColorBrewer"))
+    RColorBrewer::brewer.pal(9, "Spectral")
+  else 
+    colorRampPalette(c("blue", "purple"))(9)
+  
+  mapColours <- list(
+    DEM = topo.colors(50),
+    forestCover = colorRampPalette(c("blue", "orange", "purple", "red"))(50),
+    habitatQuality = cols
+  )
+  setColors(landscape, n = 50) <- mapColours
+  Plot(landscape, new = TRUE) # oh, how pretty!
 ```
 
 ## `Plot` arguments

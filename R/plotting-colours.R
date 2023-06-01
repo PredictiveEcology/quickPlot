@@ -10,7 +10,7 @@
 #' @export
 #' @rdname getSetColors
 #'
-#' @seealso [setColors<-()], [`brewer.pal()`][RColorBrewer::ColorBrewer]
+#' @seealso [setColors<-()], `brewer.pal()`, RColorBrewer::ColorBrewer
 #'
 #' @example inst/examples/example_setColors.R
 #'
@@ -60,10 +60,9 @@ getColors <- function(object) {
 #' @aliases setColours
 #' @export
 #' @importFrom grDevices colorRampPalette
-#' @importFrom RColorBrewer brewer.pal brewer.pal.info
 #' @rdname getSetColors
 #'
-#' @seealso [`brewer.pal()`][RColorBrewer::ColorBrewer],
+#' @seealso `brewer.pal()`, `RColorBrewer::ColorBrewer`,
 #'          [`colorRampPalette()`][grDevices::colorRamp].
 #'
 `setColors<-`  <-
@@ -72,7 +71,6 @@ getColors <- function(object) {
 #              standardGeneric("setColors<-")
 # })
 # @export
-# @importFrom raster is.factor
 # @rdname getSetColors
 # setReplaceMethod(
   # signature("RasterLayer", "numeric", "character"),
@@ -89,7 +87,9 @@ getColors <- function(object) {
                    # this allows same code for SpatRaster and RasterStack; don't pass object = object
                    `setColors<-`(object[[lay]], ..., n = n, value = value)
                  })
-      if (is(object[[1]], "Raster")) object <- raster::stack(object)
+      if (isRaster(object[[1]])) {
+        object <- raster::stack(object)
+      }
       if (is(object[[1]], "SpatRaster")) object <- terra::rast(object)
       return(object)
     }
@@ -183,7 +183,6 @@ getColors <- function(object) {
 }
 
 # @export
-# @importFrom raster is.factor
 # @rdname getSetColors
 # setReplaceMethod(
 #  "setColors",
@@ -327,10 +326,8 @@ getColors <- function(object) {
 #' @author Eliot McIntire
 #' @importFrom grDevices colorRampPalette terrain.colors
 #' @importFrom fpCompare %>>%
-#' @importFrom raster getValues sampleRegular is.factor levels
 #' @importFrom stats na.omit
 #' @importFrom utils tail head
-#' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname makeColorMatrix
@@ -513,9 +510,9 @@ getColors <- function(object) {
       }
     } else {
       if (is.character(cols) & (NROW(cols) == 1)) {
-        if (cols %in% rownames(brewer.pal.info)) {
+        if (cols %in% rownames(RColorBrewer::brewer.pal.info)) {
           suppressWarnings({
-            cols <- brewer.pal(nValues, cols)
+            cols <- RColorBrewer::brewer.pal(nValues, cols)
           })
         }
       }

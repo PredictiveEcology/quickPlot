@@ -269,7 +269,6 @@ test_that("Plot 1 is not error-free", {
 
 # block B
 test_that("Unit tests for image content is not error-free", {
-  # skip_if_not_installed("visualTest")
 
   testInit("terra")
 
@@ -374,7 +373,6 @@ test_that("Unit tests for image content is not error-free", {
 
 # ## block C
 test_that("Unit tests for plotting colors", {
-  # skip_if_not_installed("visualTest")
 
   testInit("terra")
   on.exit({
@@ -725,19 +723,6 @@ test_that("Plot with base is not error-free", {
 
   prevLastPlotNumber <- 43
   testInit("terra")
-  # library(raster)
-  # library(visualTest)
-  # library(ggplot2)
-  # library(igraph)
-  # fingerprints <- setupTestFingerprints()
-  #
-  # tmpdir <- file.path(tempdir(), "test_Plot1")
-  # dir.create(tmpdir)
-  # cwd <- getwd()
-  #
-  # on.exit({
-  #   unlink(tmpdir, recursive = TRUE)
-  # }, add = TRUE) # nolint
   set.seed(123)
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
@@ -916,7 +901,6 @@ test_that("Plot - going through package coverage", {
 
 ## block K
 test_that("Plot lists", {
-  # skip_if_not_installed("visualTest")
   prevLastPlotNumber <- 48
   testInit("terra")
 

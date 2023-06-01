@@ -80,7 +80,6 @@ numLayers <- function(x) {
 # })
 
 # @export
-# @importFrom raster nlayers
 # @rdname numLayers
 # setMethod(
 #   "numLayers",
@@ -127,8 +126,8 @@ numLayers <- function(x) {
 #' library(terra)
 #'
 #' ## RasterLayer objects
-#' files <- system.file("maps", package = "quickPlot") %>%
-#'   dir(., full.names = TRUE, pattern = "tif")
+#' files <- system.file("maps", package = "quickPlot") |>
+#'   dir(_, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
@@ -212,8 +211,8 @@ layerNames <- function(object) {
 #' @examples
 #' library(terra)
 #'
-#' files <- system.file("maps", package = "quickPlot") %>%
-#'   dir(., full.names = TRUE, pattern = "tif")
+#' files <- system.file("maps", package = "quickPlot") |>
+#'   dir(_, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
@@ -661,8 +660,6 @@ setMethod(
 #' @author Eliot McIntire
 #' @export
 #' @include plotting-classes.R
-#' @importFrom raster crs
-#' @importFrom sp coordinates Line Lines SpatialLines
 #' @rdname makeLines
 #'
 #' @example inst/examples/example_makeLines.R
@@ -1207,7 +1204,6 @@ setGeneric(".Plot", function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPl
 })
 
 #' @rdname Plot-internal
-#' @importFrom raster crop is.factor
 #' @aliases PlotHelpers
 setMethod(
   ".Plot",
@@ -1600,7 +1596,6 @@ setMethod(
 #'
 #' @author Eliot McIntire
 #' @keywords internal
-#' @importFrom raster ncell
 #' @include plotting-classes.R
 #' @rdname prepareRaster
 # igraph exports %>% from magrittr
@@ -1798,7 +1793,6 @@ setMethod(
 #' @author Eliot McIntire
 #' @export
 #' @importFrom grDevices dev.cur dev.new dev.size
-#' @importFrom sp bbox
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname arrangeViewports
@@ -1943,8 +1937,6 @@ setMethod(
 #' @importFrom data.table ':=' data.table
 #' @importFrom grDevices as.raster
 #' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
-#' @importFrom sp proj4string
-#' @importFrom raster extent pointDistance xmin xmax ymin ymax
 #' @keywords internal
 #' @rdname plotGrob
 #'
@@ -2359,7 +2351,6 @@ pgSpatialLines <- function(grobToPlot, col, size,
 #' @author Eliot McIntire
 #' @include plotting-classes.R
 #' @importFrom grid viewport vpTree vpList
-#' @importFrom raster xmin xmax ymin ymax extent
 #' @keywords internal
 #' @rdname makeViewports
 #'
@@ -2550,7 +2541,6 @@ xyRange <- function(obj) {
 #'             in the `sp1` object.
 #'
 #' @export
-#' @importFrom sp coordinates Line Lines SpatialLines
 #' @examples
 #' caribou <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
 #'                                         y = stats::runif(1e1, -50, 50)))
@@ -2607,8 +2597,6 @@ sp2sl <- function(sp1, from) {
 #'        taken from `options('quickPlot.maxNumPolygons')`, with a message.
 #'
 #' @importFrom data.table as.data.table data.table set
-#' @importFrom raster xmax xmin
-#' @importFrom sp CRS Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
 #' @rdname thin
 thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
   UseMethod("thin")
@@ -2931,7 +2919,7 @@ maxFn <- function(x) {
 #' @importFrom utils head tail
 minmaxFn <- function(x, which = "max") {
   out <- NULL
-  if (is(x, "Raster")) {
+  if (isRaster(x)) {
     if (!requireNamespace("raster")) stop()
     fn <- get(paste0(which, "Value"), envir = asNamespace("raster"))
     out <- fn(x)

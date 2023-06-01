@@ -150,7 +150,6 @@ setMethod("clearPlot",
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom raster is.factor factorValues cellFromXY
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
 #'
@@ -176,6 +175,7 @@ setMethod("clearPlot",
 #'
 #'   # repeated zooming to try various places on the original device
 #'   for(i in 1:4) clickExtent() # click at two locations on the Plot device
+#' }
 #' }
 #'
 clickValues <- function(n = 1) {
@@ -230,7 +230,6 @@ clickValues <- function(n = 1) {
 #'
 #' @export
 #' @importFrom grDevices dev.cur
-#' @importFrom raster crs<- crs
 #' @importFrom fpCompare %==%
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks

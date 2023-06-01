@@ -241,7 +241,6 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' @export
 #' @importFrom grDevices dev.cur dev.size
 #' @importFrom grid current.parent grid.rect grid.xaxis grid.yaxis gpar pushViewport upViewport
-#' @importFrom raster crop is.factor
 #' @include environment.R
 #' @include plotting-classes.R
 #' @include plotting-colours.R
@@ -871,12 +870,29 @@ isQuickPlottables <- function(x) {
   (isQuickPlotObject(x) || inherits(x, ".quickPlot")) # && !is(x, "SpatVector") && !isSF(x)
 }
 
-isSpatial <- function(x) inherits(x, "Spatial")
+isSpatial <- function(x) {
+  res <- inherits(x, "Spatial")
+  if (res)
+    if (!requireNamespace("sp", quietly = TRUE)) stop("Please install.packages('sp') to use sp objects")
+  res
+}
 isSpatVector <- function(x) inherits(x, "SpatVector")
 isSpat <- function(x) inherits(x, c("SpatRaster", "SpatVector"))
-isGridded <- function(x) inherits(x, c("SpatRaster", "Raster"))
-isVector <-  function(x) isSpatVector(x) || inherits(x, "Spatial") || isSF(x)
+isGridded <- function(x) inherits(x, "SpatRaster") || isRaster(x)
+isVector <-  function(x) isSpatVector(x) || isSpatial(x) || isSF(x)
 isSpatialAny <- function(x) isGridded(x) || isVector(x)
-isSF <- function(x) inherits(x, c("sf", "sfc"))
-isRaster <- function(x) inherits(x, "Raster")
+isSF <- function(x) {
+  res <- inherits(x, c("sf", "sfc"))
+  if (res)
+    if (!requireNamespace("sf", quietly = TRUE)) stop("Please install.packages('sf') to use sf objects")
+  res
+}
+
+
+isRaster <- function(x) {
+  res <- inherits(x, "Raster")
+  if (res)
+    if (!requireNamespace("raster", quietly = TRUE)) stop("Please install.packages('raster') to use Raster objects")
+  res
+  }
 isQuickPlotClass <- function(x) isSpatialAny(x) || inherits(x, "gg")

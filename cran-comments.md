@@ -33,16 +33,15 @@ There are no errors, or warnings in any of the above.
 
 There are some NOTEs:
 
-The `fastshp` and `visualTest` packages in Suggests are optionally installed from our R-universe repository.
+The `fastshp` package in Suggests are optionally installed from our R-universe repository.
 Instructions for installation are provided in the README, DESCRIPTION, and via a message to the user.
 We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
 
         Suggests or Enhances not in mainstream repositories:
-          fastshp, visualTest
+          fastshp
         Availability using Additional_repositories specification:
           fastshp      yes   https://predictiveecology.r-universe.dev/
-          visualTest   yes   https://predictiveecology.r-universe.dev/
-
+          
 Related to the above note:
 
         The Description field contains

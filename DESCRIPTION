@@ -5,7 +5,7 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
     optimized for speed and modularity. This has great utility for quick
     visualizations when testing code, with the key benefit that visualizations
     are updated independently of one another.
-    The suggested packages 'fastshp' and 'visualTest' can be installed with e.g.,
+    The suggested package 'fastshp' can be installed with e.g.,
     'install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")'.
 URL:
     https://quickplot.predictiveecology.org,
@@ -28,7 +28,6 @@ Imports:
     grDevices,
     grid,
     methods,
-    RColorBrewer,
     Require,
     stats,
     terra
@@ -39,15 +38,12 @@ Suggests:
     knitr,
     png,
     raster,
+    RColorBrewer,
     rmarkdown,
     sf,
     sp,
     spelling,
-    testthat (>= 1.0.2),
-    visualTest
-Remotes:
-    s-u/fastshp,
-    MangoTheCat/visualTest
+    testthat (>= 1.0.2)
 Additional_repositories: https://predictiveecology.r-universe.dev/
 Encoding: UTF-8
 Language: en-CA
