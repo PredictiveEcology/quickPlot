@@ -34,15 +34,12 @@ if (getRversion() >= "3.1.0") {
 #' numLayers(stck)
 #'
 numLayers <- function(x) {
-  if (is(x, "list")) {
-    sum(unlist(lapply(x, function(y) {
-      if (isSpatialAny(y)) {
-        numLayers(y)
-      } else {
-        1L # e.g., histogram
-      }
-    })))
-  } else if (inherits(x, ".quickPlot")) {
+  UseMethod("numLayers")
+}
+
+#' @export
+numLayers.default <- function(x) {
+  if (inherits(x, ".quickPlot")) {
     length(x@arr@extents)
   } else if (isGridded(x)) {
     if (is(x, "SpatRaster")) {
@@ -54,6 +51,17 @@ numLayers <- function(x) {
   } else {
     1L
   }
+}
+
+#' @export
+numLayers.list <- function(x) {
+  sum(unlist(lapply(x, function(y) {
+    if (isSpatialAny(y)) {
+      numLayers(y)
+    } else {
+      1L # e.g., histogram
+    }
+  })))
 }
 
 # @export
