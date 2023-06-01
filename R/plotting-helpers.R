@@ -127,7 +127,7 @@ numLayers <- function(x) {
 #'
 #' ## RasterLayer objects
 #' files <- system.file("maps", package = "quickPlot") |>
-#'   dir(_, full.names = TRUE, pattern = "tif")
+#'   dir(path = _, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
@@ -212,7 +212,7 @@ layerNames <- function(object) {
 #' library(terra)
 #'
 #' files <- system.file("maps", package = "quickPlot") |>
-#'   dir(_, full.names = TRUE, pattern = "tif")
+#'   dir(path = _, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
@@ -826,11 +826,17 @@ makeLines.default <-
 
   deparsedTxt <- deparse(parseTxt)
   sframes <- sys.frames()
-  envs <- append(.GlobalEnv, sframes) %>%
-    .[c(TRUE, unlist(lapply(sframes, function(x) {
+  # envs <- append(.GlobalEnv, sframes) %>%
+  #   .[c(TRUE, unlist(lapply(sframes, function(x) {
+  #     exists(deparsedTxt, envir = x, inherits = FALSE)
+  #   })))] %>%
+  #   .[[length(.)]]
+
+  envs <- append(.GlobalEnv, sframes)
+  envs <- envs[c(TRUE, unlist(lapply(sframes, function(x) {
       exists(deparsedTxt, envir = x, inherits = FALSE)
-    })))] %>%
-    .[[length(.)]]
+    })))]
+  envs <- envs[[length(envs)]]
 
   inGlobal <- identical(envs, .GlobalEnv)
   possEnv <- eval(parse(text = deparsedTxt), envir = envs)
@@ -1387,7 +1393,7 @@ setMethod(
                            gpText = sGrob@plotArgs$gpText,
                            speedup = sGrob@plotArgs$speedup,
                            length = sGrob@plotArgs$length
-      ) %>% append(., nonPlotArgs)
+      ) |> append(x = _, nonPlotArgs)
 
       seekViewport(subPlots, recording = FALSE)
       suppressWarnings(do.call(.plotGrob, args = plotGrobCall))
@@ -1598,7 +1604,6 @@ setMethod(
 #' @keywords internal
 #' @include plotting-classes.R
 #' @rdname prepareRaster
-# igraph exports %>% from magrittr
 .prepareRaster <- function(grobToPlot, zoomExtent, legendRange,
                            takeFromPlotObj, arr, speedup, newArr) {
   if (is.null(zoomExtent)) {
@@ -1614,9 +1619,12 @@ setMethod(
   }
 
   if (speedup > 0.1) {
-    maxpixels <- min(5e5, 3e4 / (arr@columns * arr@rows) * prod(arr@ds)) %>%
-      `/`(., speedup) %>%
-      min(., npixels)
+    maxpixels <- min(5e5, 3e4 / (arr@columns * arr@rows) * prod(arr@ds))
+    maxpixels <- maxpixels/speedup
+    maxpixels <- min(maxpixels, npixels)
+    # maxpixels <- min(5e5, 3e4 / (arr@columns * arr@rows) * prod(arr@ds)) %>%
+    #   `/`(., speedup) %>%
+    #   min(., npixels)
   } else {
     maxpixels <- npixels
   }
@@ -1665,7 +1673,7 @@ setMethod(
 
     addToPlotsNames <- unlist(lapply(newSP@quickPlotGrobList, function(x) {
       x[[1]]@plotArgs$addTo
-    })) %>% unlist() # nolint
+    })) |> unlist() # nolint
 
     if (length(addToPlotsNames) == length(newNames)) {
       overplots <- integer(0)
@@ -1839,11 +1847,16 @@ setMethod(
       colByRow[, 1] <- ceiling(nPlots / (1:nPlots))
       colByRow[, 2] <- ceiling(nPlots / colByRow[, 1])
 
-      ## rewritten for clarity/brevity with pipes below
-      whBest <- apply(colByRow, 1, function(x) x[1] / x[2]) %>%
-        `-`(., dsDimensionRatio) %>%
-        abs() %>%
+      ## rewritten for clarity/brevity with pipes below -- rewritten again because too much piping not clear
+      whBest <- apply(colByRow, 1, function(x) x[1] / x[2])
+      whBest <- (whBest - dsDimensionRatio) |>
+        abs() |>
         which.min()
+
+      # whBest <- apply(colByRow, 1, function(x) x[1] / x[2]) %>%
+      #   `-`(., dsDimensionRatio) %>%
+      #   abs() %>%
+      #   which.min()
 
       columns <- colByRow[whBest, 1]
       rows <- colByRow[whBest, 2]

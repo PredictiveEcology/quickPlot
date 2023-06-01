@@ -156,8 +156,8 @@ setMethod("clearPlot",
 #' @examples
 #' \donttest{
 #' if (interactive()) {
-#'   files <- system.file("maps", package = "quickPlot") %>%
-#'     dir(., full.names = TRUE, pattern = "tif")
+#'   files <- system.file("maps", package = "quickPlot") |>
+#'     dir(path = _, full.names = TRUE, pattern = "tif")
 #'   maps <- lapply(files, function(x) terra::rast(x))
 #'   names(maps) <- sapply(basename(files), function(x) {
 #'     strsplit(x, split = "\\.")[[1]][1]
@@ -302,13 +302,13 @@ clickCoordinates <- function(n = 1) {
 
   grepNullsW <- grep("null$", gl$widths)
   grepNpcsW <- grep("npc$", gl$widths)
-  nulls <- as.character(gl$widths)[grepNullsW] %>%
-    strsplit(., "null") %>%
-    unlist() %>%
+  nulls <- as.character(gl$widths)[grepNullsW] |>
+    strsplit(x = _, "null") |>
+    unlist() |>
     as.numeric()
-  npcs <- as.character(gl$widths)[grepNpcsW] %>%
-    strsplit(., "npc") %>%
-    unlist() %>%
+  npcs <- as.character(gl$widths)[grepNpcsW] |>
+    strsplit(x = _, "npc") |>
+    unlist() |>
     as.numeric()
   remaining <- 1 - sum(npcs)
   npcForNulls <- nulls * remaining / sum(nulls)
@@ -316,13 +316,13 @@ clickCoordinates <- function(n = 1) {
 
   grepNullsH <- grep("null$", gl$heights)
   grepNpcsH <- grep("npc$", gl$heights)
-  nulls <- as.character(gl$heights)[grepNullsH] %>%
-    strsplit(., "null") %>%
-    unlist() %>%
+  nulls <- as.character(gl$heights)[grepNullsH] |>
+    strsplit(x = _, "null") |>
+    unlist() |>
     as.numeric()
-  npcs <- as.character(gl$heights)[grepNpcsH] %>%
-    strsplit(., "npc") %>%
-    unlist() %>%
+  npcs <- as.character(gl$heights)[grepNpcsH] |>
+    strsplit(x = _, "npc") |>
+    unlist() |>
     as.numeric()
   remaining <- 1 - sum(npcs)
   npcForNulls <- nulls * remaining / sum(nulls)
@@ -475,7 +475,7 @@ dev <- function(x, ...) {
   if (is.null(dev.list())) {
     newPlot(...)
   } else {
-    while (dev.set(x) < x) newPlot(...)
+    while (dev.set(x) < x && !isRstudioServer()) newPlot(...)
   }
   #if (.Platform$OS.type != "unix") {
   #}

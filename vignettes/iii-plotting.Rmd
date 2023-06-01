@@ -189,15 +189,17 @@ See text about `na.color` below after raster values have changed.
   clearPlot()
   Plot(landscape) # original
   
-  cols <- if (requireNamespace("RColorBrewer"))
+  # can use RColorBrewer if installed
+  habQualCols <- if (requireNamespace("RColorBrewer")) {
     RColorBrewer::brewer.pal(9, "Spectral")
-  else 
+  } else {
     colorRampPalette(c("blue", "purple"))(9)
+  }
   
   mapColours <- list(
     DEM = topo.colors(50),
     forestCover = colorRampPalette(c("blue", "orange", "purple", "red"))(50),
-    habitatQuality = cols
+    habitatQuality = habQualCols
   )
   setColors(landscape, n = 50) <- mapColours
   Plot(landscape, new = TRUE) # oh, how pretty!

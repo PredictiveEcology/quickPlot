@@ -312,11 +312,12 @@ if (requireNamespace("RColorBrewer")) {
   landscape <- rast(maps)
 
   # can change color palette
-  setColors(landscape, n = 50) <- list(DEM = topo.colors(50),
-                                       forestCover = brewer.pal(9, "Set1"),
-                                       forestAge = brewer.pal("Blues", n = 8),
-                                       habitatQuality = brewer.pal(9, "Spectral"),
-                                       percentPine = brewer.pal("GnBu", n = 8))
+  setColors(landscape, n = 50) <-
+    list(DEM = topo.colors(50),
+         forestCover = RColorBrewer::brewer.pal(9, "Set1"),
+         forestAge = RColorBrewer::brewer.pal("Blues", n = 8),
+         habitatQuality = RColorBrewer::brewer.pal(9, "Spectral"),
+         percentPine = RColorBrewer::brewer.pal("GnBu", n = 8))
 
   # Make a new raster derived from a previous one; must give it a unique name
   habitatQuality2 <- landscape$habitatQuality ^ 0.3

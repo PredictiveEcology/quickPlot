@@ -25,7 +25,7 @@ clearPlot()
 Plot(ras)
 
 # Real number rasters - interpolation is used
-ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) %>%
+ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) |>
   setColors(c("red", "yellow")) # interpolates when real numbers, gives warning
 
 clearPlot()

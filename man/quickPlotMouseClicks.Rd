@@ -64,8 +64,8 @@ original map extent, not the "zoomed in" map extent. See example.
 \examples{
 \donttest{
 if (interactive()) {
-  files <- system.file("maps", package = "quickPlot") \%>\%
-    dir(., full.names = TRUE, pattern = "tif")
+  files <- system.file("maps", package = "quickPlot") |>
+    dir(path = _, full.names = TRUE, pattern = "tif")
   maps <- lapply(files, function(x) terra::rast(x))
   names(maps) <- sapply(basename(files), function(x) {
     strsplit(x, split = "\\\\.")[[1]][1]
