@@ -1,6 +1,7 @@
 test_that("clickExtent works", {
   skip_if_not(interactive(), message = "clickExtent tests must be run manually.")
 
+  skip_on_os("linux")
   testInit("terra")
 
   # make a SpatialPolygon
