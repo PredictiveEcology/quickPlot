@@ -155,7 +155,10 @@ setMethod("clearPlot",
 #'
 #' @examples
 #' \donttest{
-#' if (interactive()) {
+#' # clickValues and family are unreliable on Rstudio Server as the plotting device
+#' #   does not report its dimensions correctly; this may change in future
+#' #   updates to Rstudio
+#' if (interactive() && !isRstudioServer() ) {
 #'   files <- system.file("maps", package = "quickPlot") |>
 #'     dir(path = _, full.names = TRUE, pattern = "tif")
 #'   maps <- lapply(files, function(x) terra::rast(x))
