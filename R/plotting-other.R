@@ -206,11 +206,11 @@ clickValues <- function(n = 1) {
     } else {
       if (!is.na(layNames[i])) {
         coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-          ras1[[layNames[i]]][cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
+          ras1[[layNames[i]]][terra::cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
         }))
       } else {
         coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-          ras1[cellFromXY(ras1, coords$coords[i, 1:2])]
+          ras1[terra::cellFromXY(ras1, coords$coords[i, 1:2])]
         }))
       }
     }

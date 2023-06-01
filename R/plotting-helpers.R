@@ -1,6 +1,6 @@
 ### deal with spurious data.table warnings
 if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c(".", ".N", "keepAll"))
+  utils::globalVariables(c(".", ".N", "keepAll", "..rmCols", "L1"))
 }
 
 #' Find the number of layers in a Spatial Object
@@ -681,13 +681,14 @@ makeLines.default <-
   #signature = c("SpatialPoints", "SpatialPoints"),
   # definition =
   function(from, to) {
+    browser()
     if (is(from, "Spatial") || is(to, "Spatial")) {
       if (!requireNamespace("sp"))
         stop("Need to `install.packages('sp') or use SpatVector class")
-      ccrds <- rbind(sp::coordinates(from)[x, ], sp::coordinates(to)[x, ])
+      ccrds <- rbind(sp::coordinates(from), sp::coordinates(to))
       SpatialLines(lapply(seq_len(length(from)), function(x) {
         Lines(list(Line(
-          coords = ccrrds
+          coords = ccrds
         )), ID = x)
       }), proj4string = crs(from)) # nolint
     } else {

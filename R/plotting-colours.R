@@ -721,9 +721,19 @@ setMethod(
   return(myColors)
 })
 
+#' @importFrom grDevices rgb
 colorsRGBtoHex <- function(cols) {
   if ("alpha" %in% colnames(cols))
     rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
   else
     rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255)
+}
+
+factorValues <- function(r, values, layer = terra::activeCat(r), indices) {
+  df <- terra::levels(r)[[1]]
+  if (missing(values)) {
+    values <- r[][indices]
+  }
+  df[[layer + 1]][match(values, df[[1]])]
+
 }
