@@ -861,7 +861,7 @@ test_that("rePlot doesn't work", {
   fil1 <- file.path(tmpdir, fil1)
   fil2 <- paste0("test", prevLastPlotNumber + 1 ,".png")
   fil2 <- file.path(tmpdir, fil2)
-  announce_snapshot_file(name = basename(fil))
+  announce_snapshot_file(name = basename(fil1))
   expect_snapshot_file({
     skip_on_os("windows")
     png(file = fil1, width = 400, height = 300)
