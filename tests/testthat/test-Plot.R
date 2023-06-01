@@ -231,7 +231,8 @@ test_that("Plot 1 is not error-free", {
 
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
-  dev()
+  if (!isRstudioServer())
+    dev()
   hist87654 <- hist(stats::rnorm(1e3), plot = FALSE)
   clearPlot()
   expect_silent(Plot(hist87654))
@@ -291,9 +292,10 @@ test_that("Unit tests for image content is not error-free", {
   # New Section
 
   fil <- file.path(tmpdir, "test1.png")
-
+  announce_snapshot_file(name = basename(fil))
   testthat::expect_snapshot_file(
-    {png(file = fil, width = 400, height = 300)
+    {skip_on_os("windows")
+      png(file = fil, width = 400, height = 300)
       clearPlot()
       Plot(ras, new = TRUE)
       dev.off()
@@ -315,7 +317,9 @@ test_that("Unit tests for image content is not error-free", {
   ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
   fil <- file.path(tmpdir, "test2.png")
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil, width = 400, height = 300)
     clearPlot()
     Plot(ras)
@@ -345,7 +349,9 @@ test_that("Unit tests for image content is not error-free", {
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
   ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
 
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil, width = 400, height = 300)
     clearPlot()
     Plot(ras, new = TRUE)
@@ -396,7 +402,9 @@ test_that("Unit tests for plotting colors", {
   prevLastPlotNumber <- 3
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
     fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + testNum ,".png"))
+    announce_snapshot_file(name = basename(fil))
     expect_snapshot_file({
+      skip_on_os("windows")
       png(file = fil, width = 400, height = 300)
       clearPlot()
       Plot(ras, new = TRUE)
@@ -455,7 +463,9 @@ test_that("Unit tests for internal functions in Plot", {
     val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1
     fn <- if (testNum == 5) 5 else val
     fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
+    announce_snapshot_file(name = basename(fil))
     expect_snapshot_file({
+      skip_on_os("windows")
       png(file = fil, width = 400, height = 300)
       clearPlot()
       set.seed(123)
@@ -562,7 +572,9 @@ test_that("Plot 2 is not error-free", {
     # fn <- if (testNum == 5) 5 else val # this is needed if there is speedup used b/c terra::sample and raster::sampleRegular aren't same
     fil <- paste0("test", prevLastPlotNumber + fn ,".png")
     fil <- file.path(tmpdir, fil)
+    announce_snapshot_file(name = basename(fil))
     expect_snapshot_file({
+      skip_on_os("windows")
       png(file = fil, width = 400, height = 300)
       clearPlot()
       Plot(rasts[[testNum]], new = TRUE)
@@ -576,7 +588,9 @@ test_that("Plot 2 is not error-free", {
     if (val %in% c(7,8,10,11,12,14)) {
       fn <- if (testNum == 5) 5 else val
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
+      announce_snapshot_file(name = basename(fil))
       expect_snapshot_file({
+        skip_on_os("windows")
         png(file = fil, width = 400, height = 300)
         clearPlot()
         set.seed(123)
@@ -642,7 +656,9 @@ test_that("Plot 2 is not error-free", {
   fil <- paste0("test", prevLastPlotNumber + 1 ,".png")
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil, width = 800, height = 600)
     clearPlot()
     set.seed(123)
@@ -730,7 +746,9 @@ test_that("Plot with base is not error-free", {
   fil <- paste0("test", prevLastPlotNumber + 1 ,".png")
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil, width = 800, height = 600)
     clearPlot()
     set.seed(123)
@@ -759,7 +777,9 @@ test_that("Plot with base is not error-free", {
     fil <- paste0("test", prevLastPlotNumber + 2 ,".png")
     fil <- file.path(tmpdir, fil)
     # Mixing base and grid
+    announce_snapshot_file(name = basename(fil))
     expect_snapshot_file({
+      skip_on_os("windows")
       png(file = fil, width = 800, height = 600)
       clearPlot()
       set.seed(123)
@@ -777,7 +797,9 @@ test_that("Plot with base is not error-free", {
     # New Section
   fil <- paste0("test", prevLastPlotNumber + 3 ,".png")
   fil <- file.path(tmpdir, fil)
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil, width = 800, height = 600)
     clearPlot()
     set.seed(123)
@@ -803,7 +825,9 @@ test_that("Plot with base is not error-free", {
   fil <- paste0("test", prevLastPlotNumber + 4 ,".png")
   fil <- file.path(tmpdir, fil)
   set.seed(123)
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil, width = 800, height = 600)
     ras <- rasOrig
     ras2 <- ras
@@ -837,7 +861,9 @@ test_that("rePlot doesn't work", {
   fil1 <- file.path(tmpdir, fil1)
   fil2 <- paste0("test", prevLastPlotNumber + 1 ,".png")
   fil2 <- file.path(tmpdir, fil2)
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil1, width = 400, height = 300)
     a <- dev.cur()
     set.seed(123)
@@ -854,7 +880,9 @@ test_that("rePlot doesn't work", {
   unlink(fil1)
 
   # same file for snapshot b/c basename is same as previous
+  announce_snapshot_file(name = basename(fil1))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil2, width = 400, height = 300)
     b <- dev.cur()
     rePlot(a, b)
@@ -917,7 +945,9 @@ test_that("Plot lists", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   a$SpP <- SpP
+  announce_snapshot_file(name = basename(fil))
   expect_snapshot_file({
+    skip_on_os("windows")
     png(file = fil, width = 800, height = 600)
     clearPlot()
     set.seed(123)
@@ -935,7 +965,9 @@ test_that("Plot lists", {
     gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
     b <- list(gg = gg, gg1 = gg1)
     # png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
+    announce_snapshot_file(name = basename(fil))
     expect_snapshot_file({
+      skip_on_os("windows")
       png(file = fil, width = 800, height = 600)
       clearPlot()
       set.seed(123)
