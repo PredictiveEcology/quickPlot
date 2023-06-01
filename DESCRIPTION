@@ -44,7 +44,8 @@ Suggests:
     sf,
     sp,
     spelling,
-    testthat (>= 1.0.2)
+    testthat (>= 1.0.2),
+    withr
 Additional_repositories: https://predictiveecology.r-universe.dev/
 Encoding: UTF-8
 Language: en-CA

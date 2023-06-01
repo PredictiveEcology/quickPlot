@@ -233,9 +233,9 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' replotted with `rePlot()` or on a new device with `rePlot(n)`,
 #' where `n` is the new device number.
 #'
-#' @seealso [clearPlot()], [gpar()], [raster()],
-#' [par()], [SpatialPolygons()], [grid.polyline()],
-#' [ggplot()], [dev()]
+#' @seealso [clearPlot()], [gpar()], `raster::raster()`,
+#' [par()], `sp::SpatialPolygons()`, [grid.polyline()],
+#' `ggplot2::ggplot()`, [dev()]
 #'
 #' @author Eliot McIntire
 #' @export
