@@ -1,7 +1,5 @@
 test_that("Plot called in a do.call works", {
-  withr::local_package("terra")
-  tmpdir <- withr::local_tempdir()
-  withr::local_dir(tmpdir)
+  testInit("terra")
 
   # make a SpatialPolygon
   shpEcozone <- aPoly()

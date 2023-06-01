@@ -292,14 +292,15 @@ test_that("Unit tests for image content is not error-free", {
 
   fil <- file.path(tmpdir, "test1.png")
   announce_snapshot_file(name = basename(fil))
-  testthat::expect_snapshot_file(
-    {skip_on_os("windows")
-      png(file = fil, width = 400, height = 300)
-      clearPlot()
-      Plot(ras, new = TRUE)
-      dev.off()
-      fil},
-    basename(fil))
+  if (.Platform$OS.type == "unix")
+    testthat::expect_snapshot_file(
+      { png(file = fil, width = 400, height = 300)
+        clearPlot()
+        Plot(ras, new = TRUE)
+        dev.off()
+        fil},
+      basename(fil))
+
 
   # test_id <- "B1"
   # if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
@@ -317,13 +318,13 @@ test_that("Unit tests for image content is not error-free", {
                        ncol = ncol, nrow = nrow))
   fil <- file.path(tmpdir, "test2.png")
   announce_snapshot_file(name = basename(fil))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil, width = 400, height = 300)
-    clearPlot()
-    Plot(ras)
-    dev.off()
-    fil})
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil, width = 400, height = 300)
+      clearPlot()
+      Plot(ras)
+      dev.off()
+      fil})
 
 
   #
@@ -349,14 +350,14 @@ test_that("Unit tests for image content is not error-free", {
   ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
 
   announce_snapshot_file(name = basename(fil))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil, width = 400, height = 300)
-    clearPlot()
-    Plot(ras, new = TRUE)
-    dev.off()
-    fil
-  })
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil, width = 400, height = 300)
+      clearPlot()
+      Plot(ras, new = TRUE)
+      dev.off()
+      fil
+    })
 
 
   # test_id <- "B3"
@@ -401,14 +402,14 @@ test_that("Unit tests for plotting colors", {
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
     fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + testNum ,".png"))
     announce_snapshot_file(name = basename(fil))
-    expect_snapshot_file({
-      skip_on_os("windows")
-      png(file = fil, width = 400, height = 300)
-      clearPlot()
-      Plot(ras, new = TRUE)
-      dev.off()
-      fil
-    })
+    if (.Platform$OS.type == "unix")
+      expect_snapshot_file({
+        png(file = fil, width = 400, height = 300)
+        clearPlot()
+        Plot(ras, new = TRUE)
+        dev.off()
+        fil
+      })
   })
 })
 
@@ -462,22 +463,22 @@ test_that("Unit tests for internal functions in Plot", {
     fn <- if (testNum == 5) 5 else val
     fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
     announce_snapshot_file(name = basename(fil))
-    expect_snapshot_file({
-      skip_on_os("windows")
-      png(file = fil, width = 400, height = 300)
-      clearPlot()
-      set.seed(123)
-      switch(val,
-             `1` = Plot(rasts[[1]], new = TRUE, speedup = 3.21e4),
-             `2` = suppressWarnings(Plot(rasts[[2]], new = TRUE, speedup = 2e5)),
-             `3` = Plot(rasts[[3]], legendRange = 0:5, new = TRUE),
-             `4` = Plot(rasts[[4]], visualSqueeze = 0.88, title = FALSE,
-                        legend = FALSE, cols = colorRampPalette(c("black", "red"))(3))
+    if (.Platform$OS.type == "unix")
+      expect_snapshot_file({
+        png(file = fil, width = 400, height = 300)
+        clearPlot()
+        set.seed(123)
+        switch(val,
+               `1` = Plot(rasts[[1]], new = TRUE, speedup = 3.21e4),
+               `2` = suppressWarnings(Plot(rasts[[2]], new = TRUE, speedup = 2e5)),
+               `3` = Plot(rasts[[3]], legendRange = 0:5, new = TRUE),
+               `4` = Plot(rasts[[4]], visualSqueeze = 0.88, title = FALSE,
+                          legend = FALSE, cols = colorRampPalette(c("black", "red"))(3))
 
-             )
-      dev.off()
-      fil
-    })})
+        )
+        dev.off()
+        fil
+      })})
 })
 
 ## block E
@@ -571,14 +572,14 @@ test_that("Plot 2 is not error-free", {
     fil <- paste0("test", prevLastPlotNumber + fn ,".png")
     fil <- file.path(tmpdir, fil)
     announce_snapshot_file(name = basename(fil))
-    expect_snapshot_file({
-      skip_on_os("windows")
-      png(file = fil, width = 400, height = 300)
-      clearPlot()
-      Plot(rasts[[testNum]], new = TRUE)
-      dev.off()
-      fil
-    })})
+    if (.Platform$OS.type == "unix")
+      expect_snapshot_file({
+        png(file = fil, width = 400, height = 300)
+        clearPlot()
+        Plot(rasts[[testNum]], new = TRUE)
+        dev.off()
+        fil
+      })})
 
   prevLastPlotNumber <- 28
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
@@ -587,65 +588,65 @@ test_that("Plot 2 is not error-free", {
       fn <- if (testNum == 5) 5 else val
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
       announce_snapshot_file(name = basename(fil))
-      expect_snapshot_file({
-        skip_on_os("windows")
-        png(file = fil, width = 400, height = 300)
-        clearPlot()
-        set.seed(123)
-        switch(as.character(val),
+      if (.Platform$OS.type == "unix")
+        expect_snapshot_file({
+          png(file = fil, width = 400, height = 300)
+          clearPlot()
+          set.seed(123)
+          switch(as.character(val),
 
-               "7" = Plot(rasts[[testNum]], new = TRUE, zero.color = "black"), # black zeros
-               "8" = {
-                 a <- testNum
-                 Plot(rasts[[testNum]], new = TRUE, zero.color = "black") # black zeros, some scattered
-                 ## black zeros, plus legend -10 to 40
-                 Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 40)) # legend changed
-               },
-               "10" = {
-                 a <- testNum
-                 Plot(rasts[[testNum]], new = TRUE, zero.color = "black")# should be no black because no zeros
-                 Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 200))
-               },
+                 "7" = Plot(rasts[[testNum]], new = TRUE, zero.color = "black"), # black zeros
+                 "8" = {
+                   a <- testNum
+                   Plot(rasts[[testNum]], new = TRUE, zero.color = "black") # black zeros, some scattered
+                   ## black zeros, plus legend -10 to 40
+                   Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 40)) # legend changed
+                 },
+                 "10" = {
+                   a <- testNum
+                   Plot(rasts[[testNum]], new = TRUE, zero.color = "black")# should be no black because no zeros
+                   Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 200))
+                 },
 
-               ## should be slim black in legend, none in fig
-               #
+                 ## should be slim black in legend, none in fig
+                 #
 
-               ## Test legend that is pre-set, even with various types of rasters
-               ## should be dark red raster, legend from 0 to 200
-               "11" = {
-                 clearPlot()
-                 # should be mostly red raster, a bit of green, legend 0 to 200
-                 Plot(rasts[[11]], legendRange = c(0, 200), new = TRUE, cols = c("red", "green"))
-                 # should be mostly almost entirely red raster, legend below 0 to 2000
-                 f <- e <- d <- b <- a <- 11
-                 Plot(rasts[[a]], legendRange = c(-200, 2000), new = TRUE, cols = c("red", "green"))
-                 Plot(rasts[[b]], new = TRUE)
-                 Plot(rasts[[d]], new = TRUE, legendRange = c(0, 40)) # legend from 0 to 40, mostly green
-                 Plot(rasts[[e]], new = TRUE, zero.color = "black") # no black
-                 Plot(rasts[[f]], new = TRUE, zero.color = "black", legendRange = c(35, 40)) # lots of white
-               },
+                 ## Test legend that is pre-set, even with various types of rasters
+                 ## should be dark red raster, legend from 0 to 200
+                 "11" = {
+                   clearPlot()
+                   # should be mostly red raster, a bit of green, legend 0 to 200
+                   Plot(rasts[[11]], legendRange = c(0, 200), new = TRUE, cols = c("red", "green"))
+                   # should be mostly almost entirely red raster, legend below 0 to 2000
+                   f <- e <- d <- b <- a <- 11
+                   Plot(rasts[[a]], legendRange = c(-200, 2000), new = TRUE, cols = c("red", "green"))
+                   Plot(rasts[[b]], new = TRUE)
+                   Plot(rasts[[d]], new = TRUE, legendRange = c(0, 40)) # legend from 0 to 40, mostly green
+                   Plot(rasts[[e]], new = TRUE, zero.color = "black") # no black
+                   Plot(rasts[[f]], new = TRUE, zero.color = "black", legendRange = c(35, 40)) # lots of white
+                 },
 
-               ## legend Should have all colors in legend
-               "12" = {
-                 a <- 12
-                 clearPlot()
-                 Plot(rasts[[12]], new = TRUE)
-                 Plot(rasts[[a]], new = TRUE, cols = c("red", "yellow", "green", "blue"))
-               },
+                 ## legend Should have all colors in legend
+                 "12" = {
+                   a <- 12
+                   clearPlot()
+                   Plot(rasts[[12]], new = TRUE)
+                   Plot(rasts[[a]], new = TRUE, cols = c("red", "yellow", "green", "blue"))
+                 },
 
-               "14" = {
-                 # zero.color on Integer numbers should work - expect BLACK both in legend and in a few cells
-                 a <- 14
-                 clearPlot()
-                 Plot(rasts[[14]], new = TRUE, zero.color = "black")
-                 # zero.color on Integer numbers should work - expect red both in legend and in a few cells
-                 Plot(rasts[[a]], zero.color = "red")
+                 "14" = {
+                   # zero.color on Integer numbers should work - expect BLACK both in legend and in a few cells
+                   a <- 14
+                   clearPlot()
+                   Plot(rasts[[14]], new = TRUE, zero.color = "black")
+                   # zero.color on Integer numbers should work - expect red both in legend and in a few cells
+                   Plot(rasts[[a]], zero.color = "red")
 
-               }
-        )
-        dev.off()
-        fil
-      })
+                 }
+          )
+          dev.off()
+          fil
+        })
     }
   })
 
@@ -655,17 +656,17 @@ test_that("Plot 2 is not error-free", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   announce_snapshot_file(name = basename(fil))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil, width = 800, height = 600)
-    clearPlot()
-    set.seed(123)
-    Plot(rasts[[12]], cols = "Blues", new = TRUE, legendRange = c(-3, 4))
-    rasts[[12]][] <- rasts[[12]][] + 5
-    Plot(rasts[[12]], na.color = "white") # Should keep one dark Blue, rest white
-    dev.off()
-    fil
-  })
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      clearPlot()
+      set.seed(123)
+      Plot(rasts[[12]], cols = "Blues", new = TRUE, legendRange = c(-3, 4))
+      rasts[[12]][] <- rasts[[12]][] + 5
+      Plot(rasts[[12]], na.color = "white") # Should keep one dark Blue, rest white
+      dev.off()
+      fil
+    })
 
 
 })
@@ -732,78 +733,78 @@ test_that("Plot with base is not error-free", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   announce_snapshot_file(name = basename(fil))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil, width = 800, height = 600)
-    clearPlot()
-    set.seed(123)
-    ras5 <- ras6 <- ras7 <- ras2 <- ras3 <- ras4 <- ras1 <- ras
-    Plot(ras, ras1, ras2, ras3, ras4, ras5, ras6, ras7)
-    Plot(1:10, ylab = "hist")
-    Plot(2:22, addTo = "newOne")
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      clearPlot()
+      set.seed(123)
+      ras5 <- ras6 <- ras7 <- ras2 <- ras3 <- ras4 <- ras1 <- ras
+      Plot(ras, ras1, ras2, ras3, ras4, ras5, ras6, ras7)
+      Plot(1:10, ylab = "hist")
+      Plot(2:22, addTo = "newOne")
 
-    # New Section
-    ras <- rasOrig
-    set.seed(123)
-    Plot(rnorm(10), addTo = "hist", ylab = "test")
-    a <- hist(rnorm(10), plot = FALSE)
-    Plot(a, addTo = "histogram", axes = "L", col = "#33EEAA33", xlim = c(-3, 3))
-    a <- hist(rnorm(100), plot = FALSE)
-    Plot(a, addTo = "histogram", axes = FALSE, col = paste0("#1133FF", "33"),
-         xlim = c(-3, 3), xlab = "", ylab = "")
-    ras2 <- rast(ras)
-    ras2[] <- sample(1:8)
-    Plot(ras2)
-    dev.off()
-    fil
-  })
+      # New Section
+      ras <- rasOrig
+      set.seed(123)
+      Plot(rnorm(10), addTo = "hist", ylab = "test")
+      a <- hist(rnorm(10), plot = FALSE)
+      Plot(a, addTo = "histogram", axes = "L", col = "#33EEAA33", xlim = c(-3, 3))
+      a <- hist(rnorm(100), plot = FALSE)
+      Plot(a, addTo = "histogram", axes = FALSE, col = paste0("#1133FF", "33"),
+           xlim = c(-3, 3), xlab = "", ylab = "")
+      ras2 <- rast(ras)
+      ras2[] <- sample(1:8)
+      Plot(ras2)
+      dev.off()
+      fil
+    })
 
   if (requireNamespace("ggplot2")) {
     fil <- paste0("test", prevLastPlotNumber + 2 ,".png")
     fil <- file.path(tmpdir, fil)
     # Mixing base and grid
     announce_snapshot_file(name = basename(fil))
-    expect_snapshot_file({
-      skip_on_os("windows")
-      png(file = fil, width = 800, height = 600)
-      clearPlot()
-      set.seed(123)
-      gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = 1:10)) +
-        ggplot2::geom_point(ggplot2::aes(x,y))
-      clearPlot()
-      suppressMessages(Plot(gg1, title = "gg plot"))
-      Plot(ras1, ras2, ras3)
-      Plot(rnorm(1:10), ylab = "hist")
-      dev.off()
-      fil
-    })
+    if (.Platform$OS.type == "unix")
+      expect_snapshot_file({
+        png(file = fil, width = 800, height = 600)
+        clearPlot()
+        set.seed(123)
+        gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = 1:10)) +
+          ggplot2::geom_point(ggplot2::aes(x,y))
+        clearPlot()
+        suppressMessages(Plot(gg1, title = "gg plot"))
+        Plot(ras1, ras2, ras3)
+        Plot(rnorm(1:10), ylab = "hist")
+        dev.off()
+        fil
+      })
   }
 
     # New Section
   fil <- paste0("test", prevLastPlotNumber + 3 ,".png")
   fil <- file.path(tmpdir, fil)
   announce_snapshot_file(name = basename(fil))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil, width = 800, height = 600)
-    clearPlot()
-    set.seed(123)
-    ras <- rasOrig
-    a <- rnorm(1e2)
-    b <- rnorm(1e2)
-    Plot(a, axes = TRUE, addTo = "first", visualSqueeze = 0.6)
-    Plot(a, b, axes = TRUE, addTo = "second", visualSqueeze = 0.6)
-    Plot(1:10, axes = FALSE, addTo = "third", visualSqueeze = 0.6)
-    Plot(1:10, 1:10, axes = "L", addTo = "fourth", visualSqueeze = 0.6,
-         main = "test4", title = FALSE)
-    Plot(1:10, 1:10, axes = TRUE, addTo = "fourth", visualSqueeze = 0.6,
-         main = "test4", title = "test5")
-    Plot(1:10, 1:10, axes = TRUE, addTo = "fifth", visualSqueeze = 0.6,
-         main = "test4", title = "test5")
-    Plot(ras)
-    dev.off()
-    fil
-  })
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      clearPlot()
+      set.seed(123)
+      ras <- rasOrig
+      a <- rnorm(1e2)
+      b <- rnorm(1e2)
+      Plot(a, axes = TRUE, addTo = "first", visualSqueeze = 0.6)
+      Plot(a, b, axes = TRUE, addTo = "second", visualSqueeze = 0.6)
+      Plot(1:10, axes = FALSE, addTo = "third", visualSqueeze = 0.6)
+      Plot(1:10, 1:10, axes = "L", addTo = "fourth", visualSqueeze = 0.6,
+           main = "test4", title = FALSE)
+      Plot(1:10, 1:10, axes = TRUE, addTo = "fourth", visualSqueeze = 0.6,
+           main = "test4", title = "test5")
+      Plot(1:10, 1:10, axes = TRUE, addTo = "fifth", visualSqueeze = 0.6,
+           main = "test4", title = "test5")
+      Plot(ras)
+      dev.off()
+      fil
+    })
 
 
   # New Section
@@ -811,20 +812,20 @@ test_that("Plot with base is not error-free", {
   fil <- file.path(tmpdir, fil)
   set.seed(123)
   announce_snapshot_file(name = basename(fil))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil, width = 800, height = 600)
-    ras <- rasOrig
-    ras2 <- ras
-    ras2[] <- sample(ras[])
-    clearPlot()
-    Plot(ras,  title = "test", new = TRUE)
-    Plot(ras2,  addTo = "ras", cols = "Reds")
-    Plot(ras2, title = "test2", new = TRUE)
-    Plot(ras,  addTo = "ras2", cols = "Blues")
-    dev.off()
-    fil
-  })
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      ras <- rasOrig
+      ras2 <- ras
+      ras2[] <- sample(ras[])
+      clearPlot()
+      Plot(ras,  title = "test", new = TRUE)
+      Plot(ras2,  addTo = "ras", cols = "Reds")
+      Plot(ras2, title = "test2", new = TRUE)
+      Plot(ras,  addTo = "ras2", cols = "Blues")
+      dev.off()
+      fil
+    })
 
 
 })
@@ -847,33 +848,33 @@ test_that("rePlot doesn't work", {
   fil2 <- paste0("test", prevLastPlotNumber + 1 ,".png")
   fil2 <- file.path(tmpdir, fil2)
   announce_snapshot_file(name = basename(fil1))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil1, width = 400, height = 300)
-    a <- dev.cur()
-    set.seed(123)
-    rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
-    ras <- rasOrig
-    clearPlot()
-    ras <- ras + 1
-    Plot(ras)
-    Plot(rnorm(10), ylab = "hist")
-    dev.off(a)
-    fil1
-  })
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil1, width = 400, height = 300)
+      a <- dev.cur()
+      set.seed(123)
+      rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+      ras <- rasOrig
+      clearPlot()
+      ras <- ras + 1
+      Plot(ras)
+      Plot(rnorm(10), ylab = "hist")
+      dev.off(a)
+      fil1
+    })
 
   unlink(fil1)
 
   # same file for snapshot b/c basename is same as previous
   announce_snapshot_file(name = basename(fil1))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil2, width = 400, height = 300)
-    b <- dev.cur()
-    rePlot(a, b)
-    dev.off(b)
-    fil2
-  })
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil2, width = 400, height = 300)
+      b <- dev.cur()
+      rePlot(a, b)
+      dev.off(b)
+      fil2
+    })
 
 })
 
@@ -930,14 +931,14 @@ test_that("Plot lists", {
   # Mixing base and grid
   a$SpP <- SpP
   announce_snapshot_file(name = basename(fil))
-  expect_snapshot_file({
-    skip_on_os("windows")
-    png(file = fil, width = 800, height = 600)
-    clearPlot()
-    set.seed(123)
-    Plot(a)
-    dev.off()
-    fil
+  if (.Platform$OS.type == "unix")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      clearPlot()
+      set.seed(123)
+      Plot(a)
+      dev.off()
+      fil
     })
 
 
@@ -950,16 +951,16 @@ test_that("Plot lists", {
     b <- list(gg = gg, gg1 = gg1)
     # png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
     announce_snapshot_file(name = basename(fil))
-    expect_snapshot_file({
-      skip_on_os("windows")
-      png(file = fil, width = 800, height = 600)
-      clearPlot()
-      set.seed(123)
-      clearPlot()
-      Plot(append(a, b))
-      dev.off()
-      fil
-    })
+    if (.Platform$OS.type == "unix")
+      expect_snapshot_file({
+        png(file = fil, width = 800, height = 600)
+        clearPlot()
+        set.seed(123)
+        clearPlot()
+        Plot(append(a, b))
+        dev.off()
+        fil
+      })
 
   }
 
@@ -967,7 +968,6 @@ test_that("Plot lists", {
 
 ## block L
 test_that("Plot non-complicated object names", {
-  # library(raster)
   testInit("terra")
 
   a <- list()

@@ -193,9 +193,9 @@ clickValues <- function(n = 1) {
         sf::st_crs(a) <- sf::st_crs(ras1)
         b <- sf::st_intersection(ras1, a)
         d <- sf::st_drop_geometry(b)
-      } else if (isSpat(ras1)) {
+      } else {
         a <- terra::vect(crds, geom = xyCols)
-        b <- terra::intersect(ras1, a)
+        b <- terra::extract(ras1, a)
         d <- as.data.frame(b)
       }
       df <- cbind(crds, d)

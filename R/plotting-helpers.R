@@ -967,16 +967,7 @@ setMethod(
 #' @rdname grid-functions
 #' @seealso [grid::gpar()]
 #'
-setGeneric("gpar", function(...) {
-  standardGeneric("gpar")
-})
-
-#' @export
-#' @rdname grid-functions
-setMethod("gpar",
-          definition = function(...) {
-            return(grid::gpar(...))
-})
+gpar <- grid::gpar
 
 #' Internal functions used by `Plot`
 #'
