@@ -26,5 +26,8 @@ caribou <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
 caribouFrom <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
                                         y = stats::runif(1e1, -50, 50)))
 caribouLines <- sp2sl(caribou, caribouFrom)
-Plot(caribouLines, length = 0.1)
+if (interactive()) {
+  clearPlot()
+  Plot(caribouLines, length = 0.1)
+}
 }
