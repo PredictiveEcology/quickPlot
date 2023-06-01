@@ -156,6 +156,7 @@ setMethod("clearPlot",
 #'
 #' @examples
 #' \donttest{
+#' if (interactive()) {
 #'   files <- system.file("maps", package = "quickPlot") %>%
 #'     dir(., full.names = TRUE, pattern = "tif")
 #'   maps <- lapply(files, function(x) terra::rast(x))
@@ -174,8 +175,7 @@ setMethod("clearPlot",
 #'   print(e)
 #'
 #'   # repeated zooming to try various places on the original device
-#'   if (interactive())
-#'     for(i in 1:4) clickExtent() # click at two locations on the Plot device
+#'   for(i in 1:4) clickExtent() # click at two locations on the Plot device
 #' }
 #'
 clickValues <- function(n = 1) {

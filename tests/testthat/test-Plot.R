@@ -300,7 +300,7 @@ test_that("Unit tests for image content is not error-free", {
 
   # New Section
 
-  fil <- file.path("test1.png")
+  fil <- file.path(tmpdir, "test1.png")
   fn <- function(x) {png(file = fil, width = 400, height = 300)
     clearPlot()
     Plot(ras, new = TRUE)
@@ -323,7 +323,7 @@ test_that("Unit tests for image content is not error-free", {
   set.seed(24334)
   ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
-  fil <- "test2.png"
+  fil <- file.path(tmpdir, "test2.png")
   expect_snapshot_file({
     png(file = fil, width = 400, height = 300)
     clearPlot()
@@ -344,7 +344,7 @@ test_that("Unit tests for image content is not error-free", {
   # New Section
 
   # test non contiguous factor raster
-  fil <- "test3.png"
+  fil <- file.path(tmpdir, "test3.png")
   nLevels <- 6
   N <- ncol * nrow
   set.seed(24334)
@@ -404,7 +404,7 @@ test_that("Unit tests for plotting colors", {
   }
   prevLastPlotNumber <- 3
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
-    fil <- paste0("test", prevLastPlotNumber + testNum ,".png")
+    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + testNum ,".png"))
     expect_snapshot_file({
       png(file = fil, width = 400, height = 300)
       clearPlot()
@@ -464,7 +464,7 @@ test_that("Unit tests for internal functions in Plot", {
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
     val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1
     fn <- if (testNum == 5) 5 else val
-    fil <- paste0("test", prevLastPlotNumber + fn ,".png")
+    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
     expect_snapshot_file({
       png(file = fil, width = 400, height = 300)
       clearPlot()
@@ -586,7 +586,7 @@ test_that("Plot 2 is not error-free", {
     val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1
     if (val %in% c(7,8,10,11,12,14)) {
       fn <- if (testNum == 5) 5 else val
-      fil <- paste0("test", prevLastPlotNumber + fn ,".png")
+      fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
       fil <- file.path(tmpdir, fil)
       expect_snapshot_file({
         png(file = fil, width = 400, height = 300)

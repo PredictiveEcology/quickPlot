@@ -61,30 +61,6 @@ object. To recover original full object, double click anywhere during an
 active \code{clickExtent}. Currently, subsequent \code{clickExtent} is a click on the
 original map extent, not the "zoomed in" map extent. See example.
 }
-\examples{
-\donttest{
-  files <- system.file("maps", package = "quickPlot") \%>\%
-    dir(., full.names = TRUE, pattern = "tif")
-  maps <- lapply(files, function(x) terra::rast(x))
-  names(maps) <- sapply(basename(files), function(x) {
-    strsplit(x, split = "\\\\.")[[1]][1]
-  })
-  landscape <- c(maps$DEM, maps$forestCover, maps$habitatQuality)
-
-  clearPlot()
-  Plot(landscape)
-  clickValues(3) # click at three locations on the Plot device
-
-  clearPlot()
-  Plot(landscape)
-  e <- clickExtent() # click at two locations on the Plot device
-  print(e)
-
-  # repeated zooming to try various places on the original device
-  for(i in 1:4) clickExtent() # click at two locations on the Plot device
-}
-
-}
 \author{
 Eliot McIntire
 }

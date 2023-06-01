@@ -43,7 +43,8 @@
   xyAxes,
   legendText,
   vps,
-  nonPlotArgs
+  nonPlotArgs,
+  arr
 )
 
 \S4method{.Plot}{.quickPlotGrob}(
@@ -60,7 +61,8 @@
   xyAxes,
   legendText,
   vps,
-  nonPlotArgs
+  nonPlotArgs,
+  arr
 )
 
 .refreshGrob(
@@ -97,7 +99,7 @@
 \item{takeFromPlotObj}{Logical indicating whether data for \code{grobToPlot} should be found in
 current call to Plot or from disk}
 
-\item{arr}{An arrangement object}
+\item{arr}{An arragement object.}
 
 \item{newArr}{Logical, whether there is a new arrangement happening}
 
