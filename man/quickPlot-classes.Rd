@@ -20,9 +20,8 @@ and \code{.arrangement} objects\cr
 
 \tabular{ll}{
 \strong{Unions of existing classes:}\tab \cr
-\code{\link[=.quickPlottables]{.quickPlottables()}} \tab The union of all object classes Plot can accept\cr
-\code{\link[=.quickPlotObjects]{.quickPlotObjects()}} \tab The union of \code{spatialObjects} and several others\cr
-\code{\link[=spatialObjects]{spatialObjects()}} \tab The union of several spatial classes\cr
+\code{.quickPlottables} \tab The union of all object classes Plot can accept\cr
+\code{.quickPlotObjects} \tab The union of \code{spatialObjects} and several others\cr
 }
 }
 

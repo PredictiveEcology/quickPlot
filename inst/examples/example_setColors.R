@@ -1,4 +1,3 @@
-library(igraph)
 library(raster)
 
 ras <- raster(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))
@@ -26,7 +25,7 @@ clearPlot()
 Plot(ras)
 
 # Real number rasters - interpolation is used
-ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) %>%
+ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) |>
   setColors(c("red", "yellow")) # interpolates when real numbers, gives warning
 
 clearPlot()

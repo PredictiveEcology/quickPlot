@@ -2,12 +2,9 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{makeLines}
 \alias{makeLines}
-\alias{makeLines,SpatialPoints,SpatialPoints-method}
 \title{Make \code{SpatialLines} object from two \code{SpatialPoints} objects}
 \usage{
 makeLines(from, to)
-
-\S4method{makeLines}{SpatialPoints,SpatialPoints}(from, to)
 }
 \arguments{
 \item{from}{Starting spatial coordinates (\code{SpatialPointsDataFrame}).}
@@ -24,32 +21,35 @@ The primary conceived usage of this is to draw arrows following the
 trajectories of agents.
 }
 \examples{
-library(sp)
-library(raster)
-
+library(terra)
 # Make 2 objects
-caribou1 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
-                                y = stats::runif(10, -50, 50)))
-caribou2 <- SpatialPoints(cbind(x = stats::runif(10, -50, 50),
-                                y = stats::runif(10, -50, 50)))
+caribou1 <- terra::vect(cbind(x = stats::runif(10, -50, 50),
+                              y = stats::runif(10, -50, 50)))
+caribou2 <- terra::vect(cbind(x = stats::runif(10, -50, 50),
+                              y = stats::runif(10, -50, 50)))
 
 caribouTraj <- makeLines(caribou1, caribou2)
 
-clearPlot()
-Plot(caribouTraj, length = 0.1)
+if (interactive())
+  if (requireNamespace("quickPlot", quietly = TRUE)) {
+    quickPlot::Plot(caribouTraj, length = 0.1) # shows arrows
+  } else {
+    terra::plot(caribouTraj)
+  }
 
 # or  to a previous Plot
 files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
-maps <- lapply(files, raster)
+maps <- lapply(files, terra::rast)
 names(maps) <- lapply(maps, names)
 
 caribouTraj <- makeLines(caribou1, caribou2)
 
-clearPlot()
-Plot(maps$DEM)
-Plot(caribouTraj, addTo = "maps$DEM", length = 0.1)
+if (interactive()) {
+  clearPlot()
+  quickPlot::Plot(maps$DEM)
+  quickPlot::Plot(caribouTraj, addTo = "maps$DEM", length = 0.1)
+}
 
-clearPlot()
 }
 \author{
 Eliot McIntire

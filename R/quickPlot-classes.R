@@ -15,9 +15,8 @@
 #'
 #' \tabular{ll}{
 #'   **Unions of existing classes:**\tab \cr
-#'   [.quickPlottables()] \tab The union of all object classes Plot can accept\cr
-#'   [.quickPlotObjects()] \tab The union of `spatialObjects` and several others\cr
-#'   [spatialObjects()] \tab The union of several spatial classes\cr
+#'   `.quickPlottables` \tab The union of all object classes Plot can accept\cr
+#'   `.quickPlotObjects` \tab The union of `spatialObjects` and several others\cr
 #' }
 #'
 #' @seealso [Plot()]

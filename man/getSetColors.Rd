@@ -3,43 +3,16 @@
 \name{getColors}
 \alias{getColors}
 \alias{getColours}
-\alias{getColors,Raster-method}
-\alias{getColors,ANY-method}
-\alias{getColors,SpatialPoints-method}
 \alias{setColors<-}
 \alias{setColours}
-\alias{setColors<-,RasterLayer,numeric,character-method}
-\alias{setColors<-,RasterLayer,missing,character-method}
-\alias{setColors<-,RasterStack,numeric,list-method}
-\alias{setColors<-,Raster,missing,list-method}
 \alias{setColors}
-\alias{setColors,RasterLayer,character,numeric-method}
-\alias{setColors,RasterLayer,character,missing-method}
 \title{Get and set colours for plotting \verb{Raster*} objects}
 \usage{
 getColors(object)
 
-\S4method{getColors}{Raster}(object)
-
-\S4method{getColors}{ANY}(object)
-
-\S4method{getColors}{SpatialPoints}(object)
-
 setColors(object, ..., n) <- value
 
-\S4method{setColors}{RasterLayer,numeric,character}(object, ..., n) <- value
-
-\S4method{setColors}{RasterLayer,missing,character}(object, ..., n) <- value
-
-\S4method{setColors}{RasterStack,numeric,list}(object, ..., n) <- value
-
-\S4method{setColors}{Raster,missing,list}(object, ..., n) <- value
-
 setColors(object, value, n)
-
-\S4method{setColors}{RasterLayer,character,numeric}(object, value, n)
-
-\S4method{setColors}{RasterLayer,character,missing}(object, value)
 }
 \arguments{
 \item{object}{A \verb{Raster*} object.}
@@ -65,7 +38,6 @@ Get and set colours for plotting \verb{Raster*} objects
 This function can accept \code{RColorBrewer} colours by name. See examples.
 }
 \examples{
-library(igraph)
 library(raster)
 
 ras <- raster(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))
@@ -93,7 +65,7 @@ clearPlot()
 Plot(ras)
 
 # Real number rasters - interpolation is used
-ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) \%>\%
+ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) |>
   setColors(c("red", "yellow")) # interpolates when real numbers, gives warning
 
 clearPlot()
@@ -123,9 +95,9 @@ clearPlot()
 Plot(ras)
 }
 \seealso{
-\code{\link[=setColors<-]{setColors<-()}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}}
+\code{\link[=setColors<-]{setColors<-()}}, \code{brewer.pal()}, RColorBrewer::ColorBrewer
 
-\code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}},
+\code{brewer.pal()}, \code{RColorBrewer::ColorBrewer},
 \code{\link[grDevices:colorRamp]{colorRampPalette()}}.
 }
 \author{

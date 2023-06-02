@@ -1,10 +1,11 @@
 test_that("Plotting types without visual checking works", {
-  r1 <- raster::raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+  testInit("terra")
+  r1 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
                        vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-  r2 <- raster::raster(xmn = 0, xmx = 10, ymn = 0, ymx = 10,
+  r2 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
                        vals = sample(1:4, replace = TRUE, size = 100), res = 1)
-  s1 <- raster::stack(r1, r2)
-  sp1 <- sp::SpatialPoints(cbind(x = stats::runif(10, 0, 10),
+  s1 <- terra::rast(c(layer.1 = r1, layer.2 = r2))
+  sp1 <- terra::vect(cbind(x = stats::runif(10, 0, 10),
                                  y = stats::runif(10, 0, 10)))
   if (interactive()) {
     clearPlot()
@@ -60,7 +61,7 @@ test_that("Plotting types without visual checking works", {
 })
 
 test_that("setColors with an NA", {
-  library(raster); #on.exit(detach("package:raster"), add = TRUE)
+  withr::local_package("terra")
 
   nLevels <- 6
   ncol <- 3
@@ -68,11 +69,13 @@ test_that("setColors with an NA", {
   N <- ncol * nrow
   set.seed(24334)
   levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
-  ras <- raster(matrix(sample(levs, size = N, replace = TRUE),
+  ras <- terra::rast(matrix(sample(levs, size = N, replace = TRUE),
                        ncol = ncol, nrow = nrow))
   ras[1] <- NA
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
   expect_silent({
-    ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
+    ras <- setColors(ras, n = 4, value = c("red", "orange", "blue", "yellow"))
   })
 })
+
+
