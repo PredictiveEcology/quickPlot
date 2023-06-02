@@ -1003,3 +1003,34 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
   try(dev.off())
 })
 
+
+#
+
+
+
+test_that("Issue 20; arr working", {
+
+  prevLastPlotNumber <- 50
+  testInit("terra")
+
+  files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
+  maps <- lapply(files, rast)
+  names(maps) <- lapply(maps, names)
+
+  #   # New Section
+  fil <- paste0("test", prevLastPlotNumber + 1 ,".png")
+  fil <- file.path(tmpdir, fil)
+  # Mixing base and grid
+  announce_snapshot_file(name = basename(fil))
+  if (.Platform$OS.type == "windows")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      clearPlot()
+      Plot(maps$DEM, maps$forestCover, maps$forestAge)
+      Plot(maps$habitatQuality)  ## I get a 2 row 2 column layout
+      Plot(maps$habitatQuality, arr = c(1,4), new = TRUE) ## doesn't change the layout.
+      dev.off()
+      fil
+    })
+
+})
