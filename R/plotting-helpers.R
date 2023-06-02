@@ -133,7 +133,7 @@ numLayers.list <- function(x) {
 #'
 #' ## RasterLayer objects
 #' files <- system.file("maps", package = "quickPlot") |>
-#'   dir(path = _, full.names = TRUE, pattern = "tif")
+#' files <- dir(files, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
@@ -218,7 +218,7 @@ layerNames <- function(object) {
 #' library(terra)
 #'
 #' files <- system.file("maps", package = "quickPlot") |>
-#'   dir(path = _, full.names = TRUE, pattern = "tif")
+#' files <- dir(files, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
@@ -1392,8 +1392,8 @@ setMethod(
                            gp = sGrob@plotArgs$gp,
                            gpText = sGrob@plotArgs$gpText,
                            speedup = sGrob@plotArgs$speedup,
-                           length = sGrob@plotArgs$length
-      ) |> append(x = _, nonPlotArgs)
+                           length = sGrob@plotArgs$length)
+      plotGrobCall <- append(x = plotGrobCall, nonPlotArgs)
 
       seekViewport(subPlots, recording = FALSE)
       suppressWarnings(do.call(.plotGrob, args = plotGrobCall))

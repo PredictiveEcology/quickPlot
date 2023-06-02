@@ -164,8 +164,8 @@ setMethod("clearPlot",
 #' #   does not report its dimensions correctly; this may change in future
 #' #   updates to Rstudio
 #' if (interactive() && !isRstudioServer() ) {
-#'   files <- system.file("maps", package = "quickPlot") |>
-#'     dir(path = _, full.names = TRUE, pattern = "tif")
+#'   files <- system.file("maps", package = "quickPlot")
+#'   files <- dir(files, full.names = TRUE, pattern = "tif")
 #'   maps <- lapply(files, function(x) terra::rast(x))
 #'   names(maps) <- sapply(basename(files), function(x) {
 #'     strsplit(x, split = "\\.")[[1]][1]
@@ -310,28 +310,35 @@ clickCoordinates <- function(n = 1) {
 
   grepNullsW <- grep("null$", gl$widths)
   grepNpcsW <- grep("npc$", gl$widths)
-  nulls <- as.character(gl$widths)[grepNullsW] |>
-    strsplit(x = _, "null") |>
-    unlist() |>
-    as.numeric()
-  npcs <- as.character(gl$widths)[grepNpcsW] |>
-    strsplit(x = _, "npc") |>
-    unlist() |>
-    as.numeric()
+  browser()
+
+  # remove pipe --> keep compatible with old R, without requiring magrittr
+  nulls <- as.character(gl$widths)[grepNullsW]# |>
+  nulls <- strsplit(x = nulls, "null") #|>
+  nulls <- unlist(nulls) #|>
+  nulls <- as.numeric(nulls)
+
+  npcs <- as.character(gl$widths)[grepNpcsW]
+  npcs <- strsplit(x = npcs, "npc")
+  npcs <- unlist(npcs)
+  npcs <- as.numeric(npcs)
+
   remaining <- 1 - sum(npcs)
   npcForNulls <- nulls * remaining / sum(nulls)
   widthNpcs <- c(npcs, npcForNulls)[order(c(grepNpcsW, grepNullsW))]
 
   grepNullsH <- grep("null$", gl$heights)
   grepNpcsH <- grep("npc$", gl$heights)
-  nulls <- as.character(gl$heights)[grepNullsH] |>
-    strsplit(x = _, "null") |>
-    unlist() |>
-    as.numeric()
-  npcs <- as.character(gl$heights)[grepNpcsH] |>
-    strsplit(x = _, "npc") |>
-    unlist() |>
-    as.numeric()
+
+  nulls <- as.character(gl$heights)[grepNullsH]
+  nulls <- strsplit(x = nulls, "null")
+  nulls <- unlist(nulls)
+  nulls <- as.numeric(nulls)
+
+  npcs <- as.character(gl$heights)[grepNpcsH]
+  npcs <- strsplit(x = npcs, "npc")
+  npcs <- unlist(npcs)
+  npcs <- as.numeric(npcs)
   remaining <- 1 - sum(npcs)
   npcForNulls <- nulls * remaining / sum(nulls)
   heightNpcs <- c(npcs, npcForNulls)[order(c(grepNpcsH, grepNullsH))]

@@ -19,7 +19,7 @@ Assess whether a list of extents are all equal
 library(terra)
 
 files <- system.file("maps", package = "quickPlot") |>
-  dir(path = _, full.names = TRUE, pattern = "tif")
+files <- dir(files, full.names = TRUE, pattern = "tif")
 maps <- lapply(files, function(x) terra::rast(x))
 names(maps) <- sapply(basename(files), function(x) {
   strsplit(x, split = "\\\\.")[[1]][1]
