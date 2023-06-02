@@ -1611,7 +1611,6 @@ setMethod(
     npixels <- terra::ncell(grobToPlot)
   } else {
     zoom <- zoomExtent
-    # if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) browser() # need to convert to SpatExtent
     npixels <- terra::ncell(terra::crop(grobToPlot, zoom))
   }
   if (is.null(legendRange)) {

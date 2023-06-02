@@ -361,6 +361,9 @@ setMethod(
     }
 
     # if user uses col instead of cols
+    if (!is.null(arr)) {
+      plotArgs$arr <- NULL
+    }
     if (is.null(cols)) {
       if (!is.null(col)) {
         cols <- col
@@ -544,6 +547,9 @@ setMethod(
         length(updated$curr@quickPlotGrobList) >
           prod(currQuickPlots$curr@arr@columns, currQuickPlots$curr@arr@rows)
       ) | devResized
+      if (!is.null(arr))
+        if (!identical(c(updated$curr@arr@rows, updated$curr@arr@columns), arr))
+          newArr <- TRUE
 
       if (newArr) {
         updated$needPlotting <- lapply(updated$needPlotting, function(x) {
