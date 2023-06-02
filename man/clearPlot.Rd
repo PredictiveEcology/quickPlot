@@ -43,6 +43,9 @@ if (interactive()) {
 }
 
 }
+\seealso{
+\code{\link[=Plot]{Plot()}}.
+}
 \author{
 Eliot McIntire
 }

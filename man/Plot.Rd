@@ -412,9 +412,9 @@ if (requireNamespace("RColorBrewer")) {
 }
 }
 \seealso{
-\code{\link[=clearPlot]{clearPlot()}}, \code{\link[=gpar]{gpar()}}, \code{raster::raster()},
+\code{\link[=clearPlot]{clearPlot()}}, \code{\link[=rePlot]{rePlot()}}, \code{\link[=gpar]{gpar()}}, \code{raster::raster()},
 \code{\link[=par]{par()}}, \code{sp::SpatialPolygons()}, \code{\link[=grid.polyline]{grid.polyline()}},
-\code{ggplot2::ggplot()}, \code{\link[=dev]{dev()}}
+\code{ggplot2::ggplot()}, \code{\link[=dev]{dev()}}, \code{terra::vect()}, \code{terra::rast()}
 }
 \author{
 Eliot McIntire

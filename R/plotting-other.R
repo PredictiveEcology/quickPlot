@@ -23,6 +23,7 @@
 #' @importFrom grid grid.newpage
 #' @include plotting-classes.R
 #' @rdname clearPlot
+#' @seealso [Plot()].
 #'
 #' @examples
 #' if (interactive()) {
