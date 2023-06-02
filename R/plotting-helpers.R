@@ -20,8 +20,8 @@ if (getRversion() >= "3.1.0") {
 #' @examples
 #' library(terra)
 #'
-#' files <- system.file("maps", package = "quickPlot") |>
-#'   dir(full.names = TRUE, pattern = "tif")
+#' files <- system.file("maps", package = "quickPlot")
+#' files <- dir(files, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
 #'   strsplit(x, split = "\\.")[[1]][1]
@@ -132,7 +132,7 @@ numLayers.list <- function(x) {
 #' library(terra)
 #'
 #' ## RasterLayer objects
-#' files <- system.file("maps", package = "quickPlot") |>
+#' files <- system.file("maps", package = "quickPlot")
 #' files <- dir(files, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
@@ -217,7 +217,7 @@ layerNames <- function(object) {
 #' @examples
 #' library(terra)
 #'
-#' files <- system.file("maps", package = "quickPlot") |>
+#' files <- system.file("maps", package = "quickPlot")
 #' files <- dir(files, full.names = TRUE, pattern = "tif")
 #' maps <- lapply(files, function(x) terra::rast(x))
 #' names(maps) <- sapply(basename(files), function(x) {
