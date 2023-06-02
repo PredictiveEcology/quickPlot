@@ -1,5 +1,5 @@
-library(terra)
-if (requireNamespace("RColorBrewer")) {
+if (requireNamespace("RColorBrewer") && interactive()) {
+  library(terra)
 
   files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
   maps <- lapply(files, rast)

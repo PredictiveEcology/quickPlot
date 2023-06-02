@@ -301,8 +301,8 @@ The naming convention used is: \code{RasterStackName$layerName}, i.e,
 \code{landscape$DEM}.
 }
 \examples{
-library(terra)
-if (requireNamespace("RColorBrewer")) {
+if (requireNamespace("RColorBrewer") && interactive()) {
+  library(terra)
 
   files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
   maps <- lapply(files, rast)
