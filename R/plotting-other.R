@@ -24,7 +24,11 @@
 #' @include plotting-classes.R
 #' @rdname clearPlot
 #'
-#' @example inst/examples/example_Plot.R
+#' @examples
+#' if (interactive()) {
+#'   Plot(1:10)
+#'   clearPlot() # clears
+#' }
 #'
 setGeneric("clearPlot", function(dev = dev.cur(), removeData = TRUE, force = FALSE) {
   standardGeneric("clearPlot")

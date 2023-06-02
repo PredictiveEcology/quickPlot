@@ -1142,7 +1142,7 @@ setMethod(
   signature = c(".quickPlotGrob", ".arrangement"),
   definition = function(sGrob, arr, whPlotFrame) {
     if (sGrob@plotArgs$axes == "L") {
-      if (sGrob@objClass %in% c("Raster", "SpatRaster") &&
+      if (any(sGrob@objClass %in% c("Raster", "SpatRaster")) &&
           identical(arr@extents[(whPlotFrame - 1) %% arr@columns + 1][[1]],
            arr@extents[max(
              which(
@@ -1163,7 +1163,7 @@ setMethod(
     }
 
     if (sGrob@plotArgs$axes == "L") {
-      if (sGrob@objClass %in% c("Raster", "SpatRaster") &
+      if (any(sGrob@objClass %in% c("Raster", "SpatRaster")) &
           identical(arr@extents[whPlotFrame][[1]],
            arr@extents[(ceiling(whPlotFrame / arr@columns) - 1) * arr@columns + 1][[1]])) {
         if ((whPlotFrame - 1) %% arr@columns == 0) { # nolint

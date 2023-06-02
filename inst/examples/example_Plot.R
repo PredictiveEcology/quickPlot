@@ -45,7 +45,7 @@ if (requireNamespace("RColorBrewer")) {
 
   # SpatialPolygons
   sr1 <- cbind(object = 1, cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
-  sr2 <- cbind(objectx = 2, cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
+  sr2 <- cbind(object = 2, cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
   spP <- vect(rbind(sr1, sr2))
 
   clearPlot()
@@ -92,6 +92,16 @@ if (requireNamespace("RColorBrewer")) {
   a$spP <- spP
   clearPlot()
   Plot(a)
+
+  # Now all together
+  Plot(obj1, title = "scatterplot")
+  Plot(landscape)
+
+  # do with sf --> these will add to previous plots
+  caribouSF <- sf::st_as_sf(caribou)
+  Plot(caribouSF, axes = "L")
+  Plot(caribouSF, addTo = "landscape$percentPine") # overlay on a specific plot
+
 
   # clean up
   clearPlot()
