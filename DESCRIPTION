@@ -10,8 +10,8 @@ Description: A high-level plotting system, built using 'grid' graphics, that is
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 0.2.0.9000
-Date: 2023-06-01
+Version: 1.0.0
+Date: 2023-06-02
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
            role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
