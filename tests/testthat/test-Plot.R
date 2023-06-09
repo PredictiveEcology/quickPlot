@@ -1,5 +1,5 @@
 test_that("Plot 1 is not error-free", {
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = TRUE)
   on.exit({
     if (length(dev.list()) > 0) dev.off()
   }, add = TRUE) # nolint
@@ -155,6 +155,7 @@ test_that("Plot 1 is not error-free", {
       mess <- capture_messages(Plot(pol, new = TRUE, col = RColorBrewer::brewer.pal(8, "Set3")))
       expect_true(sum(grepl("Incorrect", mess)) == 1)
       mess <- capture_messages(Plot(pol, new = TRUE, gp = gpar(fill = "Set3")))
+      expect_true(sum(grepl("Incorrect", mess)) == 1)
     }
   }
 
@@ -237,7 +238,7 @@ test_that("Plot 1 is not error-free", {
 # # block B
 test_that("Unit tests for image content is not error-free", {
 
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   on.exit({
     if (length(dev.list()) > 0) dev.off()
@@ -331,7 +332,7 @@ test_that("Unit tests for image content is not error-free", {
 # # ## block C
 test_that("Unit tests for plotting colors", {
 
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit({
     if (length(dev.list()) > 0) dev.off()
   }, add = TRUE) # nolint
@@ -372,7 +373,7 @@ test_that("Unit tests for plotting colors", {
 #
 # ## test.png 10 to 11
 test_that("Unit tests for internal functions in Plot", {
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit({
     if (length(dev.list()) > 0) dev.off()
   }, add = TRUE) # nolint
@@ -442,7 +443,7 @@ test_that("Unit tests for internal functions in Plot", {
 
 ## block E 15 to
 test_that("Plot 2 is not error-free", {
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit({
     if (length(dev.list()) > 0) dev.off()
   }, add = TRUE) # nolint
@@ -640,7 +641,7 @@ test_that("Plot 2 is not error-free", {
 test_that("setColors is not error-free", {
   # skip("Apparently color palettes are not universal")
 
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit({
     if (length(dev.list()) > 0) dev.off()
   }, add = TRUE) # nolint
@@ -690,7 +691,7 @@ test_that("setColors is not error-free", {
 test_that("Plot with base is not error-free", {
 
   prevLastPlotNumber <- 43
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit({
     if (length(dev.list()) > 0) dev.off()
   }, add = TRUE) # nolint
@@ -804,7 +805,7 @@ test_that("Plot with base is not error-free", {
 
 ## block H
 test_that("Plot messages and warnings and errors", {
-  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
   expect_error(Plot(ras, rnorm(10)), "Can't mix base plots with .quickPlottables")
@@ -812,7 +813,7 @@ test_that("Plot messages and warnings and errors", {
 
 ## block I
 test_that("rePlot doesn't work", {
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+    testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   prevLastPlotNumber <- 47
   fil1 <- paste0("test", prevLastPlotNumber + 1 ,".png")
   fil1 <- file.path(tmpdir, fil1)
@@ -851,7 +852,7 @@ test_that("rePlot doesn't work", {
 #
 ## block J
 test_that("Plot - going through package coverage", {
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+    testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   set.seed(123)
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
@@ -870,7 +871,7 @@ test_that("Plot - going through package coverage", {
 ## block K
 test_that("Plot lists", {
   prevLastPlotNumber <- 48
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+    testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   clearPlot()
   set.seed(123)
@@ -935,7 +936,7 @@ test_that("Plot lists", {
 
 ## block L
 test_that("Plot non-complicated object names", {
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+    testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   a <- list()
   a$e <- new.env()
@@ -958,7 +959,7 @@ test_that("Plot non-complicated object names", {
 
 ## block M
 test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+    testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   Plot <- function(x) {
     quickPlot::Plot(x)
@@ -978,7 +979,7 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
 test_that("Issue 20; arr working", {
 
   prevLastPlotNumber <- 50
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+    testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
   maps <- lapply(files, rast)

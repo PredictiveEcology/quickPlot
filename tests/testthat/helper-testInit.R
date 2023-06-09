@@ -1,5 +1,5 @@
 testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt = "",
-                     opts = NULL) {
+                     opts = NULL, dev = FALSE) {
 
   set.randomseed()
 
@@ -40,6 +40,8 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
 
   out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache))
   list2env(out, envir = pf)
+  if (isTRUE(dev) && interactive() && !isRstudioServer())
+    dev()
   return(out)
 }
 
