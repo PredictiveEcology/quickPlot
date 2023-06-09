@@ -63,17 +63,17 @@ test_that("Plot 1 is not error-free", {
   clearPlot()
   expect_error(Plot(asdfd))
 
+  if (requireNamespace("raster", quietly = TRUE)) {
+    objs$rasts$DEMs[[2]] <- raster::raster(objs$rasts$DEMs[[1]])
+    objs$rasts$habQuals[[2]] <- raster::raster(objs$rasts$habQuals[[1]])
+    objs$rasts$lands[[2]] <- raster::stack(objs$rasts$lands[[1]])
+  }
   if (requireNamespace("sp", quietly = TRUE)) {
     objs$vects$lins[[2]] <- as(objs$vects$lins[[1]], "Spatial")
     objs$vects$polys[[2]] <- as(objs$vects$polys[[1]], "Spatial")
     objs$vects$caribous[[2]] <- as(objs$vects$caribous[[1]], "Spatial")
     objs$vects$polysLrg[[2]] <- as(objs$vects$polysLrg[[1]], "Spatial")
     objs$vects$caribousLrg[[2]] <- as(objs$vects$caribousLrg[[1]], "Spatial")
-  }
-  if (requireNamespace("raster", quietly = TRUE)) {
-    objs$rasts$DEMs[[2]] <- raster::raster(objs$rasts$DEMs[[1]])
-    objs$rasts$habQuals[[2]] <- raster::raster(objs$rasts$habQuals[[1]])
-    objs$rasts$lands[[2]] <- raster::stack(objs$rasts$lands[[1]])
   }
 
   for (i in seq_along(objs$rasts)) {
