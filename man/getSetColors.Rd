@@ -22,12 +22,12 @@ setColors(object, value, n, verbose = getOption("quickPlot.verbose"))
 \item{n}{An optional vector of values specifying the number
 of levels from which to interpolate the colour palette.}
 
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
+
 \item{value}{Named list of hex colour codes (e.g., from
 \code{RColorBrewer::brewer.pal}), corresponding to the names
 of \code{RasterLayer}s in \code{x}.}
-
-\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
-shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 }
 \value{
 Returns a named list of colours.

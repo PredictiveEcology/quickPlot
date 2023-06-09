@@ -65,7 +65,7 @@ getColors <- function(object) {
 #' @seealso `brewer.pal()`, `RColorBrewer::ColorBrewer`,
 #'          [`colorRampPalette()`][grDevices::colorRamp].
 #'
-`setColors<-` <- function(object, ..., n, value, verbose = getOption("quickPlot.verbose")) {
+`setColors<-` <- function(object, ..., n, verbose = getOption("quickPlot.verbose"), value) {
     if (dim(object)[[3]] > 1) { # Multi-layer RasterStack or SpatRaster
       if (!is(value, "list")) {
         value <- lapply(seq(numLayers(object)), function(x) value)

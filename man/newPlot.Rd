@@ -15,6 +15,9 @@ RStudio graphics device, which is slow.}
 
 \item{...}{Additional arguments.}
 
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
+
 \item{useRSGD}{Logical indicating whether the default device should be the
 RStudio graphic device, or the platform default (\code{quartz}
 on macOS; \code{windows} on Windows; \code{x11} on others, e.g., Linux).}

@@ -1,3 +1,8 @@
+### deal with spurious data.table warnings
+if (getRversion() >= "3.1.0") {
+  utils::globalVariables(c(".", "..xyCols"))
+}
+
 ################################################################################
 #' Clear plotting device
 #'
@@ -529,6 +534,7 @@ dev <- function(x, ..., verbose = getOption("quickPlot.verbose")) {
 #' @author Eliot McIntire and Alex Chubaty
 #' @export
 #' @importFrom grDevices dev.new
+#' @inheritParams Plot
 #' @rdname newPlot
 #'
 #' @examples
