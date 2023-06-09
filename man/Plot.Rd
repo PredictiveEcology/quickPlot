@@ -387,8 +387,8 @@ if (requireNamespace("RColorBrewer") && interactive()) {
   Plot(spP)
   Plot(spP, addTo = "landscape$forestCover", gp = gpar(lwd = 2))
 
-  # provide arrangement, NumRow, NumCol
-  Plot(spP, arr = c(1, 4), new = TRUE)
+  # provide manual arrangement, NumRow, NumCol
+  Plot(landscape, spP, arr = c(2, 5), new = TRUE)
 
   # example base plot
   clearPlot()
@@ -412,10 +412,11 @@ if (requireNamespace("RColorBrewer") && interactive()) {
   Plot(landscape)
 
   # do with sf --> these will add to previous plots
-  caribouSF <- sf::st_as_sf(caribou)
-  Plot(caribouSF, axes = "L")
-  Plot(caribouSF, addTo = "landscape$percentPine") # overlay on a specific plot
-
+  if (requireNamespace("sf", quietly = TRUE)) {
+    caribouSF <- sf::st_as_sf(caribou)
+    Plot(caribouSF, axes = "L")
+    Plot(caribouSF, addTo = "landscape$percentPine") # overlay on a specific plot
+  }
 
   # clean up
   clearPlot()

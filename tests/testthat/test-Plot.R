@@ -76,14 +76,6 @@ test_that("Plot 1 is not error-free", {
     objs$rasts$lands[[2]] <- raster::stack(objs$rasts$lands[[1]])
   }
 
-  # caribous <- list(objs$vects$caribous[[1]], objs$vects$caribous[[2]])
-  # lands <- list(objs$rasts$lands[[1]], objs$rasts$lands[[2]])
-  # habs <- list(objs$rasts$habQuals[[1]], habQuals[[2]])
-  # DEMs <- list(DEMs[[1]], DEMs[[2]])
-  # objs$vects$polys <- list(objs$vects$polys[[1]], objs$vects$polys[[2]])
-  # objs$vects$polysLrg <- list(objs$vects$polysLrg[[2]], objs$vects$polysLrg[[2]])
-  # objs$vects$lins <- list(objs$vects$lins[[1]], objs$vects$lins[[2]])
-
   for (i in seq_along(objs$rasts)) {
     car <- sample(objs$vects$caribous, 1)[[1]]
     land <- sample(objs$rasts$lands, 1)[[1]]
@@ -242,7 +234,7 @@ test_that("Plot 1 is not error-free", {
   }
 })
 
-# block B
+# # block B
 test_that("Unit tests for image content is not error-free", {
 
   testInit("terra", opts = list(quickPlot.verbose = FALSE))
@@ -336,7 +328,7 @@ test_that("Unit tests for image content is not error-free", {
 
 })
 
-# ## block C
+# # ## block C
 test_that("Unit tests for plotting colors", {
 
   testInit("terra", opts = list(quickPlot.verbose = FALSE))
@@ -377,10 +369,13 @@ test_that("Unit tests for plotting colors", {
   })
 })
 
-
-## block D
+#
+# ## test.png 10 to 11
 test_that("Unit tests for internal functions in Plot", {
   testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  on.exit({
+    if (length(dev.list()) > 0) dev.off()
+  }, add = TRUE) # nolint
   prevLastPlotNumber <- 9
 
   on.exit({
@@ -445,9 +440,12 @@ test_that("Unit tests for internal functions in Plot", {
       })})
 })
 
-## block E
+## block E 15 to
 test_that("Plot 2 is not error-free", {
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  on.exit({
+    if (length(dev.list()) > 0) dev.off()
+  }, add = TRUE) # nolint
 
   prevLastPlotNumber <- 14
 
@@ -529,8 +527,10 @@ test_that("Plot 2 is not error-free", {
     })
   }
 
-  Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
-    val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1 # this tests whether SpatRaster is same as Raster
+  hasRasterLayer <- sum(vapply(rasts, is, "Raster", FUN.VALUE = logical(1))) > 0
+  # if RasterLayer are present, then it will be 14 * 2 long, otherwise, just 14
+  Map(testNum = seq_along(rasts), function(testNum) {
+    val <-  (testNum - 1 ) %% (length(rasts) / (1 + hasRasterLayer)) + 1 # this tests whether SpatRaster is same as Raster
     fn <- val
     # fn <- if (testNum == 5) 5 else val # this is needed if there is speedup used b/c terra::sample and raster::sampleRegular aren't same
     fil <- paste0("test", prevLastPlotNumber + fn ,".png")
@@ -546,8 +546,8 @@ test_that("Plot 2 is not error-free", {
       })})
 
   prevLastPlotNumber <- 28
-  Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
-    val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1
+  Map(testNum = seq_along(rasts), function(testNum) {
+    val <-  (testNum - 1 ) %% (length(rasts) / (1 + hasRasterLayer)) + 1
     if (val %in% c(7,8,10,11,12,14)) {
       fn <- if (testNum == 5) 5 else val
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
@@ -640,7 +640,10 @@ test_that("Plot 2 is not error-free", {
 test_that("setColors is not error-free", {
   # skip("Apparently color palettes are not universal")
 
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  on.exit({
+    if (length(dev.list()) > 0) dev.off()
+  }, add = TRUE) # nolint
 
   set.seed(1234)
   ras1 <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -687,7 +690,11 @@ test_that("setColors is not error-free", {
 test_that("Plot with base is not error-free", {
 
   prevLastPlotNumber <- 43
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  on.exit({
+    if (length(dev.list()) > 0) dev.off()
+  }, add = TRUE) # nolint
+
   set.seed(123)
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
@@ -797,7 +804,7 @@ test_that("Plot with base is not error-free", {
 
 ## block H
 test_that("Plot messages and warnings and errors", {
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = FALSE))
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
   ras <- rasOrig
   expect_error(Plot(ras, rnorm(10)), "Can't mix base plots with .quickPlottables")
@@ -841,7 +848,7 @@ test_that("rePlot doesn't work", {
     })
 
 })
-
+#
 ## block J
 test_that("Plot - going through package coverage", {
     testInit("terra", opts = list(quickPlot.verbose = FALSE))
