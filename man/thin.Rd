@@ -6,7 +6,14 @@
 \alias{thin.default}
 \title{Thin a polygon using \code{fastshp::thin}}
 \usage{
-thin(x, tolerance, returnDataFrame, minCoordsToThin, ...)
+thin(
+  x,
+  tolerance,
+  returnDataFrame,
+  minCoordsToThin,
+  ...,
+  verbose = getOption("quickPlot.verbose")
+)
 
 thnSpatialPolygons(
   x,
@@ -14,10 +21,19 @@ thnSpatialPolygons(
   returnDataFrame = FALSE,
   minCoordsToThin = 1e+05,
   maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000),
-  ...
+  ...,
+  verbose = getOption("quickPlot.verbose")
 )
 
-\method{thin}{default}(x, tolerance, returnDataFrame, minCoordsToThin, maxNumPolygons, ...)
+\method{thin}{default}(
+  x,
+  tolerance,
+  returnDataFrame,
+  minCoordsToThin,
+  maxNumPolygons,
+  ...,
+  verbose = getOption("quickPlot.verbose")
+)
 }
 \arguments{
 \item{x}{A \verb{Spatial*} object}
@@ -34,6 +50,9 @@ calculate how many points there are (which is not \code{NROW(coordinates(x))} fo
 a \code{SpatialPolygon})}
 
 \item{...}{Passed to methods (e.g., \code{maxNumPolygons})}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 
 \item{maxNumPolygons}{For speed, \code{thin} can also simply remove some of the
 polygons. This is likely only a reasonable thing to do if there are

@@ -58,22 +58,14 @@ getColors <- function(object) {
 #'
 #' @aliases setColours
 #' @export
+#' @inheritParams Plot
 #' @importFrom grDevices colorRampPalette
 #' @rdname getSetColors
 #'
 #' @seealso `brewer.pal()`, `RColorBrewer::ColorBrewer`,
 #'          [`colorRampPalette()`][grDevices::colorRamp].
 #'
-`setColors<-`  <-
-  # setGeneric("setColors<-",
-#            function(object, ..., n, value) {
-#              standardGeneric("setColors<-")
-# })
-# @export
-# @rdname getSetColors
-# setReplaceMethod(
-  # signature("RasterLayer", "numeric", "character"),
-  function(object, ..., n, value) {
+`setColors<-` <- function(object, ..., n, value, verbose = getOption("quickPlot.verbose")) {
     if (dim(object)[[3]] > 1) { # Multi-layer RasterStack or SpatRaster
       if (!is(value, "list")) {
         value <- lapply(seq(numLayers(object)), function(x) value)
@@ -84,7 +76,7 @@ getColors <- function(object) {
       object <- Map(lay = seq(numLayers(object)), ..., value = value, n = n,
                  f = function(lay, ..., n, value) {
                    # this allows same code for SpatRaster and RasterStack; don't pass object = object
-                   `setColors<-`(object[[lay]], ..., n = n, value = value)
+                   `setColors<-`(object[[lay]], ..., n = n, value = value, verbose = verbose)
                  })
       if (isRaster(object[[1]])) {
         object <- raster::stack(object)
@@ -97,7 +89,7 @@ getColors <- function(object) {
       nams <- names(object)
       i <- which(nams %in% names(value))
       for (x in nams[i]) {
-        setColors(object[[x]], ...) <- value[[x]]
+        setColors(object[[x]], ..., verbose = verbose) <- value[[x]]
       }
       return(object)
     }
@@ -120,7 +112,7 @@ getColors <- function(object) {
         n1 <- length(value)
       }
 
-      setColors(object, n = n1) <- value
+      setColors(object, n = n1, verbose = verbose) <- value
       return(object)
     }
 
@@ -138,7 +130,8 @@ getColors <- function(object) {
         nrLevs <- NROW(levs)
         if (n != nrLevs) {
         # if (n != NROW(object@data@attributes[[1]])) {
-          message("Number of colours not equal number of values: interpolating")
+          messageVerbose("Number of colours not equal number of values: interpolating",
+                         verbose = verbose)
           n <- nrLevs
         }
       }
@@ -264,17 +257,15 @@ getColors <- function(object) {
 # })
 
 #' @export
+#' @inheritParams Plot
 #' @rdname getSetColors
-# setMethod(
-  setColors <-
-  # signature("RasterLayer", "character", "numeric"),
-  function(object, value, n) {
-    if (missing(n)) {
-      setColors(object = object) <- value
-    } else {
-      setColors(object = object, n = n) <- value
-    }
-    return(object)
+setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")) {
+  if (missing(n)) {
+    setColors(object = object, verbose = verbose) <- value
+  } else {
+    setColors(object = object, n = n, verbose = verbose) <- value
+  }
+  return(object)
 }
 
 # @export

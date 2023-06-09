@@ -9,7 +9,11 @@
 \usage{
 clickValues(n = 1)
 
-clickExtent(devNum = NULL, plot.it = TRUE)
+clickExtent(
+  devNum = NULL,
+  plot.it = TRUE,
+  verbose = getOption("quickPlot.verbose")
+)
 
 clickCoordinates(n = 1)
 
@@ -22,6 +26,9 @@ clickCoordinates(n = 1)
 
 \item{plot.it}{Logical. If \code{TRUE} a new plotting window is made for the
 new extent. Default \code{TRUE}.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 
 \item{X}{The raster object whose values will be returned where mouse clicks occur.}
 

@@ -5,7 +5,7 @@
 \alias{dev.useRSGD}
 \title{Open a new plotting window}
 \usage{
-newPlot(noRStudioGD = TRUE, ...)
+newPlot(noRStudioGD = TRUE, ..., verbose = getOption("quickPlot.verbose"))
 
 dev.useRSGD(useRSGD = FALSE)
 }

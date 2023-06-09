@@ -225,6 +225,8 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #'
 #' @param plotFn An optional function name to do the plotting internally, e.g.,
 #'               "barplot" to get a barplot() call. Default "plot".
+#' @param verbose Numeric or logical. If `TRUE` or `>0`, then messages will be
+#'   shown. If `FALSE` or `0`, most messages will be suppressed.
 #'
 #' @return Invisibly returns the `.quickPlot` class object.
 #' If this is assigned to an object, say `obj`, then this can be plotted
@@ -259,7 +261,8 @@ setGeneric(
            speedup = 1, size = 5, cols = NULL, col = NULL, zoomExtent = NULL,
            visualSqueeze = NULL, legend = TRUE, legendRange = NULL,
            legendText = NULL, pch = 19, title = NULL, na.color = "#FFFFFF00", # nolint
-           zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot") { # nolint
+           zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot",
+           verbose = getOption("quickPlot.verbose")) { # nolint
     standardGeneric("Plot")
 })
 
@@ -271,7 +274,7 @@ setMethod(
   definition = function(..., new, addTo, gp, gpText, gpAxis, axes, speedup,
                         size, cols, col, zoomExtent, visualSqueeze, legend,
                         legendRange, legendText, pch, title, na.color, # nolint
-                        zero.color, length, arr, plotFn) { # nolint
+                        zero.color, length, arr, plotFn, verbose = getOption("quickPlot.verbose")) { # nolint
     # Section 1 - extract object names, and determine which ones need plotting,
     # which ones need replotting etc.
 
@@ -371,7 +374,7 @@ setMethod(
       }
     } else {
       if (!is.null(col)) {
-        message("cols and col both supplied. Using cols")
+        messageVerbose("cols and col both supplied. Using cols", verbose = verbose)
       }
     }
 
@@ -454,7 +457,7 @@ setMethod(
       if (!all(canPlot)) {
         if ((sum(canPlot) - length(grep(pattern = "col", names(canPlot)))) > 0) { # nolint
           # don't message if col is passed
-          message(paste(
+          messageVerbose(verbose = verbose, paste(
             "Plot can only plot objects of class .quickPlottables.",
             "Use 'showClass(\".quickPlottables\")' to see current available",
             "classes"
@@ -505,6 +508,7 @@ setMethod(
     }
 
     nonPlotArgs <- dotObjs[!whichQuickPlottables]
+    nonPlotArgs <- append(nonPlotArgs, list(verbose = verbose))
     if (any(grepl(pattern = "col", names(nonPlotArgs)))) {
       nonPlotArgs$col <- "black"
     }
@@ -523,6 +527,7 @@ setMethod(
     isQuickPlotLong <- rep(isQuickPlot, unlist(lapply(plotObjs, numLayers)))
 
     # Create a .quickPlot object from the plotObjs and plotArgs
+    plotArgs$verbose <- NULL
     newQuickPlots <- .makeQuickPlot(plotObjs, plotArgs, whichQuickPlottables, env = objFrame)
 
     # names sanity check
@@ -559,7 +564,7 @@ setMethod(
           sapply(x, function(y) TRUE)
         })
         if (devResized)
-          message("Device resized, replotting")
+          messageVerbose("Device resized, replotting", verbose = verbose)
         clearPlot(removeData = FALSE)
       }
     } else if (all(isQuickPlot)) {
@@ -731,10 +736,11 @@ setMethod(
 #' @importFrom grDevices dev.cur
 #' @rdname Plot
 #'
-rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ...) {
+rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ...,
+                   verbose = getOption("quickPlot.verbose")) {
   if (exists(paste0("quickPlot", fromDev), envir = .quickPlotEnv)) {
     currQuickPlots <- .getQuickPlot(paste0("quickPlot", dev.cur()))
-    dev(toDev)
+    dev(toDev, verbose = verbose)
     if (clearFirst) clearPlot(toDev)
     suppressWarnings(Plot(currQuickPlots$curr,
                           new = rep(TRUE, length(currQuickPlots$curr@arr@names)), ...))

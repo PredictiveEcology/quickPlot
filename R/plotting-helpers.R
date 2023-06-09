@@ -1946,6 +1946,7 @@ setMethod(
 #'
 #' @author Eliot McIntire
 #' @export
+#' @inheritParams Plot
 #' @importFrom data.table ':=' data.table
 #' @importFrom grDevices as.raster
 #' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
@@ -1956,17 +1957,15 @@ setMethod(
 .plotGrob <-
   function(grobToPlot, col = NULL, real = FALSE, size = unit(5, "points"), minv, maxv,
            legend = TRUE, legendText = NULL, length = NULL, gp = gpar(), gpText = gpar(),
-           pch = 19, speedup = 1, name = character(), vp = list(), ...) {
+           pch = 19, speedup = 1, name = character(), vp = list(), ...,
+           verbose = getOption("quickPlot.verbose")) {
     UseMethod(".plotGrob")
     # standardGeneric(".plotGrob")
   }# )
 
-# @rdname plotGrob
-# @importFrom grid pointsGrob
-# setMethod(
 .plotGrob.default <- function(grobToPlot, col, real, size, minv, maxv,
                               legend, legendText, length, gp = gpar(), gpText,
-                              pch, speedup, name, vp, ...) {
+                              pch, speedup, name, vp, ..., verbose = getOption("quickPlot.verbose")) {
   isPolygon <- if (isSF(grobToPlot)) {
     any(grepl("POLYGON", sf::st_geometry_type(grobToPlot))) # also capture MULTIPOLYGON
   } else {
@@ -1978,11 +1977,11 @@ setMethod(
                         legend, legendText, gp, gpText, pch, name, vp, ...)
   } else if (isPolygon) {
     outGrob <- pgSpatialPolygons(grobToPlot, col, size,
-                                 legend, gp = gpar(), pch, speedup, name, vp, ...)
+                                 legend, gp = gpar(), pch, speedup, name, vp, ..., verbose = verbose)
   } else if (is(grobToPlot, "SpatialLines") ||
              (is(grobToPlot, "SpatVector") && identical("lines", terra::geomtype(grobToPlot)))) {
-    outGrob <- pgSpatialLines(grobToPlot, col, size,
-                              legend, length, gp = gpar(), pch, speedup, name, vp, ...)
+    outGrob <- pgSpatialLines(grobToPlot, col, size, legend, length, gp = gpar(),
+                              pch, speedup, name, vp, ..., verbose = verbose)
   } else { # for SpatialPoints and points SpatVector
 
     speedupScale <- speedupScale(grobToPlot, lonlatSU = 40 * 4.8e5, SU = 40)
@@ -2006,9 +2005,9 @@ setMethod(
           )
           xyOrd <- xyOrd[thinned$thin, ]
         } else {
-          message(messFastshape("polygon"))
+          messageVerbose(messFastshape("polygon"), verbose = verbose)
           if (Sys.info()[["sysname"]] == "Windows") {
-            message(
+            messageVerbose(verbose = verbose,
               paste(
                 "You may also need to download and install Rtools from:\n",
                 " https://cran.r-project.org/bin/windows/Rtools/"
@@ -2143,12 +2142,13 @@ pgmatrix <- function(grobToPlot, col, real, size, minv, maxv,
 }
 
 pgSpatialPolygons <- function(grobToPlot, col, size,
-                              legend, gp = gpar(), pch, speedup, name, vp, ...) {
+                              legend, gp = gpar(), pch, speedup, name, vp, ...,
+                              verbose = getOption("quickPlot.verbose")) {
   speedupScale <- speedupScale(grobToPlot, lonlatSU = 1.2e10, SU = 2.4e4)
 
   # For speed of plotting
   xyOrd <- thin(grobToPlot, tolerance = speedupScale * speedup,
-                           returnDataFrame = TRUE, minCoordsToThin = 1e5, ...)
+                           returnDataFrame = TRUE, minCoordsToThin = 1e5, ..., verbose = verbose)
 
   numPolys <- length(unique(xyOrd$xyOrd$poly))
   numSubPolys <- length(unique(xyOrd$xyOrd$groups))
@@ -2168,13 +2168,15 @@ pgSpatialPolygons <- function(grobToPlot, col, size,
     rep(RColorBrewer::brewer.pal(numCols, pal), length.out = numPolys)
   } else {
     if (length(gp$fill) < numPolys) {
-      message("not enough colours for each polygon (there are ",numPolys,"), recycling")
+      messageVerbose("not enough colours for each polygon (there are ",numPolys,"), recycling",
+                     verbose = verbose)
       rep(gp$fill, length.out = numPolys)
     } else if (length(gp$fill) > numPolys) {
-      message("more colours than number of polygons (there are ",numPolys,"), setting unique colors to sub-polygons (there are "
-              ,numSubPolys,")")
+      messageVerbose("more colours than number of polygons (there are ",numPolys,"), setting unique colors to sub-polygons (there are "
+              ,numSubPolys,")", verbose = verbose)
       if (length(gp$fill) != numSubPolys) {
-        message("Incorrect number of colours for number of sub-polygons; recycling")
+        messageVerbose("Incorrect number of colours for number of sub-polygons; recycling",
+                       verbose = verbose)
       }
       rep(gp$fill, length.out = numSubPolys)
     } else {
@@ -2198,7 +2200,8 @@ pgSpatialPolygons <- function(grobToPlot, col, size,
 }
 
 pgSpatialLines <- function(grobToPlot, col, size,
-                           legend, length, gp = gpar(), pch, speedup, name, vp, ...) {
+                           legend, length, gp = gpar(), pch, speedup, name, vp, ...,
+                           verbose = getOption("quickPlot.verbose")) {
   speedupScale <- speedupScale(grobToPlot, lonlatSU = 1.2e10, SU = 2.4e4)
   # speedupScale <- if (grepl(proj4string(grobToPlot), pattern = "longlat")) {
   #   pointDistance(
@@ -2243,9 +2246,9 @@ pgSpatialLines <- function(grobToPlot, col, size,
         xy <- xy[thinned, ]
         idLength <- tapply(thinned, rep(1:length(idLength), idLength), sum)
       } else {
-        message(messFastshape("lines"))
+        messageVerbose(messFastshape("lines"), verbose = verbose)
         if (Sys.info()[["sysname"]] == "Windows") {
-          message(
+          messageVerbose(
             paste(
               "You may also need to download and install Rtools from:\n",
               "  https://cran.r-project.org/bin/windows/Rtools/"
@@ -2613,28 +2616,31 @@ sp2sl <- function(sp1, from) {
 #'        a lot of polygons being plotted in a small space. Current default is
 #'        taken from `options('quickPlot.maxNumPolygons')`, with a message.
 #'
+#' @inheritParams Plot
 #' @importFrom data.table as.data.table data.table set
 #' @rdname thin
-thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...) {
+thin <- function(x, tolerance, returnDataFrame, minCoordsToThin, ...,
+                 verbose = getOption("quickPlot.verbose")) {
   UseMethod("thin")
 }
 
 #' @rdname thin
 thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, minCoordsToThin = 1e5,
-                                 maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...) {
+                               maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...,
+                               verbose = getOption("quickPlot.verbose")) {
   # For speed of plotting
   xyOrd <- ffortify(x, matchFortify = FALSE,
                     simple = returnDataFrame, maxNumPolygons) # a list: out, hole, idLength
   if (is.null(tolerance)) {
     tolerance <- (terra::xmax(x) - terra::xmin(x)) * 0.0001
-    message("tolerance set to ", tolerance)
+    messageVerbose("tolerance set to ", tolerance, verbose = verbose)
   }
   if (requireNamespace("fastshp", quietly = TRUE)) {
     if (NROW(xyOrd[["out"]]) > minCoordsToThin) {
       thinRes <- fastshp::thin(xyOrd[["out"]]$x, xyOrd[["out"]]$y, # can't use x or y because sometimes (sf) it is capitalized
                              tolerance = tolerance, id = xyOrd[["out"]]$groups)
       if (any(thinRes))
-        message("Some polygons have been simplified")
+        messageVerbose("Some polygons have been simplified", verbose = verbose)
 
       set(xyOrd[["out"]], NULL, "thinRes", thinRes)
       xyOrd[["out"]][, keepAll := sum(thinRes) < 4, by = groups]
@@ -2676,9 +2682,9 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
       }
     }
   } else {
-    message(messFastshape("polygon"))
+    messageVerbose(messFastshape("polygon"), verbose = verbose)
     if (Sys.info()[["sysname"]] == "Windows") {
-      message(
+      messageVerbose(verbose = verbose,
         paste(
           "You may also need to download and install Rtools from:\n",
           " https://cran.r-project.org/bin/windows/Rtools/"
@@ -2693,15 +2699,17 @@ thnSpatialPolygons <- function(x, tolerance = NULL, returnDataFrame = FALSE, min
 
 #' @export
 #' @rdname thin
-thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumPolygons, ...) {
+thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumPolygons, ...,
+                         verbose = getOption("quickPlot.verbose")) {
   if ( isSpatialPolygons(x) || (isSpatVector(x) && identical("polygons", terra::geomtype(x))) ||
       isSF(x)) {
     x <- thnSpatialPolygons(x, tolerance = tolerance, returnDataFrame = returnDataFrame,
                             minCoordsToThin = minCoordsToThin,
-                            maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...)
+                            maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3), ...,
+                            verbose = verbose)
 
   } else {
-    message("No method for that class of object exists. See methods('thin') to see current methods")
+    messageVerbose("No method for that class of object exists. See methods('thin') to see current methods")
   }
 }
 
@@ -2716,7 +2724,8 @@ thin.default <- function(x, tolerance, returnDataFrame, minCoordsToThin, maxNumP
 #' @importFrom data.table setDT set
 #' @keywords internal
 ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
-                     maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3)) {
+                     maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3),
+                     verbose = getOption("quickPlot.verbose")) {
   if (isSpatVector(x) || isSF(x)) {
     if (isSpatVector(x)) {
       gg <- terra::geom(x)
@@ -2761,7 +2770,7 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
       polygonSeq <- .polygonSeq(x, maxNumPolygons) #if (is.numeric(x@data$Shape_Area)) {
       ord <- ord[polygonSeq]
       .showingOnlyMessage(numShowing = maxNumPolygons,
-                          totalAvailable = length(x@plotOrder))
+                          totalAvailable = length(x@plotOrder), verbose = verbose)
     }
     ordSeq <- seq(ord)
 
@@ -2816,7 +2825,8 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
     }
 
     if (matchFortify) {
-      if (!simple) message("for matchFortify = TRUE, simple is set to FALSE")
+      if (!simple) messageVerbose("for matchFortify = TRUE, simple is set to FALSE",
+                                  verbose = verbose)
       return(data.frame(lat = xyOrd[,1], long = xyOrd[,2], order = orders,
                         hole = holes, id = Polygons, piece = Polygon,
                         #group = paste0(as.character(Polygons), ".", as.character(Polygon)))) # the actual fortify
@@ -2858,9 +2868,10 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
   cl = "plotPoly")
 }
 
-.showingOnlyMessage <- function(numShowing, totalAvailable) {
-  message("Showing only ", numShowing, " of ",
-          totalAvailable," polygons in this view. See options('quickPlot.maxNumPolygons')")
+.showingOnlyMessage <- function(numShowing, totalAvailable, verbose = getOption("quickPlot.verbose")) {
+  messageVerbose("Showing only ", numShowing, " of ",
+          totalAvailable," polygons in this view. See options('quickPlot.maxNumPolygons')",
+          verbose = verbose)
 }
 
 extent <- function(x) {
@@ -2964,6 +2975,14 @@ messFastshape <- function(shape) {
     "install.packages('fastshp', repos = 'https://PredictiveEcology.r-universe.dev')"
   )
 
+}
+
+messageVerbose <- function(...,
+                           verbose = getOption("quickPlot.verbose", 1L),
+                           verboseLevel = 1) {
+  if (verbose >= verboseLevel) {
+    message(...)
+  }
 }
 
 adjustGridFIG <- function(gf, arr, subPlots) {

@@ -29,7 +29,8 @@ Plot(
   zero.color = NULL,
   length = NULL,
   arr = NULL,
-  plotFn = "plot"
+  plotFn = "plot",
+  verbose = getOption("quickPlot.verbose")
 )
 
 \S4method{Plot}{ANY}(
@@ -55,10 +56,17 @@ Plot(
   zero.color = NULL,
   length = NULL,
   arr = NULL,
-  plotFn = "plot"
+  plotFn = "plot",
+  verbose = getOption("quickPlot.verbose")
 )
 
-rePlot(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ...)
+rePlot(
+  toDev = dev.cur(),
+  fromDev = dev.cur(),
+  clearFirst = TRUE,
+  ...,
+  verbose = getOption("quickPlot.verbose")
+)
 }
 \arguments{
 \item{...}{A combination of \code{spatialObjects} or non-spatial objects.
@@ -159,6 +167,9 @@ let Plot function do it automatically.}
 
 \item{plotFn}{An optional function name to do the plotting internally, e.g.,
 "barplot" to get a barplot() call. Default "plot".}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 
 \item{toDev}{Numeric. Which device should the new replot be plotted to.
 Default is current device.}

@@ -20,7 +20,8 @@
   speedup = 1,
   name = character(),
   vp = list(),
-  ...
+  ...,
+  verbose = getOption("quickPlot.verbose")
 )
 }
 \arguments{
@@ -67,6 +68,9 @@ make plotting faster.}
 \item{vp}{whole viewport tree of \code{quickPlotGrob}}
 
 \item{...}{Additional arguments. None currently implemented.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 }
 \description{
 Internal function. Plot a raster Grob, a points Grob, polygon Grob.

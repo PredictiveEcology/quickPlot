@@ -8,15 +8,25 @@
 \alias{clearPlot,missing,missing-method}
 \title{Clear plotting device}
 \usage{
-clearPlot(dev = dev.cur(), removeData = TRUE, force = FALSE)
+clearPlot(
+  dev = dev.cur(),
+  removeData = TRUE,
+  force = FALSE,
+  verbose = getOption("quickPlot.verbose")
+)
 
-\S4method{clearPlot}{numeric,logical}(dev = dev.cur(), removeData = TRUE, force = FALSE)
+\S4method{clearPlot}{numeric,logical}(
+  dev = dev.cur(),
+  removeData = TRUE,
+  force = FALSE,
+  verbose = getOption("quickPlot.verbose")
+)
 
 \S4method{clearPlot}{numeric,missing}(dev, force)
 
 \S4method{clearPlot}{missing,logical}(removeData, force)
 
-\S4method{clearPlot}{missing,missing}(dev = dev.cur(), removeData = TRUE, force = FALSE)
+\S4method{clearPlot}{missing,missing}(dev, removeData, force)
 }
 \arguments{
 \item{dev}{Numeric. Device number to clear.}
@@ -28,6 +38,9 @@ clearPlot(dev = dev.cur(), removeData = TRUE, force = FALSE)
 \code{clearPlot()}. If TRUE, this will close the device and reopen the same
 device number. If "all", then all \code{quickPlot} related data from all devices
 will be cleared, in addition to device closing and reopening.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 }
 \description{
 Under some conditions, a device and its metadata need to be cleared manually.
