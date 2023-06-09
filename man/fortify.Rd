@@ -9,7 +9,8 @@ ffortify(
   x,
   matchFortify = TRUE,
   simple = FALSE,
-  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000)
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000),
+  verbose = getOption("quickPlot.verbose")
 )
 }
 \description{

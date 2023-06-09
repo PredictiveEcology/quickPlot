@@ -1,5 +1,5 @@
 test_that("Plot called in a do.call works", {
-  testInit("terra")
+    testInit("terra", opts = list(quickPlot.verbose = FALSE))
 
   # make a SpatialPolygon
   shpEcozone <- aPoly()
