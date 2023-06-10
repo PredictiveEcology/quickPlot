@@ -505,8 +505,6 @@ dev <- function(x, ..., verbose = getOption("quickPlot.verbose")) {
   } else {
     while (dev.set(x) < x && !isRstudioServer()) newPlot(...)
   }
-  #if (.Platform$OS.type != "unix") {
-  #}
   return(invisible(dev.cur()))
 }
 
@@ -644,4 +642,12 @@ SysInfo <-   Sys.info()
 
 isWindows <- function() {
   tolower(SysInfo["sysname"]) == "windows"
+}
+
+isMacOSX <- function() {
+  tolower(SysInfo["sysname"]) == "darwin"
+}
+
+isLinux <- function() {
+  tolower(SysInfo["sysname"]) == "linux"
 }

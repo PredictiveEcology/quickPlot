@@ -260,7 +260,7 @@ test_that("Unit tests for image content is not error-free", {
 
   fil <- file.path(tmpdir, "test1.png")
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     testthat::expect_snapshot_file(
       { png(file = fil, width = 400, height = 300)
         clearPlot()
@@ -286,7 +286,7 @@ test_that("Unit tests for image content is not error-free", {
                        ncol = ncol, nrow = nrow))
   fil <- file.path(tmpdir, "test2.png")
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil, width = 400, height = 300)
       clearPlot()
@@ -318,7 +318,7 @@ test_that("Unit tests for image content is not error-free", {
   ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
 
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil, width = 400, height = 300)
       clearPlot()
@@ -359,7 +359,7 @@ test_that("Unit tests for plotting colors", {
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
     fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + testNum ,".png"))
     announce_snapshot_file(name = basename(fil))
-    if (.Platform$OS.type == "unix")
+    if (isLinux())
       expect_snapshot_file({
         png(file = fil, width = 400, height = 300)
         clearPlot()
@@ -423,7 +423,7 @@ test_that("Unit tests for internal functions in Plot", {
     fn <- if (testNum == 5) 5 else val
     fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
     announce_snapshot_file(name = basename(fil))
-    if (.Platform$OS.type == "unix")
+    if (isLinux())
       expect_snapshot_file({
         png(file = fil, width = 400, height = 300)
         clearPlot()
@@ -537,7 +537,7 @@ test_that("Plot 2 is not error-free", {
     fil <- paste0("test", prevLastPlotNumber + fn ,".png")
     fil <- file.path(tmpdir, fil)
     announce_snapshot_file(name = basename(fil))
-    if (.Platform$OS.type == "unix")
+    if (isLinux())
       expect_snapshot_file({
         png(file = fil, width = 400, height = 300)
         clearPlot()
@@ -553,7 +553,7 @@ test_that("Plot 2 is not error-free", {
       fn <- if (testNum == 5) 5 else val
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
       announce_snapshot_file(name = basename(fil))
-      if (.Platform$OS.type == "unix")
+      if (isLinux())
         expect_snapshot_file({
           png(file = fil, width = 400, height = 300)
           clearPlot()
@@ -621,7 +621,7 @@ test_that("Plot 2 is not error-free", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       clearPlot()
@@ -705,7 +705,7 @@ test_that("Plot with base is not error-free", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       clearPlot()
@@ -736,7 +736,7 @@ test_that("Plot with base is not error-free", {
     fil <- file.path(tmpdir, fil)
     # Mixing base and grid
     announce_snapshot_file(name = basename(fil))
-    if (.Platform$OS.type == "unix")
+    if (isLinux())
       expect_snapshot_file({
         png(file = fil, width = 800, height = 600)
         clearPlot()
@@ -756,7 +756,7 @@ test_that("Plot with base is not error-free", {
   fil <- paste0("test", prevLastPlotNumber + 3 ,".png")
   fil <- file.path(tmpdir, fil)
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       clearPlot()
@@ -784,7 +784,7 @@ test_that("Plot with base is not error-free", {
   fil <- file.path(tmpdir, fil)
   set.seed(123)
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       ras <- rasOrig
@@ -820,7 +820,7 @@ test_that("rePlot doesn't work", {
   fil2 <- paste0("test", prevLastPlotNumber + 1 ,".png")
   fil2 <- file.path(tmpdir, fil2)
   announce_snapshot_file(name = basename(fil1))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil1, width = 400, height = 300)
       a <- dev.cur()
@@ -839,7 +839,7 @@ test_that("rePlot doesn't work", {
 
   # same file for snapshot b/c basename is same as previous
   announce_snapshot_file(name = basename(fil1))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil2, width = 400, height = 300)
       b <- dev.cur()
@@ -899,7 +899,7 @@ test_that("Plot lists", {
   # Mixing base and grid
   a$SpP <- SpP
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "unix")
+  if (isLinux())
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       clearPlot()
@@ -919,7 +919,7 @@ test_that("Plot lists", {
     b <- list(gg = gg, gg1 = gg1)
     # png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
     announce_snapshot_file(name = basename(fil))
-    if (.Platform$OS.type == "unix")
+    if (isLinux())
       expect_snapshot_file({
         png(file = fil, width = 800, height = 600)
         clearPlot()
