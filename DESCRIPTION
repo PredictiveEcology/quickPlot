@@ -3,7 +3,7 @@ Type: Package
 Title: A System of Plotting Optimized for Speed and Modularity
 Description: A high-level plotting system, built using 'grid' graphics, that is
     optimized for speed and modularity. This has great utility for quick
-    visualizations when testing code, with the key benefit that visualizations
+    visualizations when testing code with a key benefit that visualizations
     are updated independently of one another.
     The suggested package 'fastshp' can be installed from the CRAN-like
     repository <"https://PredictiveEcology.r-universe.dev">
