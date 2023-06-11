@@ -1963,6 +1963,7 @@ setMethod(
     # standardGeneric(".plotGrob")
   }# )
 
+#' @export
 .plotGrob.default <- function(grobToPlot, col, real, size, minv, maxv,
                               legend, legendText, length, gp = gpar(), gpText,
                               pch, speedup, name, vp, ..., verbose = getOption("quickPlot.verbose")) {

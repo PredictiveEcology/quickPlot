@@ -6,7 +6,7 @@ Description: `quickPlot` is a package that provides a high-level plotting system
     This has great utility for quick visualizations when testing code with a 
     key benefit that visualizations are updated independently of one another. 
     The suggested package 'fastshp' can be installed from the repository 
-    "https://PredictiveEcology.r-universe.dev".
+    <https://PredictiveEcology.r-universe.dev>.
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
