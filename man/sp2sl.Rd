@@ -21,10 +21,13 @@ This can be used to represent directional \code{SpatialLines}, especially with w
 as in \code{Plot(sl, length = 0.1)}.
 }
 \examples{
-caribou <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
+caribou <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
                                         y = stats::runif(1e1, -50, 50)))
-caribouFrom <- sp::SpatialPoints(coords = cbind(x = stats::runif(1e1, -50, 50),
+caribouFrom <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
                                         y = stats::runif(1e1, -50, 50)))
 caribouLines <- sp2sl(caribou, caribouFrom)
-Plot(caribouLines, length = 0.1)
+if (interactive()) {
+  clearPlot()
+  Plot(caribouLines, length = 0.1)
+}
 }

@@ -1,59 +1,37 @@
 ## Updated release
 
-This is a maintenance release which drops support for R < 4.0.
+This is a large update that deals with migration to `terra` and `sf`, and removes `rgdal`, `rgeos`, and `maptools`.
 
 ## Test environments
 
-### Previous R versions
-* Ubuntu 20.04                 (GitHub), R 4.0.5
-* Ubuntu 20.04                 (GitHub), R 4.1.3
-* Windows                      (GitHub), R 4.0.5
-* Windows                      (GitHub), R 4.1.3
-* Windows                 (win-builder), R 4.1.3
+### GitHub Actions
+- os: macOS-latest,   r: 'release'
+- os: windows-latest, r: 'devel'
+- os: windows-latest, r: 'latest'
+.- os: windows-latest, r: 'oldrel'
+- os: ubuntu-20.04,   r: 'devel', 
+- os: ubuntu-20.04,   r: 'release'
+- os: ubuntu-20.04,   r: 'oldrel'
 
-### Current R versions
-* macOS 11.6 Big Sur           (GitHub), R 4.2.1
-* macOS 11.6 Big Sur            (local), R 4.2.1
-* macOs (m1) Big Sur             (rhub), R 4.2.1
-* Ubuntu 20.04                 (GitHub), R 4.2.1
-* Ubuntu 20.04                  (local), R 4.2.1
-* Windows                      (GitHub), R 4.2.1
-* Windows                       (local), R 4.2.1
-* Windows                 (win-builder), R 4.2.1
+### Winbuilder
+* Windows                 (win-builder), R Under development (unstable) (2023-05-19 r84451 ucrt)
+* Windows                 (win-builder), 4.3.0 (2023-04-21 ucrt)
+* Windows                 (win-builder), 4.2.3 (2023-03-15 ucrt)
 
-### Development R version
-* Ubuntu 20.04                 (GitHub), R-devel (2022-08-11 r82713)
-* Ubuntu 20.04                  (local), R-devel (2022-08-11 r82713)
-* Windows                      (GitHub), R-devel (2022-08-14 r82716 ucrt)
-* Windows                 (win-builder), R-devel (2022-08-17 r82724 ucrt)
+
+### R-hub
+* Linux (Debian, Fedora), MacOS, Windows
 
 ## R CMD check results
 
-There are no errors, or warnings in any of the above.
+There were no ERRORs nor WARNINGs nor NOTEs.
 
-There are some NOTEs:
+## revdepcheck results
 
-The `fastshp` and `visualTest` packages in Suggests are optionally installed from our R-universe repository.
-Instructions for installation are provided in the README, DESCRIPTION, and via a message to the user.
-We believe this should satisfy the CRAN policy requirement regarding additional dependencies.
+> revdepcheck::revdep_report_cran() ## update cran-comments with this output
+## revdepcheck results
 
-        Suggests or Enhances not in mainstream repositories:
-          fastshp, visualTest
-        Availability using Additional_repositories specification:
-          fastshp      yes   https://predictiveecology.r-universe.dev/
-          visualTest   yes   https://predictiveecology.r-universe.dev/
-
-Related to the above note:
-
-        The Description field contains
-          "https://PredictiveEcology.r-universe.dev")'.
-        Please enclose URLs in angle brackets (<...>).
-
-This URL is included as part of the command used to install these additional packages.
-
-## Downstream dependencies
-
-We checked 4 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+We checked 2 reverse dependencies (0 from CRAN + 2 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
  * We failed to check 0 packages

@@ -2,14 +2,15 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{fortify}
 \alias{fortify}
-\alias{.fortify}
+\alias{ffortify}
 \title{Fortify}
 \usage{
-.fortify(
+ffortify(
   x,
   matchFortify = TRUE,
   simple = FALSE,
-  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000)
+  maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3000),
+  verbose = getOption("quickPlot.verbose")
 )
 }
 \description{

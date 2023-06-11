@@ -1,55 +1,53 @@
 Package: quickPlot
 Type: Package
 Title: A System of Plotting Optimized for Speed and Modularity
-Description: A high-level plotting system, built using 'grid' graphics, that is
-    optimized for speed and modularity. This has great utility for quick
-    visualizations when testing code, with the key benefit that visualizations
-    are updated independently of one another.
-    The suggested packages 'fastshp' and 'visualTest' can be installed with e.g.,
-    'install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")'.
+Description: This package provides a high-level plotting system, 
+    compatible with ggplot2 objects, with many components using 'grid' graphics. 
+    Its primary objective is to provide a plotting system that is built for 
+    speed and modularity. This is useful for quick visualizations when testing 
+    code and for plotting multiple figures to the same device from independent
+    sources that may be independent of one another (i.e., different function or 
+    modules the create the visualizations).  The suggested package 'fastshp' 
+    can be installed from the repository 
+    (<https://PredictiveEcology.r-universe.dev>).
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 0.1.8
-Date: 2022-08-16
+Version: 1.0.0
+Date: 2023-06-09
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
            role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
-           role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
-    person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Natural Resources Canada",
-           role = "cph")
+    role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
+    person("His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada",
+    role = "cph")
     )
 Depends:
-    R (>= 4.0)
+    R (>= 4.1)
 Imports:
-    backports,
     data.table (>= 1.10.4),
     fpCompare,
-    ggplot2,
     grDevices,
     grid,
-    gridBase,
-    igraph,
     methods,
-    raster,
-    RColorBrewer,
-    rgdal,
-    rgeos,
-    sp,
-    stats
+    stats,
+    terra,
+    utils
 Suggests:
     covr,
     fastshp,
+    ggplot2,
     knitr,
     png,
+    raster,
+    RColorBrewer,
     rmarkdown,
+    sf,
+    sp,
     spelling,
     testthat (>= 1.0.2),
-    visualTest
-Remotes:
-    s-u/fastshp,
-    MangoTheCat/visualTest
+    withr
 Additional_repositories: https://predictiveecology.r-universe.dev/
 Encoding: UTF-8
 Language: en-CA
@@ -58,7 +56,7 @@ VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
 ByteCompile: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Collate: 
     'environment.R'
     'plotting-classes.R'
@@ -70,3 +68,4 @@ Collate:
     'quickPlot-package.R'
     'testing-helpers.R'
     'zzz.R'
+Config/testthat/edition: 3

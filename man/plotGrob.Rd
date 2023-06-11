@@ -2,10 +2,6 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{.plotGrob}
 \alias{.plotGrob}
-\alias{.plotGrob,SpatialPoints-method}
-\alias{.plotGrob,matrix-method}
-\alias{.plotGrob,SpatialPolygons-method}
-\alias{.plotGrob,SpatialLines-method}
 \title{Plot spatial grobs (using \pkg{grid} package)}
 \usage{
 .plotGrob(
@@ -24,83 +20,8 @@
   speedup = 1,
   name = character(),
   vp = list(),
-  ...
-)
-
-\S4method{.plotGrob}{SpatialPoints}(
-  grobToPlot,
-  col = NULL,
-  real = FALSE,
-  size = unit(5, "points"),
-  minv,
-  maxv,
-  legend = TRUE,
-  legendText = NULL,
-  length = NULL,
-  gp = gpar(),
-  gpText = gpar(),
-  pch = 19,
-  speedup = 1,
-  name = character(),
-  vp = list(),
-  ...
-)
-
-\S4method{.plotGrob}{matrix}(
-  grobToPlot,
-  col = NULL,
-  real = FALSE,
-  size = unit(5, "points"),
-  minv,
-  maxv,
-  legend = TRUE,
-  legendText = NULL,
-  length = NULL,
-  gp = gpar(),
-  gpText = gpar(),
-  pch = 19,
-  speedup = 1,
-  name = character(),
-  vp = list(),
-  ...
-)
-
-\S4method{.plotGrob}{SpatialPolygons}(
-  grobToPlot,
-  col = NULL,
-  real = FALSE,
-  size = unit(5, "points"),
-  minv,
-  maxv,
-  legend = TRUE,
-  legendText = NULL,
-  length = NULL,
-  gp = gpar(),
-  gpText = gpar(),
-  pch = 19,
-  speedup = 1,
-  name = character(),
-  vp = list(),
-  ...
-)
-
-\S4method{.plotGrob}{SpatialLines}(
-  grobToPlot,
-  col = NULL,
-  real = FALSE,
-  size = unit(5, "points"),
-  minv,
-  maxv,
-  legend = TRUE,
-  legendText = NULL,
-  length = NULL,
-  gp = gpar(),
-  gpText = gpar(),
-  pch = 19,
-  speedup = 1,
-  name = character(),
-  vp = list(),
-  ...
+  ...,
+  verbose = getOption("quickPlot.verbose")
 )
 }
 \arguments{
@@ -147,6 +68,9 @@ make plotting faster.}
 \item{vp}{whole viewport tree of \code{quickPlotGrob}}
 
 \item{...}{Additional arguments. None currently implemented.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 }
 \description{
 Internal function. Plot a raster Grob, a points Grob, polygon Grob.
@@ -165,7 +89,8 @@ Too little thinning causes an overabundance of points to be plotted, slowing
 plotting down.
 
 The suggested package \code{fastshp} can be installed with:
-\code{install.packages("fastshp", repos = "https://rforge.net", type = "source")}.
+\code{install.packages("fastshp", repos = "https://rforge.net", type = "source")} or
+for binary \code{install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")}
 
 NOTE: you may get errors relating to not having installed the software tools
 required for building R packages on your system.

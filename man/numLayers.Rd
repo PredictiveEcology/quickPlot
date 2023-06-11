@@ -2,48 +2,30 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{numLayers}
 \alias{numLayers}
-\alias{numLayers,list-method}
-\alias{numLayers,.quickPlot-method}
-\alias{numLayers,Raster-method}
-\alias{numLayers,Spatial-method}
-\alias{numLayers,ANY-method}
-\title{Find the number of layers in a Spatial Object}
+\title{Find the number of layers in an object}
 \usage{
 numLayers(x)
-
-\S4method{numLayers}{list}(x)
-
-\S4method{numLayers}{.quickPlot}(x)
-
-\S4method{numLayers}{Raster}(x)
-
-\S4method{numLayers}{Spatial}(x)
-
-\S4method{numLayers}{ANY}(x)
 }
 \arguments{
-\item{x}{A \code{.quickPlotObjects} object or list of these.}
+\item{x}{An object or list of objects.}
 }
 \value{
 The number of layers in the object.
 }
 \description{
-There are already methods for \verb{Raster*} in the raster package.
-Adding methods for \code{list}, \code{SpatialPolygons}, \code{SpatialLines},
-and \code{SpatialPoints}, \code{gg}, \code{histogram}, \code{igraph}.
-These latter classes return \code{1}.
+A unified function for \code{raster::nlayers}, \code{terra::nlyrs}, or lists of these.
+Default function returns \code{1L} for all other classes.
 }
 \examples{
-library(igraph)
-library(raster)
+library(terra)
 
-files <- system.file("maps", package = "quickPlot") \%>\%
-  dir(., full.names = TRUE, pattern = "tif")
-maps <- lapply(files, function(x) raster(x))
+files <- system.file("maps", package = "quickPlot")
+files <- dir(files, full.names = TRUE, pattern = "tif")
+maps <- lapply(files, function(x) rast(x))
 names(maps) <- sapply(basename(files), function(x) {
   strsplit(x, split = "\\\\.")[[1]][1]
 })
-stck <- stack(maps)
+stck <- rast(maps)
 
 numLayers(maps)
 numLayers(stck)

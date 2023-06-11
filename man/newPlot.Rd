@@ -5,7 +5,7 @@
 \alias{dev.useRSGD}
 \title{Open a new plotting window}
 \usage{
-newPlot(noRStudioGD = TRUE, ...)
+newPlot(noRStudioGD = TRUE, ..., verbose = getOption("quickPlot.verbose"))
 
 dev.useRSGD(useRSGD = FALSE)
 }
@@ -14,6 +14,9 @@ dev.useRSGD(useRSGD = FALSE)
 RStudio graphics device, which is slow.}
 
 \item{...}{Additional arguments.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 
 \item{useRSGD}{Logical indicating whether the default device should be the
 RStudio graphic device, or the platform default (\code{quartz}

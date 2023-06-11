@@ -10,36 +10,31 @@ sysname <- function() {
   Sys.info()["sysname"][[1]]
 }
 
-fingerprint <- function(fingerprints, id, rversion, sysname) {
-  fingerprints[test_id == id & r_version == rversion & sys_name == sysname, ][["value"]]
-}
 
-updateFingerprint <- function(newValue, fingerprints) {
-  cols <- grep("value", names(fingerprints), invert = TRUE, value = TRUE)
-  temp1 <- fingerprints[newValue, on = cols, nomatch = 0][, value := i.value]
-  set(temp1, NULL, "i.value", NULL)
-  temp2 <- fingerprints[!newValue, on = .(test_id, r_version, sys_name)]
-  fingerprints <- if (nrow(temp1) > 0) rbind(temp2, temp1) else rbind(temp2, newValue)
-  return(fingerprints)
-}
+aPoly <- function(type = "SpatVector") {
+  a <- cbind(object = 1, structure(c(-78.577, -78.456, -78.336, -78.294, -78.309, -78.758,
+                                     -78.957, -79.009, -79.011, -78.054, -77.248, -76.89, -76.751,
+                                     -77.393, -78.105, -78.787, -79.381, -79.807, -80.453, -80.584,
+                                     -80.88, -80.932, -81.12, -81.139, -81.14, -81.179, -81.195, -81.018,
+                                     -80.978, -80.736, -80.231, -78.989, -78.577, 60.547, 60.132,
+                                     59.839, 59.78, 59.726, 59.187, 58.938, 58.745, 58.468, 58.059,
+                                     57.618, 57.126, 56.773, 56.806, 56.856, 56.944, 57.091, 57.153,
+                                     57.139, 57.583, 58.551, 58.686, 59.244, 59.288, 59.532, 60.136,
+                                     60.187, 60.652, 60.715, 60.842, 60.966, 61.132, 60.547), .Dim = c(33L,
+                                                                                                       2L)))
+  b <- cbind(object = 2, structure(c(-76.751, -76.772, -76.886, -77.009, -77.623, -77.901,
+                                     -78.189, -78.597, -79.013, -79.565, -80.039, -80.261, -80.296,
+                                     -80.364, -80.447, -80.453, -79.807, -79.158, -78.787, -77.786,
+                                     -76.751, 56.773, 56.725, 56.376, 56.214, 55.694, 55.481, 55.349,
+                                     55.206, 55.088, 54.992, 54.852, 55.361, 55.41, 55.589, 56.3,
+                                     57.139, 57.153, 57.045, 56.944, 56.825, 56.773), .Dim = c(21L,
+                                                                                               2L)))
 
-fingerprintFile <- function(dir = getwd()) {
-  if (interactive()) {
-    normalizePath(file.path(dir, "tests", "fingerprints", "fingerprints.csv"), mustWork = TRUE)
-  } else {
-    normalizePath(file.path(dir, "..", "fingerprints", "fingerprints.csv"), mustWork = TRUE)
+  out <- terra::vect(rbind(a, b), "polygon")
+
+  if (!identical(type, "SpatVector")) {
+    out <- sf::st_as_sf(out)
   }
+  out
 }
 
-#' @importFrom data.table fread
-setupTestFingerprints <- function(cwd = getwd()) {
-  fread(fingerprintFile(cwd))
-}
-
-#' @importFrom data.table fwrite setkey
-teardownTestFingerprints <- function(fingerprints, cwd = getwd()) {
-  if (Sys.getenv("R_QUICKPLOT_NEW_FINGERPRINTS") == "TRUE") {
-    setkey(fingerprints, r_version, sys_name, test_id)
-    fwrite(fingerprints, file = fingerprintFile(cwd))
-  }
-}

@@ -10,40 +10,37 @@
 #' @export
 #' @rdname getSetColors
 #'
-#' @seealso [setColors<-()], [`brewer.pal()`][RColorBrewer::ColorBrewer]
+#' @seealso [setColors<-()], `brewer.pal()`, RColorBrewer::ColorBrewer
 #'
 #' @example inst/examples/example_setColors.R
 #'
-setGeneric("getColors", function(object) {
-  standardGeneric("getColors")
-})
+getColors <- function(object) {
+  nams <- names(object)
+  if (isRaster(object)) {
+    if (isRaster(object)) {
+      cols <- lapply(nams, function(x) {
+        raster::colortable(object[[x]])
+      })
+    }
+  } else if (isSpat(object) && isGridded(object)) {
+    cols <- terra::coltab(object)
+    cols <- lapply(cols, colorsRGBtoHex)
+    noCols <- vapply(cols, is.null, FUN.VALUE = logical(1))
+    if (any(noCols)) {
+      # theSeq <- minFn(object):maxFn(object)
+      cols <- lapply(cols, function(x) rev(grDevices::terrain.colors(50))) # default in SpatRaster
+      # df <- data.frame(value = theSeq, color =  cols)
+    }
+  } else if (isSpatial(object)) {
+    cols <- list(object@data$color)
+  } else {
+    cols <- NULL
+  }
+  if (!is.null(nams))
+    names(cols) <- nams
 
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "Raster",
-          definition = function(object) {
-            nams <- names(object)
-            cols <- lapply(nams, function(x) {
-              as.character(object[[x]]@legend@colortable)
-            })
-            names(cols) <- nams
-            return(cols)
-})
-
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "ANY",
-          definition = function(object) {
-            return(NULL)
-})
-
-#' @rdname getSetColors
-setMethod("getColors",
-          signature = "SpatialPoints",
-          definition = function(object) {
-            cols <- list(object@data$color)
-            return(cols)
-})
+  return(cols)
+}
 
 #' `setColors` works as a replacement method or a normal function call.
 #' This function can accept `RColorBrewer` colours by name. See examples.
@@ -61,38 +58,81 @@ setMethod("getColors",
 #'
 #' @aliases setColours
 #' @export
+#' @inheritParams Plot
 #' @importFrom grDevices colorRampPalette
-#' @importFrom RColorBrewer brewer.pal brewer.pal.info
 #' @rdname getSetColors
 #'
-#' @seealso [`brewer.pal()`][RColorBrewer::ColorBrewer],
+#' @seealso `brewer.pal()`, `RColorBrewer::ColorBrewer`,
 #'          [`colorRampPalette()`][grDevices::colorRamp].
 #'
-setGeneric("setColors<-",
-           function(object, ..., n, value) {
-             standardGeneric("setColors<-")
-})
+`setColors<-` <- function(object, ..., n, verbose = getOption("quickPlot.verbose"), value) {
+    if (dim(object)[[3]] > 1) { # Multi-layer RasterStack or SpatRaster
+      if (!is(value, "list")) {
+        value <- lapply(seq(numLayers(object)), function(x) value)
+      }
+      if (isTRUE(1 == length(n))) {
+        n <- rep(n, numLayers(object))
+      }
+      object <- Map(lay = seq(numLayers(object)), ..., value = value, n = n,
+                 f = function(lay, ..., n, value) {
+                   # this allows same code for SpatRaster and RasterStack; don't pass object = object
+                   `setColors<-`(object[[lay]], ..., n = n, value = value, verbose = verbose)
+                 })
+      if (isRaster(object[[1]])) {
+        object <- raster::stack(object)
+      }
+      if (is(object[[1]], "SpatRaster")) object <- terra::rast(object)
+      return(object)
+    }
 
-#' @export
-#' @importFrom raster is.factor
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-  signature("RasterLayer", "numeric", "character"),
-  function(object, ..., n, value) {
-    if (is.na(n)) {
+    if (is(value, "list")) { # value = "list"
+      nams <- names(object)
+      i <- which(nams %in% names(value))
+      for (x in nams[i]) {
+        setColors(object[[x]], ..., verbose = verbose) <- value[[x]]
+      }
+      return(object)
+    }
+
+    if (missing(n)) {
+      isFac <- if (!terra::is.factor(object)) {
+        FALSE
+      } else {
+        if (all(na.omit(object[]) %% 1 == 0)) {
+          ## some factor rasters are actually real number -- makes no sense
+          TRUE
+        } else {
+          FALSE
+        }
+      }
+
+      if (!isFac) {
+        n1 <- round(maxFn(object) - minFn(object)) + 1
+      } else {
+        n1 <- length(value)
+      }
+
+      setColors(object, n = n1, verbose = verbose) <- value
+      return(object)
+    }
+
+    if (any(is.na(n))) {
       object <- setColors(object = object, value = value)
       return(object)
     }
-    if (raster::is.factor(object)) {
+    if (terra::is.factor(object)) {
       a <- object[];
       a <- a[!is.na(a)]
       isInteger <- !any(a != as.integer(a))
       # isInteger <- all(na.omit(object[])%%1==0)
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
-        if (n != NROW(object@data@attributes[[1]])) {
-          message("Number of colours not equal number of values: interpolating")
-          n <- NROW(object@data@attributes[[1]])
+        levs <- terra::levels(object)[[1]]
+        nrLevs <- NROW(levs)
+        if (n != nrLevs) {
+        # if (n != NROW(object@data@attributes[[1]])) {
+          messageVerbose("Number of colours not equal number of values: interpolating",
+                         verbose = verbose)
+          n <- nrLevs
         }
       }
     }
@@ -105,125 +145,138 @@ setReplaceMethod(
       }
       value <- RColorBrewer::brewer.pal(ntmp, value)
     }
-    if (raster::is.factor(object)) {
+    if (terra::is.factor(object)) {
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
-        if (n != NROW(object@data@attributes[[1]])) {
-          object@legend@colortable <- pal(n)
+        levs <- terra::levels(object)[[1]]
+        nrLevs <- NROW(levs)
+
+        pal <- colorRampPalette(value, alpha = TRUE, ...)
+        if (n != nrLevs) {
+          vals <- pal(n)
         } else {
-          object@legend@colortable <- value
+          vals <- value
         }
+        if (isRaster(object))
+          object@legend@colortable <- pal(n)
+        else
+          terra::coltab(object) <- vals
+
       }
     } else {
       pal <- colorRampPalette(value, alpha = TRUE, ...)
-      object@legend@colortable <- pal(n)
-    }
-    if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
-    return(object)
-})
-
-#' @export
-#' @importFrom raster is.factor maxValue
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-  signature("RasterLayer", "missing", "character"),
-  function(object, ..., value) {
-    isFac <- if (!raster::is.factor(object)) {
-      FALSE
-    } else {
-      if (all(na.omit(object[]) %% 1 == 0)) {
-        ## some factor rasters are actually real number -- makes no sense
-        TRUE
+      if (isRaster(object)) {
+        raster::colortable(object) <- pal(n)
       } else {
-        FALSE
+        terra::coltab(object) <- pal(n)
       }
+
     }
-
-    if (!isFac) {
-      n <- round(maxValue(object) - minValue(object)) + 1
-    } else {
-      n <- length(value)
-    }
-
-    setColors(object, n = n) <- value
-    if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
     return(object)
-})
+}
+
+# @export
+# @rdname getSetColors
+# setReplaceMethod(
+#  "setColors",
+#  signature("RasterLayer", "missing", "character"),
+#   function(object, ..., value) {
+    # isFac <- if (!raster::is.factor(object)) {
+    #   FALSE
+    # } else {
+    #   if (all(na.omit(object[]) %% 1 == 0)) {
+    #     ## some factor rasters are actually real number -- makes no sense
+    #     TRUE
+    #   } else {
+    #     FALSE
+    #   }
+    # }
+    #
+    # if (!isFac) {
+    #   n <- round(maxFn(object) - minFn(object)) + 1
+    # } else {
+    #   n <- length(value)
+    # }
+    #
+    # setColors(object, n = n) <- value
+    # if (!is.character(object@legend@colortable)) stop("setColors needs colour character values")
+    # return(object)
+# }#)
+
+# @export
+# @rdname getSetColors
+# setReplaceMethod(
+  # "setColors",
+  #  signature("RasterStack", "numeric", "list"),
+  #  function(object, ..., n, value) {
+#      i <- which(names(object) %in% names(value))
+#      if (length(i) == 0) stop("Layer names do not match stack layer names")
+#      whValNamed <- names(value)[i] %in% names(n)
+#      whNNamed <- names(n) %in% names(value)[i]
+#      nFull <- n
+#      if (length(n) != length(i)) {
+#        # not enough n values
+#        if (sum(!nzchar(names(n), keepNA = TRUE)) > 0) {
+#          # are there unnamed ones
+#          nFull <- rep(n[!whNNamed], length.out = length(i))
+#          nFull[whValNamed] <- n[whNNamed]
+#          names(nFull)[whValNamed] <- names(n)[whNNamed]
+#        } else if (is.null(names(n))) {
+#          nFull <- rep(n, length.out = length(i))
+#        }
+#      }
+#
+#      for (x in i) {
+#        if (x %in% i[whValNamed]) {
+#          setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <-
+#            value[[names(value)[x]]]
+#        } else {
+#          setColors(object[[names(value)[x]]], ..., n = nFull[x]) <- value[[names(value)[x]]]
+#        }
+#      }
+#      return(object)
+# }# )
+
+# @export
+# @rdname getSetColors
+# setReplaceMethod(
+#   "setColors",
+#    signature("Raster", "missing", "list"),
+#    function(object, ..., value) {
+     # nams <- names(object)
+     # i <- which(nams %in% names(value))
+     # for (x in nams[i]) {
+     #   setColors(object[[x]], ...) <- value[[x]]
+     # }
+     # return(object)
+# })
+
+# @export
+# @rdname getSetColors
+# setGeneric("setColors", function(object, value, n) {
+#   standardGeneric("setColors")
+# })
 
 #' @export
+#' @inheritParams Plot
 #' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-   signature("RasterStack", "numeric", "list"),
-   function(object, ..., n, value) {
-     i <- which(names(object) %in% names(value))
-     if (length(i) == 0) stop("Layer names do not match stack layer names")
-     whValNamed <- names(value)[i] %in% names(n)
-     whNNamed <- names(n) %in% names(value)[i]
-     nFull <- n
-     if (length(n) != length(i)) {
-       # not enough n values
-       if (sum(!nzchar(names(n), keepNA = TRUE)) > 0) {
-         # are there unnamed ones
-         nFull <- rep(n[!whNNamed], length.out = length(i))
-         nFull[whValNamed] <- n[whNNamed]
-         names(nFull)[whValNamed] <- names(n)[whNNamed]
-       } else if (is.null(names(n))) {
-         nFull <- rep(n, length.out = length(i))
-       }
-     }
+setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")) {
+  if (missing(n)) {
+    setColors(object = object, verbose = verbose) <- value
+  } else {
+    setColors(object = object, n = n, verbose = verbose) <- value
+  }
+  return(object)
+}
 
-     for (x in i) {
-       if (x %in% i[whValNamed]) {
-         setColors(object[[names(value)[x]]], ..., n = nFull[[names(value)[x]]]) <-
-           value[[names(value)[x]]]
-       } else {
-         setColors(object[[names(value)[x]]], ..., n = nFull[x]) <- value[[names(value)[x]]]
-       }
-     }
-     return(object)
-})
-
-#' @export
-#' @rdname getSetColors
-setReplaceMethod(
-  "setColors",
-   signature("Raster", "missing", "list"),
-   function(object, ..., value) {
-     nams <- names(object)
-     i <- which(nams %in% names(value))
-     for (x in nams[i]) {
-       setColors(object[[x]], ...) <- value[[x]]
-     }
-     return(object)
-})
-
-#' @export
-#' @export
-#' @rdname getSetColors
-setGeneric("setColors", function(object, value, n) {
-  standardGeneric("setColors")
-})
-
-#' @export
-#' @rdname getSetColors
-setMethod(
-  "setColors",
-  signature("RasterLayer", "character", "numeric"),
-  function(object, value, n) {
-    setColors(object = object, n = n) <- value
-    return(object)
-})
-
-#' @export
-#' @rdname getSetColors
-setMethod(
-  "setColors",
-  signature("RasterLayer", "character", "missing"),
-  function(object, value) {
-    setColors(object = object) <- value
-    return(object)
-})
+# @export
+# @rdname getSetColors
+# setMethod(
+#   "setColors",
+#   signature("RasterLayer", "character", "missing"),
+#   function(object, value) {
+#     setColors(object = object) <- value
+#     return(object)
+# })
 
 ################################################################################
 #' Convert Raster to colour matrix usable by raster function for plotting
@@ -262,32 +315,22 @@ setMethod(
 #' @aliases makeColourMatrix
 #' @author Eliot McIntire
 #' @importFrom grDevices colorRampPalette terrain.colors
-#' @importFrom raster minValue getValues sampleRegular is.factor levels
+#' @importFrom fpCompare %>>%
 #' @importFrom stats na.omit
 #' @importFrom utils tail head
-#' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @include plotting-classes.R
 #' @keywords internal
 #' @rdname makeColorMatrix
 #'
-setGeneric(
-  ".makeColorMatrix",
-   function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
-            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE)  # nolint
-     standardGeneric(".makeColorMatrix")
-)
+.makeColorMatrix <- function(grobToPlot, zoomExtent, maxpixels, legendRange, cols = NULL,
+                             prevMinMax,
+            na.color = "#FFFFFF00", zero.color = NULL, skipSample = TRUE) {
 
-#' @rdname makeColorMatrix
-setMethod(
-  ".makeColorMatrix",
-  signature = c("griddedClasses", "Extent", "numeric", "ANY"),
-  #signature = c("Raster", "Extent", "numeric", "ANY"),
-  definition = function(grobToPlot, zoomExtent, maxpixels, legendRange,
-                        cols, na.color, zero.color, skipSample = TRUE) { # nolint
+  # signature = c("griddedClasses", "Extent", "numeric", "ANY"),
     zoom <- zoomExtent
 
     isFac <- FALSE
-    if (any(raster::is.factor(grobToPlot)))
+    if (any(terra::is.factor(grobToPlot)))
       if (all(na.omit(grobToPlot[] %% 1) == 0))
         isFac <- TRUE
     # It is 5x faster to access the min and max from the Raster than to
@@ -295,28 +338,61 @@ setMethod(
     # on the raster, so it is possible that it is incorrect.
     if (!skipSample) {
       colorTable <- getColors(grobToPlot)[[1]]
-      if (!inherits(try(minValue(grobToPlot)), "try-error")) {
-        minz <- minValue(grobToPlot)
+      if (is.null(prevMinMax$minz)) {
+        mn <- minFn(grobToPlot)
+      } else {
+        mn <- prevMinMax$minz
       }
-      grobToPlot <- sampleRegular(
-        x = grobToPlot, size = maxpixels,
-        ext = zoom, asRaster = TRUE, useGDAL = TRUE
-      )
-      if (length(colorTable) > 0) {
+      if (!inherits(try(mn), "try-error")) {
+        minz <- mn
+      }
+      if (is.null(prevMinMax$maxz)) {
+        mx <- maxFn(grobToPlot)
+      } else {
+        mx <- prevMinMax$maxz
+      }
+      if (!inherits(try(mx), "try-error")) {
+        maxz <- mx
+      }
+
+      if (!(is(zoom, "SpatExtent") || is(zoom, "Extent"))) {
+        zoom <- unlist(zoom)
+        if (isRaster(grobToPlot)) {
+          zoom <- raster::extent(zoom)
+        } else {
+          zoom <- zoom[c("xmin", "xmax", "ymin", "ymax")] # get in correct SpatExtent order
+          zoom <- terra::ext(zoom)
+        }
+      }
+      grobToPlot <- terra::crop(grobToPlot, zoom)
+      if (terra::ncell(grobToPlot) > maxpixels) {
+        if (isRaster(grobToPlot)) {
+          grobToPlot <- raster::sampleRegular(grobToPlot, size = maxpixels, asRaster = TRUE)
+        } else {
+          grobToPlot <- terra::spatSample(grobToPlot, method = "regular", size = maxpixels,
+                            as.raster = TRUE)
+        }
+        # This appears to be modify-in-place on grobToPlot ... that seems bad
+      }
+      # grobToPlot <- sampleRegular(
+      #   x = grobToPlot, size = maxpixels,
+      #   ext = zoom, asRaster = TRUE, useGDAL = TRUE
+      # )
+      if (NROW(colorTable) > 0) {
         cols <- colorTable
       }
     }
-    if (inherits(grobToPlot, "Raster")) {
-      z <- getValues(grobToPlot) # more general that getValues(grobToPlot)
+    if (isGridded(grobToPlot)) {
+      z <- terra::values(grobToPlot)
     } else {
       z <- grobToPlot[]
     }
 
-    # If minValue is defined, then use it, otherwise, calculate them.
+    # If minFn is defined, then use it, otherwise, calculate them.
     #  This is different than maxz because of the sampleRegular.
     # If the low values in the raster are missed in the sampleRegular,
     #  then the legend will be off by as many as are missing at the bottom;
-    #  so, use the metadata version of minValue, but use the max(z) to
+    #  so, use the metadata version of minFn, but use the max(z) to
     #  accomodate cases where there are too many legend values for the
     # number of raster values.
   #if (!raster::is.factor(grobToPlot)) {
@@ -330,8 +406,12 @@ setMethod(
       if (is.infinite(minz)) {
         minz <- 0
       }
-      #
-      maxz <- suppressWarnings(max(z, na.rm = TRUE))
+      if (!exists("maxz")) {
+        maxz <- suppressWarnings(max(z, na.rm = TRUE))
+      }
+      if (is.na(maxz)) {
+        maxz <- suppressWarnings(max(z, na.rm = TRUE))
+      }
       if (is.infinite(maxz)) {
         maxz <- 0
       }
@@ -348,7 +428,7 @@ setMethod(
     maxNumCols <- 100
 
     if (isFac) {
-      facLevs <- raster::levels(grobToPlot)[[1]]
+      facLevs <- terra::levels(grobToPlot)[[1]]
       nValues <- NROW(facLevs)
     } else {
       if (any(is.na(legendRange))) {
@@ -360,31 +440,40 @@ setMethod(
     }
 
     colTable <- NULL
+
+    # Coming out of SpatRaster, it may be in rgb matrix
+    if (is.data.frame(cols))
+      cols <- colorsRGBtoHex(cols)
+      # cols <- rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
+
     if (is.null(cols)) {
       # i.e., contained within raster or nothing
-      if (length(getColors(grobToPlot)[[1]]) > 0) {
-        colTable <- getColors(grobToPlot)[[1]]
-        lenColTable <- length(colTable)
+      theCols <- getColors(grobToPlot)[[1]]
+      if (NROW(theCols) > 0) {
+        colTable <- theCols # This is a vector for RasterLayer, but a data.frame for terra
+        lenColTable <- NROW(colTable)
 
         cols <- if ((nValues > lenColTable) & !isFac) { # nolint
           # not enough colours, use colorRamp
-          colorRampPalette(colTable)(nValues)
+          colTable
+          # colorRampPalette(colTable)(nValues)
         } else if ((nValues <= lenColTable) | isFac) { # nolint
           # one more colour than needed:
           #   assume bottom is NA
           if (isFac) {
-            factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
-              unique() %>%
-              na.omit() %>%
-              sort()
-            if (length(factorValues) == length(colTable)) {
+            factorValues <- terra::levels(grobToPlot)[[1]][["ID"]]
+            # factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
+            #   unique() %>%
+            #   na.omit() %>%
+            #   sort()
+            if (length(factorValues) == NROW(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {
-              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (length(colTable) - 1)) {
+              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (NROW(colTable) - 1)) {
                 # The case where the IDs are numeric representations
                 colTable[factorValues + 1]
               } else {
-                colTable[c(1, 1 + factorValues)] # CHANGE HERE
+                colTable[c(1, 1 + factorValues)]
               }
 
             }
@@ -410,17 +499,17 @@ setMethod(
         cols <- rev(terrain.colors(nValues))
       }
     } else {
-      if (is.character(cols) & (length(cols) == 1)) {
-        if (cols %in% rownames(brewer.pal.info)) {
+      if (is.character(cols) & (NROW(cols) == 1)) {
+        if (cols %in% rownames(RColorBrewer::brewer.pal.info)) {
           suppressWarnings({
-            cols <- brewer.pal(nValues, cols)
+            cols <- RColorBrewer::brewer.pal(nValues, cols)
           })
         }
       }
-      cols <- if (nValues > length(cols)) {
+      cols <- if (nValues > NROW(cols)) {
         colorRampPalette(cols)(nValues)
-      } else if (nValues < length(cols)) {
-        if ((minz + nValues - 1)  > length(cols)) { # nolint
+      } else if (nValues < NROW(cols)) {
+        if ((minz + nValues - 1)  > NROW(cols)) { # nolint
           # there are enough colours, but they don't start at 1
           cols[minz:maxz - minz + 1 + max(0, 1 - minz)]
         } else {
@@ -433,7 +522,7 @@ setMethod(
 
     # colours are indexed from 1, as with all objects in R, but there
     # are generally zero values on the rasters, so shift according to
-    # the minValue value, if it is below 1.
+    # the minFn value, if it is below 1.
     # Shift it by 2, 1 to make the zeros into two, the other for the
     # NAs to be ones.
 
@@ -490,10 +579,10 @@ setMethod(
     }
 
     if (any(!is.na(legendRange))) {
-      if ((max(legendRange) - min(legendRange) + 1) < length(cols)) { # nolint
+      if ((max(legendRange) - min(legendRange) + 1) < NROW(cols)) { # nolint
       } else {
         if (!is.null(colTable)) {
-          if (length(getColors(grobToPlot)[[1]]) > 0) {
+          if (NROW(getColors(grobToPlot)[[1]]) > 0) {
             cols <- colorRampPalette(colTable)(maxzOrig - minzOrig + 1)
           } else {
             # default colour if nothing specified
@@ -503,6 +592,10 @@ setMethod(
       }
     }
 
+    # Coming out of SpatRaster, it may be in rgb matrix
+    if (is.data.frame(cols))
+      cols <- colorsRGBtoHex(cols)
+
     # here, the default colour (transparent) for zero:
     # if it is the minimum value, can be overridden.
 
@@ -510,9 +603,9 @@ setMethod(
     if (minz < 0) z[z < 0] <- 0
     if (!isFac) {
       if (real) {
-        if (maxz > maxNumCols) z[z > maxNumCols] <- 0
+        if (maxz %>>% maxNumCols) z[z %>>% maxNumCols] <- 0
       } else {
-        if (maxz > nValues) z[z > nValues] <- 0
+        if (maxz %>>% nValues) z[z %>>% nValues] <- 0
       }
     }
 
@@ -523,7 +616,7 @@ setMethod(
       # changed from max to length to accommodate zeros or factors not starting at 1
       cols <- rep(na.color, length(factorValues))
       resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
-      if (length(colTable) == length(resequence))
+      if (NROW(colTable) == length(resequence))
         cols[resequence] <- colTable
       else
         cols[resequence] <- colTable[resequence]
@@ -533,9 +626,14 @@ setMethod(
     }
     cols <- c(na.color, cols) # make first index of colours be transparent
 
+    minzToMaxz <- seq(minz, maxz)
+    lenMinzToMaxz <- length(minzToMaxz)
+    if (length(cols) < lenMinzToMaxz)
+      cols <- colorRampPalette(cols)(lenMinzToMaxz)
+
     # Convert numeric z to a matrix of hex colours
     z <- matrix(
-      cols[z], nrow = NROW(grobToPlot),
+      cols[round(z, digits = 0)], nrow = NROW(grobToPlot),
       ncol = ncol(grobToPlot), byrow = TRUE
     )
 
@@ -544,7 +642,7 @@ setMethod(
       cols = cols, real = real
     )
   }
-)
+
 
 #' Divergent colour palette
 #'
@@ -558,11 +656,11 @@ setMethod(
 #'
 #' @param min.value    Numeric minimum value corresponding to `start.colour`.
 #'                     If attempting to change the colour of a `RasterLayer`,
-#'                     this can be set to `minValue(RasterObject)`.
+#'                     this can be set to `minFn(RasterObject)`.
 #'
 #' @param max.value    Numeric maximum value corresponding to `end.colour`.
 #'                     If attempting to change the colour of a `RasterLayer`,
-#'                     this can be set to `maxValue(RasterObject)`.
+#'                     this can be set to `maxFn(RasterObject)`.
 #' @param mid.value    Numeric middle value corresponding to `mid.colour`.
 #'                     Default is `0`.
 #'
@@ -612,3 +710,20 @@ setMethod(
 
   return(myColors)
 })
+
+#' @importFrom grDevices rgb
+colorsRGBtoHex <- function(cols) {
+  if ("alpha" %in% colnames(cols))
+    rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255, cols[, "alpha"]/255)
+  else
+    rgb(cols[, "red"]/255, cols[, 'green']/255, cols[, "blue"]/255)
+}
+
+factorValues <- function(r, values, layer = terra::activeCat(r), indices) {
+  df <- terra::levels(r)[[1]]
+  if (missing(values)) {
+    values <- r[][indices]
+  }
+  df[[layer + 1]][match(values, df[[1]])]
+
+}

@@ -29,20 +29,19 @@ The naming convention used is: \code{RasterStackName$layerName}, i.e, \code{land
 
 \item{\code{actual.ratio}}{numeric. Ratio of columns to rows}
 
-\item{\code{ds.dimensionRatio}}{numeric. Ratio of the device size to the ratio of the
-extents}
+\item{\code{ds.dimensionRatio}}{numeric. Ratio of the device size to the ratio of the extents.}
 
-\item{\code{ds}}{numeric of length 2. The dimensions of the plotting window in inches}
+\item{\code{ds}}{numeric of length 2. The dimensions of the plotting window in inches.}
 
 \item{\code{objects}}{list of length number of spatial objects. Each list has a character vector
-of the layer names in each of those}
+of the layer names in each of those.}
 
-\item{\code{isRaster}}{logical vector, indicating whether each object is a \verb{Raster*} object}
+\item{\code{isRaster}}{logical vector, indicating whether each object is a \verb{Raster*} object.}
 
-\item{\code{names}}{character vector. The names of the layers in the plot}
+\item{\code{names}}{character vector, indicating the names of the layers in the plot.}
 
-\item{\code{extents}}{list of class Extent objects. These are needed to calculate the
-\code{ds.dimensionRatio}, which is used to scale the Spatial objects correctly}
+\item{\code{extents}}{list of class \code{Extent} objects. These are needed to calculate the
+\code{ds.dimensionRatio}, which is used to scale the \verb{Spatial*} objects correctly.}
 
 \item{\code{isSpatialObjects}}{logical indicating whether the object(s) are \code{spatialObjects} or not.}
 

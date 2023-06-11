@@ -3,7 +3,6 @@
 \name{.makeColorMatrix}
 \alias{.makeColorMatrix}
 \alias{makeColourMatrix}
-\alias{.makeColorMatrix,griddedClasses,Extent,numeric-method}
 \title{Convert Raster to colour matrix usable by raster function for plotting}
 \usage{
 .makeColorMatrix(
@@ -12,17 +11,7 @@
   maxpixels,
   legendRange,
   cols = NULL,
-  na.color = "#FFFFFF00",
-  zero.color = NULL,
-  skipSample = TRUE
-)
-
-\S4method{.makeColorMatrix}{griddedClasses,Extent,numeric}(
-  grobToPlot,
-  zoomExtent,
-  maxpixels,
-  legendRange,
-  cols = NULL,
+  prevMinMax,
   na.color = "#FFFFFF00",
   zero.color = NULL,
   skipSample = TRUE

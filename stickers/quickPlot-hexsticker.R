@@ -10,7 +10,7 @@ font_add_google("Roboto Slab", "roboto")
 ## Automatically use showtext to render text for future devices
 showtext_auto()
 
-#imgurl <- "https://github.com/PredictiveEcology/SpaDES/raw/master/docs/images/SpaDES.png"
+#imgurl <- "https://github.com/PredictiveEcology/SpaDES/raw/master/man/figures/SpaDES.png"
 
 sticker(expression(plot(cars, cex = 0.5, cex.axis = 0.5, mgp = c(0, 0.3, 0), xlab = "", ylab = "")),
         package = "quickPlot",

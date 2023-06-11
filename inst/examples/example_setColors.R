@@ -1,7 +1,6 @@
-library(igraph)
-library(raster)
+library(terra)
 
-ras <- raster(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))
+ras <- rast(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))
 
 getColors(ras) ## none
 
@@ -26,14 +25,14 @@ clearPlot()
 Plot(ras)
 
 # Real number rasters - interpolation is used
-ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) %>%
+ras <- rast(matrix(runif(9), ncol = 3, nrow = 3)) |>
   setColors(c("red", "yellow")) # interpolates when real numbers, gives warning
 
 clearPlot()
 Plot(ras)
 
 # Factor rasters, can be contiguous (numerically) or not, in this case not:
-ras <- raster(matrix(sample(c(1, 3, 6), size = 9, replace = TRUE), ncol = 3, nrow = 3))
+ras <- rast(matrix(sample(c(1, 3, 6), size = 9, replace = TRUE), ncol = 3, nrow = 3))
 levels(ras) <- data.frame(ID = c(1, 3, 6), Names = c("red", "purple", "yellow"))
 ras <- setColors(ras, n = 3, c("red", "purple", "yellow"))
 getColors(ras)

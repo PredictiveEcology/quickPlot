@@ -2,12 +2,9 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{gpar}
 \alias{gpar}
-\alias{gpar,ANY-method}
 \title{Importing some grid functions}
 \usage{
 gpar(...)
-
-\S4method{gpar}{ANY}(...)
 }
 \arguments{
 \item{...}{ Any number of named arguments. }

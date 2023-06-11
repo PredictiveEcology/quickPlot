@@ -3,43 +3,16 @@
 \name{getColors}
 \alias{getColors}
 \alias{getColours}
-\alias{getColors,Raster-method}
-\alias{getColors,ANY-method}
-\alias{getColors,SpatialPoints-method}
 \alias{setColors<-}
 \alias{setColours}
-\alias{setColors<-,RasterLayer,numeric,character-method}
-\alias{setColors<-,RasterLayer,missing,character-method}
-\alias{setColors<-,RasterStack,numeric,list-method}
-\alias{setColors<-,Raster,missing,list-method}
 \alias{setColors}
-\alias{setColors,RasterLayer,character,numeric-method}
-\alias{setColors,RasterLayer,character,missing-method}
 \title{Get and set colours for plotting \verb{Raster*} objects}
 \usage{
 getColors(object)
 
-\S4method{getColors}{Raster}(object)
+setColors(object, ..., n, verbose = getOption("quickPlot.verbose")) <- value
 
-\S4method{getColors}{ANY}(object)
-
-\S4method{getColors}{SpatialPoints}(object)
-
-setColors(object, ..., n) <- value
-
-\S4method{setColors}{RasterLayer,numeric,character}(object, ..., n) <- value
-
-\S4method{setColors}{RasterLayer,missing,character}(object, ..., n) <- value
-
-\S4method{setColors}{RasterStack,numeric,list}(object, ..., n) <- value
-
-\S4method{setColors}{Raster,missing,list}(object, ..., n) <- value
-
-setColors(object, value, n)
-
-\S4method{setColors}{RasterLayer,character,numeric}(object, value, n)
-
-\S4method{setColors}{RasterLayer,character,missing}(object, value)
+setColors(object, value, n, verbose = getOption("quickPlot.verbose"))
 }
 \arguments{
 \item{object}{A \verb{Raster*} object.}
@@ -48,6 +21,9 @@ setColors(object, value, n)
 
 \item{n}{An optional vector of values specifying the number
 of levels from which to interpolate the colour palette.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 
 \item{value}{Named list of hex colour codes (e.g., from
 \code{RColorBrewer::brewer.pal}), corresponding to the names
@@ -65,10 +41,9 @@ Get and set colours for plotting \verb{Raster*} objects
 This function can accept \code{RColorBrewer} colours by name. See examples.
 }
 \examples{
-library(igraph)
-library(raster)
+library(terra)
 
-ras <- raster(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))
+ras <- rast(matrix(c(0, 0, 1, 2), ncol = 2, nrow = 2))
 
 getColors(ras) ## none
 
@@ -93,14 +68,14 @@ clearPlot()
 Plot(ras)
 
 # Real number rasters - interpolation is used
-ras <- raster(matrix(runif(9), ncol = 3, nrow = 3)) \%>\%
+ras <- rast(matrix(runif(9), ncol = 3, nrow = 3)) |>
   setColors(c("red", "yellow")) # interpolates when real numbers, gives warning
 
 clearPlot()
 Plot(ras)
 
 # Factor rasters, can be contiguous (numerically) or not, in this case not:
-ras <- raster(matrix(sample(c(1, 3, 6), size = 9, replace = TRUE), ncol = 3, nrow = 3))
+ras <- rast(matrix(sample(c(1, 3, 6), size = 9, replace = TRUE), ncol = 3, nrow = 3))
 levels(ras) <- data.frame(ID = c(1, 3, 6), Names = c("red", "purple", "yellow"))
 ras <- setColors(ras, n = 3, c("red", "purple", "yellow"))
 getColors(ras)
@@ -123,9 +98,9 @@ clearPlot()
 Plot(ras)
 }
 \seealso{
-\code{\link[=setColors<-]{setColors<-()}}, \code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}}
+\code{\link[=setColors<-]{setColors<-()}}, \code{brewer.pal()}, RColorBrewer::ColorBrewer
 
-\code{\link[RColorBrewer:ColorBrewer]{brewer.pal()}},
+\code{brewer.pal()}, \code{RColorBrewer::ColorBrewer},
 \code{\link[grDevices:colorRamp]{colorRampPalette()}}.
 }
 \author{

@@ -4,13 +4,16 @@
 \alias{dev}
 \title{Specify where to plot}
 \usage{
-dev(x, ...)
+dev(x, ..., verbose = getOption("quickPlot.verbose"))
 }
 \arguments{
 \item{x}{The number of a plot device. If missing, will open a new
 non-RStudio plotting device}
 
 \item{...}{Additional arguments passed to \code{\link[=newPlot]{newPlot()}}.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 }
 \value{
 Opens a new plot device on the screen.

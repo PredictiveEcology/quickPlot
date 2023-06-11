@@ -9,7 +9,11 @@
 \usage{
 clickValues(n = 1)
 
-clickExtent(devNum = NULL, plot.it = TRUE)
+clickExtent(
+  devNum = NULL,
+  plot.it = TRUE,
+  verbose = getOption("quickPlot.verbose")
+)
 
 clickCoordinates(n = 1)
 
@@ -22,6 +26,9 @@ clickCoordinates(n = 1)
 
 \item{plot.it}{Logical. If \code{TRUE} a new plotting window is made for the
 new extent. Default \code{TRUE}.}
+
+\item{verbose}{Numeric or logical. If \code{TRUE} or \verb{>0}, then messages will be
+shown. If \code{FALSE} or \code{0}, most messages will be suppressed.}
 
 \item{X}{The raster object whose values will be returned where mouse clicks occur.}
 
@@ -58,20 +65,22 @@ clicked on and passes this plot name and the clicked coordinates to \code{.click
 
 \code{clickExtent} will place the new, zoomed in plot over top of the existing
 object. To recover original full object, double click anywhere during an
-active \code{clickExtent}. See example.
+active \code{clickExtent}. Currently, subsequent \code{clickExtent} is a click on the
+original map extent, not the "zoomed in" map extent. See example.
 }
 \examples{
-\dontrun{
-  library(igraph)
-  library(raster)
-
-  files <- system.file("maps", package = "quickPlot") \%>\%
-    dir(., full.names = TRUE, pattern = "tif")
-  maps <- lapply(files, function(x) raster(x))
+\donttest{
+# clickValues and family are unreliable on Rstudio Server as the plotting device
+#   does not report its dimensions correctly; this may change in future
+#   updates to Rstudio
+if (interactive() && !isRstudioServer() ) {
+  files <- system.file("maps", package = "quickPlot")
+  files <- dir(files, full.names = TRUE, pattern = "tif")
+  maps <- lapply(files, function(x) terra::rast(x))
   names(maps) <- sapply(basename(files), function(x) {
     strsplit(x, split = "\\\\.")[[1]][1]
   })
-  landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
+  landscape <- c(maps$DEM, maps$forestCover, maps$habitatQuality)
 
   clearPlot()
   Plot(landscape)
@@ -84,6 +93,7 @@ active \code{clickExtent}. See example.
 
   # repeated zooming to try various places on the original device
   for(i in 1:4) clickExtent() # click at two locations on the Plot device
+}
 }
 
 }

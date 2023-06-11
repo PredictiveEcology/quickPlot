@@ -1,3 +1,8 @@
+### deal with spurious data.table warnings
+if (getRversion() >= "3.1.0") {
+  utils::globalVariables(c(".", "..xyCols"))
+}
+
 ################################################################################
 #' Clear plotting device
 #'
@@ -19,14 +24,21 @@
 #'
 #' @author Eliot McIntire
 #' @export
+#' @inheritParams Plot
 #' @importFrom grDevices dev.cur dev.off
 #' @importFrom grid grid.newpage
 #' @include plotting-classes.R
 #' @rdname clearPlot
+#' @seealso [Plot()].
 #'
-#' @example inst/examples/example_Plot.R
+#' @examples
+#' if (interactive()) {
+#'   Plot(1:10)
+#'   clearPlot() # clears
+#' }
 #'
-setGeneric("clearPlot", function(dev = dev.cur(), removeData = TRUE, force = FALSE) {
+setGeneric("clearPlot", function(dev = dev.cur(), removeData = TRUE, force = FALSE,
+                                 verbose = getOption("quickPlot.verbose")) {
   standardGeneric("clearPlot")
 })
 
@@ -35,7 +47,8 @@ setGeneric("clearPlot", function(dev = dev.cur(), removeData = TRUE, force = FAL
 setMethod(
   "clearPlot",
   signature = c("numeric", "logical", "ANY"),
-  definition = function(dev, removeData, force) {
+  definition = function(dev, removeData, force,
+                        verbose = getOption("quickPlot.verbose")) {
 
     suppressWarnings(
       try(rm(list = paste0("quickPlot", dev), envir = .quickPlotEnv))
@@ -60,7 +73,7 @@ setMethod(
       }
       dc <- dev.cur()
       dev.off()
-      dev(dc)
+      dev(dc, verbose = verbose)
       return(invisible())
     }
     devActive <- dev.cur()
@@ -150,22 +163,22 @@ setMethod("clearPlot",
 #'
 #' @author Eliot McIntire
 #' @export
-#' @importFrom raster is.factor factorValues cellFromXY
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
 #'
 #' @examples
-#' \dontrun{
-#'   library(igraph)
-#'   library(raster)
-#'
-#'   files <- system.file("maps", package = "quickPlot") %>%
-#'     dir(., full.names = TRUE, pattern = "tif")
-#'   maps <- lapply(files, function(x) raster(x))
+#' \donttest{
+#' # clickValues and family are unreliable on Rstudio Server as the plotting device
+#' #   does not report its dimensions correctly; this may change in future
+#' #   updates to Rstudio
+#' if (interactive() && !isRstudioServer() ) {
+#'   files <- system.file("maps", package = "quickPlot")
+#'   files <- dir(files, full.names = TRUE, pattern = "tif")
+#'   maps <- lapply(files, function(x) terra::rast(x))
 #'   names(maps) <- sapply(basename(files), function(x) {
 #'     strsplit(x, split = "\\.")[[1]][1]
 #'   })
-#'   landscape <- stack(maps$DEM, maps$forestCover, maps$habitatQuality)
+#'   landscape <- c(maps$DEM, maps$forestCover, maps$habitatQuality)
 #'
 #'   clearPlot()
 #'   Plot(landscape)
@@ -179,29 +192,52 @@ setMethod("clearPlot",
 #'   # repeated zooming to try various places on the original device
 #'   for(i in 1:4) clickExtent() # click at two locations on the Plot device
 #' }
+#' }
 #'
 clickValues <- function(n = 1) {
   coords <- clickCoordinates(n = n)
+  setDT(coords$coords)
   objLay <- strsplit(coords$map, "\\$")
   objNames <- unlist(lapply(objLay, function(x) x[1]))
   layNames <- unlist(lapply(objLay, function(x) x[2]))
   for (i in 1:n) {
     ras1 <- eval(parse(text = objNames[i]), envir = coords$envir[[i]])
-    if (!is.na(layNames[i])) {
-      coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-        ras1[[layNames[i]]][cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
-      }))
+    xyCols <- c("x", "y")
+    if (isSF(ras1) || isSpat(ras1)) {
+      crds <- coords$coords[i, ..xyCols]
+      if (isSF(ras1)) {
+        a <- sf::st_sfc(sf::st_point(as.matrix(crds)))
+        sf::st_crs(a) <- sf::st_crs(ras1)
+        b <- sf::st_intersection(ras1, a)
+        d <- sf::st_drop_geometry(b)
+      } else {
+        a <- terra::vect(crds, geom = xyCols)
+        b <- terra::extract(ras1, a)
+        d <- as.data.frame(b)
+      }
+      df <- cbind(crds, cbind("plot" = objNames[i], d))
+      cols <- intersect(colnames(coords$coords), c("x", "y"))
+      otherCols <- setdiff(colnames(df), cols)
+      coords$coords[df, (otherCols) := lapply(otherCols, function(x) get(paste0("i.", x))), on = cols]
+
     } else {
-      coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
-        ras1[cellFromXY(ras1, coords$coords[i, 1:2])]
-      }))
+      if (!is.na(layNames[i])) {
+        coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
+          ras1[[layNames[i]]][terra::cellFromXY(ras1[[layNames[i]]], coords$coords[i, 1:2])]
+        }))
+      } else {
+        coords$coords$value <- unlist(lapply(seq_len(n), function(i) {
+          ras1[terra::cellFromXY(ras1, coords$coords[i, 1:2])]
+        }))
+      }
     }
+
   }
-  if (any(raster::is.factor(ras1))) {
-    for (i in which(raster::is.factor(ras1)))
+  if (any(terra::is.factor(ras1))) {
+    for (i in which(terra::is.factor(ras1)))
       coords$coords$value <- factorValues(ras1[[i]], coords$coords$value)
   }
-  return(coords$coords)
+  return(coords$coords[])
 }
 
 #' @param devNum The device number for the new plot to be plotted on.
@@ -211,19 +247,21 @@ clickValues <- function(n = 1) {
 #'
 #' @export
 #' @importFrom grDevices dev.cur
-#' @importFrom raster crs<- crs
 #' @importFrom fpCompare %==%
+#' @inheritParams Plot
 #' @include plotting-classes.R
 #' @rdname quickPlotMouseClicks
 #'
 #' @details
 #' `clickExtent` will place the new, zoomed in plot over top of the existing
 #' object. To recover original full object, double click anywhere during an
-#' active `clickExtent`. See example.
+#' active `clickExtent`. Currently, subsequent `clickExtent` is a click on the
+#' original map extent, not the "zoomed in" map extent. See example.
 #'
-clickExtent <- function(devNum = NULL, plot.it = TRUE) {
+clickExtent <- function(devNum = NULL, plot.it = TRUE,
+                        verbose = getOption("quickPlot.verbose")) {
   corners <- clickCoordinates(2)
-  zoom <- extent(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
+  zoom <- terra::ext(c(sort(corners[[3]]$x), sort(corners[[3]]$y)))
 
   if (plot.it) {
 
@@ -233,7 +271,7 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
 
     devActive <- dev.cur()
     if (!(is.null(devNum))) {
-      dev(devNum)
+      dev(devNum, verbose = verbose)
     }
 
     obj <- list()
@@ -247,13 +285,13 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE) {
     theObj <- list(theObj)
     names(theObj) <- objNames
     if (sum(corners$coords[1,] - corners$coords[2,]) %==% 0) {
-      Plot(theObj, addTo = theName, title = theName, new = TRUE, zoomExtent = extent(theObj[[1]]))
+      Plot(theObj, addTo = theName, title = theName, new = TRUE)
     } else {
       Plot(theObj, addTo = theName, title = theName, zoomExtent = zoom, new = TRUE)
     }
 
     if (!(is.null(devNum))) {
-      dev(devActive)
+      dev(devActive, verbose = verbose)
     }
     return(invisible(zoom))
   } else {
@@ -283,28 +321,34 @@ clickCoordinates <- function(n = 1) {
 
   grepNullsW <- grep("null$", gl$widths)
   grepNpcsW <- grep("npc$", gl$widths)
-  nulls <- as.character(gl$widths)[grepNullsW] %>%
-    strsplit(., "null") %>%
-    unlist() %>%
-    as.numeric()
-  npcs <- as.character(gl$widths)[grepNpcsW] %>%
-    strsplit(., "npc") %>%
-    unlist() %>%
-    as.numeric()
+
+  # remove pipe --> keep compatible with old R, without requiring magrittr
+  nulls <- as.character(gl$widths)[grepNullsW]# |>
+  nulls <- strsplit(x = nulls, "null") #|>
+  nulls <- unlist(nulls) #|>
+  nulls <- as.numeric(nulls)
+
+  npcs <- as.character(gl$widths)[grepNpcsW]
+  npcs <- strsplit(x = npcs, "npc")
+  npcs <- unlist(npcs)
+  npcs <- as.numeric(npcs)
+
   remaining <- 1 - sum(npcs)
   npcForNulls <- nulls * remaining / sum(nulls)
   widthNpcs <- c(npcs, npcForNulls)[order(c(grepNpcsW, grepNullsW))]
 
   grepNullsH <- grep("null$", gl$heights)
   grepNpcsH <- grep("npc$", gl$heights)
-  nulls <- as.character(gl$heights)[grepNullsH] %>%
-    strsplit(., "null") %>%
-    unlist() %>%
-    as.numeric()
-  npcs <- as.character(gl$heights)[grepNpcsH] %>%
-    strsplit(., "npc") %>%
-    unlist() %>%
-    as.numeric()
+
+  nulls <- as.character(gl$heights)[grepNullsH]
+  nulls <- strsplit(x = nulls, "null")
+  nulls <- unlist(nulls)
+  nulls <- as.numeric(nulls)
+
+  npcs <- as.character(gl$heights)[grepNpcsH]
+  npcs <- strsplit(x = npcs, "npc")
+  npcs <- unlist(npcs)
+  npcs <- as.numeric(npcs)
   remaining <- 1 - sum(npcs)
   npcForNulls <- nulls * remaining / sum(nulls)
   heightNpcs <- c(npcs, npcForNulls)[order(c(grepNpcsH, grepNullsH))]
@@ -315,9 +359,16 @@ clickCoordinates <- function(n = 1) {
 
   grobLoc <- list()
 
+  if (isRstudioDevice() && isWindows())
+    warning(RstudioDeviceWarning())
+
   for (i in 1:n) {
     seekViewport("top", recording = FALSE)
     gloc <- grid.locator(unit = "npc")
+    if (isRstudioDevice()) {
+      if (isWindows())
+        gloc$y <- grid::unit(as.numeric(gloc$y) + 0.2, "npc")
+    }
     xInt <- findInterval(as.numeric(strsplit(as.character(gloc$x), "npc")[[1]]),
                          c(0, cumsum(widthNpcs)))
     # for the y, grid package treats bottom left as origin, Plot treats top left
@@ -406,6 +457,7 @@ clickCoordinates <- function(n = 1) {
 #'
 #' @author Eliot McIntire and Alex Chubaty
 #' @export
+#' @inheritParams Plot
 #' @importFrom grDevices dev.list dev.set
 #' @include plotting-classes.R
 #' @rdname dev
@@ -415,7 +467,7 @@ clickCoordinates <- function(n = 1) {
 #'   dev(4)
 #' }
 #'
-dev <- function(x, ...) {
+dev <- function(x, ..., verbose = getOption("quickPlot.verbose")) {
   if (missing(x)) {
     xMissing <- TRUE
   } else if (is.infinite(x)) {
@@ -433,16 +485,17 @@ dev <- function(x, ...) {
       if (any(isRstudioDev)) {
         x <- min(min(dev.list()) + 1 + hasAPngForStudio,
                  which(isRstudioDev) + 3L)
-        dev(x)
+        dev(x, verbose = verbose)
       } else {
         x <- min(dev.list())
-        dev(x)
+        dev(x, verbose = verbose)
       }
     }
   }
   if (identical(getOption("device"), "RStudioGD")) {
     if (.Platform$OS.type == "unix" && !isRstudioServer()) {
-      message("setting graphics device away from Rstudio device. To return to Rstudio device: dev.useRSGD(TRUE)")
+      messageVerbose("setting graphics device away from Rstudio device. To return to Rstudio device: dev.useRSGD(TRUE)",
+                     verbose = verbose)
       dev.useRSGD(FALSE)
     }
   }
@@ -450,10 +503,8 @@ dev <- function(x, ...) {
   if (is.null(dev.list())) {
     newPlot(...)
   } else {
-    while (dev.set(x) < x) newPlot(...)
+    while (dev.set(x) < x && !isRstudioServer()) newPlot(...)
   }
-  #if (.Platform$OS.type != "unix") {
-  #}
   return(invisible(dev.cur()))
 }
 
@@ -481,6 +532,7 @@ dev <- function(x, ...) {
 #' @author Eliot McIntire and Alex Chubaty
 #' @export
 #' @importFrom grDevices dev.new
+#' @inheritParams Plot
 #' @rdname newPlot
 #'
 #' @examples
@@ -492,10 +544,10 @@ dev <- function(x, ...) {
 #'   newPlot()
 #' }
 #'
-newPlot <- function(noRStudioGD = TRUE, ...) {
+newPlot <- function(noRStudioGD = TRUE, ..., verbose = getOption("quickPlot.verbose")) {
   if (isRstudioServer()) {
     noRStudioGD <- FALSE
-    message("Using Rstudio server; not opening a new window")
+    messageVerbose("Using Rstudio server; not opening a new window", verbose = verbose)
     dev.useRSGD(TRUE)
   }
 
@@ -574,3 +626,28 @@ assign(
                        "tck", "tcl", "usr", "xaxp", "xaxs", "xaxt", "xpd", "yaxp", "yaxs",
                        "yaxt", "ylbias")
   ))
+
+isRstudioDevice <- function(dev = dev.cur()) {
+  namesDevList <- names(dev)
+  isRstudioDev <- namesDevList == "RStudioGD"
+  return(isRstudioDev)
+}
+
+RstudioDeviceWarning <- function()
+  paste0("Rstudio device may give inappropriate coordinates; values may be wrong. ",
+          "Try using an external device?",
+          "\nrePlot(toDev = dev(noRStudioGD = TRUE))")
+
+SysInfo <-   Sys.info()
+
+isWindows <- function() {
+  tolower(SysInfo["sysname"]) == "windows"
+}
+
+isMacOSX <- function() {
+  tolower(SysInfo["sysname"]) == "darwin"
+}
+
+isLinux <- function() {
+  tolower(SysInfo["sysname"]) == "linux"
+}

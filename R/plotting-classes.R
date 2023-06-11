@@ -1,15 +1,6 @@
-### Allow gg S3 class to be used with Plot, an S4 function
-#' @importFrom ggplot2 ggplot
-setOldClass("gg")
-selectMethod("show", "gg")
-
 ### Allow histogram S3 class to be used with Plot, an S4 function
 setOldClass("histogram")
 selectMethod("show", "histogram")
-
-### Allow igraph S3 class to be used with Plot, an S4 function
-setOldClass("igraph")
-selectMethod("show", "igraph")
 
 ### Allow gpar S3 class to be used with Plot, an S4 function
 setOldClass("gpar")
@@ -30,91 +21,93 @@ setAs(from = "list", to = "gpar", function(from) {
 })
 
 ################################################################################
-#' The `griddedClasses` class
-#'
-#' This class is the union of several spatial objects from \pkg{raster} and
-#' \pkg{sp} packages.
-#'
-#' Members:
-#'
-#' \itemize{
-#'   \item `RasterLayer`, `RasterLayerSparse`, `RasterStack`;
-#' }
-#'
-#' Notably missing is `RasterBrick`, for now.
-#'
-#' @seealso [quickPlotClasses()]
-#'
-#' @aliases griddedClasses
-#' @importClassesFrom raster RasterLayer
-#' @importClassesFrom raster RasterLayerSparse
-#' @importClassesFrom raster RasterStack
-#' @name griddedClasses-class
-#' @rdname griddedClasses-class
-#' @author Eliot McIntire
-#' @exportClass griddedClasses
-setClassUnion(name = "griddedClasses",
-              members = c("RasterLayer", "RasterLayerSparse", "RasterStack")
-)
+# The `griddedClasses` class
+#
+# This class is the union of several spatial objects from \pkg{raster} and
+# \pkg{sp} packages.
+#
+# Members:
+#
+# \itemize{
+#   \item `RasterLayer`, `RasterLayerSparse`, `RasterStack`;
+# }
+#
+# Notably missing is `RasterBrick`, for now.
+#
+# @seealso [quickPlotClasses()]
+#
+# @aliases griddedClasses
+# @importClassesFrom raster RasterLayer
+# @importClassesFrom raster RasterLayerSparse
+# @importClassesFrom raster RasterStack
+# @name griddedClasses-class
+# @rdname griddedClasses-class
+# @author Eliot McIntire
+# @exportClass griddedClasses
+# setClassUnion(name = "griddedClasses",
+#               members = c("RasterLayer", "RasterLayerSparse", "RasterStack", "SpatRaster")
+# )
 
 ################################################################################
-#' The `spatialObjects` class
-#'
-#' This class is the union of several spatial objects from \pkg{raster} and \pkg{sp} packages.
-#'
-#' Members:
-#'
-#' \itemize{
-#'   \item `RasterLayer`, `RasterLayerSparse`, `RasterStack`;
-#'   \item `SpatialLines`, `SpatialLinesDataFrame`;
-#'   \item `SpatialPixels`, `SpatialPixelsDataFrame`;
-#'   \item `SpatialPoints`, `SpatialPointsDataFrame`;
-#'   \item `SpatialPolygons`, `SpatialPolygonsDataFrame`.
-#' }
-#'
-#' Notably missing is `RasterBrick`, for now.
-#'
-#' @seealso [quickPlotClasses()]
-#'
-#' @aliases spatialObjects
-#' @importClassesFrom sp SpatialLines
-#' @importClassesFrom sp SpatialLinesDataFrame
-#' @importClassesFrom sp SpatialPixels
-#' @importClassesFrom sp SpatialPixelsDataFrame
-#' @importClassesFrom sp SpatialPoints
-#' @importClassesFrom sp SpatialPointsDataFrame
-#' @importClassesFrom sp SpatialPolygons
-#' @importClassesFrom sp SpatialPolygonsDataFrame
-#' @name spatialObjects-class
-#' @rdname spatialObjects-class
-#' @author Eliot McIntire
-#' @exportClass spatialObjects
-setClassUnion(name = "spatialObjects",
-              members = c("griddedClasses",
-                          "SpatialLines", "SpatialLinesDataFrame",
-                          "SpatialPixels", "SpatialPixelsDataFrame",
-                          "SpatialPoints", "SpatialPointsDataFrame",
-                          "SpatialPolygons", "SpatialPolygonsDataFrame")
-)
-
+# The `spatialObjects` class
+#
+# This class is the union of several spatial objects from \pkg{raster} and \pkg{sp} packages.
+#
+# Members:
+#
+# \itemize{
+#   \item `RasterLayer`, `RasterLayerSparse`, `RasterStack`;
+#   \item `SpatialLines`, `SpatialLinesDataFrame`;
+#   \item `SpatialPixels`, `SpatialPixelsDataFrame`;
+#   \item `SpatialPoints`, `SpatialPointsDataFrame`;
+#   \item `SpatialPolygons`, `SpatialPolygonsDataFrame`.
+# }
+#
+# Notably missing is `RasterBrick`, for now.
+#
+# @seealso [quickPlotClasses()]
+#
+# @aliases spatialObjects
+# @importClassesFrom sp SpatialLines
+# @importClassesFrom sp SpatialLinesDataFrame
+# @importClassesFrom sp SpatialPixels
+# @importClassesFrom sp SpatialPixelsDataFrame
+# @importClassesFrom sp SpatialPoints
+# @importClassesFrom sp SpatialPointsDataFrame
+# @importClassesFrom sp SpatialPolygons
+# @importClassesFrom sp SpatialPolygonsDataFrame
+# @importClassesFrom terra SpatRaster
+# @importClassesFrom terra SpatVector
+# @name spatialObjects-class
+# @rdname spatialObjects-class
+# @author Eliot McIntire
+# @exportClass spatialObjects
+# setClassUnion(name = "spatialObjects",
+#               members = c("griddedClasses",
+#                           "SpatialLines", "SpatialLinesDataFrame",
+#                           "SpatialPixels", "SpatialPixelsDataFrame",
+#                           "SpatialPoints", "SpatialPointsDataFrame",
+#                           "SpatialPolygons", "SpatialPolygonsDataFrame",
+#                           "SpatRaster", "SpatVector"
+#                           )
+# )
 
 ################################################################################
-#' The `.quickPlotObjects` class
-#'
-#' This class contains the union of `spatialObjects` and several other plot-type objects.
-#' Currently, this includes `SpatialPoints*`, `SpatialPolygons*`,
-#' `SpatialLines*`, `RasterLayer`, `RasterStack`, and `ggplot` objects.
-#' These are the object classes that the [Plot()] function can handle.
-#'
-#' @importFrom ggplot2 ggplot
-#' @aliases .quickPlotObjects
-#' @author Eliot McIntire
-#' @name .quickPlotObjects-class
-#' @rdname quickPlotObjects-class
-#' @seealso [quickPlotClasses()]
-#'
-setClassUnion(name = ".quickPlotObjects",
-              members = c("spatialObjects", "gg"))
+# The `.quickPlotObjects` class
+#
+# This class contains the union of `spatialObjects` and several other plot-type objects.
+# Currently, this includes `SpatialPoints*`, `SpatialPolygons*`,
+# `SpatialLines*`, `RasterLayer`, `RasterStack`, and `ggplot` objects.
+# These are the object classes that the [Plot()] function can handle.
+#
+# @aliases .quickPlotObjects
+# @author Eliot McIntire
+# @name .quickPlotObjects-class
+# @rdname quickPlotObjects-class
+# @seealso [quickPlotClasses()]
+#
+# setClassUnion(name = ".quickPlotObjects",
+#               members = c("spatialObjects", "gg"))
 
 ################################################################################
 #' The `.quickPlotGrob` class
@@ -196,20 +189,19 @@ setClass(".quickPlotGrob",
 #'
 #' @slot actual.ratio numeric. Ratio of columns to rows
 #'
-#' @slot ds.dimensionRatio numeric. Ratio of the device size to the ratio of the
-#' extents
+#' @slot ds.dimensionRatio numeric. Ratio of the device size to the ratio of the extents.
 #'
-#' @slot ds  numeric of length 2. The dimensions of the plotting window in inches
+#' @slot ds  numeric of length 2. The dimensions of the plotting window in inches.
 #'
 #' @slot objects  list of length number of spatial objects. Each list has a character vector
-#' of the layer names in each of those
+#' of the layer names in each of those.
 #'
-#' @slot isRaster  logical vector, indicating whether each object is a `Raster*` object
+#' @slot isRaster  logical vector, indicating whether each object is a `Raster*` object.
 #'
-#' @slot names  character vector. The names of the layers in the plot
+#' @slot names  character vector, indicating the names of the layers in the plot.
 #'
-#' @slot extents list of class Extent objects. These are needed to calculate the
-#' `ds.dimensionRatio`, which is used to scale the Spatial objects correctly
+#' @slot extents list of class `Extent` objects. These are needed to calculate the
+#' `ds.dimensionRatio`, which is used to scale the `Spatial*` objects correctly.
 #'
 #' @slot isSpatialObjects logical indicating whether the object(s) are `spatialObjects` or not.
 #'
@@ -304,20 +296,20 @@ setClass(".quickPlot",
 })
 
 ################################################################################
-#' The `.quickPlottables` class
-#'
-#' This class is the union of all `.quickPlotObjects` (e.g., `RasterLayer*`,
-#' `SpatialPoints*`, `SpatialPolygons*`, `ggplot`, `hist`, etc.)
-#' and [.quickPlot()] class objects.
-#' This allows replotting of a [.quickPlot()] object.
-#'
-#' @seealso [quickPlotClasses()]
-#'
-#' @aliases .quickPlottables
-#' @keywords internal
-#' @name .quickPlottables-class
-#' @rdname quickPlottables-class
-#' @author Eliot McIntire
-#' @exportClass .quickPlottables
-setClassUnion(name = ".quickPlottables",
-              members = c(".quickPlotObjects", ".quickPlot"))
+# The `.quickPlottables` class
+#
+# This class is the union of all `.quickPlotObjects` (e.g., `RasterLayer*`,
+# `SpatialPoints*`, `SpatialPolygons*`, `ggplot`, `hist`, etc.)
+# and [.quickPlot()] class objects.
+# This allows replotting of a [.quickPlot()] object.
+#
+# @seealso [quickPlotClasses()]
+#
+# @aliases .quickPlottables
+# @keywords internal
+# @name .quickPlottables-class
+# @rdname quickPlottables-class
+# @author Eliot McIntire
+# @exportClass .quickPlottables
+# setClassUnion(name = ".quickPlottables",
+#               members = c(".quickPlotObjects", ".quickPlot"))
