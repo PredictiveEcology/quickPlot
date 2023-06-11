@@ -1,5 +1,11 @@
 Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
 
+version 1.0.8
+=============
+* Add support for `terra` and `sf` classes. 
+* removed several S4 methods; converted several S4 methods to S3 methods
+* many bugfixes 
+
 version 0.1.8
 =============
 * drop support for R version 3.6 (versions >= 4.0 are currently supported)
