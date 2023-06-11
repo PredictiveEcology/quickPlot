@@ -67,9 +67,6 @@
     <loc>https://quickplot.predictiveecology.org/reference/grid-functions.html</loc>
   </url>
   <url>
-    <loc>https://quickplot.predictiveecology.org/reference/griddedClasses-class.html</loc>
-  </url>
-  <url>
     <loc>https://quickplot.predictiveecology.org/reference/hasBbox.html</loc>
   </url>
   <url>
@@ -145,19 +142,10 @@
     <loc>https://quickplot.predictiveecology.org/reference/quickPlotMouseClicks.html</loc>
   </url>
   <url>
-    <loc>https://quickplot.predictiveecology.org/reference/quickPlotObjects-class.html</loc>
-  </url>
-  <url>
-    <loc>https://quickplot.predictiveecology.org/reference/quickPlottables-class.html</loc>
-  </url>
-  <url>
     <loc>https://quickplot.predictiveecology.org/reference/sample-maps.html</loc>
   </url>
   <url>
     <loc>https://quickplot.predictiveecology.org/reference/sp2sl.html</loc>
-  </url>
-  <url>
-    <loc>https://quickplot.predictiveecology.org/reference/spatialObjects-class.html</loc>
   </url>
   <url>
     <loc>https://quickplot.predictiveecology.org/reference/thin.html</loc>

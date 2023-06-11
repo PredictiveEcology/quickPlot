@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">quickPlot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -75,18 +75,7 @@
 <span>  <span class="va">takeFromPlotObj</span>,</span>
 <span>  <span class="va">arr</span>,</span>
 <span>  <span class="va">newArr</span>,</span>
-<span>  <span class="va">quickPlotGrobCounter</span>,</span>
-<span>  <span class="va">subPlots</span>,</span>
-<span>  <span class="va">cols</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for griddedClasses,.quickPlotGrob</span></span>
-<span><span class="fu">.preparePlotGrob</span><span class="op">(</span></span>
-<span>  <span class="va">grobToPlot</span>,</span>
-<span>  <span class="va">sGrob</span>,</span>
-<span>  <span class="va">takeFromPlotObj</span>,</span>
-<span>  <span class="va">arr</span>,</span>
-<span>  <span class="va">newArr</span>,</span>
+<span>  <span class="va">prevMinMax</span>,</span>
 <span>  <span class="va">quickPlotGrobCounter</span>,</span>
 <span>  <span class="va">subPlots</span>,</span>
 <span>  <span class="va">cols</span></span>
@@ -111,7 +100,8 @@
 <span>  <span class="va">xyAxes</span>,</span>
 <span>  <span class="va">legendText</span>,</span>
 <span>  <span class="va">vps</span>,</span>
-<span>  <span class="va">nonPlotArgs</span></span>
+<span>  <span class="va">nonPlotArgs</span>,</span>
+<span>  <span class="va">arr</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for .quickPlotGrob</span></span>
@@ -129,7 +119,8 @@
 <span>  <span class="va">xyAxes</span>,</span>
 <span>  <span class="va">legendText</span>,</span>
 <span>  <span class="va">vps</span>,</span>
-<span>  <span class="va">nonPlotArgs</span></span>
+<span>  <span class="va">nonPlotArgs</span>,</span>
+<span>  <span class="va">arr</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">.refreshGrob</span><span class="op">(</span></span>
@@ -177,7 +168,7 @@ current call to Plot or from disk</p></dd>
 
 
 <dt>arr</dt>
-<dd><p>An arrangement object</p></dd>
+<dd><p>An arragement object.</p></dd>
 
 
 <dt>newArr</dt>
@@ -292,7 +283,7 @@ the specific grob types, e.g., <code>rasterGrob</code>, <code>polygonGrob</code>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

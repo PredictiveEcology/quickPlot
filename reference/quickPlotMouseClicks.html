@@ -27,7 +27,7 @@ This works for Raster*, SpatialPoints*, and SpatialPolygons* objects."><!-- math
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">quickPlot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -79,7 +79,11 @@ This works for <code>Raster*</code>, <code>SpatialPoints*</code>, and <code>Spat
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">clickValues</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">clickExtent</span><span class="op">(</span>devNum <span class="op">=</span> <span class="cn">NULL</span>, plot.it <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">clickExtent</span><span class="op">(</span></span>
+<span>  devNum <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  plot.it <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"quickPlot.verbose"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">clickCoordinates</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
@@ -99,6 +103,11 @@ This works for <code>Raster*</code>, <code>SpatialPoints*</code>, and <code>Spat
 <dt>plot.it</dt>
 <dd><p>Logical. If <code>TRUE</code> a new plotting window is made for the
 new extent. Default <code>TRUE</code>.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>Numeric or logical. If <code>TRUE</code> or <code>&gt;0</code>, then messages will be
+shown. If <code>FALSE</code> or <code>0</code>, most messages will be suppressed.</p></dd>
 
 
 <dt>X</dt>
@@ -133,7 +142,8 @@ clicked on and passes this plot name and the clicked coordinates to <code>.click
 <p><code>.clickCoord</code> is intended for internal use and is called by other functions here.</p>
 <p><code>clickExtent</code> will place the new, zoomed in plot over top of the existing
 object. To recover original full object, double click anywhere during an
-active <code>clickExtent</code>. See example.</p>
+active <code>clickExtent</code>. Currently, subsequent <code>clickExtent</code> is a click on the
+original map extent, not the "zoomed in" map extent. See example.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -142,17 +152,18 @@ active <code>clickExtent</code>. See example.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://igraph.org" class="external-link">igraph</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"maps"</span>, package <span class="op">=</span> <span class="st">"quickPlot"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="va">.</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"tif"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">maps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># clickValues and family are unreliable on Rstudio Server as the plotting device</span></span></span>
+<span class="r-in"><span><span class="co">#   does not report its dimensions correctly; this may change in future</span></span></span>
+<span class="r-in"><span><span class="co">#   updates to Rstudio</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="isRstudioServer.html">isRstudioServer</a></span><span class="op">(</span><span class="op">)</span> <span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"maps"</span>, package <span class="op">=</span> <span class="st">"quickPlot"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="va">files</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"tif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">maps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">maps</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">x</span>, split <span class="op">=</span> <span class="st">"\\."</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">landscape</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, <span class="va">maps</span><span class="op">$</span><span class="va">forestCover</span>, <span class="va">maps</span><span class="op">$</span><span class="va">habitatQuality</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">landscape</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, <span class="va">maps</span><span class="op">$</span><span class="va">forestCover</span>, <span class="va">maps</span><span class="op">$</span><span class="va">habitatQuality</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span></span></span>
@@ -166,6 +177,7 @@ active <code>clickExtent</code>. See example.</p>
 <span class="r-in"><span>  <span class="co"># repeated zooming to try various places on the original device</span></span></span>
 <span class="r-in"><span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="fu">clickExtent</span><span class="op">(</span><span class="op">)</span> <span class="co"># click at two locations on the Plot device</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -181,7 +193,7 @@ active <code>clickExtent</code>. See example.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

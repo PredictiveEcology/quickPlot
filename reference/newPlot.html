@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">quickPlot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -69,7 +69,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">newPlot</span><span class="op">(</span>noRStudioGD <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">newPlot</span><span class="op">(</span>noRStudioGD <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span>, verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"quickPlot.verbose"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">dev.useRSGD</span><span class="op">(</span>useRSGD <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -83,6 +83,11 @@ RStudio graphics device, which is slow.</p></dd>
 
 <dt>...</dt>
 <dd><p>Additional arguments.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>Numeric or logical. If <code>TRUE</code> or <code>&gt;0</code>, then messages will be
+shown. If <code>FALSE</code> or <code>0</code>, most messages will be suppressed.</p></dd>
 
 
 <dt>useRSGD</dt>
@@ -133,7 +138,7 @@ and <code>dev.useRSGD(TRUE)</code> to use the RStudio graphics device.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
