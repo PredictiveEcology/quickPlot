@@ -2,6 +2,11 @@
 
 Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
 
+version 1.0.2
+=============
+
+
+
 version 1.0.1
 =============
 * Add support for `terra` and `sf` classes. 
