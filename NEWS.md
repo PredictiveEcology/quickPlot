@@ -1,3 +1,5 @@
+# quickPlot (development version)
+
 Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
 
 version 1.0.1
