@@ -1,6 +1,6 @@
 ## Updated release
 
-This is a large update that deals with migration to `terra` and `sf`, and removes `rgdal`, `rgeos`, and `maptools`.
+This is a large update that deals with migration to `terra` and `sf`, and removes `rgdal`, `rgeos`, and `maptools`. We also dealt with minor CRAN requests about DESCRIPTION paragraph.
 
 ## Test environments
 
