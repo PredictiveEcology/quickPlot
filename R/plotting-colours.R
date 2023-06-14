@@ -33,6 +33,7 @@ getColors <- function(object) {
     }
   } else if (isSpatial(object)) {
     cols <- list(object@data$color)
+    nams <- NULL
   } else {
     cols <- NULL
   }
