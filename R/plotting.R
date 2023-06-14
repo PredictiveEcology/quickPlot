@@ -659,7 +659,7 @@ setMethod(
 
           isPlotFnAddable <- FALSE
 
-          if (!isQuickPlotObject(grobToPlot)) {
+          if (!isQuickPlottables(grobToPlot)) {
             if (!inherits(grobToPlot, ".quickPlot")) {
               if (sGrob@plotArgs$userProvidedPlotFn && !isTRUE(grobToPlot[["add"]])) {
                 isPlotFnAddable <- TRUE
@@ -871,14 +871,23 @@ whereInStack2 <- function(name, whFrame = -1) {
 
 # .quickPlotClasses <- c(spatialClasses, "gg")
 
-quickPlotClasses <- c(".quickPlotObjects", ".quickPlot")
+quickPlotClasses <- c(".quickPlot")
 
-isQuickPlotObject <- function(x) {
-  isSpatialAny(x) || is(x, "gg")
-}
 
 isQuickPlottables <- function(x) {
-  (isQuickPlotObject(x) || inherits(x, ".quickPlot")) # && !is(x, "SpatVector") && !isSF(x)
+  # check for registered method for `.plotGrob` --> this allows extension of methods to
+  #   other classes, without needing to declare that that other class is a `.quickPlottable`
+  test <- (isSpatialAny(x) || is(x, "gg") || inherits(x, quickPlotClasses))
+  if (!isTRUE(test)) {
+    # this is 150x faster than `methods(.plotGrob)`
+    for(xx in paste0(".plotGrob.", is(x))) {
+      test <- get0(xx)
+      if (!is.null(test))
+        break
+    }
+    test <- !is.null(test)
+  }
+  test
 }
 
 isSpatial <- function(x) {

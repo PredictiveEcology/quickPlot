@@ -4,7 +4,7 @@ Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
 
 version 1.0.2
 =============
-
+* Allow extending .plotGrob without `.quickPlottables` class, using method dispatch
 
 
 version 1.0.1
