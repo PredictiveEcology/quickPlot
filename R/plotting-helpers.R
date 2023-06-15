@@ -2900,6 +2900,14 @@ if (!isGeneric("coordinates", .GlobalEnv)) {
   )
 }
 
+#' Extract coordinates from a variety of spatial objectgs
+#'
+#' This will extract using `terra::crds`, `sf::st_coordinates` and
+#' `raster::coordinates`. Other packages can create methods, as this is
+#' generic.
+#'
+#' @return A 2 column matrix of coordinates (x and y)
+#'
 #' @export
 #' @rdname coordinates
 setMethod(
