@@ -613,6 +613,7 @@ setMethod(
 
     # Section 3 - the actual Plotting
     # Plot each element passed to Plot function, one at a time
+
     for (subPlots in names(quickSubPlots)) {
       quickPlotGrobCounter <- 0
       for (sGrob in quickSubPlots[[subPlots]]) {
@@ -903,7 +904,7 @@ isSpatialPolygons <- function(x) {
 
 isSpatVector <- function(x) inherits(x, "SpatVector")
 isSpat <- function(x) inherits(x, c("SpatRaster", "SpatVector"))
-isGridded <- function(x) inherits(x, "SpatRaster") || isRaster(x)
+isGridded <- function(x) inherits(x, "SpatRaster") || isRaster(x) || is.matrix(x) || is.array(x)
 isVector <-  function(x) isSpatVector(x) || isSpatial(x) || isSF(x)
 isSpatialAny <- function(x) isGridded(x) || isVector(x)
 isSF <- function(x) {
