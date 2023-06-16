@@ -2321,7 +2321,6 @@ pgSpatialLines <- function(grobToPlot, col, size,
 #'
 #' @author Eliot McIntire
 #' @include plotting-classes.R
-#' @importFrom quickPlot extent
 #' @importFrom grid viewport vpTree vpList
 #' @keywords internal
 #' @rdname makeViewports

@@ -31,11 +31,7 @@ caribou2 <- terra::vect(cbind(x = stats::runif(10, -50, 50),
 caribouTraj <- makeLines(caribou1, caribou2)
 
 if (interactive())
-  if (requireNamespace("quickPlot", quietly = TRUE)) {
-    quickPlot::Plot(caribouTraj, length = 0.1) # shows arrows
-  } else {
-    terra::plot(caribouTraj)
-  }
+  Plot(caribouTraj, length = 0.1) # shows arrows
 
 # or  to a previous Plot
 files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
@@ -46,8 +42,8 @@ caribouTraj <- makeLines(caribou1, caribou2)
 
 if (interactive()) {
   clearPlot()
-  quickPlot::Plot(maps$DEM)
-  quickPlot::Plot(caribouTraj, addTo = "maps$DEM", length = 0.1)
+  Plot(maps$DEM)
+  Plot(caribouTraj, addTo = "maps$DEM", length = 0.1)
 }
 
 }
