@@ -115,13 +115,11 @@ numLayers.list <- function(x) {
 #     return(1L)
 # })
 
-if (!isGeneric("layerNames", .GlobalEnv)) {
-  setGeneric(
-    "layerNames",
-    function(object) {
-      standardGeneric("layerNames")
-    })
-}
+setGeneric(
+  "layerNames",
+  function(object) {
+    standardGeneric("layerNames")
+  })
 
 
 #' Extract the layer names of Spatial Objects
@@ -178,51 +176,6 @@ setMethod(
   out
 })
 
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "list",
-#   definition = function(object) {
-#     unlist(lapply(object, layerNames))
-# })
-
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "ANY",
-#   definition = function(object) {
-#     return("")
-# })
-
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "Raster",
-#   definition = function(object) {
-#     names(object)
-# })
-
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = ".quickPlot",
-#   definition = function(object) {
-#     return(unlist(lapply(object@quickPlotGrobList, function(x) {
-#       unlist(lapply(x, function(y) y@plotName))[[1]]
-#     })))
-# })
-
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "igraph",
-#   definition = function(object) {
-#     return("")
-# })
 
 #' Assess whether a list of extents are all equal
 #'
@@ -2865,6 +2818,15 @@ if (!isGeneric("extent", .GlobalEnv)) {
   )
 }
 
+#' Get extent of a variety of spatial objects
+#'
+#' This is a wrapper around `terra::ext`, `sf::st_bbox`, and
+#' `raster::extent`.
+#' @param x The spatial object from which to extract the extent.
+#' @param ... Not used.
+#' @return Returns a list of length 4 with elements `xmin`, `xmax`, `ymin`, and `ymax`,
+#'   in that order.
+#'
 #' @export
 setMethod(
   "extent",
@@ -2905,6 +2867,8 @@ if (!isGeneric("coordinates", .GlobalEnv)) {
 #' `raster::coordinates`. Other packages can create methods, as this is
 #' generic.
 #'
+#' @param obj An object from which to extract the coordinates (e.g., `sf`, `sp`)
+#' @param ... Ignored.
 #' @return A 2 column matrix of coordinates (x and y)
 #'
 #' @export

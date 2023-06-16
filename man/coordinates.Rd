@@ -6,6 +6,11 @@
 \usage{
 \S4method{coordinates}{ANY}(obj, ...)
 }
+\arguments{
+\item{obj}{An object from which to extract the coordinates (e.g., \code{sf}, \code{sp})}
+
+\item{...}{Ignored.}
+}
 \value{
 A 2 column matrix of coordinates (x and y)
 }
