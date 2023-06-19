@@ -115,11 +115,6 @@ numLayers.list <- function(x) {
 #     return(1L)
 # })
 
-setGeneric(
-  "layerNames",
-  function(object) {
-    standardGeneric("layerNames")
-  })
 
 
 #' Extract the layer names of Spatial Objects
@@ -155,6 +150,15 @@ setGeneric(
 #'                              y = stats::runif(1e2, -50, 50)))
 #' layerNames(caribou)
 #'
+setGeneric(
+  "layerNames",
+  function(object) {
+    standardGeneric("layerNames")
+  })
+
+
+#' @export
+#' @rdname layerNames
 setMethod(
   "layerNames",
   signature = "ANY",
@@ -1873,7 +1877,8 @@ setMethod(
       notNA <- !is.na(grobToPlot[])
       firstNonNA <- grobToPlot[notNA][1]
     }
-    isColorMatrix <- any(nchar(firstNonNA) %in% c(7, 9)) && any(grepl("\\#", firstNonNA))
+    isColorMatrix <- any(nchar(firstNonNA) %in% c(7, 9)) && any(grepl("\\#", firstNonNA)) ||
+      is.character(grobToPlot)
 
   }
   isPolygon <- if (isSF(grobToPlot)) {
@@ -2809,6 +2814,19 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
 }
 
 
+
+#' Get extent of a variety of spatial objects
+#'
+#' This is a wrapper around `terra::ext`, `sf::st_bbox`, and
+#' `raster::extent`.
+#' @rdname extent
+#' @name extent
+#' @param x The spatial object from which to extract the extent.
+#' @param ... Not used.
+#' @return Returns a list of length 4 with elements `xmin`, `xmax`, `ymin`, and `ymax`,
+#'   in that order.
+#'
+#' @export
 if (!isGeneric("extent", .GlobalEnv)) {
   setGeneric(
     "extent",
@@ -2818,15 +2836,8 @@ if (!isGeneric("extent", .GlobalEnv)) {
   )
 }
 
-#' Get extent of a variety of spatial objects
-#'
-#' This is a wrapper around `terra::ext`, `sf::st_bbox`, and
-#' `raster::extent`.
-#' @param x The spatial object from which to extract the extent.
-#' @param ... Not used.
-#' @return Returns a list of length 4 with elements `xmin`, `xmax`, `ymin`, and `ymax`,
-#'   in that order.
-#'
+
+#' @rdname extent
 #' @export
 setMethod(
   "extent",
@@ -2852,14 +2863,6 @@ setMethod(
   x
 })
 
-if (!isGeneric("coordinates", .GlobalEnv)) {
-  setGeneric(
-    "coordinates",
-    function(obj, ...) {
-      standardGeneric("coordinates")
-    }
-  )
-}
 
 #' Extract coordinates from a variety of spatial objectgs
 #'
@@ -2873,6 +2876,24 @@ if (!isGeneric("coordinates", .GlobalEnv)) {
 #'
 #' @export
 #' @rdname coordinates
+#' @name coordinates
+#' @examples
+#' library(terra)
+#' caribou <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
+#'                                         y = stats::runif(1e1, -50, 50)))
+#' coordinates(caribou)
+#'
+if (!isGeneric("coordinates", .GlobalEnv)) {
+  setGeneric(
+    "coordinates",
+    function(obj, ...) {
+      standardGeneric("coordinates")
+    }
+  )
+}
+
+#' @rdname coordinates
+#' @export
 setMethod(
   "coordinates",
   signature("ANY"),

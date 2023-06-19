@@ -39,13 +39,11 @@ Suggests:
     fastshp,
     ggplot2,
     knitr,
-    png,
     raster,
     RColorBrewer,
     rmarkdown,
     sf,
     sp,
-    spelling,
     testthat (>= 1.0.2),
     withr
 Additional_repositories: https://predictiveecology.r-universe.dev/
