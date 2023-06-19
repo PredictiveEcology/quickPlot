@@ -2,9 +2,12 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{layerNames}
 \alias{layerNames}
+\alias{layerNames,ANY-method}
 \title{Extract the layer names of Spatial Objects}
 \usage{
 layerNames(object)
+
+\S4method{layerNames}{ANY}(object)
 }
 \arguments{
 \item{object}{A \verb{Raster*}, \verb{SpatialPoints*}, \verb{SpatialLines*},
