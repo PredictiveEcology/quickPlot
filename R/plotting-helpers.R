@@ -2350,6 +2350,10 @@ pgSpatialLines <- function(grobToPlot, col, size,
       lpc <- c((lpc - 1):(lpc + 1)) # nolint
       lpr <- c((lpr):(lpr + 1)) # nolint
     }
+
+    # Convert to list --> too many other formats
+    extents[[extentInd]] <- .ExtentToList(extents[[extentInd]])
+
     # makes equal scale
     yrange <- extents[[extentInd]]$ymax - extents[[extentInd]]$ymin
     if (yrange > 0) {
@@ -2846,25 +2850,31 @@ setMethod(
   "extent",
   signature("ANY"),
   definition = function(x, ...) {
-  x <- if (inherits(x, "sf")) {
-    x <- as.list(sf::st_bbox(x))
-  } else { #if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
-           # is(x, "SpatExtent") || is(x, "Extent")) {
-    if (!is(x, "SpatExtent")) {
-      if (isSpat(x) || isSpatial(x))
-        x <- terra::ext(x)
-      else {
-        if (!requireNamespace("raster", quietly = TRUE))
-          stop("Need to install.packages('raster')")
-        x <- raster::extent(x)
-      }
+  .ExtentToList(x)
+})
 
+.ExtentToList <- function(x) {
+  if (!is(x, "list")) {
+    x <- if (inherits(x, "sf")) {
+      x <- as.list(sf::st_bbox(x))
+    } else { #if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
+      # is(x, "SpatExtent") || is(x, "Extent")) {
+      if (!is(x, "SpatExtent")) {
+        if (isSpat(x) || isSpatial(x))
+          x <- terra::ext(x)
+        else {
+          if (!requireNamespace("raster", quietly = TRUE))
+            stop("Need to install.packages('raster')")
+          x <- raster::extent(x)
+        }
+
+      }
+      list(xmin = terra::xmin(x), xmax = terra::xmax(x),
+           ymin = terra::ymin(x), ymax = terra::ymax(x))
     }
-    list(xmin = terra::xmin(x), xmax = terra::xmax(x),
-         ymin = terra::ymin(x), ymax = terra::ymax(x))
   }
   x
-})
+}
 
 
 #' Extract coordinates from a variety of spatial objectgs
