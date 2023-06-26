@@ -2289,31 +2289,36 @@ pgSpatialLines <- function(grobToPlot, col, size,
 
   extents <- sapply(sgl, function(x) {
     unname(lapply(x[[1]]@isSpatialObjects, function(z) {
-      if (z == TRUE) {
-        # for spatial objects
-        if (!is.null(x[[1]]@plotArgs$zoomExtent)) {
-          extent(x[[1]]@plotArgs$zoomExtent) # convert to list
-        } else {
-          ## TODO: temporary workaround to enable Plotting terra rasters
-          obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
-          extent(obj)
-        }
-      } else {
+      browser()
+      hasZoomExtent <- FALSE
+      obj <- if (z %in% TRUE) {
+        ze <- x[[1]]@plotArgs$zoomExtent
+        hasZoomExtent <- (!is.null(ze))
+        if (hasZoomExtent)
+          out <- extent(ze) # convert to list
+      }
+      if (hasZoomExtent %in% FALSE) {
+        browser()
         obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
-
-        if (is(obj, "SpatRaster")) {
-          obj <- terra::rast(obj)
-        }
-
-        # if the object has an extent method
-        if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
-          # list has an extent method, but too general
-          extent(obj)
+        if (z == TRUE) {
+          # for spatial objects without zoomExtent
+          out <- extent(obj)
         } else {
-          # for non spatial objects
-          list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+          if (is(obj, "SpatRaster")) {
+            obj <- terra::rast(obj)
+          }
+
+          # if the object has an extent method
+          if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
+            # list has an extent method, but too general
+            out <- extent(obj)
+          } else {
+            # for non spatial objects
+            out <- list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+          }
         }
       }
+      out
     }))
   })
 
