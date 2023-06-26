@@ -467,6 +467,10 @@ setMethod(
       plotObjs <- dotObjs[whichQuickPlottables]
     }
 
+    if (!is.null(list(...)$env)) {
+      objFrame <- list(...)$env
+    }
+
     if (any(whichQuickPlottables)) {
       # perhaps push objects into an environment, if they are only in the list
       devCurEnvName <- paste0("Dev", dev.cur())
@@ -477,7 +481,9 @@ setMethod(
           assign(devCurEnvName, devCurEnv, envir = .quickPlotEnv)
         }
 
-        objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+        if (!exists("objFrame", inherits = FALSE)) {
+          objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+        }
         dots$env <- list2env(dots, envir = objFrame)
       } else {
         if (any(isDoCall)) {
@@ -486,7 +492,10 @@ setMethod(
           objNames <- lapply(substitute(placeholderFunction(...))[-1],
                              deparse, backtick = TRUE)
         }
-        objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
+        if (!exists("objFrame", inherits = FALSE)) {
+          objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+          objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
+        }
         # sanity check -- maybe won't exist
         allGood <- try(eval(parse(text = objNames[[1]]), envir = objFrame), silent = TRUE)
         if (is(allGood, "try-error"))
