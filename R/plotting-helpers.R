@@ -1128,7 +1128,8 @@ setMethod(
 
       #gf <- try(gridBase::gridFIG())
       gf <- c(0.0033, 0.9767, 0.0233, 0.8750)
-      gf <- adjustGridFIG(gf, arr, subPlots)
+      wh <- which(names(arr) %in% subPlots)
+      gf <- adjustGridFIG(gf, nCols = arr@columns, nRows = arr@rows, wh = wh)
 
 
       if (is(gf, "try-error")) {
@@ -1355,11 +1356,19 @@ setMethod(
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, subPlots, legendRange,
                         grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
-    seekViewport(paste0("outer", subPlots), recording = FALSE)
+    # seekViewport(paste0("outer", subPlots), recording = FALSE)
     needsNewTitle <- sGrob@plotArgs$new != FALSE
-    grid.rect(x = 0, height = unit(1 + needsNewTitle * inherits(grobToPlot, "Raster") * 0.20 / (nRows / 2), "npc"),
-              width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
-              gp = gpar(fill = "white", col = "white"), just = "left")
+    seekViewport("top", recording = FALSE)
+    gf <- adjustGridFIG(c(0, 1, 0, 1), nCols = nColumns, nRows = nRows, whPlotObj)
+    grid.rect(x = unit(gf[1], "npc"), y = unit(gf[3], "npc"),
+              height = unit(gf[4] - gf[3], "npc"),
+              width = unit(gf[2] - gf[1], "npc"),
+              gp = gpar(fill = "white", col = "white"),
+              just = c(0,0))
+
+    # grid.rect(x = 0, height = unit(1 + needsNewTitle * inherits(grobToPlot, "Raster") * 0.20 / (nRows / 2), "npc"),
+    #           width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
+    #           gp = gpar(fill = "white", col = "white"), just = "left")
     plotArgsByPlot <- lapply(plotArgs, function(x) {
       if (is.list(x)) {
         if (length(x) > 1) {
@@ -3006,21 +3015,21 @@ messageVerbose <- function(...,
   }
 }
 
-adjustGridFIG <- function(gf, arr, subPlots) {
-  wh <- which(names(arr) %in% subPlots)
-  whR <- ceiling(wh / arr@columns)
-  whC <- (wh - 1) %% arr@columns + 1
-  if (arr@rows > 1) {
+adjustGridFIG <- function(gf, nCols, nRows, wh) {
+  whR <- ceiling(wh / nCols)
+  whC <- (wh - 1) %% nCols + 1
+  if (nRows > 1) {
     interRange <- (gf[4] - gf[3])
-    each <- interRange / arr@rows
+    each <- interRange / nRows
     gf[3] <- gf[4] - each * (whR)
     gf[4] <- gf[4] - each * (whR - 1)
   }
-  if (arr@columns > 1) {
+  if (nCols > 1) {
     interRange <- (gf[2] - gf[1])
-    each <- interRange / arr@columns
+    each <- interRange / nCols
     gf[2] <- gf[1] + each * (whC)
     gf[1] <- gf[1] + each * (whC - 1)
   }
   gf
 }
+

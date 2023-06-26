@@ -686,6 +686,7 @@ setMethod(
                                   nColumns = updated$curr@arr@columns,
                                   nRows = updated$curr@arr@rows,
                                   whLayerFromPO)
+            isNewPlot <- TRUE
             wipe <- TRUE # can't overplot a histogram
           } else {
             wipe <- FALSE
