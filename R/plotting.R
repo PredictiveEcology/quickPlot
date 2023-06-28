@@ -468,7 +468,6 @@ setMethod(
     }
 
     if (!is.null(list(...)$env)) {
-      browser()
       objFrame <- list(...)$env
     }
 
@@ -482,9 +481,9 @@ setMethod(
           assign(devCurEnvName, devCurEnv, envir = .quickPlotEnv)
         }
 
-        #if (!exists("objFrame", inherits = FALSE)) {
+        if (!exists("objFrame", inherits = FALSE)) {
           objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
-        #}
+        }
         dots$env <- list2env(dots, envir = objFrame)
       } else {
         if (any(isDoCall)) {
@@ -493,10 +492,10 @@ setMethod(
           objNames <- lapply(substitute(placeholderFunction(...))[-1],
                              deparse, backtick = TRUE)
         }
-        # if (!exists("objFrame", inherits = FALSE)) {
+        if (!exists("objFrame", inherits = FALSE)) {
         #  objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
           objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
-        # }
+        }
         # sanity check -- maybe won't exist
         allGood <- try(eval(parse(text = objNames[[1]]), envir = objFrame), silent = TRUE)
         if (is(allGood, "try-error"))
