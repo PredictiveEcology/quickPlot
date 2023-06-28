@@ -493,7 +493,7 @@ setMethod(
                              deparse, backtick = TRUE)
         }
         if (!exists("objFrame", inherits = FALSE)) {
-          objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+        #  objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
           objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
         }
         # sanity check -- maybe won't exist
@@ -641,6 +641,11 @@ setMethod(
           # If not, then x and y axes are written where necessary.
           xyAxes <- .xyAxes(sGrob, arr = updated$curr@arr, whPlotFrame)
 
+          layerFromExisting <- (names(updated$curr@quickPlotGrobList) %in%
+                                 sGrob@plotName)
+          whLayerFromExisting <- which(layerFromExisting)
+
+
           layerFromPlotObj <- (names(newQuickPlots@quickPlotGrobList) %in%
                                  sGrob@plotName)
           whLayerFromPO <- which(layerFromPlotObj)
@@ -651,7 +656,7 @@ setMethod(
 
           layerFromPlotObj <- if (length(whLayerFromPO) == 0) {
             FALSE
-          } else if (isQuickPlotLong[whLayerFromPO]) {
+          } else  if (isTRUE(isQuickPlotLong[whLayerFromPO])) {
             FALSE
           } else {
             layerFromPlotObj[whLayerFromPO]
@@ -684,7 +689,10 @@ setMethod(
                                   grobToPlot, plotArgs = sGrob@plotArgs,
                                   nColumns = updated$curr@arr@columns,
                                   nRows = updated$curr@arr@rows,
-                                  whLayerFromPO)
+                                  whLayerFromPO,
+                                  whLayerFromExisting)
+            isNewPlot <- TRUE
+            isBaseSubPlot <- TRUE
             wipe <- TRUE # can't overplot a histogram
           } else {
             wipe <- FALSE

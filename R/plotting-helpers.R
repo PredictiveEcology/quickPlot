@@ -1128,7 +1128,8 @@ setMethod(
 
       #gf <- try(gridBase::gridFIG())
       gf <- c(0.0033, 0.9767, 0.0233, 0.8750)
-      gf <- adjustGridFIG(gf, arr, subPlots)
+      wh <- which(names(arr) %in% subPlots)
+      gf <- adjustGridFIG(gf, nCols = arr@columns, nRows = arr@rows, wh = wh)
 
 
       if (is(gf, "try-error")) {
@@ -1334,6 +1335,8 @@ setMethod(
 #' @param nRows Numeric, length 1, indicating how many rows are in the device arrangement
 #' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed into
 #'                  `Plot` is currently being plotted, i.e., a counter of sorts.
+#' @param whExistingObj Numeric. Like `whPlotObj`, but for whole existing plot, not just supplied in
+#'   current call.
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
@@ -1343,7 +1346,8 @@ setMethod(
 #' @rdname Plot-internal
 #'
 setGeneric(".refreshGrob", function(sGrob, subPlots, legendRange,
-                                    grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
+                                    grobToPlot, plotArgs, nColumns, nRows, whPlotObj,
+                                    whExistingObj) {
   standardGeneric(".refreshGrob")
 })
 
@@ -1354,12 +1358,20 @@ setMethod(
   ".refreshGrob",
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, subPlots, legendRange,
-                        grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
-    seekViewport(paste0("outer", subPlots), recording = FALSE)
+                        grobToPlot, plotArgs, nColumns, nRows, whPlotObj, whExistingObj) {
+    # seekViewport(paste0("outer", subPlots), recording = FALSE)
     needsNewTitle <- sGrob@plotArgs$new != FALSE
-    grid.rect(x = 0, height = unit(1 + needsNewTitle * inherits(grobToPlot, "Raster") * 0.20 / (nRows / 2), "npc"),
-              width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
-              gp = gpar(fill = "white", col = "white"), just = "left")
+    seekViewport("top", recording = FALSE)
+    gf <- adjustGridFIG(c(0, 1, 0, 1), nCols = nColumns, nRows = nRows, whExistingObj)
+    grid.rect(x = unit(gf[1], "npc"), y = unit(gf[3], "npc"),
+              height = unit(gf[4] - gf[3], "npc"),
+              width = unit(gf[2] - gf[1], "npc"),
+              gp = gpar(fill = "white", col = "white"),
+              just = c(0,0))
+
+    # grid.rect(x = 0, height = unit(1 + needsNewTitle * inherits(grobToPlot, "Raster") * 0.20 / (nRows / 2), "npc"),
+    #           width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
+    #           gp = gpar(fill = "white", col = "white"), just = "left")
     plotArgsByPlot <- lapply(plotArgs, function(x) {
       if (is.list(x)) {
         if (length(x) > 1) {
@@ -2289,7 +2301,6 @@ pgSpatialLines <- function(grobToPlot, col, size,
 
   extents <- sapply(sgl, function(x) {
     unname(lapply(x[[1]]@isSpatialObjects, function(z) {
-      browser()
       hasZoomExtent <- FALSE
       obj <- if (z %in% TRUE) {
         ze <- x[[1]]@plotArgs$zoomExtent
@@ -2298,7 +2309,6 @@ pgSpatialLines <- function(grobToPlot, col, size,
           out <- extent(ze) # convert to list
       }
       if (hasZoomExtent %in% FALSE) {
-        browser()
         obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
         if (z == TRUE) {
           # for spatial objects without zoomExtent
@@ -2352,6 +2362,10 @@ pgSpatialLines <- function(grobToPlot, col, size,
       lpc <- c((lpc - 1):(lpc + 1)) # nolint
       lpr <- c((lpr):(lpr + 1)) # nolint
     }
+
+    # Convert to list --> too many other formats
+    extents[[extentInd]] <- .ExtentToList(extents[[extentInd]])
+
     # makes equal scale
     yrange <- extents[[extentInd]]$ymax - extents[[extentInd]]$ymin
     if (yrange > 0) {
@@ -2848,25 +2862,31 @@ setMethod(
   "extent",
   signature("ANY"),
   definition = function(x, ...) {
-  x <- if (inherits(x, "sf")) {
-    x <- as.list(sf::st_bbox(x))
-  } else { #if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
-           # is(x, "SpatExtent") || is(x, "Extent")) {
-    if (!is(x, "SpatExtent")) {
-      if (isSpat(x) || isSpatial(x))
-        x <- terra::ext(x)
-      else {
-        if (!requireNamespace("raster", quietly = TRUE))
-          stop("Need to install.packages('raster')")
-        x <- raster::extent(x)
-      }
+  .ExtentToList(x)
+})
 
+.ExtentToList <- function(x) {
+  if (!is(x, "list")) {
+    x <- if (inherits(x, "sf")) {
+      x <- as.list(sf::st_bbox(x))
+    } else { #if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
+      # is(x, "SpatExtent") || is(x, "Extent")) {
+      if (!is(x, "SpatExtent")) {
+        if (isSpat(x) || isSpatial(x))
+          x <- terra::ext(x)
+        else {
+          if (!requireNamespace("raster", quietly = TRUE))
+            stop("Need to install.packages('raster')")
+          x <- raster::extent(x)
+        }
+
+      }
+      list(xmin = terra::xmin(x), xmax = terra::xmax(x),
+           ymin = terra::ymin(x), ymax = terra::ymax(x))
     }
-    list(xmin = terra::xmin(x), xmax = terra::xmax(x),
-         ymin = terra::ymin(x), ymax = terra::ymax(x))
   }
   x
-})
+}
 
 
 #' Extract coordinates from a variety of spatial objectgs
@@ -2998,21 +3018,21 @@ messageVerbose <- function(...,
   }
 }
 
-adjustGridFIG <- function(gf, arr, subPlots) {
-  wh <- which(names(arr) %in% subPlots)
-  whR <- ceiling(wh / arr@columns)
-  whC <- (wh - 1) %% arr@columns + 1
-  if (arr@rows > 1) {
+adjustGridFIG <- function(gf, nCols, nRows, wh) {
+  whR <- ceiling(wh / nCols)
+  whC <- (wh - 1) %% nCols + 1
+  if (nRows > 1) {
     interRange <- (gf[4] - gf[3])
-    each <- interRange / arr@rows
+    each <- interRange / nRows
     gf[3] <- gf[4] - each * (whR)
     gf[4] <- gf[4] - each * (whR - 1)
   }
-  if (arr@columns > 1) {
+  if (nCols > 1) {
     interRange <- (gf[2] - gf[1])
-    each <- interRange / arr@columns
+    each <- interRange / nCols
     gf[2] <- gf[1] + each * (whC)
     gf[1] <- gf[1] + each * (whC - 1)
   }
   gf
 }
+
