@@ -1335,6 +1335,8 @@ setMethod(
 #' @param nRows Numeric, length 1, indicating how many rows are in the device arrangement
 #' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed into
 #'                  `Plot` is currently being plotted, i.e., a counter of sorts.
+#' @param whExistingObj Numeric. Like `whPlotObj`, but for whole existing plot, not just supplied in
+#'   current call.
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
@@ -1344,7 +1346,8 @@ setMethod(
 #' @rdname Plot-internal
 #'
 setGeneric(".refreshGrob", function(sGrob, subPlots, legendRange,
-                                    grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
+                                    grobToPlot, plotArgs, nColumns, nRows, whPlotObj,
+                                    whExistingObj) {
   standardGeneric(".refreshGrob")
 })
 
@@ -1355,11 +1358,11 @@ setMethod(
   ".refreshGrob",
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, subPlots, legendRange,
-                        grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
+                        grobToPlot, plotArgs, nColumns, nRows, whPlotObj, whExistingObj) {
     # seekViewport(paste0("outer", subPlots), recording = FALSE)
     needsNewTitle <- sGrob@plotArgs$new != FALSE
     seekViewport("top", recording = FALSE)
-    gf <- adjustGridFIG(c(0, 1, 0, 1), nCols = nColumns, nRows = nRows, whPlotObj)
+    gf <- adjustGridFIG(c(0, 1, 0, 1), nCols = nColumns, nRows = nRows, whExistingObj)
     grid.rect(x = unit(gf[1], "npc"), y = unit(gf[3], "npc"),
               height = unit(gf[4] - gf[3], "npc"),
               width = unit(gf[2] - gf[1], "npc"),
