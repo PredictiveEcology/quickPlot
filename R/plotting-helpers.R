@@ -2289,7 +2289,6 @@ pgSpatialLines <- function(grobToPlot, col, size,
 
   extents <- sapply(sgl, function(x) {
     unname(lapply(x[[1]]@isSpatialObjects, function(z) {
-      browser()
       hasZoomExtent <- FALSE
       obj <- if (z %in% TRUE) {
         ze <- x[[1]]@plotArgs$zoomExtent
@@ -2298,7 +2297,6 @@ pgSpatialLines <- function(grobToPlot, col, size,
           out <- extent(ze) # convert to list
       }
       if (hasZoomExtent %in% FALSE) {
-        browser()
         obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
         if (z == TRUE) {
           # for spatial objects without zoomExtent
