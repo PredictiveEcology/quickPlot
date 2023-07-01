@@ -5,7 +5,9 @@ Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
 version 1.0.2
 =============
 * Allow extending .plotGrob without `.quickPlottables` class, using method dispatch
-
+* improved wiping of a plotting space when `new = TRUE`
+* A function `extents` which tries to provide a consistent output from `st::st_bbox`, `terra::ext` and `raster::extent`
+* Bugfixes for revdeps, especially SpaDES.core
 
 version 1.0.1
 =============
