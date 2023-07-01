@@ -3,7 +3,7 @@
 \name{coordinates}
 \alias{coordinates}
 \alias{coordinates,ANY-method}
-\title{Extract coordinates from a variety of spatial objectgs}
+\title{Extract coordinates from a variety of spatial objects}
 \usage{
 \S4method{coordinates}{ANY}(obj, ...)
 }

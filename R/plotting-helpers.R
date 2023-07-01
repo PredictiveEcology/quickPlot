@@ -2889,7 +2889,7 @@ setMethod(
 }
 
 
-#' Extract coordinates from a variety of spatial objectgs
+#' Extract coordinates from a variety of spatial objects
 #'
 #' This will extract using `terra::crds`, `sf::st_coordinates` and
 #' `raster::coordinates`. Other packages can create methods, as this is

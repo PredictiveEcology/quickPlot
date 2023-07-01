@@ -1,6 +1,6 @@
 ## Updated release
 
-This is a large update that deals with migration to `terra` and `sf`, and removes `rgdal`, `rgeos`, and `maptools`. We also dealt with minor CRAN requests about DESCRIPTION paragraph.
+This is a medium update that further deals with migration to `terra` and `sf`, and removes `rgdal`, `rgeos`, and `maptools`. 
 
 ## Test environments
 
@@ -14,8 +14,8 @@ This is a large update that deals with migration to `terra` and `sf`, and remove
 - os: ubuntu-20.04,   r: 'oldrel'
 
 ### Winbuilder
-* Windows                 (win-builder), R Under development (unstable) (2023-05-19 r84451 ucrt)
-* Windows                 (win-builder), 4.3.0 (2023-04-21 ucrt)
+* Windows                 (win-builder), R Under development (unstable) (2023-06-29 r84618 ucrt)
+* Windows                 (win-builder), 4.3.1 (2023-04-21 ucrt)
 * Windows                 (win-builder), 4.2.3 (2023-03-15 ucrt)
 
 
