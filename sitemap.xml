@@ -43,6 +43,9 @@
     <loc>https://quickplot.predictiveecology.org/reference/clearPlot.html</loc>
   </url>
   <url>
+    <loc>https://quickplot.predictiveecology.org/reference/coordinates.html</loc>
+  </url>
+  <url>
     <loc>https://quickplot.predictiveecology.org/reference/dev.html</loc>
   </url>
   <url>
@@ -53,6 +56,9 @@
   </url>
   <url>
     <loc>https://quickplot.predictiveecology.org/reference/existsQuickPlot.html</loc>
+  </url>
+  <url>
+    <loc>https://quickplot.predictiveecology.org/reference/extent.html</loc>
   </url>
   <url>
     <loc>https://quickplot.predictiveecology.org/reference/fortify.html</loc>

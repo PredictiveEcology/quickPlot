@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">quickPlot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -131,7 +131,8 @@
 <span>  <span class="va">plotArgs</span>,</span>
 <span>  <span class="va">nColumns</span>,</span>
 <span>  <span class="va">nRows</span>,</span>
-<span>  <span class="va">whPlotObj</span></span>
+<span>  <span class="va">whPlotObj</span>,</span>
+<span>  <span class="va">whExistingObj</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for .quickPlotGrob</span></span>
@@ -143,7 +144,8 @@
 <span>  <span class="va">plotArgs</span>,</span>
 <span>  <span class="va">nColumns</span>,</span>
 <span>  <span class="va">nRows</span>,</span>
-<span>  <span class="va">whPlotObj</span></span>
+<span>  <span class="va">whPlotObj</span>,</span>
+<span>  <span class="va">whExistingObj</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">.updateGrobGPTextAxis</span><span class="op">(</span><span class="va">sGrob</span>, <span class="va">arr</span>, <span class="va">newArr</span><span class="op">)</span></span>
@@ -264,6 +266,11 @@ the specific grob types, e.g., <code>rasterGrob</code>, <code>polygonGrob</code>
 <dt>whPlotObj</dt>
 <dd><p>Numeric. Length 1, indicating which of the currently objects passed into
 <code>Plot</code> is currently being plotted, i.e., a counter of sorts.</p></dd>
+
+
+<dt>whExistingObj</dt>
+<dd><p>Numeric. Like <code>whPlotObj</code>, but for whole existing plot, not just supplied in
+current call.</p></dd>
 
 </dl></div>
     <div id="author">

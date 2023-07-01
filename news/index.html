@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">quickPlot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -63,6 +63,22 @@
       <small>Source: <a href="https://github.com/PredictiveEcology/quickPlot/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="development version" id="quickplot-development-version">quickPlot (development version)<a class="anchor" aria-label="anchor" href="#quickplot-development-version"></a></h2>
+<p>Known issues: <a href="https://github.com/PredictiveEcology/quickPlot/issues" class="external-link uri">https://github.com/PredictiveEcology/quickPlot/issues</a></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.2" id="version-102">version 1.0.2<a class="anchor" aria-label="anchor" href="#version-102"></a></h2>
+<ul><li>Fixed all known errors due to changes in package dependencies (e.g., <code>raster</code>, <code>terra</code>, <code>sf</code>, <code>sp</code>)</li>
+<li>completed migration away from <code>rgdal</code>, <code>maptools</code>, and <code>rgeos</code>
+</li>
+<li>Allow extending .plotGrob without <code>.quickPlottables</code> class, using method dispatch</li>
+<li>improved wiping of a plotting space when <code>new = TRUE</code>
+</li>
+<li>A function <code>extents</code> which tries to provide a consistent output from <code>st::st_bbox</code>, <code><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">terra::ext</a></code> and <code><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">raster::extent</a></code>
+</li>
+<li>Bugfixes for revdeps, especially SpaDES.core</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.1" id="version-101">version 1.0.1<small>2023-06-12</small><a class="anchor" aria-label="anchor" href="#version-101"></a></h2>
 <ul><li>Add support for <code>terra</code> and <code>sf</code> classes.</li>
