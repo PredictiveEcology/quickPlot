@@ -4,6 +4,8 @@ Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
 
 version 1.0.2
 =============
+* Fixed all known errors due to changes in package dependencies (e.g., `raster`, `terra`, `sf`, `sp`)
+* completed migration away from `rgdal`, `maptools`, and `rgeos`
 * Allow extending .plotGrob without `.quickPlottables` class, using method dispatch
 * improved wiping of a plotting space when `new = TRUE`
 * A function `extents` which tries to provide a consistent output from `st::st_bbox`, `terra::ext` and `raster::extent`
