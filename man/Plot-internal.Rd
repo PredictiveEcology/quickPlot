@@ -73,7 +73,8 @@
   plotArgs,
   nColumns,
   nRows,
-  whPlotObj
+  whPlotObj,
+  whExistingObj
 )
 
 \S4method{.refreshGrob}{.quickPlotGrob}(
@@ -84,7 +85,8 @@
   plotArgs,
   nColumns,
   nRows,
-  whPlotObj
+  whPlotObj,
+  whExistingObj
 )
 
 .updateGrobGPTextAxis(sGrob, arr, newArr)
@@ -155,6 +157,9 @@ the specific grob types, e.g., \code{rasterGrob}, \code{polygonGrob}, etc.}
 
 \item{whPlotObj}{Numeric. Length 1, indicating which of the currently objects passed into
 \code{Plot} is currently being plotted, i.e., a counter of sorts.}
+
+\item{whExistingObj}{Numeric. Like \code{whPlotObj}, but for whole existing plot, not just supplied in
+current call.}
 }
 \description{
 Extract colours, legends and other things from object, and convert to a \code{plotGrob}.

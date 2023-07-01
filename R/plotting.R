@@ -467,6 +467,10 @@ setMethod(
       plotObjs <- dotObjs[whichQuickPlottables]
     }
 
+    if (!is.null(list(...)$env)) {
+      objFrame <- list(...)$env
+    }
+
     if (any(whichQuickPlottables)) {
       # perhaps push objects into an environment, if they are only in the list
       devCurEnvName <- paste0("Dev", dev.cur())
@@ -477,7 +481,9 @@ setMethod(
           assign(devCurEnvName, devCurEnv, envir = .quickPlotEnv)
         }
 
-        objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+        if (!exists("objFrame", inherits = FALSE)) {
+          objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+        }
         dots$env <- list2env(dots, envir = objFrame)
       } else {
         if (any(isDoCall)) {
@@ -486,7 +492,10 @@ setMethod(
           objNames <- lapply(substitute(placeholderFunction(...))[-1],
                              deparse, backtick = TRUE)
         }
-        objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
+        if (!exists("objFrame", inherits = FALSE)) {
+        #  objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+          objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
+        }
         # sanity check -- maybe won't exist
         allGood <- try(eval(parse(text = objNames[[1]]), envir = objFrame), silent = TRUE)
         if (is(allGood, "try-error"))
@@ -613,6 +622,7 @@ setMethod(
 
     # Section 3 - the actual Plotting
     # Plot each element passed to Plot function, one at a time
+
     for (subPlots in names(quickSubPlots)) {
       quickPlotGrobCounter <- 0
       for (sGrob in quickSubPlots[[subPlots]]) {
@@ -631,6 +641,11 @@ setMethod(
           # If not, then x and y axes are written where necessary.
           xyAxes <- .xyAxes(sGrob, arr = updated$curr@arr, whPlotFrame)
 
+          layerFromExisting <- (names(updated$curr@quickPlotGrobList) %in%
+                                 sGrob@plotName)
+          whLayerFromExisting <- which(layerFromExisting)
+
+
           layerFromPlotObj <- (names(newQuickPlots@quickPlotGrobList) %in%
                                  sGrob@plotName)
           whLayerFromPO <- which(layerFromPlotObj)
@@ -641,7 +656,7 @@ setMethod(
 
           layerFromPlotObj <- if (length(whLayerFromPO) == 0) {
             FALSE
-          } else if (isQuickPlotLong[whLayerFromPO]) {
+          } else  if (isTRUE(isQuickPlotLong[whLayerFromPO])) {
             FALSE
           } else {
             layerFromPlotObj[whLayerFromPO]
@@ -659,7 +674,7 @@ setMethod(
 
           isPlotFnAddable <- FALSE
 
-          if (!isQuickPlotObject(grobToPlot)) {
+          if (!isQuickPlottables(grobToPlot)) {
             if (!inherits(grobToPlot, ".quickPlot")) {
               if (sGrob@plotArgs$userProvidedPlotFn && !isTRUE(grobToPlot[["add"]])) {
                 isPlotFnAddable <- TRUE
@@ -674,7 +689,10 @@ setMethod(
                                   grobToPlot, plotArgs = sGrob@plotArgs,
                                   nColumns = updated$curr@arr@columns,
                                   nRows = updated$curr@arr@rows,
-                                  whLayerFromPO)
+                                  whLayerFromPO,
+                                  whLayerFromExisting)
+            isNewPlot <- TRUE
+            isBaseSubPlot <- TRUE
             wipe <- TRUE # can't overplot a histogram
           } else {
             wipe <- FALSE
@@ -871,14 +889,23 @@ whereInStack2 <- function(name, whFrame = -1) {
 
 # .quickPlotClasses <- c(spatialClasses, "gg")
 
-quickPlotClasses <- c(".quickPlotObjects", ".quickPlot")
+quickPlotClasses <- c(".quickPlot")
 
-isQuickPlotObject <- function(x) {
-  isSpatialAny(x) || is(x, "gg")
-}
 
 isQuickPlottables <- function(x) {
-  (isQuickPlotObject(x) || inherits(x, ".quickPlot")) # && !is(x, "SpatVector") && !isSF(x)
+  # check for registered method for `.plotGrob` --> this allows extension of methods to
+  #   other classes, without needing to declare that that other class is a `.quickPlottable`
+  test <- (isSpatialAny(x) || is(x, "gg") || inherits(x, quickPlotClasses))
+  if (!isTRUE(test)) {
+    # this is 150x faster than `methods(.plotGrob)`
+    for(xx in paste0(".plotGrob.", is(x))) {
+      test <- get0(xx)
+      if (!is.null(test))
+        break
+    }
+    test <- !is.null(test)
+  }
+  test
 }
 
 isSpatial <- function(x) {
@@ -894,7 +921,7 @@ isSpatialPolygons <- function(x) {
 
 isSpatVector <- function(x) inherits(x, "SpatVector")
 isSpat <- function(x) inherits(x, c("SpatRaster", "SpatVector"))
-isGridded <- function(x) inherits(x, "SpatRaster") || isRaster(x)
+isGridded <- function(x) inherits(x, "SpatRaster") || isRaster(x) || is.matrix(x) || is.array(x)
 isVector <-  function(x) isSpatVector(x) || isSpatial(x) || isSF(x)
 isSpatialAny <- function(x) isGridded(x) || isVector(x)
 isSF <- function(x) {

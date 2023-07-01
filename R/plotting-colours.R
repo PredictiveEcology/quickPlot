@@ -33,6 +33,7 @@ getColors <- function(object) {
     }
   } else if (isSpatial(object)) {
     cols <- list(object@data$color)
+    nams <- NULL
   } else {
     cols <- NULL
   }
@@ -382,11 +383,7 @@ setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")
         cols <- colorTable
       }
     }
-    if (isGridded(grobToPlot)) {
-      z <- terra::values(grobToPlot)
-    } else {
-      z <- grobToPlot[]
-    }
+    z <- grobToPlot[] # terra::values(grobToPlot) gets worldMatrix, raster, terra etc.
 
     # If minFn is defined, then use it, otherwise, calculate them.
     #  This is different than maxz because of the sampleRegular.

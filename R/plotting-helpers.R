@@ -43,7 +43,10 @@ numLayers.default <- function(x) {
     if (is(x, "SpatRaster")) {
       terra::nlyr(x)
     } else {
-      raster::nlayers(x)
+      out <- try(raster::nlayers(x), silent = TRUE)
+      if (is(out, "try-error"))
+        out <- 1L
+      out
     }
 
   } else {
@@ -112,6 +115,8 @@ numLayers.list <- function(x) {
 #     return(1L)
 # })
 
+
+
 #' Extract the layer names of Spatial Objects
 #'
 #' There are already methods for `Raster*` objects. This adds methods for
@@ -145,66 +150,36 @@ numLayers.list <- function(x) {
 #'                              y = stats::runif(1e2, -50, 50)))
 #' layerNames(caribou)
 #'
-layerNames <- function(object) {
+setGeneric(
+  "layerNames",
+  function(object) {
+    standardGeneric("layerNames")
+  })
+
+
+#' @export
+#' @rdname layerNames
+setMethod(
+  "layerNames",
+  signature = "ANY",
+  definition = function(object) {
+  out <- ""
   if (is(object, "list")) {
-    unlist(lapply(object, layerNames))
+    out <- unlist(lapply(object, layerNames))
   } else if (isGridded(object)) {
-    names(object)
+    out <- names(object)
   } else if (inherits(object, ".quickPlot")) {
-    unlist(lapply(object@quickPlotGrobList, function(x) {
+    out <- unlist(lapply(object@quickPlotGrobList, function(x) {
       unlist(lapply(x, function(y) y@plotName))[[1]]
     }))
-  } else {
-    ""
   }
 
-}
+  if (is.null(out))
+    out <- ""
 
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "list",
-#   definition = function(object) {
-#     unlist(lapply(object, layerNames))
-# })
+  out
+})
 
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "ANY",
-#   definition = function(object) {
-#     return("")
-# })
-
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "Raster",
-#   definition = function(object) {
-#     names(object)
-# })
-
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = ".quickPlot",
-#   definition = function(object) {
-#     return(unlist(lapply(object@quickPlotGrobList, function(x) {
-#       unlist(lapply(x, function(y) y@plotName))[[1]]
-#     })))
-# })
-
-# @export
-# @rdname layerNames
-# setMethod(
-#   "layerNames",
-#   signature = "igraph",
-#   definition = function(object) {
-#     return("")
-# })
 
 #' Assess whether a list of extents are all equal
 #'
@@ -999,13 +974,15 @@ gpar <- grid::gpar
   function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr, prevMinMax,
                         quickPlotGrobCounter, subPlots, cols) {
 
+    cn <- colnames(grobToPlot)
     if (is(grobToPlot, "SpatialLines")) {
       if (!is.null(sGrob@plotArgs$zoomExtent)) {
         grobToPlot <- terra::crop(grobToPlot, sGrob@plotArgs$zoomExtent)
       }
       zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
                    cols = sGrob@plotArgs$cols, real = FALSE)
-    } else if (isSpatial(grobToPlot) || isSpatVector(grobToPlot)) {
+    } else if (isSpatial(grobToPlot) || isSpatVector(grobToPlot)
+               || !is.null(cn)) { # the last one about column names will capture e.g., agentMatrix
       if (!is.null(sGrob@plotArgs$zoomExtent) &&
           !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
         grobToPlot <- terra::crop(grobToPlot, sGrob@plotArgs$zoomExtent)
@@ -1045,82 +1022,6 @@ gpar <- grid::gpar
     return(zMat)
 }
 
-# @importFrom rgeos gIntersects gArea
-# setMethod(
-# .preparePlotGrob <-
-#   # signature = c("Spatial", ".quickPlotGrob"),
-#   # definition =
-#   function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-#                         quickPlotGrobCounter, subPlots, cols) {
-#
-#     if (!is.null(sGrob@plotArgs$zoomExtent) &&
-#         !identical(extent(grobToPlot), arr@extents[[subPlots]])) {
-#         #!identical(arr@extents[[subPlots]], sGrob@plotArgs$zoomExtent)) {
-#       useCrop <- FALSE
-#       if (!useCrop) {
-#         zoom <- sGrob@plotArgs$zoomExtent
-#         extPolygon <- as(zoom, "SpatialPolygons")
-#         crs(extPolygon) <- crs(grobToPlot)
-#         extPolygon <- list(extPolygon)
-#         names(extPolygon) <- sGrob@plotName
-#
-#         fullArea <-
-#           rgeos::gArea(as(extent(grobToPlot), "SpatialPolygons"))
-#         zoomArea <-
-#           rgeos::gArea(as(extent(zoom), "SpatialPolygons"))
-#         numPolys <- length(grobToPlot)
-#         ratio <- fullArea / zoomArea
-#         if (numPolys / ratio * 5 > getOption("quickPlot.maxNumPolygons", 3e3)) {
-#           polySeq <-
-#             .polygonSeq(grobToPlot,
-#                         maxNumPolygons = getOption("quickPlot.maxNumPolygons", 3e3))
-#           .showingOnlyMessage(numShowing = getOption("quickPlot.maxNumPolygons", 3e3),
-#                               totalAvailable = length(grobToPlot))
-#           grobToPlot <- grobToPlot[polySeq,]
-#
-#         }
-#         message("Cropping to new extent")
-#         a <- rgeos::gIntersects(grobToPlot, extPolygon[[1]], byid = TRUE)
-#         grobToPlot <- grobToPlot[a[1,],]
-#       } else {
-#         grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
-#       }
-#
-#     }
-#
-#     # This handles SpatialPointsDataFrames with column "colour"
-#     if (any(grepl(pattern = "color", names(grobToPlot))) & is.null(cols))
-#       sGrob@plotArgs$cols <- unlist(getColors(grobToPlot))
-#
-#     zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
-#                  cols = sGrob@plotArgs$cols, real = FALSE)
-#     return(zMat)
-# })
-
-# setMethod(
-#   ".preparePlotGrob",
-#   signature = c("ANY", ".quickPlotGrob"),
-#   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-#                         quickPlotGrobCounter, subPlots, cols) {
-#     if (any(grepl(pattern = "color", colnames(grobToPlot))) & is.null(cols))
-#       sGrob@plotArgs$cols <- grobToPlot$color
-#
-#     list(z = grobToPlot, minz = 0, maxz = 0,
-#          cols = sGrob@plotArgs$cols, real = FALSE)
-# })
-
-# setMethod(
-#   ".preparePlotGrob",
-#   signature = c("SpatialLines", ".quickPlotGrob"),
-#   definition = function(grobToPlot, sGrob, takeFromPlotObj, arr, newArr,
-#                         quickPlotGrobCounter, subPlots, cols) {
-#   if (!is.null(sGrob@plotArgs$zoomExtent)) {
-#     grobToPlot <- crop(grobToPlot, sGrob@plotArgs$zoomExtent)
-#   }
-#   zMat <- list(z = grobToPlot, minz = 0, maxz = 0,
-#                cols = sGrob@plotArgs$cols, real = FALSE)
-#   return(zMat)
-# })
 
 #' @param whPlotFrame Numeric. Which plot within the `quickPlotGrobPlots` object.
 #'
@@ -1227,7 +1128,8 @@ setMethod(
 
       #gf <- try(gridBase::gridFIG())
       gf <- c(0.0033, 0.9767, 0.0233, 0.8750)
-      gf <- adjustGridFIG(gf, arr, subPlots)
+      wh <- which(names(arr) %in% subPlots)
+      gf <- adjustGridFIG(gf, nCols = arr@columns, nRows = arr@rows, wh = wh)
 
 
       if (is(gf, "try-error")) {
@@ -1433,6 +1335,8 @@ setMethod(
 #' @param nRows Numeric, length 1, indicating how many rows are in the device arrangement
 #' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed into
 #'                  `Plot` is currently being plotted, i.e., a counter of sorts.
+#' @param whExistingObj Numeric. Like `whPlotObj`, but for whole existing plot, not just supplied in
+#'   current call.
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
@@ -1442,7 +1346,8 @@ setMethod(
 #' @rdname Plot-internal
 #'
 setGeneric(".refreshGrob", function(sGrob, subPlots, legendRange,
-                                    grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
+                                    grobToPlot, plotArgs, nColumns, nRows, whPlotObj,
+                                    whExistingObj) {
   standardGeneric(".refreshGrob")
 })
 
@@ -1453,12 +1358,20 @@ setMethod(
   ".refreshGrob",
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, subPlots, legendRange,
-                        grobToPlot, plotArgs, nColumns, nRows, whPlotObj) {
-    seekViewport(paste0("outer", subPlots), recording = FALSE)
+                        grobToPlot, plotArgs, nColumns, nRows, whPlotObj, whExistingObj) {
+    # seekViewport(paste0("outer", subPlots), recording = FALSE)
     needsNewTitle <- sGrob@plotArgs$new != FALSE
-    grid.rect(x = 0, height = unit(1 + needsNewTitle * inherits(grobToPlot, "Raster") * 0.20 / (nRows / 2), "npc"),
-              width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
-              gp = gpar(fill = "white", col = "white"), just = "left")
+    seekViewport("top", recording = FALSE)
+    gf <- adjustGridFIG(c(0, 1, 0, 1), nCols = nColumns, nRows = nRows, whExistingObj)
+    grid.rect(x = unit(gf[1], "npc"), y = unit(gf[3], "npc"),
+              height = unit(gf[4] - gf[3], "npc"),
+              width = unit(gf[2] - gf[1], "npc"),
+              gp = gpar(fill = "white", col = "white"),
+              just = c(0,0))
+
+    # grid.rect(x = 0, height = unit(1 + needsNewTitle * inherits(grobToPlot, "Raster") * 0.20 / (nRows / 2), "npc"),
+    #           width = unit(1 + inherits(grobToPlot, "Raster") * 0.20 / (nColumns / 2), "npc"),
+    #           gp = gpar(fill = "white", col = "white"), just = "left")
     plotArgsByPlot <- lapply(plotArgs, function(x) {
       if (is.list(x)) {
         if (length(x) > 1) {
@@ -1967,24 +1880,36 @@ setMethod(
 .plotGrob.default <- function(grobToPlot, col, real, size, minv, maxv,
                               legend, legendText, length, gp = gpar(), gpText,
                               pch, speedup, name, vp, ..., verbose = getOption("quickPlot.verbose")) {
+  isColorMatrix <- FALSE
+  if (is.matrix(grobToPlot)) {
+    notNA <- !is.na(grobToPlot[1,1])
+    if (any(notNA)) { # quick version if possible
+      firstNonNA <- grobToPlot[1,1]
+    } else { # for cases where corner is NA
+      notNA <- !is.na(grobToPlot[])
+      firstNonNA <- grobToPlot[notNA][1]
+    }
+    isColorMatrix <- any(nchar(firstNonNA) %in% c(7, 9)) && any(grepl("\\#", firstNonNA)) ||
+      is.character(grobToPlot)
+
+  }
   isPolygon <- if (isSF(grobToPlot)) {
     any(grepl("POLYGON", sf::st_geometry_type(grobToPlot))) # also capture MULTIPOLYGON
   } else {
     isSpatialPolygons(grobToPlot) ||
       (is(grobToPlot, "SpatVector") && identical("polygons", terra::geomtype(grobToPlot)))
   }
-  if (is.matrix(grobToPlot)) {
-    outGrob <- pgmatrix(grobToPlot, col, real, size, minv, maxv,
-                        legend, legendText, gp, gpText, pch, name, vp, ...)
-  } else if (isPolygon) {
+  if (isPolygon) {
     outGrob <- pgSpatialPolygons(grobToPlot, col, size,
                                  legend, gp = gpar(), pch, speedup, name, vp, ..., verbose = verbose)
   } else if (is(grobToPlot, "SpatialLines") ||
              (is(grobToPlot, "SpatVector") && identical("lines", terra::geomtype(grobToPlot)))) {
     outGrob <- pgSpatialLines(grobToPlot, col, size, legend, length, gp = gpar(),
                               pch, speedup, name, vp, ..., verbose = verbose)
-  } else { # for SpatialPoints and points SpatVector
-
+  } else if (isColorMatrix) {
+    outGrob <- pgmatrix(grobToPlot, col, real, size, minv, maxv,
+                        legend, legendText, gp, gpText, pch, name, vp, ...)
+  } else { # for SpatialPoints and points SpatVector or other e.g., agentMatrix
     speedupScale <- speedupScale(grobToPlot, lonlatSU = 40 * 4.8e5, SU = 40)
     xyOrd <- coordinates(grobToPlot)
 
@@ -2376,38 +2301,34 @@ pgSpatialLines <- function(grobToPlot, col, size,
 
   extents <- sapply(sgl, function(x) {
     unname(lapply(x[[1]]@isSpatialObjects, function(z) {
-      if (z == TRUE) {
-        # for spatial objects
-        if (!is.null(x[[1]]@plotArgs$zoomExtent)) {
-          extent(x[[1]]@plotArgs$zoomExtent) # convert to list
-        } else {
-          ## TODO: temporary workaround to enable Plotting terra rasters
-          obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
-          # if (is(obj, "SpatRaster")) {
-          #   obj <- terra::rast(obj)
-          # }
-          ## END WORKAROUND
-
-          extent(obj)
-        }
-      } else {
+      hasZoomExtent <- FALSE
+      obj <- if (z %in% TRUE) {
+        ze <- x[[1]]@plotArgs$zoomExtent
+        hasZoomExtent <- (!is.null(ze))
+        if (hasZoomExtent)
+          out <- extent(ze) # convert to list
+      }
+      if (hasZoomExtent %in% FALSE) {
         obj <- eval(parse(text = x[[1]]@objName), envir = x[[1]]@envir)
-
-        ## TODO: temporary workaround to enable Plotting terra rasters
-        if (is(obj, "SpatRaster")) {
-          obj <- terra::rast(obj)
-        }
-        ## END WORKAROUND
-
-        # if the object has an extent method
-        if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
-          # list has an extent method, but too general
-          extent(obj)
+        if (z == TRUE) {
+          # for spatial objects without zoomExtent
+          out <- extent(obj)
         } else {
-          # for non spatial objects
-          list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+          if (is(obj, "SpatRaster")) {
+            obj <- terra::rast(obj)
+          }
+
+          # if the object has an extent method
+          if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
+            # list has an extent method, but too general
+            out <- extent(obj)
+          } else {
+            # for non spatial objects
+            out <- list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+          }
         }
       }
+      out
     }))
   })
 
@@ -2441,6 +2362,10 @@ pgSpatialLines <- function(grobToPlot, col, size,
       lpc <- c((lpc - 1):(lpc + 1)) # nolint
       lpr <- c((lpr):(lpr + 1)) # nolint
     }
+
+    # Convert to list --> too many other formats
+    extents[[extentInd]] <- .ExtentToList(extents[[extentInd]])
+
     # makes equal scale
     yrange <- extents[[extentInd]]$ymax - extents[[extentInd]]$ymin
     if (yrange > 0) {
@@ -2532,17 +2457,49 @@ pgSpatialLines <- function(grobToPlot, col, size,
 }
 
 xyRange <- function(obj) {
-  if (isGridded(obj) || is(obj, "SpatVector"))
-    c(terra::xmax(obj) - terra::xmin(obj), terra::ymax(obj) - terra::ymin(obj))
+  out <- NULL
+  if (isGridded(obj) || is(obj, "SpatVector")) {
+    # can be error with e.g., worldMatrix b/c needs to use bbox
+    out <- try(c(terra::xmax(obj) - terra::xmin(obj), terra::ymax(obj) - terra::ymin(obj)),
+               silent = TRUE)
+    if (is(out, "try-error")) {
+      out <- try(extent(obj))
+      if (!is(out, "try-error")) {
+        if (is(out, "list")) {
+          out <- c(out$xmax - out$xmin, out$ymax - out$ymin)
+        } else {
+          out <- c(terra::xmax(out) - terra::xmin(out), terra::ymax(out) - terra::ymin(out))
+        }
+      }
+
+    }
+  }
   else if (inherits(obj, "sf")) {
     bb <- sf::st_bbox(obj)
-    c(bb["xmax"] - bb["xmin"], bb["ymax"] - bb["ymin"])
-  } else {
-    iss <- isSpatial(obj) # just checks for sp package
-    apply(sp::bbox(obj), 1, function(y) {
-      diff(range(y))
-    })
+    out <- c(bb["xmax"] - bb["xmin"], bb["ymax"] - bb["ymin"])
   }
+
+  if (is.null(out) || is(out, "try-error")) {
+    for (i in 1:2) {
+      out <- try(apply(bbox(obj), 1, function(y) {
+        diff(range(y))
+      }), silent = TRUE)
+      if (!is(out, "try-error"))
+        break
+      if (is(obj, "Spatial")) {
+        if (!requireNamespace("sp"))
+          stop("Please install.packages('sp') to use ", class(obj))
+        bbox <- sp::bbox
+      } else {
+        bbox <- suppressWarnings(findMethods("bbox", classes = class(obj)))
+        if (length(bbox) == 0)
+          stop("Could not find bbox for ", paste(class(obj), collapse = ", "),
+               "\nPerhaps a package not installed or loaded (e.g., library(...) )?")
+      }
+    }
+
+  }
+  out
 }
 
 #' Convert pairs of coordinates to `SpatialLines`
@@ -2875,33 +2832,107 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
           verbose = verbose)
 }
 
-extent <- function(x) {
-  x <- if (inherits(x, "sf")) {
-    x <- as.list(sf::st_bbox(x))
-  } else { #if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
-           # is(x, "SpatExtent") || is(x, "Extent")) {
-    if (!is(x, "SpatExtent"))
-      if (isSpat(x))
-        x <- terra::ext(x)
-    else
-      x <- raster::extent(x)
-    list(xmin = terra::xmin(x), xmax = terra::xmax(x),
-         ymin = terra::ymin(x), ymax = terra::ymax(x))
+
+
+#' Get extent of a variety of spatial objects
+#'
+#' This is a wrapper around `terra::ext`, `sf::st_bbox`, and
+#' `raster::extent`.
+#' @rdname extent
+#' @name extent
+#' @param x The spatial object from which to extract the extent.
+#' @param ... Not used.
+#' @return Returns a list of length 4 with elements `xmin`, `xmax`, `ymin`, and `ymax`,
+#'   in that order.
+#'
+#' @export
+if (!isGeneric("extent", .GlobalEnv)) {
+  setGeneric(
+    "extent",
+    function(x, ...) {
+      standardGeneric("extent")
+    }
+  )
+}
+
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("ANY"),
+  definition = function(x, ...) {
+  .ExtentToList(x)
+})
+
+.ExtentToList <- function(x) {
+  if (!is(x, "list")) {
+    x <- if (inherits(x, "sf")) {
+      x <- as.list(sf::st_bbox(x))
+    } else { #if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
+      # is(x, "SpatExtent") || is(x, "Extent")) {
+      if (!is(x, "SpatExtent")) {
+        if (isSpat(x) || isSpatial(x))
+          x <- terra::ext(x)
+        else {
+          if (!requireNamespace("raster", quietly = TRUE))
+            stop("Need to install.packages('raster')")
+          x <- raster::extent(x)
+        }
+
+      }
+      list(xmin = terra::xmin(x), xmax = terra::xmax(x),
+           ymin = terra::ymin(x), ymax = terra::ymax(x))
+    }
   }
   x
 }
 
 
-coordinates <- function(x) {
-  if (isSpat(x) && isVector(x)) {
-    terra::crds(x)
-  } else if (isSF(x)) {
-    sf::st_coordinates(x)
+#' Extract coordinates from a variety of spatial objects
+#'
+#' This will extract using `terra::crds`, `sf::st_coordinates` and
+#' `raster::coordinates`. Other packages can create methods, as this is
+#' generic.
+#'
+#' @param obj An object from which to extract the coordinates (e.g., `sf`, `sp`)
+#' @param ... Ignored.
+#' @return A 2 column matrix of coordinates (x and y)
+#'
+#' @export
+#' @rdname coordinates
+#' @name coordinates
+#' @examples
+#' library(terra)
+#' caribou <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
+#'                                         y = stats::runif(1e1, -50, 50)))
+#' coordinates(caribou)
+#'
+if (!isGeneric("coordinates", .GlobalEnv)) {
+  setGeneric(
+    "coordinates",
+    function(obj, ...) {
+      standardGeneric("coordinates")
+    }
+  )
+}
+
+#' @rdname coordinates
+#' @export
+setMethod(
+  "coordinates",
+  signature("ANY"),
+
+  definition = function(obj, ...) {
+  if (isSpat(obj) && isVector(obj)) {
+    terra::crds(obj)
+  } else if (isSF(obj)) {
+    sf::st_coordinates(obj)
   } else {
-    raster::coordinates(x)
+    raster::coordinates(obj)
   }
 
-}
+})
 
 isLonLat <- function(x) {
   if (isSpat(x)) {
@@ -2917,7 +2948,8 @@ isLonLat <- function(x) {
 
 speedupScale <- function(grobToPlot, lonlatSU, SU) {
   extGTP <- extent(grobToPlot)
-  speedupScale <- if (isTRUE(isLonLat(grobToPlot))) {
+  isLongLat <- tryCatch(isLonLat(grobToPlot), error = function(e) FALSE) # for object classes with no isLonLat method
+  speedupScale <- if (isTRUE(isLongLat)) {
     as.numeric(terra::distance(
       x = cbind(extGTP$xmax, extGTP$ymax),
       y = cbind(extGTP$xmin, extGTP$ymin),
@@ -2986,21 +3018,21 @@ messageVerbose <- function(...,
   }
 }
 
-adjustGridFIG <- function(gf, arr, subPlots) {
-  wh <- which(names(arr) %in% subPlots)
-  whR <- ceiling(wh / arr@columns)
-  whC <- (wh - 1) %% arr@columns + 1
-  if (arr@rows > 1) {
+adjustGridFIG <- function(gf, nCols, nRows, wh) {
+  whR <- ceiling(wh / nCols)
+  whC <- (wh - 1) %% nCols + 1
+  if (nRows > 1) {
     interRange <- (gf[4] - gf[3])
-    each <- interRange / arr@rows
+    each <- interRange / nRows
     gf[3] <- gf[4] - each * (whR)
     gf[4] <- gf[4] - each * (whR - 1)
   }
-  if (arr@columns > 1) {
+  if (nCols > 1) {
     interRange <- (gf[2] - gf[1])
-    each <- interRange / arr@columns
+    each <- interRange / nCols
     gf[2] <- gf[1] + each * (whC)
     gf[1] <- gf[1] + each * (whC - 1)
   }
   gf
 }
+
