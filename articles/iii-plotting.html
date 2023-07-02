@@ -89,7 +89,7 @@
                         <h4 data-toc-skip class="author">Eliot J. B.
 McIntire</h4>
             
-            <h4 data-toc-skip class="date">July 01 2023</h4>
+            <h4 data-toc-skip class="date">July 02 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/quickPlot/blob/HEAD/vignettes/iii-plotting.Rmd" class="external-link"><code>vignettes/iii-plotting.Rmd</code></a></small>
       <div class="hidden name"><code>iii-plotting.Rmd</code></div>
@@ -575,12 +575,12 @@ original Raster had <code>1e8</code> pixels.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, <span class="va">caribou</span>, <span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.117   0.004   0.121</span></span></code></pre>
+<span><span class="co">##   0.119   0.000   0.118</span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, <span class="va">caribou</span>, <span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, speedup <span class="op">=</span> <span class="fl">10</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="iii-plotting_files/figure-html/speedup-1.png" width="700"></p>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.183   0.000   0.183</span></span></code></pre>
+<span><span class="co">##   0.177   0.000   0.177</span></span></code></pre>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># can add a new plot to the plotting window</span></span></code></pre></div>
 </div>
