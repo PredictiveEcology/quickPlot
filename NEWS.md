@@ -2,6 +2,11 @@
 
 Known issues: <https://github.com/PredictiveEcology/quickPlot/issues>
 
+version 1.0.3
+=============
+* bugfixes for `SpatRaster` that use lowercase `id` for their levels
+* bugfix `nrowLegText` missing
+
 version 1.0.2
 =============
 * Fixed all known errors due to changes in package dependencies (e.g., `raster`, `terra`, `sf`, `sp`)
