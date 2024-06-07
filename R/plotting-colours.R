@@ -162,7 +162,7 @@ getColors <- function(object) {
         if (isRaster(object))
           object@legend@colortable <- pal(n)
         else
-          terra::coltab(object) <- vals
+          terra::coltab(object) <- data.frame(value = levs[[id]], col = vals)
 
       }
     } else {
