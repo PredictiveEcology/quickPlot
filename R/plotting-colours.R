@@ -149,6 +149,8 @@ getColors <- function(object) {
     if (terra::is.factor(object)) {
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
         levs <- terra::levels(object)[[1]]
+        id <- grep("^id$", ignore.case = TRUE,
+                   colnames(levs), value = TRUE)
         nrLevs <- NROW(levs)
 
         pal <- colorRampPalette(value, alpha = TRUE, ...)
