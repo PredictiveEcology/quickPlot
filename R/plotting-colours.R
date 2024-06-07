@@ -458,7 +458,9 @@ setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")
           # one more colour than needed:
           #   assume bottom is NA
           if (isFac) {
-            factorValues <- terra::levels(grobToPlot)[[1]][["ID"]]
+            lvls <- terra::levels(grobToPlot)[[1]]
+            names(lvls) <- tolower(names(lvls))
+            factorValues <- lvls[["id"]]
             # factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
             #   unique() %>%
             #   na.omit() %>%
