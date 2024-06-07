@@ -1990,7 +1990,7 @@ pgmatrix <- function(grobToPlot, col, real, size, minv, maxv,
   if (NCOL(legendText) == 1) {
     # means it was not a factor
     pr <- pr[pr <= maxv & pr >= minv]
-  } else {
+  } else if (!is.null(legendText)) {
     pr <- pr[pr <= nrowLegText & pr >= 1]
   }
   if (length(pr) == 0) pr <- seq(minv, maxv, by = 2)
