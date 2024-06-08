@@ -1077,7 +1077,7 @@ test_that("Issue 20; arr working", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "windows" && ver >= "4.4")
+  if (.Platform$OS.type == "windows" && getRversion() >= "4.4")
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       clearPlot()
@@ -1096,12 +1096,12 @@ test_that("Issue 32 Plot of factors when lower case id used", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   for (fn in 1:2) {
-
-    for (verRow in seq(NROW(df))) {
-      lower <- df$lower[verRow]
-      upper <- df$upper[verRow]
-      ver <- paste0("_", lower, "_to_", upper)
-      ver <- gsub("\\.", "_", paste0("_", ver))
+    for (ver in oses) {
+    # for (verRow in seq(NROW(df))) {
+    #   lower <- df$lower[verRow]
+    #   upper <- df$upper[verRow]
+    #   ver <- paste0("_", lower, "_to_", upper)
+    #   ver <- gsub("\\.", "_", paste0("_", ver))
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
 
       r <- rast(ncols=3, nrows=2, vals=1:6)
@@ -1112,7 +1112,8 @@ test_that("Issue 32 Plot of factors when lower case id used", {
       levels(r) <- cls
 
       announce_snapshot_file(name = basename(fil))
-      if (getRversion() < upper && getRversion() >= lower)
+      if ((ver %in% "Win" && isWindows()) || ver %in% "Linux" && isLinux())
+        #if (getRversion() < upper && getRversion() >= lower) # && ifelse(isWindows(), verRow == 2, TRUE))
         expect_snapshot_file({
           png(file = fil, width = 800, height = 600)
           clearPlot()
@@ -1124,19 +1125,20 @@ test_that("Issue 32 Plot of factors when lower case id used", {
   }
 
   for (fn in 3) {
-
-    for (verRow in seq(NROW(df))) {
-      lower <- df$lower[verRow]
-      upper <- df$upper[verRow]
-      ver <- paste0("_", lower, "_to_", upper)
-      ver <- gsub("\\.", "_", paste0("_", ver))
+    for (ver in oses) {
+      # for (verRow in seq(NROW(df))) {
+      # lower <- df$lower[verRow]
+      # upper <- df$upper[verRow]
+      # ver <- paste0("_", lower, "_to_", upper)
+      # ver <- gsub("\\.", "_", paste0("_", ver))
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
-        r <- rast(ncols=3, nrows=2, vals=1:6)
+      r <- rast(ncols=3, nrows=2, vals=1:6)
       cls <- data.frame(id=1:6, class=LETTERS[1:6])
       levels(r) <- cls
 
       announce_snapshot_file(name = basename(fil))
-      if (getRversion() < upper && getRversion() >= lower)
+      if ((ver %in% "Win" && isWindows()) || ver %in% "Linux" && isLinux())
+      # if (getRversion() < upper && getRversion() >= lower)# && ifelse(isWindows(), verRow == 2, TRUE))
         expect_snapshot_file({
           png(file = fil, width = 800, height = 600)
           clearPlot()

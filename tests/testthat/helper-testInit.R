@@ -73,3 +73,5 @@ filName <- function(df, verRow, tmpdir, prevLastPlotNumber, fn) {
   ver <- gsub("\\.", "_", paste0("_", ver))
   fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
 }
+
+oses <- c("Win", "Linux")
