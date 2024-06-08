@@ -149,18 +149,21 @@ getColors <- function(object) {
     if (terra::is.factor(object)) {
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
         levs <- terra::levels(object)[[1]]
+        id <- grep("^id$", ignore.case = TRUE,
+                   colnames(levs), value = TRUE)
         nrLevs <- NROW(levs)
 
         pal <- colorRampPalette(value, alpha = TRUE, ...)
-        if (n != nrLevs) {
+        if (n != nrLevs || n != length(value)) {
           vals <- pal(n)
         } else {
           vals <- value
         }
-        if (isRaster(object))
+        if (isRaster(object)) {
           object@legend@colortable <- pal(n)
-        else
-          terra::coltab(object) <- vals
+        } else {
+          terra::coltab(object) <- data.frame(value = levs[[id]], col = vals)
+        }
 
       }
     } else {

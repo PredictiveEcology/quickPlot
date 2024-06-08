@@ -421,7 +421,8 @@ test_that("Unit tests for internal functions in Plot", {
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
     val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1
     fn <- if (testNum == 5) 5 else val
-    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
+    ver <- paste0("_", c("4.4", "4.3")[(getRversion() < "4.4.0") + 1])
+    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
     announce_snapshot_file(name = basename(fil))
     if (isLinux())
       expect_snapshot_file({
@@ -534,8 +535,12 @@ test_that("Plot 2 is not error-free", {
     val <-  (testNum - 1 ) %% (length(rasts) / (1 + hasRasterLayer)) + 1 # this tests whether SpatRaster is same as Raster
     fn <- val
     # fn <- if (testNum == 5) 5 else val # this is needed if there is speedup used b/c terra::sample and raster::sampleRegular aren't same
-    fil <- paste0("test", prevLastPlotNumber + fn ,".png")
-    fil <- file.path(tmpdir, fil)
+
+    ver <- paste0("_", c("4.4", "4.3")[(getRversion() < "4.4.0") + 1])
+    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
+
+    # fil <- paste0("test", prevLastPlotNumber + fn ,".png")
+    # fil <- file.path(tmpdir, fil)
     announce_snapshot_file(name = basename(fil))
     if (isLinux())
       expect_snapshot_file({
@@ -551,7 +556,8 @@ test_that("Plot 2 is not error-free", {
     val <-  (testNum - 1 ) %% (length(rasts) / (1 + hasRasterLayer)) + 1
     if (val %in% c(7,8,10,11,12,14)) {
       fn <- if (testNum == 5) 5 else val
-      fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn ,".png"))
+      ver <- paste0("_", c("4.4", "4.3")[(getRversion() < "4.4.0") + 1])
+      fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
       announce_snapshot_file(name = basename(fil))
       if (isLinux())
         expect_snapshot_file({
@@ -990,7 +996,7 @@ test_that("Issue 20; arr working", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "windows")
+  if (.Platform$OS.type == "windows" && getRversion() >= "4.4")
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       clearPlot()
