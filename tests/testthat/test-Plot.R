@@ -435,7 +435,7 @@ test_that("Unit tests for internal functions in Plot", {
     fn <- if (testNum == 5) 5 else val
     vers <- c("4.4", "4.3")
     for (verOrig in vers) {
-      ver <- paste0("_", verOrig)
+      ver <- gsub("\\.", "_", paste0("_", verOrig))
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
       announce_snapshot_file(name = basename(fil))
       if (getRversion() < verOrig)
@@ -561,7 +561,7 @@ test_that("Plot 2 is not error-free", {
 
     vers <- c("4.4", "4.3")
     for (verOrig in vers) {
-      ver <- paste0("_", verOrig)
+      ver <- gsub("\\.", "_", paste0("_", verOrig))
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
 
       # fil <- paste0("test", prevLastPlotNumber + fn ,".png")
@@ -593,7 +593,7 @@ test_that("Plot 2 is not error-free", {
       vers <- c("4.4", "4.3")
       for (verOrig in vers) {
 
-        ver <- paste0("_", verOrig)
+        ver <- gsub("\\.", "_", paste0("_", verOrig))
         fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
         announce_snapshot_file(name = basename(fil))
         if (getRversion() < verOrig)
@@ -1092,42 +1092,50 @@ test_that("Issue 32 Plot of factors when lower case id used", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   for (fn in 1:2) {
-    ver <- ""
-    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
+    vers <- c("4.4", "4.3")
+    for (verOrig in vers) {
+      ver <- gsub("\\.", "_", paste0("_", verOrig))
 
-    r <- rast(ncols=3, nrows=2, vals=1:6)
-    col <- if(fn == 1) rainbow(6, end=.9) else colorRampPalette(c("light green", "dark green"))(6)
-    coltb <- data.frame(value=1:6, col=col)
-    coltab(r) <- coltb
-    cls <- data.frame(id=1:6, class=LETTERS[1:6])
-    levels(r) <- cls
+      fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
 
-    announce_snapshot_file(name = basename(fil))
-    #if (.Platform$OS.type == "windows" && ver >= "4.4")
-    expect_snapshot_file({
-      png(file = fil, width = 800, height = 600)
-      clearPlot()
-      Plot(r, new = TRUE)
-      dev.off()
-      fil
-    })
+      r <- rast(ncols=3, nrows=2, vals=1:6)
+      col <- if(fn == 1) rainbow(6, end=.9) else colorRampPalette(c("light green", "dark green"))(6)
+      coltb <- data.frame(value=1:6, col=col)
+      coltab(r) <- coltb
+      cls <- data.frame(id=1:6, class=LETTERS[1:6])
+      levels(r) <- cls
+
+      announce_snapshot_file(name = basename(fil))
+      #if (.Platform$OS.type == "windows" && ver >= "4.4")
+      expect_snapshot_file({
+        png(file = fil, width = 800, height = 600)
+        clearPlot()
+        Plot(r, new = TRUE)
+        dev.off()
+        fil
+      })
+    }
   }
 
   for (fn in 3) {
-    ver <- ""
-    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
-    r <- rast(ncols=3, nrows=2, vals=1:6)
-    cls <- data.frame(id=1:6, class=LETTERS[1:6])
-    levels(r) <- cls
+    vers <- c("4.4", "4.3")
+    for (verOrig in vers) {
+      ver <- gsub("\\.", "_", paste0("_", verOrig))
 
-    announce_snapshot_file(name = basename(fil))
-    expect_snapshot_file({
-      png(file = fil, width = 800, height = 600)
-      clearPlot()
-      Plot(r, col = "Reds")
-      dev.off()
-      fil
-    })
+      fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
+      r <- rast(ncols=3, nrows=2, vals=1:6)
+      cls <- data.frame(id=1:6, class=LETTERS[1:6])
+      levels(r) <- cls
+
+      announce_snapshot_file(name = basename(fil))
+      expect_snapshot_file({
+        png(file = fil, width = 800, height = 600)
+        clearPlot()
+        Plot(r, col = "Reds")
+        dev.off()
+        fil
+      })
+    }
   }
 
 })
