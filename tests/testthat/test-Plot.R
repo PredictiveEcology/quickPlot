@@ -433,12 +433,14 @@ test_that("Unit tests for internal functions in Plot", {
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
     val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1
     fn <- if (testNum == 5) 5 else val
-    vers <- c("4.4", "4.3")
-    for (verOrig in vers) {
-      ver <- gsub("\\.", "_", paste0("_", verOrig))
+    for (verRow in seq(NROW(df))) {
+      lower <- df$lower[verRow]
+      upper <- df$upper[verRow]
+      ver <- paste0("_", lower, "_to_", upper)
+      ver <- gsub("\\.", "_", paste0("_", ver))
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
       announce_snapshot_file(name = basename(fil))
-      if (getRversion() < verOrig)
+      if (getRversion() < upper && getRversion() >= lower)
         if (isLinux()) {
           expect_snapshot_file({
             png(file = fil, width = 400, height = 300)
@@ -559,15 +561,15 @@ test_that("Plot 2 is not error-free", {
     fn <- val
     # fn <- if (testNum == 5) 5 else val # this is needed if there is speedup used b/c terra::sample and raster::sampleRegular aren't same
 
-    vers <- c("4.4", "4.3")
-    for (verOrig in vers) {
-      ver <- gsub("\\.", "_", paste0("_", verOrig))
-      fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
 
-      # fil <- paste0("test", prevLastPlotNumber + fn ,".png")
-      # fil <- file.path(tmpdir, fil)
+    for (verRow in seq(NROW(df))) {
+      lower <- df$lower[verRow]
+      upper <- df$upper[verRow]
+      ver <- paste0("_", lower, "_to_", upper)
+      ver <- gsub("\\.", "_", paste0("_", ver))
+      fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
       announce_snapshot_file(name = basename(fil))
-      if (getRversion() < verOrig)
+      if (getRversion() < upper && getRversion() >= lower)
         if (isLinux()) {
           expect_snapshot_file({
             png(file = fil, width = 400, height = 300)
@@ -590,13 +592,15 @@ test_that("Plot 2 is not error-free", {
     if (val %in% c(7,8,10,11,12,14)) {
       fn <- if (testNum == 5) 5 else val
 
-      vers <- c("4.4", "4.3")
-      for (verOrig in vers) {
 
-        ver <- gsub("\\.", "_", paste0("_", verOrig))
+      for (verRow in seq(NROW(df))) {
+        lower <- df$lower[verRow]
+        upper <- df$upper[verRow]
+        ver <- paste0("_", lower, "_to_", upper)
+        ver <- gsub("\\.", "_", paste0("_", ver))
         fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
         announce_snapshot_file(name = basename(fil))
-        if (getRversion() < verOrig)
+        if (getRversion() < upper && getRversion() >= lower)
           if (isLinux()) {
             expect_snapshot_file({
               png(file = fil, width = 400, height = 300)
@@ -1092,10 +1096,12 @@ test_that("Issue 32 Plot of factors when lower case id used", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   for (fn in 1:2) {
-    vers <- c("4.4", "4.3")
-    for (verOrig in vers) {
-      ver <- gsub("\\.", "_", paste0("_", verOrig))
 
+    for (verRow in seq(NROW(df))) {
+      lower <- df$lower[verRow]
+      upper <- df$upper[verRow]
+      ver <- paste0("_", lower, "_to_", upper)
+      ver <- gsub("\\.", "_", paste0("_", ver))
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
 
       r <- rast(ncols=3, nrows=2, vals=1:6)
@@ -1106,37 +1112,41 @@ test_that("Issue 32 Plot of factors when lower case id used", {
       levels(r) <- cls
 
       announce_snapshot_file(name = basename(fil))
-      #if (.Platform$OS.type == "windows" && ver >= "4.4")
-      expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
-        clearPlot()
-        Plot(r, new = TRUE)
-        dev.off()
-        fil
-      })
+      if (getRversion() < upper && getRversion() >= lower)
+        expect_snapshot_file({
+          png(file = fil, width = 800, height = 600)
+          clearPlot()
+          Plot(r, new = TRUE)
+          dev.off()
+          fil
+        })
     }
   }
 
   for (fn in 3) {
-    vers <- c("4.4", "4.3")
-    for (verOrig in vers) {
-      ver <- gsub("\\.", "_", paste0("_", verOrig))
 
+    for (verRow in seq(NROW(df))) {
+      lower <- df$lower[verRow]
+      upper <- df$upper[verRow]
+      ver <- paste0("_", lower, "_to_", upper)
+      ver <- gsub("\\.", "_", paste0("_", ver))
       fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
-      r <- rast(ncols=3, nrows=2, vals=1:6)
+        r <- rast(ncols=3, nrows=2, vals=1:6)
       cls <- data.frame(id=1:6, class=LETTERS[1:6])
       levels(r) <- cls
 
       announce_snapshot_file(name = basename(fil))
-      expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
-        clearPlot()
-        Plot(r, col = "Reds")
-        dev.off()
-        fil
-      })
+      if (getRversion() < upper && getRversion() >= lower)
+        expect_snapshot_file({
+          png(file = fil, width = 800, height = 600)
+          clearPlot()
+          Plot(r, col = "Reds")
+          dev.off()
+          fil
+        })
     }
   }
 
 })
+
 
