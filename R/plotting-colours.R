@@ -154,15 +154,16 @@ getColors <- function(object) {
         nrLevs <- NROW(levs)
 
         pal <- colorRampPalette(value, alpha = TRUE, ...)
-        if (n != nrLevs) {
+        if (n != nrLevs || n != length(value)) {
           vals <- pal(n)
         } else {
           vals <- value
         }
-        if (isRaster(object))
+        if (isRaster(object)) {
           object@legend@colortable <- pal(n)
-        else
+        } else {
           terra::coltab(object) <- data.frame(value = levs[[id]], col = vals)
+        }
 
       }
     } else {
