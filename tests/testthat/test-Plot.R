@@ -990,7 +990,7 @@ test_that("Issue 20; arr working", {
   fil <- file.path(tmpdir, fil)
   # Mixing base and grid
   announce_snapshot_file(name = basename(fil))
-  if (.Platform$OS.type == "windows")
+  if (.Platform$OS.type == "windows" && getRversion() >= "4.4")
     expect_snapshot_file({
       png(file = fil, width = 800, height = 600)
       clearPlot()
