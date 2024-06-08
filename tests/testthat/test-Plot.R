@@ -1008,3 +1008,53 @@ test_that("Issue 20; arr working", {
     })
 
 })
+
+test_that("Issue 32 Plot of factors when lower case id used", {
+
+  prevLastPlotNumber <- 51
+  testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
+
+  for (fn in 1:2) {
+    # ver <- paste0("_", c("4.4", "4.3")[(getRversion() < "4.4.0") + 1])
+    ver <- ""
+    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
+
+    r <- rast(ncols=3, nrows=2, vals=1:6)
+    col <- if(fn == 1) rainbow(6, end=.9) else colorRampPalette(c("light green", "dark green"))(6)
+    coltb <- data.frame(value=1:6, col=col)
+    coltab(r) <- coltb
+    cls <- data.frame(id=1:6, class=LETTERS[1:6])
+    levels(r) <- cls
+
+    announce_snapshot_file(name = basename(fil))
+    #if (.Platform$OS.type == "windows" && getRversion() >= "4.4")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      clearPlot()
+      Plot(r, new = TRUE)
+      dev.off()
+      fil
+    })
+  }
+
+  for (fn in 3) {
+    # ver <- paste0("_", c("4.4", "4.3")[(getRversion() < "4.4.0") + 1])
+    ver <- ""
+    fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
+    r <- rast(ncols=3, nrows=2, vals=1:6)
+    cls <- data.frame(id=1:6, class=LETTERS[1:6])
+    levels(r) <- cls
+
+    announce_snapshot_file(name = basename(fil))
+    #if (.Platform$OS.type == "windows" && getRversion() >= "4.4")
+    expect_snapshot_file({
+      png(file = fil, width = 800, height = 600)
+      clearPlot()
+      Plot(r, col = "Reds")
+      dev.off()
+      fil
+    })
+  }
+
+})
+
