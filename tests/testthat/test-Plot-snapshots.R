@@ -483,11 +483,11 @@ test_that("Plot with base is not error-free", {
       })
   }
 
-  if (requireNamespace("ggplot2")) {
     for (os in oses) {
       fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
       announce_snapshot_file(name = basename(fil))
-      if (correctOS(os))
+      if (requireNamespace("ggplot2", quietly = TRUE)) {
+        if (correctOS(os))
         expect_snapshot_file({
           png(file = fil, width = 800, height = 600)
           clearPlot()
@@ -665,19 +665,14 @@ test_that("Plot lists", {
       })
   }
 
-
-  set.seed(123)
-  if (requireNamespace("ggplot2")) {
-    # fil <- paste0("test", prevLastPlotNumber + 2 ,".png")
-    # fil <- file.path(tmpdir, fil)
-    gg <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
-    gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
-    b <- list(gg = gg, gg1 = gg1)
-    # png(file = file.path(tmpdir, "test.png"), width = 400, height = 300)
-    for (os in oses) {
-      fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
-      announce_snapshot_file(name = basename(fil))
-      if (correctOS(os))
+  for (os in oses) {
+    fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
+    announce_snapshot_file(name = basename(fil))
+    if (correctOS(os)) {
+      if (requireNamespace("ggplot2", quietly = TRUE)) {
+        gg <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
+        gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
+        b <- list(gg = gg, gg1 = gg1)
         expect_snapshot_file({
           png(file = fil, width = 800, height = 600)
           clearPlot()
@@ -687,6 +682,7 @@ test_that("Plot lists", {
           dev.off()
           fil
         })
+      }
     }
   }
 

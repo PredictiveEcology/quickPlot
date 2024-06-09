@@ -207,7 +207,7 @@ test_that("Plot 1 is not error-free", {
   clearPlot()
 
 
-  if (requireNamespace("ggplot2")) {
+  if (requireNamespace("ggplot2", quietly = TRUE)) {
     suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
                                                    geom = "histogram")) # warning is about deprecation
     expect_no_error(Plot(ggplot87654))
