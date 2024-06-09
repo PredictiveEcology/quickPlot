@@ -1,5 +1,5 @@
 testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt = "",
-                     opts = NULL, dev = FALSE) {
+                     opts = NULL, dev = FALSE, envirHere = parent.frame()) {
 
   set.randomseed()
 
@@ -38,7 +38,11 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   }
   withr::local_dir(tmpdir, .local_envir = pf)
 
-  out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache))
+  desc <- get("desc", whereInStack("desc"))
+  counter <- 0
+  out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache,
+                          desc = desc, counter = counter,
+                          envirHere = envirHere))
   list2env(out, envir = pf)
   if (isTRUE(dev) && interactive() && !isRstudioServer())
     dev()
@@ -75,3 +79,13 @@ filName <- function(df, verRow, tmpdir, prevLastPlotNumber, fn) {
 }
 
 oses <- c("Win", "Linux")
+
+fn <- function(tmpdir, desc, counter, os, envir = parent.frame()) {
+  fil <- file.path(tmpdir, paste0(desc, counter, os,".png"))
+  counter <- counter + 1
+  assign("counter", counter, envir = envir)
+  fil
+}
+
+correctOS <- function(os)
+  (os %in% "Win" && isWindows()) || os %in% "Linux" && isLinux()
