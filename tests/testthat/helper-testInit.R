@@ -39,6 +39,7 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   withr::local_dir(tmpdir, .local_envir = pf)
 
   desc <- get("desc", whereInStack("desc"))
+  desc <- gsub(" ", "_", desc)
   counter <- 0
   out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache,
                           desc = desc, counter = counter,
