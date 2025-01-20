@@ -13,20 +13,20 @@ Description: A high-level plotting system, compatible with `ggplot2` objects,
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 1.0.2.9003
-Date: 2024-06-08
+Version: 1.0.2.9004
+Date: 2025-01-20
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
            role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
-    role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
+           role = "aut", comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
     person("His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada",
-    role = "cph")
+           role = "cph")
     )
 Depends:
     R (>= 4.1)
 Imports:
-    data.table (>= 1.10.4),
+    data.table,
     fpCompare,
     grDevices,
     grid,
@@ -54,7 +54,7 @@ VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
 ByteCompile: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Collate: 
     'environment.R'
     'plotting-classes.R'

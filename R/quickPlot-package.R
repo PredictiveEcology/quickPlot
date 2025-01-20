@@ -12,9 +12,7 @@
 #'
 "_PACKAGE"
 
-################################################################################
-# data documentation
-#
+## data documentation
 
 #' Dummy maps included with `quickPlot`
 #'
@@ -43,11 +41,22 @@
 #' @format raster
 NULL
 
-################################################################################
-# package imports
-# See \url{https://r-pkgs.had.co.nz/namespace.html#imports}
+## package imports (see \url{https://r-pkgs.had.co.nz/namespace.html#imports})
 
 #' @import graphics
 #' @import grid
 #' @import methods
+NULL
+
+## usethis namespace: start
+#' @importFrom data.table data.table
+#' @importFrom data.table :=
+#' @importFrom data.table .SD
+#' @importFrom data.table .BY
+#' @importFrom data.table .N
+#' @importFrom data.table .I
+#' @importFrom data.table .GRP
+#' @importFrom data.table .NGRP
+#' @importFrom data.table .EACHI
+## usethis namespace: end
 NULL

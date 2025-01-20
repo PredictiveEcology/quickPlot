@@ -1857,12 +1857,11 @@ setMethod(
 #'
 #' @param ...     Additional arguments. None currently implemented.
 #'
-#' @author Eliot McIntire
-#' @export
 #' @inheritParams Plot
-#' @importFrom data.table ':=' data.table
-#' @importFrom grDevices as.raster
-#' @importFrom grid gpar gTree gList rasterGrob textGrob grid.draw
+#'
+#' @author Eliot McIntire
+#'
+#' @export
 #' @keywords internal
 #' @rdname plotGrob
 #'
@@ -1874,7 +1873,8 @@ setMethod(
            verbose = getOption("quickPlot.verbose")) {
     UseMethod(".plotGrob")
     # standardGeneric(".plotGrob")
-  }# )
+  }
+# )
 
 #' @export
 .plotGrob.default <- function(grobToPlot, col, real, size, minv, maxv,
@@ -3033,4 +3033,3 @@ adjustGridFIG <- function(gf, nCols, nRows, wh) {
   }
   gf
 }
-

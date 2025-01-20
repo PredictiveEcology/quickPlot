@@ -9,17 +9,17 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' If a named list, the names either represent a different original object in the
 #' calling environment and that will be used, or if the names don't exist in the
 #' calling environment, then they will be copied to `.quickPlotEnv` for reuse later.
-#' It can also handle `ggplot2` objects or `base::histogram` objects
-#' created via call to `exHist <- hist(1:10, plot = FALSE)`. It can also take
-#' arguments as if it were a call to `plot`. In this latter
-#' case, the user should be explicit about naming the plot area using `addTo`.
+#' It can also handle \pkg{ggplot2} objects or `base::histogram` objects
+#' created via call to `exHist <- hist(1:10, plot = FALSE)`.
+#' It can also take arguments as if it were a call to `plot`.
+#' In this latter case, the user should be explicit about naming the plot area using `addTo`.
 #' Customization of the `ggplot2` elements can be done as a normal
 #' `ggplot2` plot, then added with `Plot(ggplotObject)`.
 #'
 #' **NOTE:** Plot uses the \pkg{grid} package; therefore, it is NOT compatible
 #' with base R graphics. Also, because it does not by default wipe the plotting device
-#' before plotting, a call to [clearPlot()] is helpful to resolve
-#' many errors. Careful use of the other device tools, such as `dev.off()` and
+#' before plotting, a call to [clearPlot()] is helpful to resolve many errors.
+#' Careful use of the other device tools, such as `dev.off()` and
 #' `dev.list()` might also clear problems that may arise.
 #'
 #' If `new = TRUE`, a new plot will be generated, but only in the figure region that
@@ -48,7 +48,7 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' In other words, only enough information is used to uniquely identify the plot.
 #'
 #' For modularity, `Plot` must have access to the original objects that were plotted.
-#' These objects will be used if a subsequent Plot event forces a rearrangement of the plot device.
+#' These objects will be used if subsequent `Plot` events forces a rearrangement of the plot device.
 #' Rather than saving all the plot information (including the data) at each `Plot` call
 #' (this is generally too much data to constantly make copies),
 #' the function saves a pointer to the original R object. If the plot needs
@@ -62,7 +62,6 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' of objects, Plot will either create a link to objects with those names in the
 #' calling environment (e.g., `.GlobalEnv`) or, if they do not exist, then `Plot`
 #' will make a copy in the hidden `.quickPlotEnv` for later reuse.
-#'
 #'
 #' `cols` is a vector of colours that can be understood directly, or by
 #' [`colorRampPalette()`][grDevices::colorRamp], such as `c("orange", "blue")`,

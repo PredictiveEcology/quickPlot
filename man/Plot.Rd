@@ -194,18 +194,18 @@ These can be provided as individual objects, or a named list.
 If a named list, the names either represent a different original object in the
 calling environment and that will be used, or if the names don't exist in the
 calling environment, then they will be copied to \code{.quickPlotEnv} for reuse later.
-It can also handle \code{ggplot2} objects or \code{base::histogram} objects
-created via call to \code{exHist <- hist(1:10, plot = FALSE)}. It can also take
-arguments as if it were a call to \code{plot}. In this latter
-case, the user should be explicit about naming the plot area using \code{addTo}.
+It can also handle \pkg{ggplot2} objects or \code{base::histogram} objects
+created via call to \code{exHist <- hist(1:10, plot = FALSE)}.
+It can also take arguments as if it were a call to \code{plot}.
+In this latter case, the user should be explicit about naming the plot area using \code{addTo}.
 Customization of the \code{ggplot2} elements can be done as a normal
 \code{ggplot2} plot, then added with \code{Plot(ggplotObject)}.
 }
 \details{
 \strong{NOTE:} Plot uses the \pkg{grid} package; therefore, it is NOT compatible
 with base R graphics. Also, because it does not by default wipe the plotting device
-before plotting, a call to \code{\link[=clearPlot]{clearPlot()}} is helpful to resolve
-many errors. Careful use of the other device tools, such as \code{dev.off()} and
+before plotting, a call to \code{\link[=clearPlot]{clearPlot()}} is helpful to resolve many errors.
+Careful use of the other device tools, such as \code{dev.off()} and
 \code{dev.list()} might also clear problems that may arise.
 
 If \code{new = TRUE}, a new plot will be generated, but only in the figure region that
@@ -234,7 +234,7 @@ object name, then, for simplicity, only the object name will be used.
 In other words, only enough information is used to uniquely identify the plot.
 
 For modularity, \code{Plot} must have access to the original objects that were plotted.
-These objects will be used if a subsequent Plot event forces a rearrangement of the plot device.
+These objects will be used if subsequent \code{Plot} events forces a rearrangement of the plot device.
 Rather than saving all the plot information (including the data) at each \code{Plot} call
 (this is generally too much data to constantly make copies),
 the function saves a pointer to the original R object. If the plot needs
