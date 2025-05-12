@@ -3,10 +3,12 @@ test_that("Unit tests for image content is not error-free", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-    # unlink(tmpdir, recursive = TRUE)
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+      # unlink(tmpdir, recursive = TRUE)
+    },
+    add = TRUE) # nolint
 
   ncol <- 3
   nrow <- 4
@@ -16,7 +18,7 @@ test_that("Unit tests for image content is not error-free", {
   # Test legend with a factor raster
   set.seed(24334)
   ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
-                     ncol = ncol, nrow = nrow))
+    ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = 1:nLevels, Class = paste0("Level", 1:nLevels))
 
   # New Section
@@ -25,11 +27,13 @@ test_that("Unit tests for image content is not error-free", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       testthat::expect_snapshot_file(
-        { png(file = fil, width = 400, height = 300)
+        {
+          png(file = fil, width = 400, height = 300)
           clearPlot()
           Plot(ras, new = TRUE)
           dev.off()
-          fil},
+          fil
+        },
         basename(fil))
   }
 
@@ -37,7 +41,7 @@ test_that("Unit tests for image content is not error-free", {
   # Test legend with a factor raster
   set.seed(24334)
   ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
-                     ncol = ncol, nrow = nrow))
+    ncol = ncol, nrow = nrow))
   for (os in oses) {
     fil <- fn(tmpdir, desc, counter, os)
     announce_snapshot_file(name = basename(fil))
@@ -47,7 +51,8 @@ test_that("Unit tests for image content is not error-free", {
         clearPlot()
         Plot(ras)
         dev.off()
-        fil})
+        fil
+      })
   }
 
   # test non contiguous factor raster
@@ -57,7 +62,7 @@ test_that("Unit tests for image content is not error-free", {
   set.seed(24334)
   levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
   ras <- rast(matrix(sample(levs, size = N, replace = TRUE),
-                     ncol = ncol, nrow = nrow))
+    ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
   ras <- setColors(ras, n = 4, c("red", "orange", "blue", "yellow"))
 
@@ -79,9 +84,11 @@ test_that("Unit tests for image content is not error-free", {
 test_that("Unit tests for plotting colors", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
   rasts <- list()
 
@@ -121,13 +128,17 @@ test_that("Unit tests for plotting colors", {
 # ## test.png 10 to 11
 test_that("Unit tests for internal functions in Plot", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
 
   # Test .makeColorMatrix for subsampled rasters
@@ -166,7 +177,7 @@ test_that("Unit tests for internal functions in Plot", {
 
   # envirHere <- environment()
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
-    val <-  (testNum - 1 ) %% (length(rasts) / 2) + 1
+    val <-  (testNum - 1) %% (length(rasts) / 2) + 1
     for (os in oses) {
       fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
       announce_snapshot_file(name = basename(fil))
@@ -178,11 +189,11 @@ test_that("Unit tests for internal functions in Plot", {
           clearPlot()
           set.seed(123)
           switch(val,
-                 `1` = Plot(rasts[[1]], new = TRUE, speedup = 3.21e4),
-                 `2` = suppressWarnings(Plot(rasts[[2]], new = TRUE, speedup = 2e5)),
-                 `3` = Plot(rasts[[3]], legendRange = 0:5, new = TRUE),
-                 `4` = Plot(rasts[[4]], visualSqueeze = 0.88, title = FALSE,
-                            legend = FALSE, cols = colorRampPalette(c("black", "red"))(3))
+            `1` = Plot(rasts[[1]], new = TRUE, speedup = 3.21e4),
+            `2` = suppressWarnings(Plot(rasts[[2]], new = TRUE, speedup = 2e5)),
+            `3` = Plot(rasts[[3]], legendRange = 0:5, new = TRUE),
+            `4` = Plot(rasts[[4]], visualSqueeze = 0.88, title = FALSE,
+              legend = FALSE, cols = colorRampPalette(c("black", "red"))(3))
 
           )
           dev.off()
@@ -195,13 +206,17 @@ test_that("Unit tests for internal functions in Plot", {
 ## block E 15 to
 test_that("Plot 2 is not error-free", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
   rasts <- list()
 
@@ -215,7 +230,7 @@ test_that("Plot 2 is not error-free", {
   rasts[[1]] <- r # Expect rainbow colors, lots of peach, little green
 
   ## -71 < vals < 1606
-  rasts[[2]] <- r - 200# Expect legend from below 0 to just above 1500
+  rasts[[2]] <- r - 200 # Expect legend from below 0 to just above 1500
 
   # Expect legend from below 0.2 to exactly 1
   rasts[[3]] <- r / max(as.numeric(values(r)), na.rm = TRUE)
@@ -253,8 +268,8 @@ test_that("Plot 2 is not error-free", {
   rasts[[11]][] <- sample(31:40, replace = TRUE, size = 900)
 
   rasts[[12]] <- rast(xmin = 50, xmax = 50 + 3 * 100,
-                      ymin = 50, ymax = 50 + 3 * 100,
-                      res = c(100, 100), val = 1)
+    ymin = 50, ymax = 50 + 3 * 100,
+    res = c(100, 100), val = 1)
   rasts[[12]][1] <- -1
   rasts[[12]][2:6] <- 2
 
@@ -282,7 +297,7 @@ test_that("Plot 2 is not error-free", {
 
   # envirHere <- environment()
   Map(testNum = seq_along(rasts), function(testNum) {
-    val <-  (testNum - 1 ) %% (length(rasts) / (1 + hasRasterLayer)) + 1 # this tests whether SpatRaster is same as Raster
+    val <-  (testNum - 1) %% (length(rasts) / (1 + hasRasterLayer)) + 1 # this tests whether SpatRaster is same as Raster
     for (os in oses) {
       fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
       announce_snapshot_file(name = basename(fil))
@@ -301,8 +316,8 @@ test_that("Plot 2 is not error-free", {
 
   # envirHere <- environment()
   Map(testNum = seq_along(rasts), function(testNum) {
-    val <-  (testNum - 1 ) %% (length(rasts) / (1 + hasRasterLayer)) + 1
-    if (val %in% c(7,8,10,11,12,14)) {
+    val <-  (testNum - 1) %% (length(rasts) / (1 + hasRasterLayer)) + 1
+    if (val %in% c(7, 8, 10, 11, 12, 14)) {
       for (os in oses) {
         fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
         announce_snapshot_file(name = basename(fil))
@@ -313,54 +328,54 @@ test_that("Plot 2 is not error-free", {
             set.seed(123)
             switch(as.character(val),
 
-                   "7" = Plot(rasts[[testNum]], new = TRUE, zero.color = "black"), # black zeros
-                   "8" = {
-                     a <- testNum
-                     Plot(rasts[[testNum]], new = TRUE, zero.color = "black") # black zeros, some scattered
-                     ## black zeros, plus legend -10 to 40
-                     Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 40)) # legend changed
-                   },
-                   "10" = {
-                     a <- testNum
-                     Plot(rasts[[testNum]], new = TRUE, zero.color = "black")# should be no black because no zeros
-                     Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 200))
-                   },
+              "7" = Plot(rasts[[testNum]], new = TRUE, zero.color = "black"), # black zeros
+              "8" = {
+                a <- testNum
+                Plot(rasts[[testNum]], new = TRUE, zero.color = "black") # black zeros, some scattered
+                ## black zeros, plus legend -10 to 40
+                Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 40)) # legend changed
+              },
+              "10" = {
+                a <- testNum
+                Plot(rasts[[testNum]], new = TRUE, zero.color = "black") # should be no black because no zeros
+                Plot(rasts[[a]], new = TRUE, zero.color = "black", legendRange = c(-10, 200))
+              },
 
-                   ## should be slim black in legend, none in fig
-                   #
+              ## should be slim black in legend, none in fig
+              #
 
-                   ## Test legend that is pre-set, even with various types of rasters
-                   ## should be dark red raster, legend from 0 to 200
-                   "11" = {
-                     clearPlot()
-                     # should be mostly red raster, a bit of green, legend 0 to 200
-                     Plot(rasts[[11]], legendRange = c(0, 200), new = TRUE, cols = c("red", "green"))
-                     # should be mostly almost entirely red raster, legend below 0 to 2000
-                     f <- e <- d <- b <- a <- 11
-                     Plot(rasts[[a]], legendRange = c(-200, 2000), new = TRUE, cols = c("red", "green"))
-                     Plot(rasts[[b]], new = TRUE)
-                     Plot(rasts[[d]], new = TRUE, legendRange = c(0, 40)) # legend from 0 to 40, mostly green
-                     Plot(rasts[[e]], new = TRUE, zero.color = "black") # no black
-                     Plot(rasts[[f]], new = TRUE, zero.color = "black", legendRange = c(35, 40)) # lots of white
-                   },
+              ## Test legend that is pre-set, even with various types of rasters
+              ## should be dark red raster, legend from 0 to 200
+              "11" = {
+                clearPlot()
+                # should be mostly red raster, a bit of green, legend 0 to 200
+                Plot(rasts[[11]], legendRange = c(0, 200), new = TRUE, cols = c("red", "green"))
+                # should be mostly almost entirely red raster, legend below 0 to 2000
+                f <- e <- d <- b <- a <- 11
+                Plot(rasts[[a]], legendRange = c(-200, 2000), new = TRUE, cols = c("red", "green"))
+                Plot(rasts[[b]], new = TRUE)
+                Plot(rasts[[d]], new = TRUE, legendRange = c(0, 40)) # legend from 0 to 40, mostly green
+                Plot(rasts[[e]], new = TRUE, zero.color = "black") # no black
+                Plot(rasts[[f]], new = TRUE, zero.color = "black", legendRange = c(35, 40)) # lots of white
+              },
 
-                   ## legend Should have all colors in legend
-                   "12" = {
-                     a <- 12
-                     clearPlot()
-                     Plot(rasts[[12]], new = TRUE)
-                     Plot(rasts[[a]], new = TRUE, cols = c("red", "yellow", "green", "blue"))
-                   },
+              ## legend Should have all colors in legend
+              "12" = {
+                a <- 12
+                clearPlot()
+                Plot(rasts[[12]], new = TRUE)
+                Plot(rasts[[a]], new = TRUE, cols = c("red", "yellow", "green", "blue"))
+              },
 
-                   "14" = {
-                     # zero.color on Integer numbers should work - expect BLACK both in legend and in a few cells
-                     a <- 14
-                     clearPlot()
-                     Plot(rasts[[14]], new = TRUE, zero.color = "black")
-                     # zero.color on Integer numbers should work - expect red both in legend and in a few cells
-                     Plot(rasts[[a]], zero.color = "red")
+              "14" = {
+                # zero.color on Integer numbers should work - expect BLACK both in legend and in a few cells
+                a <- 14
+                clearPlot()
+                Plot(rasts[[14]], new = TRUE, zero.color = "black")
+                # zero.color on Integer numbers should work - expect red both in legend and in a few cells
+                Plot(rasts[[a]], zero.color = "red")
 
-                   }
+              }
             )
             dev.off()
             fil
@@ -395,16 +410,18 @@ test_that("setColors is not error-free", {
   # skip("Apparently color palettes are not universal")
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
   set.seed(1234)
   ras1 <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
   ras2 <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
   rasStack <- c(ras1, ras2)
   expect_no_error(setColors(rasStack, n = c(ras1 = 3, ras2 = 5)) <-
-                    list(ras1 = c("red", "blue", "green"), ras2 = c("purple", "yellow")))
+    list(ras1 = c("red", "blue", "green"), ras2 = c("purple", "yellow")))
   names(rasStack) <- c("ras1", "ras2")
   expect_no_error({
     setColors(rasStack, n = c(ras1 = 3, ras2 = 5)) <-
@@ -414,9 +431,9 @@ test_that("setColors is not error-free", {
   expect_true(identical(
     getColors(rasStack),
     structure(list(ras1 = c("#FF0000FF", "#0000FFFF", "#00FF00FF"),
-                   ras2 = c("#A020F0FF", "#B757B3FF", "#CF8F78FF", "#E7C73CFF",
-                            "#FFFF00FF")),
-              .Names = c("ras1", "ras2"))
+      ras2 = c("#A020F0FF", "#B757B3FF", "#CF8F78FF", "#E7C73CFF",
+        "#FFFF00FF")),
+    .Names = c("ras1", "ras2"))
   ))
 
   ras3 <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -436,7 +453,7 @@ test_that("setColors is not error-free", {
       ras1 = c("#FF0000FF", "#0000FFFF", "#00FF00FF"),
       ras2 = c("#A020F0FF", "#B757B3FF", "#CF8F78FF", "#E7C73CFF", "#FFFF00FF"),
       ras3 = c("#FFA500FF", "#FFD200FF", "#FFFF00FF")),
-      .Names = c("ras1", "ras2", "ras3"))
+    .Names = c("ras1", "ras2", "ras3"))
   ))
 })
 
@@ -444,9 +461,11 @@ test_that("setColors is not error-free", {
 test_that("Plot with base is not error-free", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
   set.seed(123)
   rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
@@ -474,7 +493,7 @@ test_that("Plot with base is not error-free", {
         Plot(a, addTo = "histogram", axes = "L", col = "#33EEAA33", xlim = c(-3, 3))
         a <- hist(rnorm(100), plot = FALSE)
         Plot(a, addTo = "histogram", axes = FALSE, col = paste0("#1133FF", "33"),
-             xlim = c(-3, 3), xlab = "", ylab = "")
+          xlim = c(-3, 3), xlab = "", ylab = "")
         ras2 <- rast(ras)
         ras2[] <- sample(1:8)
         Plot(ras2)
@@ -483,17 +502,17 @@ test_that("Plot with base is not error-free", {
       })
   }
 
-    for (os in oses) {
-      fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
-      announce_snapshot_file(name = basename(fil))
-      if (requireNamespace("ggplot2", quietly = TRUE)) {
-        if (correctOS(os))
+  for (os in oses) {
+    fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
+    announce_snapshot_file(name = basename(fil))
+    if (requireNamespace("ggplot2", quietly = TRUE)) {
+      if (correctOS(os))
         expect_snapshot_file({
           png(file = fil, width = 800, height = 600)
           clearPlot()
           set.seed(123)
           gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = 1:10)) +
-            ggplot2::geom_point(ggplot2::aes(x,y))
+            ggplot2::geom_point(ggplot2::aes(x, y))
           clearPlot()
           suppressMessages(Plot(gg1, title = "gg plot"))
           Plot(ras1, ras2, ras3)
@@ -520,11 +539,11 @@ test_that("Plot with base is not error-free", {
         Plot(a, b, axes = TRUE, addTo = "second", visualSqueeze = 0.6)
         Plot(1:10, axes = FALSE, addTo = "third", visualSqueeze = 0.6)
         Plot(1:10, 1:10, axes = "L", addTo = "fourth", visualSqueeze = 0.6,
-             main = "test4", title = FALSE)
+          main = "test4", title = FALSE)
         Plot(1:10, 1:10, axes = TRUE, addTo = "fourth", visualSqueeze = 0.6,
-             main = "test4", title = "test5")
+          main = "test4", title = "test5")
         Plot(1:10, 1:10, axes = TRUE, addTo = "fifth", visualSqueeze = 0.6,
-             main = "test4", title = "test5")
+          main = "test4", title = "test5")
         Plot(ras)
         dev.off()
         fil
@@ -612,7 +631,7 @@ test_that("Plot - going through package coverage", {
   clearPlot(force = TRUE)
 
   ## do.call version:
-  #expect_error(do.call(Plot, list(ras = ras)), "Currently,") # nolint
+  # expect_error(do.call(Plot, list(ras = ras)), "Currently,") # nolint
 
   try(dev.off())
 })
@@ -628,7 +647,8 @@ test_that("Plot lists", {
     ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1
   )
   ras1 <- ras2 <- ras3 <- ras4 <- rasOrig
-  a <- list(); for (i in 1:4) a[[paste0("ras", i)]] <- get(paste0("ras", i))
+  a <- list()
+  for (i in 1:4) a[[paste0("ras", i)]] <- get(paste0("ras", i))
 
   Sr1 <- cbind(object = 1, cbind(c(2, 4, 4, 1, 2), c(2, 3, 5, 4, 2)) * 20 - 50)
   Sr2 <- cbind(object = 2, cbind(c(5, 4, 2, 5), c(2, 3, 2, 2)) * 20 - 50)
@@ -651,10 +671,10 @@ test_that("Plot lists", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
 
-      # fil <- paste0("test", prevLastPlotNumber + 1 ,".png")
-      # fil <- file.path(tmpdir, fil)
-      # announce_snapshot_file(name = basename(fil))
-      # if (isLinux()) {
+    # fil <- paste0("test", prevLastPlotNumber + 1 ,".png")
+    # fil <- file.path(tmpdir, fil)
+    # announce_snapshot_file(name = basename(fil))
+    # if (isLinux()) {
       expect_snapshot_file({
         png(file = fil, width = 800, height = 600)
         clearPlot()
@@ -743,7 +763,7 @@ test_that("Issue 20; arr working", {
         clearPlot()
         Plot(maps$DEM, maps$forestCover, maps$forestAge)
         Plot(maps$habitatQuality)  ## I get a 2 row 2 column layout
-        Plot(maps$habitatQuality, arr = c(1,4), new = TRUE) ## doesn't change the layout.
+        Plot(maps$habitatQuality, arr = c(1, 4), new = TRUE) ## doesn't change the layout.
         dev.off()
         fil
       })
@@ -756,11 +776,11 @@ test_that("Issue 32 Plot of factors when lower case id used", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   for (colPalette in 1:2) {
-    r <- rast(ncols=3, nrows=2, vals=1:6)
-    col <- if(colPalette == 1) rainbow(6, end=.9) else colorRampPalette(c("light green", "dark green"))(6)
-    coltb <- data.frame(value=1:6, col=col)
+    r <- rast(ncols = 3, nrows = 2, vals = 1:6)
+    col <- if (colPalette == 1) rainbow(6, end = .9) else colorRampPalette(c("light green", "dark green"))(6)
+    coltb <- data.frame(value = 1:6, col = col)
     coltab(r) <- coltb
-    cls <- data.frame(id=1:6, class=LETTERS[1:6])
+    cls <- data.frame(id = 1:6, class = LETTERS[1:6])
     levels(r) <- cls
 
     for (os in oses) {
@@ -778,8 +798,8 @@ test_that("Issue 32 Plot of factors when lower case id used", {
   }
 
   for (fn in 3) {
-    r <- rast(ncols=3, nrows=2, vals=1:6)
-    cls <- data.frame(id=1:6, class=LETTERS[1:6])
+    r <- rast(ncols = 3, nrows = 2, vals = 1:6)
+    cls <- data.frame(id = 1:6, class = LETTERS[1:6])
     levels(r) <- cls
 
     for (os in oses) {
@@ -797,6 +817,3 @@ test_that("Issue 32 Plot of factors when lower case id used", {
   }
 
 })
-
-
-

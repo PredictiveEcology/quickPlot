@@ -1,12 +1,14 @@
 test_that("Plot 1 is not error-free", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = TRUE)
-  on.exit({
-    if (length(dev.list()) > 0) dev.off()
-  }, add = TRUE) # nolint
+  on.exit(
+    {
+      if (length(dev.list()) > 0) dev.off()
+    },
+    add = TRUE) # nolint
 
   set.seed(1234)
   ras <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
-                vals = sample(1:4, replace = TRUE, size = 100), res = 1)
+    vals = sample(1:4, replace = TRUE, size = 100), res = 1)
   objs <- list()
   objs$rasts$DEMs <- list(ras)
 
@@ -18,21 +20,21 @@ test_that("Plot 1 is not error-free", {
 
   objs$rasts$lands[[1]] <- c(objs$rasts$DEMs[[1]], objs$rasts$habQuals[[1]])
 
-
   objs$vects$caribous[[1]] <- terra::vect(type = "points",
     x = cbind(x = stats::runif(1e1, 0, 10), y = stats::runif(1e1, 0, 10))
   )
 
-  x1 <- rbind(c(-180,-20), c(-140,55), c(10, 0), c(-140,-60))
-  x2 <- rbind(c(-10,0), c(140,60), c(160,0), c(140,-55))
-  x3 <- rbind(c(-125,0), c(0,60), c(40,5), c(15,-45))
-  hole <- rbind(c(80,0), c(105,13), c(120,2), c(105,-13))
-  z <- rbind(cbind(object=1, part=1, x1, hole=0), cbind(object=2, part=1, x3, hole=0),
-             cbind(object=3, part=1, x2, hole=0), cbind(object=3, part=1, hole, hole=1))
-  colnames(z)[3:4] <- c('x', 'y')
+  x1 <- rbind(c(-180, -20), c(-140, 55), c(10, 0), c(-140, -60))
+  x2 <- rbind(c(-10, 0), c(140, 60), c(160, 0), c(140, -55))
+  x3 <- rbind(c(-125, 0), c(0, 60), c(40, 5), c(15, -45))
+  hole <- rbind(c(80, 0), c(105, 13), c(120, 2), c(105, -13))
+  z <- rbind(
+    cbind(object = 1, part = 1, x1, hole = 0), cbind(object = 2, part = 1, x3, hole = 0),
+    cbind(object = 3, part = 1, x2, hole = 0), cbind(object = 3, part = 1, hole, hole = 1)
+  )
+  colnames(z)[3:4] <- c("x", "y")
 
   objs$vects$polys[[1]] <- vect(z, "polygons")
-
 
   # Test polygon with > 1e3 points to test the speedup parameter
   r <- 1
@@ -42,7 +44,7 @@ test_that("Plot 1 is not error-free", {
   a <- seq(0, 2 * pi, length.out = N)
   x <- cx + r * cos(a)
   y <- cy + r * sin(a)
-  objs$vects$polysLrg[[1]] <- vect(cbind(object = 1, x,y), "polygons")
+  objs$vects$polysLrg[[1]] <- vect(cbind(object = 1, x, y), "polygons")
 
   # test SpatialLines
   l1 <- cbind(c(10, 2, 30), c(30, 2, 2))
@@ -132,12 +134,13 @@ test_that("Plot 1 is not error-free", {
     polys1 <- lapply(seq(M), function(m) {
       N <- 20
       adds <- rep(1:N, each = 4)
-      x <- rep((c(0,0,1,1) + m ) * N , N)
-      y <- rep(c(0,1,1,0), N) + adds
+      x <- rep((c(0, 0, 1, 1) + m) * N, N)
+      y <- rep(c(0, 1, 1, 0), N) + adds
       polyNum <- adds
       coords1 <- cbind(x, y, polyNum)
       polys1 <- sp::Polygons(by(coords1, polyNum, function(coo) {
-        list(sp::Polygon(coo[, 1:2]))}), paste0("ss", m))#[], paste0("s", unique(coo[, 3])))
+        list(sp::Polygon(coo[, 1:2]))
+      }), paste0("ss", m)) # [], paste0("s", unique(coo[, 3])))
 
       polys1
     })
@@ -209,7 +212,7 @@ test_that("Plot 1 is not error-free", {
 
   if (requireNamespace("ggplot2", quietly = TRUE)) {
     suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
-                                                   geom = "histogram")) # warning is about deprecation
+      geom = "histogram")) # warning is about deprecation
     expect_no_error(Plot(ggplot87654))
   }
 
@@ -234,4 +237,3 @@ test_that("Plot 1 is not error-free", {
     expect_no_error(rePlot())
   }
 })
-
