@@ -7,8 +7,10 @@ test_that("Plot 1 is not error-free", {
     add = TRUE) # nolint
 
   set.seed(1234)
-  ras <- rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
-    vals = sample(1:4, replace = TRUE, size = 100), res = 1)
+  ras <- rast(
+    xmin = 0, xmax = 10, ymin = 0, ymax = 10,
+    vals = sample(1:4, replace = TRUE, size = 100), resolution = 1
+  )
   objs <- list()
   objs$rasts$DEMs <- list(ras)
 
@@ -20,7 +22,8 @@ test_that("Plot 1 is not error-free", {
 
   objs$rasts$lands[[1]] <- c(objs$rasts$DEMs[[1]], objs$rasts$habQuals[[1]])
 
-  objs$vects$caribous[[1]] <- terra::vect(type = "points",
+  objs$vects$caribous[[1]] <- terra::vect(
+    type = "points",
     x = cbind(x = stats::runif(1e1, 0, 10), y = stats::runif(1e1, 0, 10))
   )
 
@@ -51,13 +54,18 @@ test_that("Plot 1 is not error-free", {
   l1a <- cbind(l1[, 1] + .05, l1[, 2] + .05)
   l2 <- cbind(c(1, 20, 3), c(10, 1.5, 1))
 
-  obj <- cbind(object = c(rep(1, NROW(l1)), rep(2, NROW(l1a)), rep(3, NROW(l2))),  rbind(rbind(l1, l1a), l2))
+  obj <- cbind(
+    object = c(rep(1, NROW(l1)), rep(2, NROW(l1a)), rep(3, NROW(l2))),
+    rbind(rbind(l1, l1a), l2)
+  )
   objs$vects$lins[[1]] <- terra::vect(obj, "lines")
 
 
   # Test points with > 1e3 points to test the speedup parameter
   # test speedup
-  objs$vects$caribousLrg[[1]] <- terra::vect(cbind(x = stats::runif(N, 0, 10), y = stats::runif(N, 0, 10)))
+  objs$vects$caribousLrg[[1]] <- terra::vect(cbind(
+    x = stats::runif(N, 0, 10), y = stats::runif(N, 0, 10)
+  ))
 
   # If any rearrangements are required, Plot searches for objects in Global Env
   # So all tests must run a clearPlot or a new = TRUE to be cleared to
@@ -209,10 +217,10 @@ test_that("Plot 1 is not error-free", {
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
 
-
   if (requireNamespace("ggplot2", quietly = TRUE)) {
-    suppressWarnings(ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3,
-      geom = "histogram")) # warning is about deprecation
+    suppressWarnings(
+      ggplot87654 <- ggplot2::qplot(stats::rnorm(1e3), binwidth = 0.3, geom = "histogram")
+    ) # warning is about deprecation
     expect_no_error(Plot(ggplot87654))
   }
 

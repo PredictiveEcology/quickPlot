@@ -27,7 +27,7 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   if (!is.null(opts))
     withr::local_options(opts, .local_envir = pf)
   td <- normalizePath(file.path(tempdir(), substr(basename(tempfile()), 5, 16)),
-                      mustWork = FALSE, winslash = "/")
+    mustWork = FALSE, winslash = "/")
   tmpdir <- withr::local_tempdir(tmpdir = td, .local_envir = pf)
   tmpCache <- withr::local_tempdir(tmpdir = tmpdir, .local_envir = pf)
   if (isTRUE(any(nzchar(tmpFileExt)))) {
@@ -42,8 +42,8 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   desc <- gsub(" ", "_", desc)
   counter <- 0
   out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache,
-                          desc = desc, counter = counter,
-                          envirHere = envirHere))
+    desc = desc, counter = counter,
+    envirHere = envirHere))
   list2env(out, envir = pf)
   if (isTRUE(dev) && interactive() && !isRstudioServer())
     dev()
@@ -65,24 +65,22 @@ upper <- c("5.10", "4.3.99")
 # ineqV <- c(">=", "<=")
 df <- data.frame(lower = lower, upper = upper)
 
-
 compareVersionW <- function(ineqV, verOrig, vers) {
   eval(parse(text = paste0("`", ineqV[match(verOrig, vers)], "`")))(getRversion(), verOrig)
 }
-
 
 filName <- function(df, verRow, tmpdir, prevLastPlotNumber, fn) {
   lower <- df$lower[verRow]
   upper <- df$upper[verRow]
   ver <- paste0("_", lower, "_to_", upper)
   ver <- gsub("\\.", "_", paste0("_", ver))
-  fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver,".png"))
+  fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver, ".png"))
 }
 
 oses <- c("Win", "Linux")
 
 fn <- function(tmpdir, desc, counter, os, envir = parent.frame()) {
-  fil <- file.path(tmpdir, paste0(desc, counter, os,".png"))
+  fil <- file.path(tmpdir, paste0(desc, counter, os, ".png"))
   counter <- counter + 1
   assign("counter", counter, envir = envir)
   fil
