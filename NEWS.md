@@ -1,6 +1,6 @@
 # quickPlot (development version)
 
-* none
+* drop support for R <= 4.2;
 
 # quickPlot 1.0.3
 
