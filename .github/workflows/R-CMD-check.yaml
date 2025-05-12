@@ -49,13 +49,6 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-            fastshp=?ignore
-
-      - name: Install additional package dependencies
-        run: |
-          pak::pkg_install("remotes")
-          remotes::install_github("s-u/fastshp")
-        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:

@@ -5,11 +5,6 @@
 #' when testing code, with the key benefit that visualizations are updated
 #' independently of one another.
 #'
-#' @note
-#'
-#' The suggested package \pkg{fastshp} can be installed with
-#' `install.packages("fastshp", repos = "https://rforge.net", type = "source")`.
-#'
 "_PACKAGE"
 
 ## data documentation

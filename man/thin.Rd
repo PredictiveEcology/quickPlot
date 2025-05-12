@@ -4,7 +4,7 @@
 \alias{thin}
 \alias{thnSpatialPolygons}
 \alias{thin.default}
-\title{Thin a polygon using \code{fastshp::thin}}
+\title{Thin a polygon}
 \usage{
 thin(
   x,
@@ -65,6 +65,8 @@ This will change the geometry, so it is not recommended for computation.
 This is similar to \code{sf::st_simplify},
 but faster (see examples) for large shapefiles, particularly if
 \code{returnDataFrame} is \code{TRUE}.
-\emph{\code{thin} will not attempt to preserve topology.}
-It is strictly for making smaller polygons for the (likely) purpose of visualizing more quickly.
+}
+\note{
+\emph{\code{thin} will not attempt to preserve topology};
+it is strictly for making smaller polygons for the (likely) purpose of visualizing more quickly.
 }
