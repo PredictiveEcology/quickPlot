@@ -35,11 +35,11 @@ and \code{dev.useRSGD(TRUE)} to use the RStudio graphics device.
 }
 \examples{
 \dontrun{
-  ## set option to avoid using Rstudio graphics device
-  dev.useRSGD(FALSE)
+## set option to avoid using Rstudio graphics device
+dev.useRSGD(FALSE)
 
-  ## open new plotting window
-  newPlot()
+## open new plotting window
+newPlot()
 }
 
 }

@@ -1,12 +1,12 @@
 test_that("Plotting types without visual checking works", {
   testInit("terra")
   r1 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
-                       vals = sample(1:4, replace = TRUE, size = 100), res = 1)
+    vals = sample(1:4, replace = TRUE, size = 100), resolution = 1)
   r2 <- terra::rast(xmin = 0, xmax = 10, ymin = 0, ymax = 10,
-                       vals = sample(1:4, replace = TRUE, size = 100), res = 1)
+    vals = sample(1:4, replace = TRUE, size = 100), resolution = 1)
   s1 <- terra::rast(c(layer.1 = r1, layer.2 = r2))
   sp1 <- terra::vect(cbind(x = stats::runif(10, 0, 10),
-                                 y = stats::runif(10, 0, 10)))
+    y = stats::runif(10, 0, 10)))
   if (interactive()) {
     clearPlot()
 
@@ -70,12 +70,10 @@ test_that("setColors with an NA", {
   set.seed(24334)
   levs <- (1:nLevels)[-((nLevels - 2):(nLevels - 1))] # nolint
   ras <- terra::rast(matrix(sample(levs, size = N, replace = TRUE),
-                       ncol = ncol, nrow = nrow))
+    ncol = ncol, nrow = nrow))
   ras[1] <- NA
   levels(ras) <- data.frame(ID = levs, Class = paste0("Level", levs))
   expect_silent({
     ras <- setColors(ras, n = 4, value = c("red", "orange", "blue", "yellow"))
   })
 })
-
-

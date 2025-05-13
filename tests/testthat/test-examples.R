@@ -1,5 +1,4 @@
 test_that("all exported functions have examples", {
-
   skip_on_ci()
   skip_on_cran()
   exFiles <- normalizePath(dir("../../man", full.names = TRUE))

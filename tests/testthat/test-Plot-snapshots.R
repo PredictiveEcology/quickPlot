@@ -1,4 +1,4 @@
-# # block B
+## block B
 test_that("Unit tests for image content is not error-free", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)

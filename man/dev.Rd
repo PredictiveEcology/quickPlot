@@ -32,7 +32,7 @@ If it does not exist, it opens it. If devices 1-5 don't exist they will be opene
 }
 \examples{
 \dontrun{
-  dev(4)
+dev(4)
 }
 
 }

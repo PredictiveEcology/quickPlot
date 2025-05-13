@@ -907,8 +907,11 @@ isQuickPlottables <- function(x) {
 
 isSpatial <- function(x) {
   res <- inherits(x, "Spatial")
-  if (res)
-    if (!requireNamespace("sp", quietly = TRUE)) stop("Please install.packages('sp') to use sp objects")
+  if (res) {
+    if (!requireNamespace("sp", quietly = TRUE)) {
+      stop("Please install.packages('sp') to use sp objects")
+    }
+  }
   res
 }
 
@@ -923,15 +926,21 @@ isVector <-  function(x) isSpatVector(x) || isSpatial(x) || isSF(x)
 isSpatialAny <- function(x) isGridded(x) || isVector(x)
 isSF <- function(x) {
   res <- inherits(x, c("sf", "sfc"))
-  if (res)
-    if (!requireNamespace("sf", quietly = TRUE)) stop("Please install.packages('sf') to use sf objects")
+  if (res) {
+    if (!requireNamespace("sf", quietly = TRUE)) {
+      stop("Please install.packages('sf') to use sf objects")
+    }
+  }
   res
 }
 
 isRaster <- function(x) {
   res <- inherits(x, "Raster")
-  if (res)
-    if (!requireNamespace("raster", quietly = TRUE)) stop("Please install.packages('raster') to use Raster objects")
+  if (res) {
+    if (!requireNamespace("raster", quietly = TRUE)) {
+      stop("Please install.packages('raster') to use Raster objects")
+    }
+  }
   res
 }
 

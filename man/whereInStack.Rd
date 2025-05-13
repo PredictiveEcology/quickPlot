@@ -45,7 +45,7 @@ findB() # Finds 2 because it is looking up the call stack, i.e., the user's pers
 
 # defined outside of findB2, so its enclosing environment is the same as findB2
 innerGet <- function(y) {
-   get("b")
+  get("b")
 }
 findB2 <- function(x) {
   b <- 2
