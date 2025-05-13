@@ -17,8 +17,7 @@ test_that("Unit tests for image content is not error-free", {
 
   # Test legend with a factor raster
   set.seed(24334)
-  ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
-    ncol = ncol, nrow = nrow))
+  ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE), ncol = ncol, nrow = nrow))
   levels(ras) <- data.frame(ID = 1:nLevels, Class = paste0("Level", 1:nLevels))
 
   # New Section
@@ -28,7 +27,7 @@ test_that("Unit tests for image content is not error-free", {
     if (correctOS(os))
       testthat::expect_snapshot_file(
         {
-          png(file = fil, width = 400, height = 300)
+          png(filename = fil, width = 400, height = 300)
           clearPlot()
           Plot(ras, new = TRUE)
           dev.off()
@@ -37,17 +36,15 @@ test_that("Unit tests for image content is not error-free", {
         basename(fil))
   }
 
-
   # Test legend with a factor raster
   set.seed(24334)
-  ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE),
-    ncol = ncol, nrow = nrow))
+  ras <- rast(matrix(sample(1:nLevels, size = N, replace = TRUE), ncol = ncol, nrow = nrow))
   for (os in oses) {
     fil <- fn(tmpdir, desc, counter, os)
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 400, height = 300)
+        png(filename = fil, width = 400, height = 300)
         clearPlot()
         Plot(ras)
         dev.off()
@@ -71,7 +68,7 @@ test_that("Unit tests for image content is not error-free", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 400, height = 300)
+        png(filename = fil, width = 400, height = 300)
         clearPlot()
         Plot(ras, new = TRUE)
         dev.off()
@@ -106,7 +103,13 @@ test_that("Unit tests for plotting colors", {
   ##
   if (requireNamespace("raster", quietly = TRUE)) {
     rasterVec <- seq_along(rasts) + length(rasts)
-    rasts[rasterVec] <- lapply(rasts, function(r) if (length(names(r)) == 1) raster::raster(r) else raster::stack(r))
+    rasts[rasterVec] <- lapply(rasts, function(r) {
+      if (length(names(r)) == 1) {
+        raster::raster(r)
+      } else {
+        raster::stack(r)
+      }
+    })
   }
   # # envirHere <- environment()
   Map(testNum = seq_along(rasts), ras = rasts, function(testNum, ras) {
@@ -115,7 +118,7 @@ test_that("Unit tests for plotting colors", {
       announce_snapshot_file(name = basename(fil))
       if (correctOS(os))
         expect_snapshot_file({
-          png(file = fil, width = 400, height = 300)
+          png(filename = fil, width = 400, height = 300)
           clearPlot()
           Plot(ras, new = TRUE)
           dev.off()
@@ -185,7 +188,7 @@ test_that("Unit tests for internal functions in Plot", {
       on.exit(rm(aaaa, envir = .GlobalEnv))
       if (correctOS(os))
         expect_snapshot_file({
-          png(file = fil, width = 400, height = 300)
+          png(filename = fil, width = 400, height = 300)
           clearPlot()
           set.seed(123)
           switch(val,
@@ -303,7 +306,7 @@ test_that("Plot 2 is not error-free", {
       announce_snapshot_file(name = basename(fil))
       if (correctOS(os))
         expect_snapshot_file({
-          png(file = fil, width = 400, height = 300)
+          png(filename = fil, width = 400, height = 300)
           clearPlot()
           Plot(rasts[[testNum]], new = TRUE)
           dev.off()
@@ -323,7 +326,7 @@ test_that("Plot 2 is not error-free", {
         announce_snapshot_file(name = basename(fil))
         if (correctOS(os))
           expect_snapshot_file({
-            png(file = fil, width = 400, height = 300)
+            png(filename = fil, width = 400, height = 300)
             clearPlot()
             set.seed(123)
             switch(as.character(val),
@@ -392,7 +395,7 @@ test_that("Plot 2 is not error-free", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
+        png(filename = fil, width = 800, height = 600)
         clearPlot()
         set.seed(123)
         Plot(rasts[[12]], cols = "Blues", new = TRUE, legendRange = c(-3, 4))
@@ -477,7 +480,7 @@ test_that("Plot with base is not error-free", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
+        png(filename = fil, width = 800, height = 600)
         clearPlot()
         set.seed(123)
         ras5 <- ras6 <- ras7 <- ras2 <- ras3 <- ras4 <- ras1 <- ras
@@ -508,7 +511,7 @@ test_that("Plot with base is not error-free", {
     if (requireNamespace("ggplot2", quietly = TRUE)) {
       if (correctOS(os))
         expect_snapshot_file({
-          png(file = fil, width = 800, height = 600)
+          png(filename = fil, width = 800, height = 600)
           clearPlot()
           set.seed(123)
           gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = 1:10)) +
@@ -529,7 +532,7 @@ test_that("Plot with base is not error-free", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
+        png(filename = fil, width = 800, height = 600)
         clearPlot()
         set.seed(123)
         ras <- rasOrig
@@ -557,7 +560,7 @@ test_that("Plot with base is not error-free", {
     set.seed(123)
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
+        png(filename = fil, width = 800, height = 600)
         ras <- rasOrig
         ras2 <- ras
         ras2[] <- sample(ras[])
@@ -589,7 +592,7 @@ test_that("rePlot doesn't work", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 400, height = 300)
+        png(filename = fil, width = 400, height = 300)
         a <- dev.cur()
         set.seed(123)
         rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
@@ -608,7 +611,7 @@ test_that("rePlot doesn't work", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 400, height = 300)
+        png(filename = fil, width = 400, height = 300)
         b <- dev.cur()
         rePlot(a, b)
         dev.off(b)
@@ -676,7 +679,7 @@ test_that("Plot lists", {
     # announce_snapshot_file(name = basename(fil))
     # if (isLinux()) {
       expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
+        png(filename = fil, width = 800, height = 600)
         clearPlot()
         set.seed(123)
         Plot(a)
@@ -694,7 +697,7 @@ test_that("Plot lists", {
         gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
         b <- list(gg = gg, gg1 = gg1)
         expect_snapshot_file({
-          png(file = fil, width = 800, height = 600)
+          png(filename = fil, width = 800, height = 600)
           clearPlot()
           set.seed(123)
           clearPlot()
@@ -705,7 +708,6 @@ test_that("Plot lists", {
       }
     }
   }
-
 })
 
 ## block L
@@ -745,9 +747,7 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
   try(dev.off())
 })
 
-
 test_that("Issue 20; arr working", {
-
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
@@ -759,7 +759,7 @@ test_that("Issue 20; arr working", {
     announce_snapshot_file(name = basename(fil))
     if (correctOS(os))
       expect_snapshot_file({
-        png(file = fil, width = 800, height = 600)
+        png(filename = fil, width = 800, height = 600)
         clearPlot()
         Plot(maps$DEM, maps$forestCover, maps$forestAge)
         Plot(maps$habitatQuality)  ## I get a 2 row 2 column layout
@@ -771,7 +771,6 @@ test_that("Issue 20; arr working", {
 })
 
 test_that("Issue 32 Plot of factors when lower case id used", {
-
   prevLastPlotNumber <- 51
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
@@ -788,7 +787,7 @@ test_that("Issue 32 Plot of factors when lower case id used", {
       announce_snapshot_file(name = basename(fil))
       if (correctOS(os))
         expect_snapshot_file({
-          png(file = fil, width = 800, height = 600)
+          png(filename = fil, width = 800, height = 600)
           clearPlot()
           Plot(r, new = TRUE)
           dev.off()
@@ -807,7 +806,7 @@ test_that("Issue 32 Plot of factors when lower case id used", {
       announce_snapshot_file(name = basename(fil))
       if (correctOS(os))
         expect_snapshot_file({
-          png(file = fil, width = 800, height = 600)
+          png(filename = fil, width = 800, height = 600)
           clearPlot()
           Plot(r, col = "Reds")
           dev.off()
@@ -815,5 +814,4 @@ test_that("Issue 32 Plot of factors when lower case id used", {
         })
     }
   }
-
 })

@@ -1,5 +1,5 @@
 test_that("Plot called in a do.call works", {
-    testInit("terra", opts = list(quickPlot.verbose = FALSE))
+  testInit("terra", opts = list(quickPlot.verbose = FALSE))
 
   # make a SpatialPolygon
   shpEcozone <- aPoly()
@@ -10,7 +10,7 @@ test_that("Plot called in a do.call works", {
   # shpEcozone <- SpatialPolygons(list(Srs1), 1L)
   # crs(shpEcozone) <- "+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
-  r <- rast(ext(0,10,0,10), res = 1, vals = 1:100)
+  r <- rast(ext(0, 10, 0, 10), resolution = 1, vals = 1:100)
 
   a <- do.call(Plot, list(shpEcozone = shpEcozone, new = TRUE, speedup = 3))
   b <- Plot(shpEcozone, new = TRUE, speedup = 3)
