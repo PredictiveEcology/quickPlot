@@ -41,9 +41,14 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   desc <- get("desc", whereInStack("desc"))
   desc <- gsub(" ", "_", desc)
   counter <- 0
-  out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache,
-    desc = desc, counter = counter,
-    envirHere = envirHere))
+  out <- append(
+    out,
+    list(
+      tmpdir = tmpdir, tmpCache = tmpCache,
+      desc = desc, counter = counter,
+      envirHere = envirHere
+    )
+  )
   list2env(out, envir = pf)
   if (isTRUE(dev) && interactive() && !isRstudioServer())
     dev()

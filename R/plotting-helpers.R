@@ -1,7 +1,4 @@
-### deal with spurious data.table warnings
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c(".", ".N", "keepAll", "..rmCols", "L1"))
-}
+utils::globalVariables(c(".", ".N", "keepAll", "..rmCols", "L1"))
 
 #' Find the number of layers in an object
 #'

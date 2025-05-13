@@ -1,6 +1,4 @@
-globalVariables(c(
-  "i.value", "sys_name", "test_id", "value"
-))
+globalVariables(c("i.value", "sys_name", "test_id", "value"))
 
 r_version <- function() {
   as.character(getRversion())

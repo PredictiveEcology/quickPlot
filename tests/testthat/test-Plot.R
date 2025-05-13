@@ -132,10 +132,7 @@ test_that("Plot 1 is not error-free", {
 
     expect_no_error(Plot(polyLrg, new = TRUE))
     expect_no_error(Plot(Lin))
-
   }
-
-
 
   M <- 2
   if (requireNamespace("sp", quietly = TRUE)) {
@@ -170,9 +167,7 @@ test_that("Plot 1 is not error-free", {
     }
   }
 
-
   for (i in seq_along(objs$vects$lins)) {
-
     car <- sample(objs$vects$caribous, 1)[[1]]
     car2 <- sample(objs$vects$caribousLrg, 1)[[1]]
     land <- sample(objs$rasts$lands, 1)[[1]]
@@ -191,7 +186,7 @@ test_that("Plot 1 is not error-free", {
     expect_no_error(Plot(car, new = TRUE, gpAxis = gpar(cex = 0.4), size = 1))
     clearPlot()
     expect_no_error(Plot(DEM, gpText = gpar(cex = 0.4)))
-    # test colors
+    # test colours
     clearPlot()
     expect_no_error(Plot(DEM, cols = c("blue", "red")))
     # Should work with col as well as cols
@@ -203,8 +198,6 @@ test_that("Plot 1 is not error-free", {
     clearPlot()
     expect_no_error(Plot(car2, speedup = 10, new = TRUE))
   }
-
-
 
   # test ggplot2 and hist -- don't work unless invoke global environment
   clearPlot()
