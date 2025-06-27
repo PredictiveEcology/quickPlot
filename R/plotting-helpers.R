@@ -2290,7 +2290,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
           }
 
           # if the object has an extent method
-          if (hasMethod("extent", is(obj)[1]) & !is.list(obj)) {
+          if (hasMethod("extent", is(obj)[1]) && !is.list(obj)) {
             # list has an extent method, but too general
             out <- extent(obj)
           } else {
