@@ -21,9 +21,7 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   }
 
   out <- list()
-  withr::local_options("reproducible.ask" = ask, .local_envir = pf)
-  if (!missing(verbose))
-    withr::local_options("reproducible.verbose" = verbose, .local_envir = pf)
+
   if (!is.null(opts))
     withr::local_options(opts, .local_envir = pf)
   td <- normalizePath(file.path(tempdir(), substr(basename(tempfile()), 5, 16)),
