@@ -17,6 +17,5 @@ Returns a list of length 4 with elements \code{xmin}, \code{xmax}, \code{ymin}, 
 in that order.
 }
 \description{
-This is a wrapper around \code{terra::ext}, \code{sf::st_bbox}, and
-\code{raster::extent}.
+This is a wrapper around \code{terra::ext}, \code{sf::st_bbox}, and \code{raster::extent}.
 }

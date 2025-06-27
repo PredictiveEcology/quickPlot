@@ -2771,16 +2771,18 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
 
 #' Get extent of a variety of spatial objects
 #'
-#' This is a wrapper around `terra::ext`, `sf::st_bbox`, and
-#' `raster::extent`.
-#' @rdname extent
-#' @name extent
+#' This is a wrapper around `terra::ext`, `sf::st_bbox`, and `raster::extent`.
+#'
 #' @param x The spatial object from which to extract the extent.
+#'
 #' @param ... Not used.
+#'
 #' @return Returns a list of length 4 with elements `xmin`, `xmax`, `ymin`, and `ymax`,
 #'   in that order.
 #'
 #' @export
+#' @name extent
+#' @rdname extent
 if (!isGeneric("extent", .GlobalEnv)) {
   setGeneric(
     "extent",
