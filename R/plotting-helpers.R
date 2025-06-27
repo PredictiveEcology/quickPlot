@@ -2266,7 +2266,6 @@ pgSpatialLines <- function(grobToPlot, col, size,
 #' @importFrom grid viewport vpTree vpList
 #' @keywords internal
 #' @rdname makeViewports
-#'
 .makeViewports <- function(sPlot, newArr = FALSE) {
   arr <- sPlot@arr
   sgl <- sPlot@quickPlotGrobList
@@ -2816,10 +2815,11 @@ setMethod(
           }
           x <- raster::extent(x)
         }
-
       }
-      list(xmin = terra::xmin(x), xmax = terra::xmax(x),
-        ymin = terra::ymin(x), ymax = terra::ymax(x))
+      list(
+        xmin = terra::xmin(x), xmax = terra::xmax(x),
+        ymin = terra::ymin(x), ymax = terra::ymax(x)
+      )
     }
   }
   x
