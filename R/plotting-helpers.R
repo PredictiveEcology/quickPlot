@@ -2297,7 +2297,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
             out <- extent(obj)
           } else {
             # for non spatial objects
-            out <- list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+            out <- .ExtentNonSpatial
           }
         }
       }
@@ -2335,8 +2335,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
       lpr <- c((lpr):(lpr + 1)) # nolint
     }
 
-    # Convert to list --> too many other formats
-    extents[[extentInd]] <- .ExtentToList(extents[[extentInd]])
+    extents[[extentInd]] <- extent(extents[[extentInd]])
 
     # makes equal scale
     yrange <- extents[[extentInd]]$ymax - extents[[extentInd]]$ymin
@@ -2771,6 +2770,28 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
     verbose = verbose)
 }
 
+.ExtentToList <- function(x) {
+  extlist <- as.list(x)
+
+  if (is.null(names(extlist))) {
+    list(
+      xmin = extlist[1],
+      xmax = extlist[2],
+      ymin = extlist[3],
+      ymax = extlist[4]
+    )
+  } else {
+    list(
+      xmin = extlist$xmin,
+      xmax = extlist$xmax,
+      ymin = extlist$ymin,
+      ymax = extlist$ymax
+    )
+  }
+}
+
+.ExtentNonSpatial <- list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+
 #' Get extent of a variety of spatial objects
 #'
 #' This is a wrapper around `terra::ext`, `sf::st_bbox`, and `raster::extent`.
@@ -2798,36 +2819,83 @@ if (!isGeneric("extent", .GlobalEnv)) {
 #' @export
 setMethod(
   "extent",
-  signature("ANY"),
+  signature("list"),
+  definition = function(x, ...) {
+    x
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("sf"),
+  definition = function(x, ...) {
+    sf::st_bbox(x) |>
+      as.list()
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("SpatRaster"),
+  definition = function(x, ...) {
+    terra::ext(x) |>
+      .ExtentToList()
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("SpatVector"),
+  definition = function(x, ...) {
+    terra::ext(x) |>
+      .ExtentToList()
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("SpatExtent"),
   definition = function(x, ...) {
     .ExtentToList(x)
   }
 )
 
-.ExtentToList <- function(x) {
-  if (!is(x, "list")) {
-    x <- if (inherits(x, "sf")) {
-      x <- as.list(sf::st_bbox(x))
-    } else { # if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
-      # is(x, "SpatExtent") || is(x, "Extent")) {
-      if (!is(x, "SpatExtent")) {
-        if (isSpat(x) || isSpatial(x))
-          x <- terra::ext(x)
-        else {
-          if (!requireNamespace("raster", quietly = TRUE)) {
-            stop("Need to install.packages('raster')")
-          }
-          x <- raster::extent(x)
-        }
-      }
-      list(
-        xmin = terra::xmin(x), xmax = terra::xmax(x),
-        ymin = terra::ymin(x), ymax = terra::ymax(x)
-      )
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("Spatial"),
+  definition = function(x, ...) {
+    if (!requireNamespace("sp", quietly = TRUE)) {
+      stop("Please install.packages('sp') to use sp objects")
     }
+
+    terra::ext(x) |>
+      .ExtentToList()
   }
-  x
-}
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("Raster"),
+  definition = function(x, ...) {
+    if (!requireNamespace("raster", quietly = TRUE)) {
+      stop("Need to install.packages('raster')")
+    }
+    raster::extent(x) |>
+      .ExtentToList()
+  }
+)
 
 #' Extract coordinates from a variety of spatial objects
 #'
