@@ -683,7 +683,7 @@ makeLines.default <-
 
 #' Parse arguments and find environments
 #'
-#' Internal function used within `objectNames`.
+#' Internal function used within `.objectNames`.
 #'
 #' @param y  A character representation of the arguments passed to a function, e.g., `Plot`.
 #'

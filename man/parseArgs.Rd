@@ -19,7 +19,7 @@ standardized representation (i.e., replacing \verb{[[]]} with \code{$} notation 
 and their layers (if \code{RasterStack}s).
 }
 \description{
-Internal function used within \code{objectNames}.
+Internal function used within \code{.objectNames}.
 }
 \author{
 Eliot McIntire and Alex Chubaty
