@@ -26,6 +26,7 @@ Depends:
 Imports:
     data.table,
     fpCompare,
+    ggplot2,
     grDevices,
     grid,
     methods,
@@ -34,7 +35,6 @@ Imports:
     utils
 Suggests:
     covr,
-    ggplot2,
     knitr,
     raster,
     RColorBrewer,

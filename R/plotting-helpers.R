@@ -1096,6 +1096,7 @@ setMethod(
 #'
 #' @include plotting-classes.R
 #' @importFrom grid seekViewport grid.text
+#' @importFrom ggplot2 is_ggplot
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .Plot
@@ -1143,7 +1144,7 @@ setMethod(
       sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
 
       # clear out all arguments that don't have meaning in plot.default
-      if (inherits(grobToPlot, "gg")) {
+      if (is_ggplot(grobToPlot)) {
         print(grobToPlot, vp = subPlots)
         a <- try(seekViewport(subPlots, recording = FALSE))
       } else {
@@ -1454,6 +1455,7 @@ setMethod(
 #'                        into `Plot` (`TRUE`), or from the (`.quickPlotEnv`) (`FALSE`).
 #'
 #' @author Eliot McIntire
+#' @importFrom ggplot2 is_ggplot
 #' @include plotting-classes.R
 #' @keywords internal
 #' @export
@@ -1482,7 +1484,7 @@ setMethod(
       }
     } else {
       if (takeFromPlotObj) {
-        if (!inherits(toPlot, "gg") && !inherits(toPlot, "igraph") && is(toPlot, "list")) {
+        if (!is_ggplot(toPlot) && !inherits(toPlot, "igraph") && is(toPlot, "list")) {
           grobToPlot <- unlist(toPlot, recursive = FALSE)
         } else {
           grobToPlot <- toPlot
