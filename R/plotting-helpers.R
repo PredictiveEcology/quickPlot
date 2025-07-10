@@ -1116,19 +1116,17 @@ setMethod(
   definition = function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                         isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
                         vps, nonPlotArgs, arr) {
-
     seekViewport(subPlots, recording = FALSE)
 
     if (is(grobToPlot, "list") || is(grobToPlot, "gg")) {
-      # This is for base plot calls... the grobToPlot is a call i.e,. a name
-      # Because base plotting is not set up to overplot,
-      # must plot a white rectangle
+      ## This is for base plot calls... the grobToPlot is a call i.e,. a name
+      ## Because base plotting is not set up to overplot,
+      ## must plot a white rectangle
 
       # gf <- try(gridBase::gridFIG())
       gf <- c(0.0033, 0.9767, 0.0233, 0.8750)
       wh <- which(names(arr) %in% subPlots)
       gf <- adjustGridFIG(gf, nCols = arr@columns, nRows = arr@rows, wh = wh)
-
 
       if (is(gf, "try-error")) {
         if (identical(names(dev.cur()), "RStudioGD")) {
@@ -1149,12 +1147,12 @@ setMethod(
         sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
       }
 
-      # clear out all arguments that don't have meaning in plot.default
+      ## clear out all arguments that don't have meaning in plot.default
       if (is_ggplot(grobToPlot)) {
         print(grobToPlot, vp = subPlots)
         a <- try(seekViewport(subPlots, recording = FALSE))
       } else {
-        # plot y and x axes should use deparse(substitute(...)) names
+        ## plot y and x axes should use deparse(substitute(...)) names
         if (!identical(FALSE, sGrob@plotArgs$axes)) {
           if (!is.na(sGrob@plotArgs$axisLabels["x"])) {
             sGrob@plotArgs$xlab <- sGrob@plotArgs$axisLabels["x"]
@@ -1209,9 +1207,9 @@ setMethod(
         plotFn <- argsPlot1$plotFn
         argsPlot1$plotFn <- NULL
 
-        # base plots can't use minz, maxz
+        ## base plots can't use minz, maxz
         # if (isBaseSubPlot)
-        # argsPlot1 <- argsPlot1[setdiff(names(argsPlot1), c("minz", "maxz"))]
+        #   argsPlot1 <- argsPlot1[setdiff(names(argsPlot1), c("minz", "maxz"))]
 
         # The actuall plot calls for base plotting
         if (inherits(grobToPlot, "igraph")) {
@@ -1227,11 +1225,11 @@ setMethod(
         } else if (quickPlotGrobCounter == 1 | wipe | isHist) {
           suppressWarnings(par(new = TRUE))
 
-          # This is a work around because I am not able to generically
-          #  assess the formals of a function to remove any that aren't
-          #  defined for that method... i.e., plot is the generic, but
-          #  plot.igraph has different formals. Some of the functions
-          #  are not exported, so their formals can't be found algorithmically
+          ## This is a workaround because I am not able to generically
+          ##  assess the formals of a function to remove any that aren't
+          ##  defined for that method... i.e., plot is the generic, but
+          ##  plot.igraph has different formals. Some of the functions
+          ##  are not exported, so their formals can't be found algorithmically
           tryCatch(do.call(plotFn, args = argsPlot1), error = function(x) {
             parsRm <- unlist(strsplit(gsub(x,
               pattern = ".*Unknown plot parameters: ",
@@ -1241,7 +1239,7 @@ setMethod(
             do.call(plotFn, args = argsPlot1)
           })
         } else {
-          # adding points to a plot
+          ## adding points to a plot
           tmpPlotFn <- if (plotFn == "plot") "points" else plotFn
           argsPlot1[c("axes", "xlab", "ylab", "plotFn")] <- NULL
           suppressWarnings(do.call(tmpPlotFn, args = argsPlot1))
@@ -1267,8 +1265,8 @@ setMethod(
         }
       }
     } else {
-      # This is for Rasters and Sp objects only
-      # Extract legend text if the raster is a factored raster
+      ## This is for Rasters and Sp objects only
+      ## Extract legend text if the raster is a factored raster
       if (is.null(legendText)) {
         if (is.null(sGrob@plotArgs$legendTxt)) {
           if (any(terra::is.factor(grobToPlot))) {
@@ -1317,9 +1315,9 @@ setMethod(
         }
         seekViewport(subPlots, recording = FALSE)
       }
-    } # gg vs histogram vs spatialObject
+    } ## gg vs histogram vs spatialObject
 
-    # print Title on plot
+    ## print Title on plot
     if (is.null(sGrob@plotArgs$title)) {
       sGrob@plotArgs$title <- TRUE
     }
@@ -1328,9 +1326,9 @@ setMethod(
       a <- try(seekViewport(paste0("outer", subPlots), recording = FALSE))
       suppressWarnings(grid.text(plotName, name = "title",
         y = 1.08 - is.list(grobToPlot) * 0.02,
-        vjust = 0.5, # tweak... not good practice.
-        # Should find original reason why this is
-        # not same y for rasters and all others
+        vjust = 0.5, ## tweak... not good practice.
+        ## Should find original reason why this is
+        ## not same y for rasters and all others
         gp = sGrob@plotArgs$gpText))
       a <- try(seekViewport(subPlots, recording = FALSE))
     }
@@ -1340,10 +1338,11 @@ setMethod(
 
 #' @param nColumns Numeric, length 1, indicating how many columns are in the device arrangement
 #' @param nRows Numeric, length 1, indicating how many rows are in the device arrangement
-#' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed into
-#'                  `Plot` is currently being plotted, i.e., a counter of sorts.
-#' @param whExistingObj Numeric. Like `whPlotObj`, but for whole existing plot, not just supplied in
-#'   current call.
+#' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed to
+#'   `Plot` is currently being plotted, i.e., a counter of sorts.
+#'
+#' @param whExistingObj Numeric. Like `whPlotObj`, but for whole existing plot,
+#'   not just supplied in current call.
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
