@@ -1108,8 +1108,9 @@ setGeneric(".Plot", function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPl
   standardGeneric(".Plot")
 })
 
-#' @rdname Plot-internal
 #' @aliases PlotHelpers
+#' @importFrom ggplot2 is_ggplot
+#' @rdname Plot-internal
 setMethod(
   ".Plot",
   signature = c(".quickPlotGrob"),
@@ -1118,7 +1119,7 @@ setMethod(
                         vps, nonPlotArgs, arr) {
     seekViewport(subPlots, recording = FALSE)
 
-    if (is(grobToPlot, "list") || is(grobToPlot, "gg")) {
+    if (is(grobToPlot, "list") || is_ggplot(grobToPlot)) {
       ## This is for base plot calls... the grobToPlot is a call i.e,. a name
       ## Because base plotting is not set up to overplot,
       ## must plot a white rectangle
@@ -1140,7 +1141,7 @@ setMethod(
       }
       par(fig = gf)
 
-      if (packageVersion("ggplot2") >= "3.5.2.9001" && is(grobToPlot, "gg")) {
+      if (packageVersion("ggplot2") >= "3.5.2.9001" && is_ggplot(grobToPlot)) {
         # theNams <- S7::prop_names(grobToPlot)
         sGrob@plotArgs[["ggobject"]] <- grobToPlot
       } else {
