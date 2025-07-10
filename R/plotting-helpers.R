@@ -1141,7 +1141,13 @@ setMethod(
         }
       }
       par(fig = gf)
-      sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
+
+      if (packageVersion("ggplot2") >= "3.5.2.9001" && is(grobToPlot, "gg")) {
+        # theNams <- S7::prop_names(grobToPlot)
+        sGrob@plotArgs[["ggobject"]] <- grobToPlot
+      } else {
+        sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
+      }
 
       # clear out all arguments that don't have meaning in plot.default
       if (is_ggplot(grobToPlot)) {
