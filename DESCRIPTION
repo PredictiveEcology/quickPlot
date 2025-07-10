@@ -11,7 +11,7 @@ Description: A high-level plotting system, compatible with `ggplot2` objects,
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 1.0.2.9008
+Version: 1.0.2.9009
 Date: 2025-07-09
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",

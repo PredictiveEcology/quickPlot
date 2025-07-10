@@ -689,10 +689,12 @@ test_that("Plot lists", {
   }
 
   for (os in oses) {
-    fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
-    announce_snapshot_file(name = basename(fil))
     if (correctOS(os)) {
+      ggplotVersion <- if (packageVersion("ggplot2") > "3.5.2") "newer" else "older"
+      fil <- fn(tmpdir, paste0(desc, "ggplotV", ggplotVersion), counter, os, envir = envirHere)
+      announce_snapshot_file(name = basename(fil))
       if (requireNamespace("ggplot2", quietly = TRUE)) {
+        ggplotVer <- packageVersion("ggplot2")
         gg <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
         gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
         b <- list(gg = gg, gg1 = gg1)
@@ -705,6 +707,7 @@ test_that("Plot lists", {
           dev.off()
           fil
         })
+
       }
     }
   }
