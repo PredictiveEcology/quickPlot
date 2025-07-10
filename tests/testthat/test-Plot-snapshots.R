@@ -1,5 +1,5 @@
 ## block B
-test_that("Unit tests for image content is not error-free", {
+test_that("image content is not error-free", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
@@ -78,7 +78,7 @@ test_that("Unit tests for image content is not error-free", {
 })
 
 # # ## block C
-test_that("Unit tests for plotting colors", {
+test_that("plotting colors", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
@@ -129,7 +129,7 @@ test_that("Unit tests for plotting colors", {
 })
 
 # ## test.png 10 to 11
-test_that("Unit tests for internal functions in Plot", {
+test_that("internal functions in Plot", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
     {
@@ -775,7 +775,7 @@ test_that("Issue 20; arr working", {
   }
 })
 
-test_that("Issue 32 Plot of factors when lower case id used", {
+test_that("Issue 32 Plot factors lower case id", {
   prevLastPlotNumber <- 51
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
