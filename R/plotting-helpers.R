@@ -1110,6 +1110,7 @@ setGeneric(".Plot", function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPl
 
 #' @aliases PlotHelpers
 #' @importFrom ggplot2 is_ggplot
+#' @importFrom utils packageVersion
 #' @rdname Plot-internal
 setMethod(
   ".Plot",
