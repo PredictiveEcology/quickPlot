@@ -4,14 +4,22 @@
 # pak::pkg_install("r-lib/revdepcheck")
 # pak::pkg_install("achubaty/crancache@r-universe")
 
-options(
-  repos = c(
-    PE = "https://predictiveecology.r-universe.dev",
+CRAN_ONLY = FALSE ## use TRUE to only test CRAN packages
 
-    ## note this is counter to the "Canonical CRAN.r-project.org" for CRAN packages,
-    ## but revdep/ directory is .Rbuildignored and this is used for revdep checks only.
-    CRAN = paste0("https://", "cloud.", "r-project.", "org")
-  ),
+use_repos = c(
+  PE = "https://predictiveecology.r-universe.dev",
+
+  ## note this is counter to the "Canonical CRAN.r-project.org" for CRAN packages,
+  ## but revdep/ directory is .Rbuildignored and this is used for revdep checks only.
+  CRAN = paste0("https://", "cloud.", "r-project.", "org")
+)
+
+if (isTRUE(CRAN_ONLY)) {
+  use_repos <- use_repos[which(names(use_repos) == "CRAN")]
+}
+
+options(
+  repos = use_repos,
   revdepcheck.num_workers = getOption("Ncpus", 2L)
 )
 
@@ -24,9 +32,6 @@ revdeps <- c(
   revdepcheck.extras::revdep_grandchildren()
 ) |>
   setdiff(omit_pkgs)
-
-# CRAN ONLY PACKAGES
-# revdeps <- c("SpaDES.core", "reproducible", "SpaDES", "NetLogoR", "SpaDES.tools")
 
 ## reset from any previous runs
 revdepcheck.extras::revdep_reset() ## clears revdep/{cache,checks,library} directories
