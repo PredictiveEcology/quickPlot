@@ -149,18 +149,21 @@ getColors <- function(object) {
     if (terra::is.factor(object)) {
       if (isInteger) { # some factor rasters are actually real number -- makes no sense
         levs <- terra::levels(object)[[1]]
+        id <- grep("^id$", ignore.case = TRUE,
+                   colnames(levs), value = TRUE)
         nrLevs <- NROW(levs)
 
         pal <- colorRampPalette(value, alpha = TRUE, ...)
-        if (n != nrLevs) {
+        if (n != nrLevs || n != length(value)) {
           vals <- pal(n)
         } else {
           vals <- value
         }
-        if (isRaster(object))
+        if (isRaster(object)) {
           object@legend@colortable <- pal(n)
-        else
-          terra::coltab(object) <- vals
+        } else {
+          terra::coltab(object) <- data.frame(value = levs[[id]], col = vals)
+        }
 
       }
     } else {
@@ -426,6 +429,8 @@ setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")
 
     if (isFac) {
       facLevs <- terra::levels(grobToPlot)[[1]]
+      id <- grep("^id$", ignore.case = TRUE,
+                 colnames(facLevs), value = TRUE)
       nValues <- NROW(facLevs)
     } else {
       if (any(is.na(legendRange))) {
@@ -458,7 +463,7 @@ setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")
           # one more colour than needed:
           #   assume bottom is NA
           if (isFac) {
-            factorValues <- terra::levels(grobToPlot)[[1]][["ID"]]
+            factorValues <- facLevs[[id]]
             # factorValues <- grobToPlot@data@attributes[[1]][, 1] %>%
             #   unique() %>%
             #   na.omit() %>%
@@ -466,7 +471,7 @@ setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")
             if (length(factorValues) == NROW(colTable)) {
               colTable[seq.int(length(factorValues))]
             } else {
-              if ((tail(facLevs$ID, 1) - head(facLevs$ID, 1) + 1) == (NROW(colTable) - 1)) {
+              if ((tail(facLevs[[id]], 1) - head(facLevs[[id]], 1) + 1) == (NROW(colTable) - 1)) {
                 # The case where the IDs are numeric representations
                 colTable[factorValues + 1]
               } else {
@@ -545,7 +550,7 @@ setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")
 
     # Here, rescale so it is between 0 and maxNumCols or nValues
     if (isFac) {
-      z <- match(z, facLevs$ID)
+      z <- match(z, facLevs[[id]])
     } else {
       if (real) {
         z <- maxNumCols / (maxz - minz) * (z - minz)
@@ -612,7 +617,7 @@ setColors <- function(object, value, n, verbose = getOption("quickPlot.verbose")
     if (isFac & !is.null(colTable)) {
       # changed from max to length to accommodate zeros or factors not starting at 1
       cols <- rep(na.color, length(factorValues))
-      resequence <- seq_along(facLevs$ID) - min(factorValues) + 1
+      resequence <- seq_along(facLevs[[id]]) - min(factorValues) + 1
       if (NROW(colTable) == length(resequence))
         cols[resequence] <- colTable
       else

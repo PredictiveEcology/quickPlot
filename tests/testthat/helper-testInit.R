@@ -1,5 +1,5 @@
 testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt = "",
-                     opts = NULL, dev = FALSE) {
+                     opts = NULL, dev = FALSE, envirHere = parent.frame()) {
 
   set.randomseed()
 
@@ -21,13 +21,11 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   }
 
   out <- list()
-  withr::local_options("reproducible.ask" = ask, .local_envir = pf)
-  if (!missing(verbose))
-    withr::local_options("reproducible.verbose" = verbose, .local_envir = pf)
+
   if (!is.null(opts))
     withr::local_options(opts, .local_envir = pf)
   td <- normalizePath(file.path(tempdir(), substr(basename(tempfile()), 5, 16)),
-                      mustWork = FALSE, winslash = "/")
+    mustWork = FALSE, winslash = "/")
   tmpdir <- withr::local_tempdir(tmpdir = td, .local_envir = pf)
   tmpCache <- withr::local_tempdir(tmpdir = tmpdir, .local_envir = pf)
   if (isTRUE(any(nzchar(tmpFileExt)))) {
@@ -38,7 +36,17 @@ testInit <- function(libraries = character(), ask = FALSE, verbose, tmpFileExt =
   }
   withr::local_dir(tmpdir, .local_envir = pf)
 
-  out <- append(out, list(tmpdir = tmpdir, tmpCache = tmpCache))
+  desc <- get("desc", whereInStack("desc"))
+  desc <- gsub(" ", "_", desc)
+  counter <- 0
+  out <- append(
+    out,
+    list(
+      tmpdir = tmpdir, tmpCache = tmpCache,
+      desc = desc, counter = counter,
+      envirHere = envirHere
+    )
+  )
   list2env(out, envir = pf)
   if (isTRUE(dev) && interactive() && !isRstudioServer())
     dev()
@@ -53,3 +61,33 @@ set.randomseed <- function(set.seed = TRUE) {
     set.seed(newSeed)
   return(invisible(newSeed))
 }
+
+# vers <- c("4.4", "4.3.99")
+lower <- c("4.4", "4.1")
+upper <- c("5.10", "4.3.99")
+# ineqV <- c(">=", "<=")
+df <- data.frame(lower = lower, upper = upper)
+
+compareVersionW <- function(ineqV, verOrig, vers) {
+  eval(parse(text = paste0("`", ineqV[match(verOrig, vers)], "`")))(getRversion(), verOrig)
+}
+
+filName <- function(df, verRow, tmpdir, prevLastPlotNumber, fn) {
+  lower <- df$lower[verRow]
+  upper <- df$upper[verRow]
+  ver <- paste0("_", lower, "_to_", upper)
+  ver <- gsub("\\.", "_", paste0("_", ver))
+  fil <- file.path(tmpdir, paste0("test", prevLastPlotNumber + fn, ver, ".png"))
+}
+
+oses <- c("Win", "Linux")
+
+fn <- function(tmpdir, desc, counter, os, envir = parent.frame()) {
+  fil <- file.path(tmpdir, paste0(desc, counter, os, ".png"))
+  counter <- counter + 1
+  assign("counter", counter, envir = envir)
+  fil
+}
+
+correctOS <- function(os)
+  (os %in% "Win" && isWindows()) || os %in% "Linux" && isLinux()

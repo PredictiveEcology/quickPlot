@@ -81,21 +81,10 @@ and \code{SpatialLines} in this function.
 Attempts have been made to subsample at a good level that optimizes speed of
 plotting, without losing visible quality. Nevertheless, to force all points to
 be plotted, use a speedup value less than 0.1.
-From a speed perspective, there appears to be an optimal subsampling when
-using \code{thin} from the \pkg{fastshp} package.
 Presumably, too much thinning requires large distance matrices to be
 calculated, slowing plotting down.
 Too little thinning causes an overabundance of points to be plotted, slowing
 plotting down.
-
-The suggested package \code{fastshp} can be installed with:
-\code{install.packages("fastshp", repos = "https://rforge.net", type = "source")} or
-for binary \code{install.packages("fastshp", repos = "https://PredictiveEcology.r-universe.dev")}
-
-NOTE: you may get errors relating to not having installed the software tools
-required for building R packages on your system.
-For building on Windows, you'll need to install \code{Rtools} from
-\url{https://cran.r-project.org/bin/windows/Rtools/}.
 }
 \author{
 Eliot McIntire

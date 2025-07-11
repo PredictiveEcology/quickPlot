@@ -2,10 +2,28 @@
 % Please edit documentation in R/plotting-helpers.R
 \name{extent}
 \alias{extent}
-\alias{extent,ANY-method}
+\alias{extent,list-method}
+\alias{extent,sf-method}
+\alias{extent,SpatRaster-method}
+\alias{extent,SpatVector-method}
+\alias{extent,SpatExtent-method}
+\alias{extent,Spatial-method}
+\alias{extent,Raster-method}
 \title{Get extent of a variety of spatial objects}
 \usage{
-\S4method{extent}{ANY}(x, ...)
+\S4method{extent}{list}(x, ...)
+
+\S4method{extent}{sf}(x, ...)
+
+\S4method{extent}{SpatRaster}(x, ...)
+
+\S4method{extent}{SpatVector}(x, ...)
+
+\S4method{extent}{SpatExtent}(x, ...)
+
+\S4method{extent}{Spatial}(x, ...)
+
+\S4method{extent}{Raster}(x, ...)
 }
 \arguments{
 \item{x}{The spatial object from which to extract the extent.}
@@ -17,6 +35,5 @@ Returns a list of length 4 with elements \code{xmin}, \code{xmax}, \code{ymin}, 
 in that order.
 }
 \description{
-This is a wrapper around \code{terra::ext}, \code{sf::st_bbox}, and
-\code{raster::extent}.
+This is a wrapper around \code{terra::ext}, \code{sf::st_bbox}, and \code{raster::extent}.
 }

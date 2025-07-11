@@ -9,17 +9,17 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' If a named list, the names either represent a different original object in the
 #' calling environment and that will be used, or if the names don't exist in the
 #' calling environment, then they will be copied to `.quickPlotEnv` for reuse later.
-#' It can also handle `ggplot2` objects or `base::histogram` objects
-#' created via call to `exHist <- hist(1:10, plot = FALSE)`. It can also take
-#' arguments as if it were a call to `plot`. In this latter
-#' case, the user should be explicit about naming the plot area using `addTo`.
+#' It can also handle \pkg{ggplot2} objects or `base::histogram` objects
+#' created via call to `exHist <- hist(1:10, plot = FALSE)`.
+#' It can also take arguments as if it were a call to `plot`.
+#' In this latter case, the user should be explicit about naming the plot area using `addTo`.
 #' Customization of the `ggplot2` elements can be done as a normal
 #' `ggplot2` plot, then added with `Plot(ggplotObject)`.
 #'
 #' **NOTE:** Plot uses the \pkg{grid} package; therefore, it is NOT compatible
 #' with base R graphics. Also, because it does not by default wipe the plotting device
-#' before plotting, a call to [clearPlot()] is helpful to resolve
-#' many errors. Careful use of the other device tools, such as `dev.off()` and
+#' before plotting, a call to [clearPlot()] is helpful to resolve many errors.
+#' Careful use of the other device tools, such as `dev.off()` and
 #' `dev.list()` might also clear problems that may arise.
 #'
 #' If `new = TRUE`, a new plot will be generated, but only in the figure region that
@@ -48,7 +48,7 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' In other words, only enough information is used to uniquely identify the plot.
 #'
 #' For modularity, `Plot` must have access to the original objects that were plotted.
-#' These objects will be used if a subsequent Plot event forces a rearrangement of the plot device.
+#' These objects will be used if subsequent `Plot` events forces a rearrangement of the plot device.
 #' Rather than saving all the plot information (including the data) at each `Plot` call
 #' (this is generally too much data to constantly make copies),
 #' the function saves a pointer to the original R object. If the plot needs
@@ -62,7 +62,6 @@ utils::globalVariables(c("groups", "thin", "whGrobNamesi", "xmax", "xmin", "ymax
 #' of objects, Plot will either create a link to objects with those names in the
 #' calling environment (e.g., `.GlobalEnv`) or, if they do not exist, then `Plot`
 #' will make a copy in the hidden `.quickPlotEnv` for later reuse.
-#'
 #'
 #' `cols` is a vector of colours that can be understood directly, or by
 #' [`colorRampPalette()`][grDevices::colorRamp], such as `c("orange", "blue")`,
@@ -264,7 +263,7 @@ setGeneric(
            zero.color = NULL, length = NULL, arr = NULL, plotFn = "plot",
            verbose = getOption("quickPlot.verbose")) { # nolint
     standardGeneric("Plot")
-})
+  })
 
 #' @rdname Plot
 #' @export
@@ -283,10 +282,11 @@ setMethod(
     #  there may in fact be something.
     if (sum(news) > 0) {
       if (length(ls(.quickPlotEnv)) +
-          numLayers(.quickPlotEnv[[paste0("quickPlot", dev.cur())]]) - 1 <= sum(news) |
-          length(ls(.quickPlotEnv)) == 0) {
+        numLayers(.quickPlotEnv[[paste0("quickPlot", dev.cur())]]) - 1 <= sum(news) |
+        length(ls(.quickPlotEnv)) == 0) {
         clearPlot(dev.cur())
-      }}
+      }
+    }
 
     # Determine object names that were passed and layer names of each
     scalls <- sys.calls()
@@ -298,9 +298,9 @@ setMethod(
 
     dots <- list(...)
     if (is(dots[[1]], "list") & !isQuickPlottables(dots[[1]]) &
-        # some reason, `inherits` doesn't work here for ggplot
-        !inherits(dots[[1]], "communities") & !inherits(dots[[1]], "igraph") &
-        !inherits(dots[[1]], "histogram")) {
+      # some reason, `inherits` doesn't work here for ggplot
+      !inherits(dots[[1]], "communities") & !inherits(dots[[1]], "igraph") &
+      !inherits(dots[[1]], "histogram")) {
       dots <- dots[[1]]
       # dots <- unlist(dots, recursive = FALSE)
       listNames <- names(dots)
@@ -313,7 +313,7 @@ setMethod(
 
     # Determine where the objects are located
     #  We need to know exactly where they are, so that they can be replotted later, if needed
-    #whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
+    # whFrame <- grep(scalls, pattern = "^Plot|^quickPlot::Plot")
     if (any(isDoCall)) {
       doCallCall <- as.list(match.call(do.call, call = scalls[isDoCall][[1]]))
       argNames <- names(doCallCall$args[-1]) # don't need "list()"
@@ -323,7 +323,7 @@ setMethod(
       plotFrame <- sys.frame(which(isDoCall) - 1)
       dotNames <- setdiff(argNames, nonDots)
       noName <- !nzchar(dotNames)
-      #dotObjs <- mget(dotNames[!noName], envir = plotFrame, inherits = TRUE)
+      # dotObjs <- mget(dotNames[!noName], envir = plotFrame, inherits = TRUE)
       if (isTRUE(any(noName))) {
         dotObjs2 <- as.list(doCallCall$args)[-1][-nonDotsWh]
         dotNames <- as.character(dotObjs2)
@@ -331,7 +331,7 @@ setMethod(
       }
       dotObjs <- mget(dotNames, envir = plotFrame, inherits = TRUE)
 
-      #stop("Currently, Plot can not be called within a do.call. ",
+      # stop("Currently, Plot can not be called within a do.call. ",
       #     "Try passing a named list of objects to Plot instead.")
     } else {
       dotObjs <- dots
@@ -388,14 +388,14 @@ setMethod(
 
     if (!(all(!whichQuickPlottables) | all(whichQuickPlottables)))
       stop("Can't mix base plots with .quickPlottables objects in one function call. ",
-           "Please call Plot for base plots separately.")
+        "Please call Plot for base plots separately.")
 
     # Create plotObjs object, which is a cleaned up version of the objects passed into Plot
     if (all(!whichQuickPlottables)) {
       ## if not a .quickPlottables then it is a pass to plot or points
       if (!exists(paste0("basePlots_", dev.cur()), envir = .quickPlotEnv))
         .assignQuickPlot(paste0("basePlots_", dev.cur()),
-                         new.env(hash = FALSE, parent = .quickPlotEnv))
+          new.env(hash = FALSE, parent = .quickPlotEnv))
       mc <- match.call(get(plotArgs$plotFn), call(plotArgs$plotFn, quote(...)))
       mcPlot <- match.call(Plot, call = sys.call(whFramePlot))
       plotArgs$userProvidedPlotFn <- ("plotFn" %in% names(mcPlot))
@@ -430,8 +430,8 @@ setMethod(
       if (is.null(mcPlot$col)) {
         if (!any(unlist(lapply(dotObjs, function(x) {
           any(unlist(lapply(c("histogram", "igraph", "communities"), function(y) inherits(x, y))))
-        })))) #default for histogram is NULL
-          plotArgs$col <- NULL#"black"
+        })))) # default for histogram is NULL
+          plotArgs$col <- NULL # "black"
       }
       plotArgs$main <- ""
       plotObjs[[1]][[1]]$main <- plotArgs$main
@@ -439,7 +439,7 @@ setMethod(
 
       if (addTo %in% ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) {
         plotObjsName <- paste0(addTo, "_",
-                               length(ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) + 1)
+          length(ls(.getQuickPlot(paste0("basePlots_", dev.cur())))) + 1)
       } else {
         plotObjsName <- addTo
       }
@@ -490,10 +490,10 @@ setMethod(
           objNames <- names(dotObjs)
         } else {
           objNames <- lapply(substitute(placeholderFunction(...))[-1],
-                             deparse, backtick = TRUE)
+            deparse, backtick = TRUE)
         }
         if (!exists("objFrame", inherits = FALSE)) {
-        #  objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
+          #  objFrame <- get(devCurEnvName, envir = .quickPlotEnv)
           objFrame <- try(whereInStack(objNames[[1]]), silent = TRUE)
         }
         # sanity check -- maybe won't exist
@@ -526,7 +526,7 @@ setMethod(
     if (!is.null(addTo)) {
       if (!tryCatch(
         addTo %in%
-        unlist(layerNames(get(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv))),
+          unlist(layerNames(get(paste0("quickPlot", dev.cur()), envir = .quickPlotEnv))),
         error = function(x) FALSE)) {
         plotArgs$addTo <- NULL
       }
@@ -642,16 +642,16 @@ setMethod(
           xyAxes <- .xyAxes(sGrob, arr = updated$curr@arr, whPlotFrame)
 
           layerFromExisting <- (names(updated$curr@quickPlotGrobList) %in%
-                                 sGrob@plotName)
+            sGrob@plotName)
           whLayerFromExisting <- which(layerFromExisting)
 
 
           layerFromPlotObj <- (names(newQuickPlots@quickPlotGrobList) %in%
-                                 sGrob@plotName)
+            sGrob@plotName)
           whLayerFromPO <- which(layerFromPlotObj)
 
           objNames <- unique(unname(unlist(lapply(newQuickPlots@quickPlotGrobList,
-                                                  function(x) x[[1]]@objName))))
+            function(x) x[[1]]@objName))))
           whPlotObj <- which(objNames %in% sGrob@objName)
 
           layerFromPlotObj <- if (length(whLayerFromPO) == 0) {
@@ -683,14 +683,14 @@ setMethod(
           }
 
           if (sGrob@plotArgs$new | inherits(grobToPlot, "igraph") |
-              inherits(grobToPlot, "histogram") | isPlotFnAddable) {
+            inherits(grobToPlot, "histogram") | isPlotFnAddable) {
             ## draw a white rectangle to clear plot
             sGrob <- .refreshGrob(sGrob, subPlots, legendRange,
-                                  grobToPlot, plotArgs = sGrob@plotArgs,
-                                  nColumns = updated$curr@arr@columns,
-                                  nRows = updated$curr@arr@rows,
-                                  whLayerFromPO,
-                                  whLayerFromExisting)
+              grobToPlot, plotArgs = sGrob@plotArgs,
+              nColumns = updated$curr@arr@columns,
+              nRows = updated$curr@arr@rows,
+              whLayerFromPO,
+              whLayerFromExisting)
             isNewPlot <- TRUE
             isBaseSubPlot <- TRUE
             wipe <- TRUE # can't overplot a histogram
@@ -702,11 +702,11 @@ setMethod(
 
 
           prevMinMax <- tryCatch(updated$curr@quickPlotGrobList[[subPlots]][[subPlots]]@plotArgs[c("minz", "maxz")],
-                                 error = function(x) list(minz = NULL, maxz = NULL))
+            error = function(x) list(minz = NULL, maxz = NULL))
           zMat <- .preparePlotGrob(grobToPlot, sGrob, layerFromPlotObj,
-                                   arr = updated$curr@arr, newArr,
-                                   prevMinMax = prevMinMax,
-                                   quickPlotGrobCounter, subPlots, cols)
+            arr = updated$curr@arr, newArr,
+            prevMinMax = prevMinMax,
+            quickPlotGrobCounter, subPlots, cols)
           sGrob@plotArgs$minz <- zMat$minz
           sGrob@plotArgs$maxz <- zMat$maxz
 
@@ -715,12 +715,13 @@ setMethod(
             if (is.null(sGrob@plotArgs$legendRange)) {
               sGrob@plotArgs$legendRange <-
                 c(zMat$minz, zMat$maxz)
-            }}
+            }
+          }
 
           # Plot any grobToPlot to device, given all the parameters
           sGrob2 <- try(.Plot(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
-                         isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
-                         vps, nonPlotArgs, arr = updated$curr@arr))
+            isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
+            vps, nonPlotArgs, arr = updated$curr@arr))
           if (!is(sGrob2, "try-error")) {
             sGrob <- sGrob2
           } else {
@@ -736,7 +737,7 @@ setMethod(
     seekViewport("top", recording = FALSE)
     .assignQuickPlot(paste0("quickPlot", dev.cur()), updated)
     return(invisible(updated$curr))
-})
+  })
 
 ################################################################################
 #' Re-plot to a specific device
@@ -761,7 +762,7 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
     dev(toDev, verbose = verbose)
     if (clearFirst) clearPlot(toDev)
     suppressWarnings(Plot(currQuickPlots$curr,
-                          new = rep(TRUE, length(currQuickPlots$curr@arr@names)), ...))
+      new = rep(TRUE, length(currQuickPlots$curr@arr@names)), ...))
   } else {
     stop(
       paste(
@@ -811,7 +812,7 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
 #'
 #' # defined outside of findB2, so its enclosing environment is the same as findB2
 #' innerGet <- function(y) {
-#'    get("b")
+#'   get("b")
 #' }
 #' findB2 <- function(x) {
 #'   b <- 2
@@ -820,7 +821,7 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
 #' findB2() # Finds 1 because b has a value of 1 in the enclosing environment of innerGet
 #' b <- 3
 #' findB2() # Finds 3 because b has a value of 3 in the enclosing environment of innerGet,
-#'          #  i.e., the environment in which innerGet was defined
+#' #  i.e., the environment in which innerGet was defined
 #' findB() # Still finds 2 because the call stack hasn't changed
 #'
 #' # compare base::dynGet
@@ -829,7 +830,7 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
 #'   dynGet("b")
 #' }
 #' findB3() # same as findB(), but marginally faster, because it omits the stripping on
-#'          #   sub elements that may be part of the name argument
+#' #   sub elements that may be part of the name argument
 #'
 #'
 #' b <- list()
@@ -867,7 +868,6 @@ whereInStack <- function(name, whFrame = -1) {
   sys.frame(whFrame)
 }
 
-
 whereInStack2 <- function(name, whFrame = -1) {
   snframe <- sys.nframe()
   keepGoing <- TRUE
@@ -885,12 +885,9 @@ whereInStack2 <- function(name, whFrame = -1) {
   sys.frame(whFrame)
 }
 
-
-
 # .quickPlotClasses <- c(spatialClasses, "gg")
 
 quickPlotClasses <- c(".quickPlot")
-
 
 isQuickPlottables <- function(x) {
   # check for registered method for `.plotGrob` --> this allows extension of methods to
@@ -898,7 +895,7 @@ isQuickPlottables <- function(x) {
   test <- (isSpatialAny(x) || is(x, "gg") || inherits(x, quickPlotClasses))
   if (!isTRUE(test)) {
     # this is 150x faster than `methods(.plotGrob)`
-    for(xx in paste0(".plotGrob.", is(x))) {
+    for (xx in paste0(".plotGrob.", is(x))) {
       test <- get0(xx)
       if (!is.null(test))
         break
@@ -910,8 +907,11 @@ isQuickPlottables <- function(x) {
 
 isSpatial <- function(x) {
   res <- inherits(x, "Spatial")
-  if (res)
-    if (!requireNamespace("sp", quietly = TRUE)) stop("Please install.packages('sp') to use sp objects")
+  if (res) {
+    if (!requireNamespace("sp", quietly = TRUE)) {
+      stop("Please install.packages('sp') to use sp objects")
+    }
+  }
   res
 }
 
@@ -926,16 +926,23 @@ isVector <-  function(x) isSpatVector(x) || isSpatial(x) || isSF(x)
 isSpatialAny <- function(x) isGridded(x) || isVector(x)
 isSF <- function(x) {
   res <- inherits(x, c("sf", "sfc"))
-  if (res)
-    if (!requireNamespace("sf", quietly = TRUE)) stop("Please install.packages('sf') to use sf objects")
+  if (res) {
+    if (!requireNamespace("sf", quietly = TRUE)) {
+      stop("Please install.packages('sf') to use sf objects")
+    }
+  }
   res
 }
 
-
 isRaster <- function(x) {
   res <- inherits(x, "Raster")
-  if (res)
-    if (!requireNamespace("raster", quietly = TRUE)) stop("Please install.packages('raster') to use Raster objects")
-  res
+  if (res) {
+    if (!requireNamespace("raster", quietly = TRUE)) {
+      stop("Please install.packages('raster') to use Raster objects")
+    }
   }
-isQuickPlotClass <- function(x) isSpatialAny(x) || inherits(x, "gg")
+  res
+}
+
+#' @importFrom ggplot2 is_ggplot
+isQuickPlotClass <- function(x) isSpatialAny(x) || is_ggplot(x)

@@ -1,7 +1,4 @@
-### deal with spurious data.table warnings
-if (getRversion() >= "3.1.0") {
-  utils::globalVariables(c(".", "..xyCols"))
-}
+utils::globalVariables(c(".", "..xyCols"))
 
 ################################################################################
 #' Clear plotting device
@@ -64,7 +61,7 @@ setMethod(
 
       suppressWarnings(
         try(rm(list = ls(.quickPlotEnv[[paste0("dev", dev)]]),
-               envir = .quickPlotEnv[[paste0("dev", dev)]]), silent = TRUE)
+          envir = .quickPlotEnv[[paste0("dev", dev)]]), silent = TRUE)
       )
     }
     if (!identical(FALSE, force)) {
@@ -89,26 +86,26 @@ setMethod(
 #' @export
 #' @rdname clearPlot
 setMethod("clearPlot",
-          signature = c("numeric", "missing", "ANY"),
-          definition = function(dev, force) {
-            clearPlot(dev, removeData = TRUE, force = force)
-          })
+  signature = c("numeric", "missing", "ANY"),
+  definition = function(dev, force) {
+    clearPlot(dev, removeData = TRUE, force = force)
+  })
 
 #' @export
 #' @rdname clearPlot
 setMethod("clearPlot",
-          signature = c("missing", "logical", "ANY"),
-          definition =  function(removeData, force) {
-            clearPlot(dev = dev.cur(), removeData = removeData, force = force)
-          })
+  signature = c("missing", "logical", "ANY"),
+  definition =  function(removeData, force) {
+    clearPlot(dev = dev.cur(), removeData = removeData, force = force)
+  })
 
 #' @export
 #' @rdname clearPlot
 setMethod("clearPlot",
-          signature = c("missing", "missing"),
-          definition =  function(dev, removeData, force) {
-            clearPlot(dev.cur(), removeData = TRUE, force = force)
-          })
+  signature = c("missing", "missing"),
+  definition =  function(dev, removeData, force) {
+    clearPlot(dev.cur(), removeData = TRUE, force = force)
+  })
 
 ################################################################################
 #' Convert `grid.locator` units
@@ -127,7 +124,7 @@ setMethod("clearPlot",
 #'
 .unittrim <- function(grid.locator) {
   as.numeric(sub("^([0-9]+|[0-9]+[.][0-9])[0-9]*", "\\1",
-                 as.character(grid.locator)))
+    as.character(grid.locator)))
 }
 
 ################################################################################
@@ -171,7 +168,7 @@ setMethod("clearPlot",
 #' # clickValues and family are unreliable on Rstudio Server as the plotting device
 #' #   does not report its dimensions correctly; this may change in future
 #' #   updates to Rstudio
-#' if (interactive() && !isRstudioServer() ) {
+#' if (interactive() && dev.interactive(orNone = TRUE) && !isRstudioServer()) {
 #'   files <- system.file("maps", package = "quickPlot")
 #'   files <- dir(files, full.names = TRUE, pattern = "tif")
 #'   maps <- lapply(files, function(x) terra::rast(x))
@@ -190,7 +187,7 @@ setMethod("clearPlot",
 #'   print(e)
 #'
 #'   # repeated zooming to try various places on the original device
-#'   for(i in 1:4) clickExtent() # click at two locations on the Plot device
+#'   for (i in 1:4) clickExtent() # click at two locations on the Plot device
 #' }
 #' }
 #'
@@ -284,7 +281,7 @@ clickExtent <- function(devNum = NULL, plot.it = TRUE,
     }
     theObj <- list(theObj)
     names(theObj) <- objNames
-    if (sum(corners$coords[1,] - corners$coords[2,]) %==% 0) {
+    if (sum(corners$coords[1, ] - corners$coords[2, ]) %==% 0) {
       Plot(theObj, addTo = theName, title = theName, new = TRUE)
     } else {
       Plot(theObj, addTo = theName, title = theName, zoomExtent = zoom, new = TRUE)
@@ -311,19 +308,19 @@ clickCoordinates <- function(n = 1) {
   arr <- try(.getQuickPlot(paste0("quickPlot", dc)))
   if (inherits(arr, "try-error")) {
     stop(paste("Plot does not already exist on current device.",
-               "clearPlot() or change device to",
-               "one that has objects from a call to Plot()."))
+      "clearPlot() or change device to",
+      "one that has objects from a call to Plot()."))
   }
   gl <- grid.layout(nrow = arr$curr@arr@rows * 3 + 2,
-                    ncol = arr$curr@arr@columns * 3 + 2,
-                    widths = arr$curr@arr@layout$wdth,
-                    heights = arr$curr@arr@layout$ht)
+    ncol = arr$curr@arr@columns * 3 + 2,
+    widths = arr$curr@arr@layout$wdth,
+    heights = arr$curr@arr@layout$ht)
 
   grepNullsW <- grep("null$", gl$widths)
   grepNpcsW <- grep("npc$", gl$widths)
 
   # remove pipe --> keep compatible with old R, without requiring magrittr
-  nulls <- as.character(gl$widths)[grepNullsW]# |>
+  nulls <- as.character(gl$widths)[grepNullsW] # |>
   nulls <- strsplit(x = nulls, "null") #|>
   nulls <- unlist(nulls) #|>
   nulls <- as.numeric(nulls)
@@ -370,11 +367,11 @@ clickCoordinates <- function(n = 1) {
         gloc$y <- grid::unit(as.numeric(gloc$y) + 0.2, "npc")
     }
     xInt <- findInterval(as.numeric(strsplit(as.character(gloc$x), "npc")[[1]]),
-                         c(0, cumsum(widthNpcs)))
+      c(0, cumsum(widthNpcs)))
     # for the y, grid package treats bottom left as origin, Plot treats top left
     #  as origin... so, require 1-
     yInt <- findInterval(as.numeric(strsplit(as.character(gloc$y), "npc")[[1]]),
-                         c(0, cumsum(heightNpcs)))
+      c(0, cumsum(heightNpcs)))
     if (!(xInt %in% grepNpcsW) || !(yInt %in% grepNpcsH)) {
       stop("No plot at those coordinates")
     }
@@ -405,7 +402,7 @@ clickCoordinates <- function(n = 1) {
       )[[1]]) - minLayY) / (maxLayY - minLayY), "npc")
 
     clickCoords[i, ] <- .clickCoord(arr$curr@quickPlotGrobList[[map]][[1]]@plotName,
-                                    n = 1, gl = grobLoc)
+      n = 1, gl = grobLoc)
     mapNames[i] <- arr$curr@quickPlotGrobList[[map]][[1]]@plotName
     envs[[i]] <- arr$curr@quickPlotGrobList[[map]][[1]]@envir
   }
@@ -464,7 +461,7 @@ clickCoordinates <- function(n = 1) {
 #'
 #' @examples
 #' \dontrun{
-#'   dev(4)
+#' dev(4)
 #' }
 #'
 dev <- function(x, ..., verbose = getOption("quickPlot.verbose")) {
@@ -484,7 +481,7 @@ dev <- function(x, ..., verbose = getOption("quickPlot.verbose")) {
       hasAPngForStudio <- (identical(namesDevList[min(length(namesDevList), which(isRstudioDev) + 1)], "png"))
       if (any(isRstudioDev)) {
         x <- min(min(dev.list()) + 1 + hasAPngForStudio,
-                 which(isRstudioDev) + 3L)
+          which(isRstudioDev) + 3L)
         dev(x, verbose = verbose)
       } else {
         x <- min(dev.list())
@@ -495,7 +492,7 @@ dev <- function(x, ..., verbose = getOption("quickPlot.verbose")) {
   if (identical(getOption("device"), "RStudioGD")) {
     if (.Platform$OS.type == "unix" && !isRstudioServer()) {
       messageVerbose("setting graphics device away from Rstudio device. To return to Rstudio device: dev.useRSGD(TRUE)",
-                     verbose = verbose)
+        verbose = verbose)
       dev.useRSGD(FALSE)
     }
   }
@@ -537,11 +534,11 @@ dev <- function(x, ..., verbose = getOption("quickPlot.verbose")) {
 #'
 #' @examples
 #' \dontrun{
-#'   ## set option to avoid using Rstudio graphics device
-#'   dev.useRSGD(FALSE)
+#' ## set option to avoid using Rstudio graphics device
+#' dev.useRSGD(FALSE)
 #'
-#'   ## open new plotting window
-#'   newPlot()
+#' ## open new plotting window
+#' newPlot()
 #' }
 #'
 newPlot <- function(noRStudioGD = TRUE, ..., verbose = getOption("quickPlot.verbose")) {
@@ -596,36 +593,36 @@ assign(
   ".parOrig",
   envir = .quickPlotEnv,
   structure(list(xlog = FALSE, ylog = FALSE, adj = 0.5, ann = TRUE,
-                 ask = FALSE, bg = "white", bty = "o", cex = 1, cex.axis = 1,
-                 cex.lab = 1, cex.main = 1.2, cex.sub = 1, col = "black",
-                 col.axis = "black", col.lab = "black", col.main = "black",
-                 col.sub = "black", crt = 0, err = 0L, family = "", fg = "black",
-                 fig = c(0.5, 0.9866, 0.0233, 0.875),
-                 fin = c(5.00285625, 2.155865625),
-                 font = 1L, font.axis = 1L, font.lab = 1L, font.main = 2L,
-                 font.sub = 1L, lab = c(5L, 5L, 7L), las = 0L, lend = "round",
-                 lheight = 1, ljoin = "round", lmitre = 10, lty = "solid",
-                 lwd = 1, mai = c(1.02, 0.82, 0.82, 0.42),
-                 mar = c(5.1, 4.1, 4.1, 2.1), mex = 1, mfcol = c(1L, 1L),
-                 mfg = c(1L, 1L, 1L, 1L), mfrow = c(1L, 1L), mgp = c(3, 1, 0),
-                 mkh = 0.001, new = FALSE,
-                 oma = c(0, 0, 0, 0), omd = c(0, 1, 0, 1), omi = c(0, 0, 0, 0),
-                 pch = 1L, pin = c(3.6020565, 1.293519375),
-                 plt = c(0.23, 0.95, 0.3, 0.9), ps = 12L, pty = "m",
-                 smo = 1, srt = 0, tck = NA_real_,
-                 tcl = -0.5, usr = c(0.64, 10.36, -1.74682466270393, 0.852684557824307
-                 ), xaxp = c(2, 10, 4), xaxs = "r", xaxt = "s", xpd = FALSE,
-                 yaxp = c(-1.5, 0.5, 4), yaxs = "r", yaxt = "s", ylbias = 0.2),
-            .Names = c("xlog", "ylog", "adj", "ann", "ask", "bg", "bty", "cex", "cex.axis",
-                       "cex.lab", "cex.main", "cex.sub", "col", "col.axis", "col.lab",
-                       "col.main", "col.sub", "crt", "err", "family", "fg", "fig", "fin",
-                       "font", "font.axis", "font.lab", "font.main", "font.sub", "lab",
-                       "las", "lend", "lheight", "ljoin", "lmitre", "lty", "lwd", "mai",
-                       "mar", "mex", "mfcol", "mfg", "mfrow", "mgp", "mkh", "new", "oma",
-                       "omd", "omi", "pch", "pin", "plt", "ps", "pty", "smo", "srt",
-                       "tck", "tcl", "usr", "xaxp", "xaxs", "xaxt", "xpd", "yaxp", "yaxs",
-                       "yaxt", "ylbias")
-  ))
+    ask = FALSE, bg = "white", bty = "o", cex = 1, cex.axis = 1,
+    cex.lab = 1, cex.main = 1.2, cex.sub = 1, col = "black",
+    col.axis = "black", col.lab = "black", col.main = "black",
+    col.sub = "black", crt = 0, err = 0L, family = "", fg = "black",
+    fig = c(0.5, 0.9866, 0.0233, 0.875),
+    fin = c(5.00285625, 2.155865625),
+    font = 1L, font.axis = 1L, font.lab = 1L, font.main = 2L,
+    font.sub = 1L, lab = c(5L, 5L, 7L), las = 0L, lend = "round",
+    lheight = 1, ljoin = "round", lmitre = 10, lty = "solid",
+    lwd = 1, mai = c(1.02, 0.82, 0.82, 0.42),
+    mar = c(5.1, 4.1, 4.1, 2.1), mex = 1, mfcol = c(1L, 1L),
+    mfg = c(1L, 1L, 1L, 1L), mfrow = c(1L, 1L), mgp = c(3, 1, 0),
+    mkh = 0.001, new = FALSE,
+    oma = c(0, 0, 0, 0), omd = c(0, 1, 0, 1), omi = c(0, 0, 0, 0),
+    pch = 1L, pin = c(3.6020565, 1.293519375),
+    plt = c(0.23, 0.95, 0.3, 0.9), ps = 12L, pty = "m",
+    smo = 1, srt = 0, tck = NA_real_,
+    tcl = -0.5, usr = c(0.64, 10.36, -1.74682466270393, 0.852684557824307
+    ), xaxp = c(2, 10, 4), xaxs = "r", xaxt = "s", xpd = FALSE,
+    yaxp = c(-1.5, 0.5, 4), yaxs = "r", yaxt = "s", ylbias = 0.2),
+  .Names = c("xlog", "ylog", "adj", "ann", "ask", "bg", "bty", "cex", "cex.axis",
+    "cex.lab", "cex.main", "cex.sub", "col", "col.axis", "col.lab",
+    "col.main", "col.sub", "crt", "err", "family", "fg", "fig", "fin",
+    "font", "font.axis", "font.lab", "font.main", "font.sub", "lab",
+    "las", "lend", "lheight", "ljoin", "lmitre", "lty", "lwd", "mai",
+    "mar", "mex", "mfcol", "mfg", "mfrow", "mgp", "mkh", "new", "oma",
+    "omd", "omi", "pch", "pin", "plt", "ps", "pty", "smo", "srt",
+    "tck", "tcl", "usr", "xaxp", "xaxs", "xaxt", "xpd", "yaxp", "yaxs",
+    "yaxt", "ylbias")
+))
 
 isRstudioDevice <- function(dev = dev.cur()) {
   namesDevList <- names(dev)
@@ -635,8 +632,8 @@ isRstudioDevice <- function(dev = dev.cur()) {
 
 RstudioDeviceWarning <- function()
   paste0("Rstudio device may give inappropriate coordinates; values may be wrong. ",
-          "Try using an external device?",
-          "\nrePlot(toDev = dev(noRStudioGD = TRUE))")
+    "Try using an external device?",
+    "\nrePlot(toDev = dev(noRStudioGD = TRUE))")
 
 SysInfo <-   Sys.info()
 

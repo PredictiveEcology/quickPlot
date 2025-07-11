@@ -32,9 +32,8 @@ install.packages("quickPlot")
 **Install from GitHub:**
     
 ```r
-#install.packages("devtools")
-library("devtools")
-install_github("PredictiveEcology/quickPlot", dependencies = TRUE) # stable
+# install.packages("remotes")
+remotes::install_github("PredictiveEcology/quickPlot", dependencies = TRUE)
 ```
 
 ### Development version (unstable)
@@ -42,7 +41,6 @@ install_github("PredictiveEcology/quickPlot", dependencies = TRUE) # stable
 **Install from GitHub:**
 
 ```r
-#install.packages("devtools")
-library("devtools")
-install_github("PredictiveEcology/quickPlot", ref = "development", dependencies = TRUE) # unstable
+# install.packages("remotes")
+remotes::install_github("PredictiveEcology/quickPlot@development", dependencies = TRUE)
 ```

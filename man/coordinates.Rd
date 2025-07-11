@@ -22,8 +22,12 @@ generic.
 }
 \examples{
 library(terra)
-caribou <- terra::vect(x = cbind(x = stats::runif(1e1, -50, 50),
-                                        y = stats::runif(1e1, -50, 50)))
+caribou <- terra::vect(
+  x = cbind(
+    x = stats::runif(1e1, -50, 50),
+    y = stats::runif(1e1, -50, 50)
+  )
+)
 coordinates(caribou)
 
 }

@@ -1,6 +1,7 @@
-checks
-library
-checks.noindex
-library.noindex
-data.sqlite
 *.html
+checks
+checks.noindex
+cloud.noindexdata.sqlite
+data.sqlite
+library
+library.noindex

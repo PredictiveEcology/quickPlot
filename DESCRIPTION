@@ -7,27 +7,26 @@ Description: A high-level plotting system, compatible with `ggplot2` objects,
     that is built for speed and modularity. This is useful for quick visualizations 
     when testing code and for plotting multiple figures to the same device from 
     independent sources that may be independent of one another (i.e., different 
-    function or modules the create the visualizations).  The suggested package 
-    'fastshp' can be installed from the repository 
-    (<https://PredictiveEcology.r-universe.dev>).
+    function or modules the create the visualizations).
 URL:
     https://quickplot.predictiveecology.org,
     https://github.com/PredictiveEcology/quickPlot
-Version: 1.0.2
-Date: 2023-07-01
+Version: 1.0.2.9010
+Date: 2025-07-09
 Authors@R: c(
     person("Eliot J B", "McIntire", email = "eliot.mcintire@canada.ca",
            role = c("aut", "cre"), comment=c(ORCID = "https://orcid.org/0000-0002-6914-8316")),
     person("Alex M", "Chubaty", email = "achubaty@for-cast.ca",
-    role = c("aut"), comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
+           role = "aut", comment = c(ORCID = "https://orcid.org/0000-0001-7146-8135")),
     person("His Majesty the King in Right of Canada, as represented by the Minister of Natural Resources Canada",
-    role = "cph")
+           role = "cph")
     )
 Depends:
-    R (>= 4.1)
+    R (>= 4.3)
 Imports:
-    data.table (>= 1.10.4),
+    data.table,
     fpCompare,
+    ggplot2,
     grDevices,
     grid,
     methods,
@@ -36,8 +35,6 @@ Imports:
     utils
 Suggests:
     covr,
-    fastshp,
-    ggplot2,
     knitr,
     raster,
     RColorBrewer,
@@ -46,6 +43,8 @@ Suggests:
     sp,
     testthat (>= 1.0.2),
     withr
+Remotes:
+    tidyverse/ggplot2
 Additional_repositories: https://predictiveecology.r-universe.dev/
 Encoding: UTF-8
 Language: en-CA
@@ -54,7 +53,7 @@ VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PredictiveEcology/quickPlot/issues
 ByteCompile: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Collate: 
     'environment.R'
     'plotting-classes.R'

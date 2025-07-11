@@ -33,8 +33,12 @@ names(maps) <- sapply(basename(files), function(x) {
 layerNames(maps)
 
 ## SpatVector objects
-caribou <- terra::vect(cbind(x = stats::runif(1e2, -50, 50),
-                             y = stats::runif(1e2, -50, 50)))
+caribou <- terra::vect(
+  cbind(
+    x = stats::runif(1e2, -50, 50),
+    y = stats::runif(1e2, -50, 50)
+  )
+)
 layerNames(caribou)
 
 }

@@ -73,7 +73,7 @@ original map extent, not the "zoomed in" map extent. See example.
 # clickValues and family are unreliable on Rstudio Server as the plotting device
 #   does not report its dimensions correctly; this may change in future
 #   updates to Rstudio
-if (interactive() && !isRstudioServer() ) {
+if (interactive() && dev.interactive(orNone = TRUE) && !isRstudioServer()) {
   files <- system.file("maps", package = "quickPlot")
   files <- dir(files, full.names = TRUE, pattern = "tif")
   maps <- lapply(files, function(x) terra::rast(x))
@@ -92,7 +92,7 @@ if (interactive() && !isRstudioServer() ) {
   print(e)
 
   # repeated zooming to try various places on the original device
-  for(i in 1:4) clickExtent() # click at two locations on the Plot device
+  for (i in 1:4) clickExtent() # click at two locations on the Plot device
 }
 }
 

@@ -155,11 +155,11 @@ the specific grob types, e.g., \code{rasterGrob}, \code{polygonGrob}, etc.}
 
 \item{nRows}{Numeric, length 1, indicating how many rows are in the device arrangement}
 
-\item{whPlotObj}{Numeric. Length 1, indicating which of the currently objects passed into
+\item{whPlotObj}{Numeric. Length 1, indicating which of the currently objects passed to
 \code{Plot} is currently being plotted, i.e., a counter of sorts.}
 
-\item{whExistingObj}{Numeric. Like \code{whPlotObj}, but for whole existing plot, not just supplied in
-current call.}
+\item{whExistingObj}{Numeric. Like \code{whPlotObj}, but for whole existing plot,
+not just supplied in current call.}
 }
 \description{
 Extract colours, legends and other things from object, and convert to a \code{plotGrob}.
