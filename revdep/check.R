@@ -33,13 +33,12 @@ revdepcheck.extras::revdep_reset() ## clears revdep/{cache,checks,library} direc
 
 ## sequentially install deps of each revdeps package in parallel;
 ## NOTE: PE pkgs aren't crancached, and will be installed each time.
-fs::path("revdep", "library", revdeps) |> fs::dir_create()
-if (Sys.info()[["sysname"]] != "Darwin") {
-  ## TODO: why does masOS sometimes use 'library.noindex/'??
-  ## Error in normalizePath(paths, mustWork = TRUE) :
-  ##   path[1]="[...]/<package>/revdep/library.noindex/fireSenseUtils": No such file or directory
-  lapply(revdeps, revdepcheck:::deps_install, pkgdir = ".")
+if (Sys.info()[["sysname"]] == "Darwin") {
+  fs::path("revdep", "library.noindex", revdeps) |> fs::dir_create()
+} else {
+  fs::path("revdep", "library", revdeps) |> fs::dir_create()
 }
+lapply(revdeps, revdepcheck:::deps_install, pkgdir = ".")
 
 ## setup and run the checks
 revdepcheck.extras::revdep_init()
