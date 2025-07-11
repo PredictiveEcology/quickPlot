@@ -1,20 +1,55 @@
-# pak::pak("r-lib/revdepcheck")
-library("revdepcheck")
+# pak::pkg_install(c(
+#   "achubaty/crancache@r-universe",
+#   "r-lib/revdepcheck",
+#   "HenrikBengtsson/revdepcheck.extras"
+# ))
 
-options(repos = c(
-  PE = "https://predictiveecology.r-universe.dev",
+library(revdepcheck)
 
-  ## note this is counter to the "Canonical CRAN.r-project.org" for CRAN packages,
-  ## but revdep/ directory is .Rbuildignored and this is used for revdep checks only.
-  CRAN = paste0("https://", "cloud.", "r-project.", "org")
-))
+options(
+  repos = c(
+    PE = "https://predictiveecology.r-universe.dev",
 
-revdep_reset()
+    ## note this is counter to the "Canonical CRAN.r-project.org" for CRAN packages,
+    ## but revdep/ directory is .Rbuildignored and this is used for revdep checks only.
+    CRAN = paste0("https://", "cloud.", "r-project.", "org")
+  ),
+  revdepcheck.num_workers = getOption("Ncpus", 2L)
+)
+
+omit_pkgs <- c(
+  "SpaDES.project" ## omit b/c it circularly Suggests SpaDES.config
+)
+revdeps <- c(
+  revdepcheck.extras::revdep_children(),
+  revdepcheck.extras::revdep_grandchildren()
+) |>
+  setdiff(omit_pkgs)
+
+## reset from any previous runs
+revdepcheck.extras::revdep_reset() ## clears revdep/{cache,checks,library} directories
+
+## manual pre-installation (uses crancache)
+# crancache::update_packages(lib.loc = .libPaths()[1], ask = FALSE)
+# revdepcheck.extras::revdep_precache(pkgs = revdeps)
+
+## sequentially install deps of each revdeps package in parallel;
+## NOTE: PE pkgs aren't crancached, and will be installed each time.
+fs::path("revdep", "library", revdeps) |> fs::dir_create()
+lapply(revdeps, revdepcheck:::deps_install, pkgdir = ".")
+
+## setup and run the checks
+revdepcheck.extras::revdep_init()
+revdep_add(packages = revdeps)
+revdep_todo()
+
 revdep_check(
-  num_workers = getOption("Ncpus", 2),
+  num_workers = getOption("revdepcheck.num_workers", 2L),
   quiet = FALSE,
   timeout = as.difftime(60, units = "mins")
 )
+
+# revdep_details(".", "SpaDES.core")
 revdep_report_cran() ## update cran-comments with this output
 
 ### email maintainers of revdep packages (need to edit: `revdep/email.yml`)
