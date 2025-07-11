@@ -1,8 +1,8 @@
-# pak::pkg_install(c(
-#   "achubaty/crancache@r-universe",
-#   "r-lib/revdepcheck",
-#   "HenrikBengtsson/revdepcheck.extras"
-# ))
+## install separately; keep this order to avoid conflicts
+# pak::pkg_install("fs")
+# pak::pkg_install("HenrikBengtsson/revdepcheck.extras")
+# pak::pkg_install("r-lib/revdepcheck")
+# pak::pkg_install("achubaty/crancache@r-universe")
 
 library(revdepcheck)
 
