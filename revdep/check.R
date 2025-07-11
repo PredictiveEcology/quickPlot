@@ -53,6 +53,7 @@ revdepcheck::revdep_check(
 )
 
 # revdepcheck::revdep_details(".", "SpaDES.core")
+revdepcheck::revdep_report(all = TRUE)
 revdepcheck::revdep_report_cran() ## update cran-comments with this output
 
 ### email maintainers of revdep packages (need to edit: `revdep/email.yml`)
