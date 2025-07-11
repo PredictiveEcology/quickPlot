@@ -18,11 +18,15 @@ options(
 omit_pkgs <- c(
   "SpaDES.project" ## omit b/c it circularly Suggests SpaDES.config
 )
+
 revdeps <- c(
   revdepcheck.extras::revdep_children(),
   revdepcheck.extras::revdep_grandchildren()
 ) |>
   setdiff(omit_pkgs)
+
+# CRAN ONLY PACKAGES
+# revdeps <- c("SpaDES.core", "reproducible", "SpaDES", "NetLogoR", "SpaDES.tools")
 
 ## reset from any previous runs
 revdepcheck.extras::revdep_reset() ## clears revdep/{cache,checks,library} directories
