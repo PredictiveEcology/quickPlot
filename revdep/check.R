@@ -4,8 +4,6 @@
 # pak::pkg_install("r-lib/revdepcheck")
 # pak::pkg_install("achubaty/crancache@r-universe")
 
-library(revdepcheck)
-
 options(
   repos = c(
     PE = "https://predictiveecology.r-universe.dev",
@@ -36,22 +34,27 @@ revdepcheck.extras::revdep_reset() ## clears revdep/{cache,checks,library} direc
 ## sequentially install deps of each revdeps package in parallel;
 ## NOTE: PE pkgs aren't crancached, and will be installed each time.
 fs::path("revdep", "library", revdeps) |> fs::dir_create()
-lapply(revdeps, revdepcheck:::deps_install, pkgdir = ".")
+if (Sys.info()[["sysname"]] != "Darwin") {
+  ## TODO: why does masOS sometimes use 'library.noindex/'??
+  ## Error in normalizePath(paths, mustWork = TRUE) :
+  ##   path[1]="[...]/<package>/revdep/library.noindex/fireSenseUtils": No such file or directory
+  lapply(revdeps, revdepcheck:::deps_install, pkgdir = ".")
+}
 
 ## setup and run the checks
 revdepcheck.extras::revdep_init()
-revdep_add(packages = revdeps)
-revdep_todo()
+revdepcheck::revdep_add(packages = revdeps)
+revdepcheck::revdep_todo()
 
-revdep_check(
+revdepcheck::revdep_check(
   num_workers = getOption("revdepcheck.num_workers", 2L),
   quiet = FALSE,
   timeout = as.difftime(60, units = "mins")
 )
 
-# revdep_details(".", "SpaDES.core")
-revdep_report_cran() ## update cran-comments with this output
+# revdepcheck::revdep_details(".", "SpaDES.core")
+revdepcheck::revdep_report_cran() ## update cran-comments with this output
 
 ### email maintainers of revdep packages (need to edit: `revdep/email.yml`)
-# revdep_email(type = "broken") ## will send via gmail
-# revdep_email(type = "failed") ## will send via gmail
+# revdepcheck::revdep_email(type = "broken") ## will send via gmail
+# revdepcheck::revdep_email(type = "failed") ## will send via gmail
