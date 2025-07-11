@@ -7,6 +7,7 @@ on:
     branches: [main, master, development]
   schedule:
     - cron: '23 23 * * 0 '
+  workflow_dispatch:
 
 name: revdeps-check
 
