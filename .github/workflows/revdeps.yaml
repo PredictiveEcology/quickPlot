@@ -49,7 +49,7 @@ jobs:
             any::rcmdcheck
           needs: check
 
-      - uses: PredictiveEcology/actions/revdeps-check@v0.3
+      - uses: PredictiveEcology/actions/revdeps-check@main
         with:
           quiet: false
           timeout: 30
