@@ -1,5 +1,5 @@
 ## block B
-test_that("Unit tests for image content is not error-free", {
+test_that("image content is not error-free", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
@@ -78,7 +78,7 @@ test_that("Unit tests for image content is not error-free", {
 })
 
 # # ## block C
-test_that("Unit tests for plotting colors", {
+test_that("plotting colors", {
 
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
@@ -129,7 +129,7 @@ test_that("Unit tests for plotting colors", {
 })
 
 # ## test.png 10 to 11
-test_that("Unit tests for internal functions in Plot", {
+test_that("internal functions in Plot", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
     {
@@ -689,12 +689,16 @@ test_that("Plot lists", {
   }
 
   for (os in oses) {
-    fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
-    announce_snapshot_file(name = basename(fil))
     if (correctOS(os)) {
+      ggplotVersion <- if (utils::packageVersion("ggplot2") > "3.5.2") "newer" else "older"
+      fil <- fn(tmpdir, paste0(desc, "ggplotV", ggplotVersion), counter, os, envir = envirHere)
+      announce_snapshot_file(name = basename(fil))
       if (requireNamespace("ggplot2", quietly = TRUE)) {
-        gg <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
-        gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) + ggplot2::geom_point(ggplot2::aes(x,  y))
+        ggplotVer <- utils::packageVersion("ggplot2")
+        gg <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) +
+          ggplot2::geom_point(ggplot2::aes(x,  y))
+        gg1 <- ggplot2::ggplot(data.frame(x = 1:10, y = sample(1:10))) +
+          ggplot2::geom_point(ggplot2::aes(x,  y))
         b <- list(gg = gg, gg1 = gg1)
         expect_snapshot_file({
           png(filename = fil, width = 800, height = 600)
@@ -705,6 +709,7 @@ test_that("Plot lists", {
           dev.off()
           fil
         })
+
       }
     }
   }
@@ -770,7 +775,7 @@ test_that("Issue 20; arr working", {
   }
 })
 
-test_that("Issue 32 Plot of factors when lower case id used", {
+test_that("Issue 32 Plot factors lower case id", {
   prevLastPlotNumber <- 51
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 

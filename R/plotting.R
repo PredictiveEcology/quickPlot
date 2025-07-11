@@ -944,4 +944,5 @@ isRaster <- function(x) {
   res
 }
 
-isQuickPlotClass <- function(x) isSpatialAny(x) || inherits(x, "gg")
+#' @importFrom ggplot2 is_ggplot
+isQuickPlotClass <- function(x) isSpatialAny(x) || is_ggplot(x)

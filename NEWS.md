@@ -2,6 +2,8 @@
 
 * drop support for R <= 4.2;
 * remove defunct dependency `fastshp` (#35);
+* updates and fixes  for forthcoming `ggplot2` release (#37; #38);
+* move `ggplot2` from Suggests to Imports;
 
 # quickPlot 1.0.3
 

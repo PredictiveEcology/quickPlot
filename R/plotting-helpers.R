@@ -1096,6 +1096,7 @@ setMethod(
 #'
 #' @include plotting-classes.R
 #' @importFrom grid seekViewport grid.text
+#' @importFrom ggplot2 is_ggplot
 #' @aliases PlotHelpers
 #' @keywords internal
 #' @name .Plot
@@ -1107,27 +1108,27 @@ setGeneric(".Plot", function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPl
   standardGeneric(".Plot")
 })
 
-#' @rdname Plot-internal
 #' @aliases PlotHelpers
+#' @importFrom ggplot2 is_ggplot
+#' @importFrom utils packageVersion
+#' @rdname Plot-internal
 setMethod(
   ".Plot",
   signature = c(".quickPlotGrob"),
   definition = function(sGrob, grobToPlot, subPlots, quickSubPlots, quickPlotGrobCounter,
                         isBaseSubPlot, isNewPlot, isReplot, zMat, wipe, xyAxes, legendText,
                         vps, nonPlotArgs, arr) {
-
     seekViewport(subPlots, recording = FALSE)
 
-    if (is(grobToPlot, "list") || is(grobToPlot, "gg")) {
-      # This is for base plot calls... the grobToPlot is a call i.e,. a name
-      # Because base plotting is not set up to overplot,
-      # must plot a white rectangle
+    if (is(grobToPlot, "list") || is_ggplot(grobToPlot)) {
+      ## This is for base plot calls... the grobToPlot is a call i.e,. a name
+      ## Because base plotting is not set up to overplot,
+      ## must plot a white rectangle
 
       # gf <- try(gridBase::gridFIG())
       gf <- c(0.0033, 0.9767, 0.0233, 0.8750)
       wh <- which(names(arr) %in% subPlots)
       gf <- adjustGridFIG(gf, nCols = arr@columns, nRows = arr@rows, wh = wh)
-
 
       if (is(gf, "try-error")) {
         if (identical(names(dev.cur()), "RStudioGD")) {
@@ -1140,14 +1141,20 @@ setMethod(
         }
       }
       par(fig = gf)
-      sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
 
-      # clear out all arguments that don't have meaning in plot.default
-      if (inherits(grobToPlot, "gg")) {
+      if (packageVersion("ggplot2") >= "3.5.2.9001" && is_ggplot(grobToPlot)) {
+        # theNams <- S7::prop_names(grobToPlot)
+        sGrob@plotArgs[["ggobject"]] <- grobToPlot
+      } else {
+        sGrob@plotArgs[names(grobToPlot)] <- grobToPlot
+      }
+
+      ## clear out all arguments that don't have meaning in plot.default
+      if (is_ggplot(grobToPlot)) {
         print(grobToPlot, vp = subPlots)
         a <- try(seekViewport(subPlots, recording = FALSE))
       } else {
-        # plot y and x axes should use deparse(substitute(...)) names
+        ## plot y and x axes should use deparse(substitute(...)) names
         if (!identical(FALSE, sGrob@plotArgs$axes)) {
           if (!is.na(sGrob@plotArgs$axisLabels["x"])) {
             sGrob@plotArgs$xlab <- sGrob@plotArgs$axisLabels["x"]
@@ -1202,9 +1209,9 @@ setMethod(
         plotFn <- argsPlot1$plotFn
         argsPlot1$plotFn <- NULL
 
-        # base plots can't use minz, maxz
+        ## base plots can't use minz, maxz
         # if (isBaseSubPlot)
-        # argsPlot1 <- argsPlot1[setdiff(names(argsPlot1), c("minz", "maxz"))]
+        #   argsPlot1 <- argsPlot1[setdiff(names(argsPlot1), c("minz", "maxz"))]
 
         # The actuall plot calls for base plotting
         if (inherits(grobToPlot, "igraph")) {
@@ -1220,11 +1227,11 @@ setMethod(
         } else if (quickPlotGrobCounter == 1 | wipe | isHist) {
           suppressWarnings(par(new = TRUE))
 
-          # This is a work around because I am not able to generically
-          #  assess the formals of a function to remove any that aren't
-          #  defined for that method... i.e., plot is the generic, but
-          #  plot.igraph has different formals. Some of the functions
-          #  are not exported, so their formals can't be found algorithmically
+          ## This is a workaround because I am not able to generically
+          ##  assess the formals of a function to remove any that aren't
+          ##  defined for that method... i.e., plot is the generic, but
+          ##  plot.igraph has different formals. Some of the functions
+          ##  are not exported, so their formals can't be found algorithmically
           tryCatch(do.call(plotFn, args = argsPlot1), error = function(x) {
             parsRm <- unlist(strsplit(gsub(x,
               pattern = ".*Unknown plot parameters: ",
@@ -1234,7 +1241,7 @@ setMethod(
             do.call(plotFn, args = argsPlot1)
           })
         } else {
-          # adding points to a plot
+          ## adding points to a plot
           tmpPlotFn <- if (plotFn == "plot") "points" else plotFn
           argsPlot1[c("axes", "xlab", "ylab", "plotFn")] <- NULL
           suppressWarnings(do.call(tmpPlotFn, args = argsPlot1))
@@ -1260,8 +1267,8 @@ setMethod(
         }
       }
     } else {
-      # This is for Rasters and Sp objects only
-      # Extract legend text if the raster is a factored raster
+      ## This is for Rasters and Sp objects only
+      ## Extract legend text if the raster is a factored raster
       if (is.null(legendText)) {
         if (is.null(sGrob@plotArgs$legendTxt)) {
           if (any(terra::is.factor(grobToPlot))) {
@@ -1310,9 +1317,9 @@ setMethod(
         }
         seekViewport(subPlots, recording = FALSE)
       }
-    } # gg vs histogram vs spatialObject
+    } ## gg vs histogram vs spatialObject
 
-    # print Title on plot
+    ## print Title on plot
     if (is.null(sGrob@plotArgs$title)) {
       sGrob@plotArgs$title <- TRUE
     }
@@ -1321,9 +1328,9 @@ setMethod(
       a <- try(seekViewport(paste0("outer", subPlots), recording = FALSE))
       suppressWarnings(grid.text(plotName, name = "title",
         y = 1.08 - is.list(grobToPlot) * 0.02,
-        vjust = 0.5, # tweak... not good practice.
-        # Should find original reason why this is
-        # not same y for rasters and all others
+        vjust = 0.5, ## tweak... not good practice.
+        ## Should find original reason why this is
+        ## not same y for rasters and all others
         gp = sGrob@plotArgs$gpText))
       a <- try(seekViewport(subPlots, recording = FALSE))
     }
@@ -1333,10 +1340,11 @@ setMethod(
 
 #' @param nColumns Numeric, length 1, indicating how many columns are in the device arrangement
 #' @param nRows Numeric, length 1, indicating how many rows are in the device arrangement
-#' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed into
-#'                  `Plot` is currently being plotted, i.e., a counter of sorts.
-#' @param whExistingObj Numeric. Like `whPlotObj`, but for whole existing plot, not just supplied in
-#'   current call.
+#' @param whPlotObj Numeric. Length 1, indicating which of the currently objects passed to
+#'   `Plot` is currently being plotted, i.e., a counter of sorts.
+#'
+#' @param whExistingObj Numeric. Like `whPlotObj`, but for whole existing plot,
+#'   not just supplied in current call.
 #'
 #' @include plotting-classes.R
 #' @inheritParams .makeQuickPlot
@@ -1454,6 +1462,7 @@ setMethod(
 #'                        into `Plot` (`TRUE`), or from the (`.quickPlotEnv`) (`FALSE`).
 #'
 #' @author Eliot McIntire
+#' @importFrom ggplot2 is_ggplot
 #' @include plotting-classes.R
 #' @keywords internal
 #' @export
@@ -1482,7 +1491,7 @@ setMethod(
       }
     } else {
       if (takeFromPlotObj) {
-        if (!inherits(toPlot, "gg") && !inherits(toPlot, "igraph") && is(toPlot, "list")) {
+        if (!is_ggplot(toPlot) && !inherits(toPlot, "igraph") && is(toPlot, "list")) {
           grobToPlot <- unlist(toPlot, recursive = FALSE)
         } else {
           grobToPlot <- toPlot
@@ -2295,7 +2304,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
             out <- extent(obj)
           } else {
             # for non spatial objects
-            out <- list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+            out <- .ExtentNonSpatial
           }
         }
       }
@@ -2333,8 +2342,7 @@ pgSpatialLines <- function(grobToPlot, col, size,
       lpr <- c((lpr):(lpr + 1)) # nolint
     }
 
-    # Convert to list --> too many other formats
-    extents[[extentInd]] <- .ExtentToList(extents[[extentInd]])
+    extents[[extentInd]] <- extent(extents[[extentInd]])
 
     # makes equal scale
     yrange <- extents[[extentInd]]$ymax - extents[[extentInd]]$ymin
@@ -2769,6 +2777,28 @@ ffortify <- function(x, matchFortify = TRUE, simple = FALSE,
     verbose = verbose)
 }
 
+.ExtentToList <- function(x) {
+  extlist <- as.list(x)
+
+  if (is.null(names(extlist))) {
+    list(
+      xmin = extlist[1],
+      xmax = extlist[2],
+      ymin = extlist[3],
+      ymax = extlist[4]
+    )
+  } else {
+    list(
+      xmin = extlist$xmin,
+      xmax = extlist$xmax,
+      ymin = extlist$ymin,
+      ymax = extlist$ymax
+    )
+  }
+}
+
+.ExtentNonSpatial <- list(xmin = 0, xmax = 2, ymin = 0, ymax = 2)
+
 #' Get extent of a variety of spatial objects
 #'
 #' This is a wrapper around `terra::ext`, `sf::st_bbox`, and `raster::extent`.
@@ -2796,36 +2826,83 @@ if (!isGeneric("extent", .GlobalEnv)) {
 #' @export
 setMethod(
   "extent",
-  signature("ANY"),
+  signature("list"),
+  definition = function(x, ...) {
+    x
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("sf"),
+  definition = function(x, ...) {
+    sf::st_bbox(x) |>
+      as.list()
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("SpatRaster"),
+  definition = function(x, ...) {
+    terra::ext(x) |>
+      .ExtentToList()
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("SpatVector"),
+  definition = function(x, ...) {
+    terra::ext(x) |>
+      .ExtentToList()
+  }
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("SpatExtent"),
   definition = function(x, ...) {
     .ExtentToList(x)
   }
 )
 
-.ExtentToList <- function(x) {
-  if (!is(x, "list")) {
-    x <- if (inherits(x, "sf")) {
-      x <- as.list(sf::st_bbox(x))
-    } else { # if (isGridded(x) || inherits(x, "Spatial") || isSpat(x) ||
-      # is(x, "SpatExtent") || is(x, "Extent")) {
-      if (!is(x, "SpatExtent")) {
-        if (isSpat(x) || isSpatial(x))
-          x <- terra::ext(x)
-        else {
-          if (!requireNamespace("raster", quietly = TRUE)) {
-            stop("Need to install.packages('raster')")
-          }
-          x <- raster::extent(x)
-        }
-      }
-      list(
-        xmin = terra::xmin(x), xmax = terra::xmax(x),
-        ymin = terra::ymin(x), ymax = terra::ymax(x)
-      )
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("Spatial"),
+  definition = function(x, ...) {
+    if (!requireNamespace("sp", quietly = TRUE)) {
+      stop("Please install.packages('sp') to use sp objects")
     }
+
+    terra::ext(x) |>
+      .ExtentToList()
   }
-  x
-}
+)
+
+#' @rdname extent
+#' @export
+setMethod(
+  "extent",
+  signature("Raster"),
+  definition = function(x, ...) {
+    if (!requireNamespace("raster", quietly = TRUE)) {
+      stop("Need to install.packages('raster')")
+    }
+    raster::extent(x) |>
+      .ExtentToList()
+  }
+)
 
 #' Extract coordinates from a variety of spatial objects
 #'
