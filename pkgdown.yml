@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   iii-plotting: iii-plotting.html
-last_built: 2025-07-14T22:38Z
+last_built: 2025-07-14T22:41Z
 urls:
   reference: https://quickplot.predictiveecology.org/reference
   article: https://quickplot.predictiveecology.org/articles
