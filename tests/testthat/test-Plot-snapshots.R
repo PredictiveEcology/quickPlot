@@ -272,7 +272,7 @@ test_that("Plot 2 is not error-free", {
 
   rasts[[12]] <- rast(xmin = 50, xmax = 50 + 3 * 100,
     ymin = 50, ymax = 50 + 3 * 100,
-    res = c(100, 100), val = 1)
+    resolution = c(100, 100), val = 1)
   rasts[[12]][1] <- -1
   rasts[[12]][2:6] <- 2
 
@@ -282,7 +282,6 @@ test_that("Plot 2 is not error-free", {
   rasts[[14]] <- r - 1000
   rasts[[14]] <- round(rasts[[14]] / 300, 0)
   rasts[[14]][4] <- 0
-
 
   if (requireNamespace("raster", quietly = TRUE)) {
     rasterVec <- seq_along(rasts) + length(rasts)
@@ -471,7 +470,7 @@ test_that("Plot with base is not error-free", {
     add = TRUE) # nolint
 
   set.seed(123)
-  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), resolution = 1)
   ras <- rasOrig
   aTime <- Sys.time()
   #   # New Section
@@ -575,11 +574,10 @@ test_that("Plot with base is not error-free", {
   }
 })
 
-
 ## block H
 test_that("Plot messages and warnings and errors", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
-  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), resolution = 1)
   ras <- rasOrig
   expect_error(Plot(ras, rnorm(10)), "Can't mix base plots with .quickPlottables")
 })
@@ -595,7 +593,7 @@ test_that("rePlot doesn't work", {
         png(filename = fil, width = 400, height = 300)
         a <- dev.cur()
         set.seed(123)
-        rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+        rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), resolution = 1)
         ras <- rasOrig
         clearPlot()
         ras <- ras + 1
@@ -626,7 +624,7 @@ test_that("Plot - going through package coverage", {
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   set.seed(123)
-  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), resolution = 1)
   ras <- rasOrig
 
   expect_no_error(Plot(ras, new = TRUE))
@@ -647,7 +645,7 @@ test_that("Plot lists", {
   clearPlot()
   set.seed(123)
   rasOrig <- rast(
-    ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1
+    ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), resolution = 1
   )
   ras1 <- ras2 <- ras3 <- ras4 <- rasOrig
   a <- list()
@@ -662,7 +660,7 @@ test_that("Plot lists", {
   SpP <- terra::vect(SpP, "polygons")
 
   set.seed(123)
-  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), resolution = 1)
   ras <- rasOrig
   aTime <- Sys.time()
   #   # New Section
@@ -721,7 +719,7 @@ test_that("Plot non-complicated object names", {
 
   a <- list()
   a$e <- new.env()
-  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), res = 1)
+  rasOrig <- rast(ext(0, 40, 0, 20), vals = sample(1:8, replace = TRUE, size = 800), resolution = 1)
   rasOrig2 <- rasOrig
   a$e$p <- rasOrig
   a$e$s <- c(rasOrig2, lyr.2 = rasOrig)
