@@ -1,4 +1,4 @@
-# quickPlot (development version)
+# quickPlot 1.0.4
 
 * drop support for R <= 4.2;
 * remove defunct dependency `fastshp` (#35);
