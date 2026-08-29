@@ -88,9 +88,9 @@
                         <h4 data-toc-skip class="author">Eliot J. B.
 McIntire</h4>
             
-            <h4 data-toc-skip class="date">July 14 2025</h4>
+            <h4 data-toc-skip class="date">August 29 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/quickPlot/blob/v1.0.4/vignettes/iii-plotting.Rmd" class="external-link"><code>vignettes/iii-plotting.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/PredictiveEcology/quickPlot/blob/main/vignettes/iii-plotting.Rmd" class="external-link"><code>vignettes/iii-plotting.Rmd</code></a></small>
       <div class="hidden name"><code>iii-plotting.Rmd</code></div>
 
     </div>
@@ -179,7 +179,7 @@ system, changing plot parameters is done with the <code>gp=gpar()</code>
 designation. See <code><a href="../reference/grid-functions.html">?gpar</a></code> for options.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/first_plot-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/first_plot-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># make a SpatialPoints object</span></span>
 <span><span class="va">caribou</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
@@ -188,7 +188,7 @@ designation. See <code><a href="../reference/grid-functions.html">?gpar</a></cod
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span>, addTo <span class="op">=</span> <span class="st">"landscape$habitatQuality"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/first_plot-2.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/first_plot-2.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># from ?vect help file</span></span>
 <span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">18</span>, <span class="op">-</span><span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">14</span>, <span class="fl">5.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">14</span>, <span class="op">-</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
@@ -212,7 +212,7 @@ designation. See <code><a href="../reference/grid-functions.html">?gpar</a></cod
 <span><span class="va">sl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">z</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, <span class="st">"lines"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">sl</span>, gp <span class="op">=</span> <span class="fu"><a href="../reference/grid-functions.html">gpar</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, addTo <span class="op">=</span> <span class="st">"landscape$DEM"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/first_plot-3.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/first_plot-3.png" class="r-plt" alt="" width="700"></p>
 <p>Any combination of <code>RasterStack</code>,
 <code>RasterLayer</code>, <code>SpatialPoints*</code>, and
 <code>SpatialPolygons*</code> objects can be plotted from a single
@@ -223,7 +223,7 @@ invocation of <code>Plot</code>:</p>
 <span>  axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  gp <span class="op">=</span> <span class="fu"><a href="../reference/grid-functions.html">gpar</a></span><span class="op">(</span>cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>, visualSqueeze <span class="op">=</span> <span class="fl">0.65</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/mixing_layer_types-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/mixing_layer_types-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="other-object-types">Other object types<a class="anchor" aria-label="anchor" href="#other-object-types"></a>
@@ -244,9 +244,9 @@ with spatial objects as well.</p>
 <span>  <span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span>, axes <span class="op">=</span> <span class="st">"L"</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">ggObj</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/ggplot-1.png" width="700"></p>
-<pre><code><span><span class="co">## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span></code></pre>
-<p><img src="iii-plotting_files/figure-html/ggplot-2.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/ggplot-1.png" class="r-plt" alt="" width="700"></p>
+<pre><code><span><span class="co">## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre>
+<p><img src="iii-plotting_files/figure-html/ggplot-2.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="base-plotting">
@@ -337,7 +337,7 @@ changed.</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/getSetColors.html">setColors</a></span><span class="op">(</span><span class="va">landscape</span>, n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">mapColours</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># oh, how pretty!</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/set_colours-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/set_colours-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="plot-arguments">
@@ -358,14 +358,14 @@ matched to the <code>...</code> items to plot.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span>, gpAxis <span class="op">=</span> <span class="fu"><a href="../reference/grid-functions.html">gpar</a></span><span class="op">(</span>cex <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, gpText <span class="op">=</span> <span class="fu"><a href="../reference/grid-functions.html">gpar</a></span><span class="op">(</span>cex <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-2.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-2.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, <span class="va">caribou</span>, gpText <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/grid-functions.html">gpar</a></span><span class="op">(</span>cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="../reference/grid-functions.html">gpar</a></span><span class="op">(</span>cex <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-3.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/gp_gpAxis_gpText-3.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="visualsqueeze">
@@ -385,11 +385,11 @@ area. If the plots need to be slightly smaller, this could be set to
 <code class="sourceCode R"><span><span class="co"># x axis gets cut off in pdf and html</span></span>
 <span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/visualSqueeze-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/visualSqueeze-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, visualSqueeze <span class="op">=</span> <span class="fl">0.6</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/visualSqueeze-2.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/visualSqueeze-2.png" class="r-plt" alt="" width="700"></p>
 <p>A key reason why the legends or axes are cut off sometimes is because
 there is a minimum threshold for font size for readability. So, either
 <code>visualSqueeze</code> can be set or making a larger device will
@@ -412,7 +412,7 @@ expected range of all stages of that raster, will work.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, legendRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">500</span><span class="op">)</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/legendRange-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/legendRange-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="zoomextent">
@@ -427,7 +427,7 @@ call <code>Plot(obj, zoomExtent=newZoom)</code>. This new zoom will
 persist with rearrangements.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, zoomExtent <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/zoomExtent-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/zoomExtent-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="length">
@@ -439,7 +439,7 @@ length, in inches, meaning that the lines will be arrows.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">maps</span><span class="op">$</span><span class="va">DEM</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">sl</span>, addTo <span class="op">=</span> <span class="st">"maps$DEM"</span>, length <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/arrows-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/arrows-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 </div>
@@ -477,7 +477,7 @@ work as desired.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>, axes <span class="op">=</span> <span class="st">"L"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/new-as-list-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/new-as-list-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="calling-plot-again-and-again">Calling Plot again and again<a class="anchor" aria-label="anchor" href="#calling-plot-again-and-again"></a>
@@ -495,11 +495,11 @@ available empty space.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/simple_add-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/simple_add-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># can add a new plot to the plotting window</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span>, new <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/simple_add-2.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/simple_add-2.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="if-there-is-not-a-blank-spot-for-a-new-plot">If there is <em>not</em> a blank spot for a new plot<a class="anchor" aria-label="anchor" href="#if-there-is-not-a-blank-spot-for-a-new-plot"></a>
@@ -512,11 +512,11 @@ device.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># can add a new plot to the plotting window</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span>, new <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-2.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/add_with_rearrangement-2.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="a-pre-existing-name-to-a-device">A pre-existing name to a device<a class="anchor" aria-label="anchor" href="#a-pre-existing-name-to-a-device"></a>
@@ -535,7 +535,7 @@ legend will remain as per the original legend, unless
 <span><span class="co"># note: zeros are treated as no colour by default.</span></span>
 <span><span class="co"># if this is not the correct behaviour, can use `zero.color`</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, new <span class="op">=</span> <span class="cn">FALSE</span>, zero.color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add_with_same_name-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/add_with_same_name-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 </div>
@@ -580,12 +580,12 @@ original Raster had <code>1e8</code> pixels.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, <span class="va">caribou</span>, <span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.111   0.001   0.111</span></span></code></pre>
+<span><span class="co">##   0.121   0.001   0.122</span></span></code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span>, <span class="va">caribou</span>, <span class="va">maps</span><span class="op">$</span><span class="va">DEM</span>, speedup <span class="op">=</span> <span class="fl">10</span>, new <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/speedup-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/speedup-1.png" class="r-plt" alt="" width="700"></p>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.125   0.000   0.126</span></span></code></pre>
+<span><span class="co">##   0.137   0.001   0.140</span></span></code></pre>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># can add a new plot to the plotting window</span></span></code></pre></div>
 </div>
@@ -606,7 +606,7 @@ This can be useful to see where agents are on a
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">landscape</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span>, addTo <span class="op">=</span> <span class="st">"landscape$DEM"</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/add-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/add-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="clearing-plot">Clearing Plot<a class="anchor" aria-label="anchor" href="#clearing-plot"></a>
@@ -620,7 +620,7 @@ and reopen it, which is a sure-fire way to clear everything.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clearPlot.html">clearPlot</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/Plot.html">Plot</a></span><span class="op">(</span><span class="va">caribou</span><span class="op">)</span></span></code></pre></div>
-<p><img src="iii-plotting_files/figure-html/clearPlot-1.png" width="700"></p>
+<p><img src="iii-plotting_files/figure-html/clearPlot-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="plotting-in-rstudio">Plotting in RStudio<a class="anchor" aria-label="anchor" href="#plotting-in-rstudio"></a>
@@ -737,7 +737,7 @@ original source. This provides the same behaviour as a call to
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>
