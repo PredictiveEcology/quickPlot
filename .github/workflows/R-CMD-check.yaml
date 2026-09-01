@@ -20,7 +20,3 @@ jobs:
     with:
       extra-env: |
         OMP_THREAD_LIMIT=4
-      ## Legs beyond the org default 8. These still work and are
-      ## deliberate back-compat coverage, so they are preserved.
-      extra-config: |
-        [{"config": {"os": "ubuntu-latest", "nosuggests": false, "r": "oldrel-2"}}, {"config": {"os": "windows-latest", "nosuggests": false, "r": "oldrel-2"}}]
