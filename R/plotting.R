@@ -838,7 +838,7 @@ rePlot <- function(toDev = dev.cur(), fromDev = dev.cur(), clearFirst = TRUE, ..
 #'   b$a <- 2
 #'   dynGet("b$a")
 #' }
-#' testthat::expect_error(findB3()) # fails because not an object name
+#' try(findB3()) # fails because not an object name
 #'
 #' findB <- function(x) {
 #'   b$a <- 2
