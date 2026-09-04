@@ -621,17 +621,19 @@ test_that("rePlot doesn't work", {
         fil
       })
 
-    unlink(fil)
-
-    # same file for snapshot b/c basename is same as previous
-    announce_snapshot_file(name = basename(fil))
+    ## testthat rejects reusing a snapshot name within a run, so the rePlot
+    ## output needs its own. Derive it from `fil` rather than calling `fn()`
+    ## again: `fn()` bumps the shared `counter`, which would rename every
+    ## snapshot after this one.
+    filRePlot <- sub("\\.png$", "-rePlot.png", fil)
+    announce_snapshot_file(name = basename(filRePlot))
     if (correctOS(os))
       expect_snapshot_file({
-        png(filename = fil, width = 400, height = 300)
+        png(filename = filRePlot, width = 400, height = 300)
         b <- dev.cur()
         rePlot(a, b)
         dev.off(b)
-        fil
+        filRePlot
       })
   }
 
