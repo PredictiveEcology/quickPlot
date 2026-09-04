@@ -1,6 +1,17 @@
+## The image snapshots in this file were all recorded with the full Suggests set
+## installed, and `raster` in particular changes what gets recorded: several
+## tests double the length of their `rasts` list when `raster` is available, and
+## snapshot file names come from a running `counter` over those lists (see `fn()`
+## in helper-testInit.R). With `raster` absent -- as on the `_R_CHECK_DEPENDS_ONLY_`
+## CI leg -- the same names line up against different plots, so every snapshot
+## after the first `requireNamespace("raster")` block compares the wrong image.
+## Rather than maintain a second set of reference images, skip the image tests
+## when `raster` is missing; the rest of the suite still exercises the package.
+
 ## block B
 test_that("image content is not error-free", {
 
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   on.exit(
@@ -80,6 +91,7 @@ test_that("image content is not error-free", {
 # # ## block C
 test_that("plotting colors", {
 
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
     {
@@ -130,6 +142,7 @@ test_that("plotting colors", {
 
 # ## test.png 10 to 11
 test_that("internal functions in Plot", {
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
     {
@@ -208,6 +221,7 @@ test_that("internal functions in Plot", {
 
 ## block E 15 to
 test_that("Plot 2 is not error-free", {
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
     {
@@ -462,6 +476,7 @@ test_that("setColors is not error-free", {
 # block G
 test_that("Plot with base is not error-free", {
 
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   on.exit(
     {
@@ -584,6 +599,7 @@ test_that("Plot messages and warnings and errors", {
 
 ## block I
 test_that("rePlot doesn't work", {
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
   for (os in oses) {
     fil <- fn(tmpdir, desc, counter, os, envir = envirHere)
@@ -640,6 +656,7 @@ test_that("Plot - going through package coverage", {
 # block K
 test_that("Plot lists", {
   prevLastPlotNumber <- 48
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   clearPlot()
@@ -751,6 +768,7 @@ test_that("Plot functions NOT in quickPlot, i.e. redefining Plot", {
 })
 
 test_that("Issue 20; arr working", {
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   files <- dir(system.file("maps", package = "quickPlot"), full.names = TRUE, pattern = "tif")
@@ -775,6 +793,7 @@ test_that("Issue 20; arr working", {
 
 test_that("Issue 32 Plot factors lower case id", {
   prevLastPlotNumber <- 51
+  skip_if_not_installed("raster")
   testInit("terra", opts = list(quickPlot.verbose = TRUE), dev = FALSE)
 
   for (colPalette in 1:2) {
