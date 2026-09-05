@@ -1,57 +1,39 @@
-on:
-  push:
-    branches:
-      - master
-      - development
-  pull_request:
-    branches:
-      - master
-      - development
+## Thin caller -- the matrix, system dependencies, caching and the check itself
+## live in PredictiveEcology/actions. Pinned @main deliberately: tags freeze and
+## rot (this repo's revdeps workflow sat on install-spatial-deps@v0.3, whose
+## ubuntugis PPA installs a GDAL that is ABI-incompatible with Posit's noble
+## cache). The actions repo gates merges with its own self-test CI.
+##
+## Triggers were [master, development]. There is no `master` branch here and the
+## default branch is `main`, so this workflow had never run on main at all.
 
 name: R-CMD-check
 
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   R-CMD-check:
-    if: "!contains(github.event.commits[0].message, '[skip-ci]')"
-    runs-on: ${{ matrix.config.os }}
-
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {os: macOS-latest,   r: 'release'}
-          - {os: windows-latest, r: 'devel'}
-          - {os: windows-latest, r: 'release'}
-          - {os: windows-latest, r: 'oldrel-1'}
-          - {os: windows-latest, r: 'oldrel-2'}
-          - {os: ubuntu-latest,   r: 'devel'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
-          - {os: ubuntu-latest,   r: 'oldrel-2'}
-
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      OMP_THREAD_LIMIT: 4
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          Ncpus: 4
-          r-version: ${{ matrix.config.r }}
-          use-public-rspm: true
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: |
-            any::rcmdcheck
-
-      - uses: r-lib/actions/check-r-package@v2
-        with:
-          upload-snapshots: true
+    uses: PredictiveEcology/actions/.github/workflows/R-CMD-check.yaml@main
+    secrets: inherit
+    with:
+      ## The org default matrix covers macOS release, windows devel/release/
+      ## oldrel-1, ubuntu devel/release/oldrel-1 and a nosuggests leg (a gain --
+      ## there was no _R_CHECK_DEPENDS_ONLY_ leg before).
+      ##
+      ## The extra legs exist to cover the declared floor. DESCRIPTION says
+      ## `R (>= 4.3)`, and with release at 4.6 that floor is oldrel-3 -- which
+      ## the hand-rolled matrix never tested: it stopped at oldrel-2, so the
+      ## DESCRIPTION claim was unverified. ubuntu oldrel-3 tests it. The
+      ## oldrel-2 legs are carried over from the previous matrix.
+      extra-config: |
+        [{"config": {"os": "ubuntu-latest",  "nosuggests": false, "r": "oldrel-2"}},
+         {"config": {"os": "windows-latest", "nosuggests": false, "r": "oldrel-2"}},
+         {"config": {"os": "ubuntu-latest",  "nosuggests": false, "r": "oldrel-3"}}]
