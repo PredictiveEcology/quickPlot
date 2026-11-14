@@ -19,6 +19,6 @@ the version is bumped and `Remotes` is removed for the release).
 
 ## Reverse dependencies
 
-`NetLogoR` and `SpaDES.core` (Imports/Depends) and `SpaDES.tools` (Suggests)
-use `quickPlot`. No exported function changed, so none should be affected.
-`revdepcheck` TO DO before submission.
+`SpaDES.core` (Imports) and `SpaDES.tools` (Suggests) use `quickPlot`.
+`NetLogoR` will no longer depend on it after its own pending update. No exported
+function changed, so none should be affected. `revdepcheck` TO DO before submission.
