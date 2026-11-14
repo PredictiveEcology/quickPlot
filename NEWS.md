@@ -1,5 +1,10 @@
 # quickPlot (development version)
 
+* `structure()` calls no longer use the deprecated special names `.Names` and `.Dim`, which R-devel flagged in CRAN checks;
+* tests: image snapshots are skipped when `raster` is not installed; three missing snapshot fixtures added;
+
+# quickPlot 1.0.4
+
 * drop support for R <= 4.2;
 * remove defunct dependency `fastshp` (#35);
 * updates and fixes  for forthcoming `ggplot2` release (#37; #38);

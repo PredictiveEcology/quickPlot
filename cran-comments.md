@@ -1,37 +1,24 @@
-## Updated release
+## Update
 
-This is a medium update that further deals with migration to `terra` and `sf`, and removes `rgdal`, `rgeos`, and `maptools`. 
+This is a small update that removes the NOTE currently shown on the R-devel
+CRAN flavours: `structure()` calls used the deprecated special names `.Names`
+and `.Dim` (`R/plotting-other.R`, `R/testing-helpers.R`, and two test files).
+There are no other user-visible changes since 1.0.4. See `NEWS.md`.
 
 ## Test environments
 
-### GitHub Actions
-- os: macOS-latest,   r: 'release'
-- os: windows-latest, r: 'devel'
-- os: windows-latest, r: 'latest'
-.- os: windows-latest, r: 'oldrel'
-- os: ubuntu-20.04,   r: 'devel', 
-- os: ubuntu-20.04,   r: 'release'
-- os: ubuntu-20.04,   r: 'oldrel'
-
-### Winbuilder
-* Windows                 (win-builder), R Under development (unstable) (2023-06-29 r84618 ucrt)
-* Windows                 (win-builder), 4.3.1 (2023-04-21 ucrt)
-* Windows                 (win-builder), 4.2.3 (2023-03-15 ucrt)
-
-
-### R-hub
-* Linux (Debian, Fedora), MacOS, Windows
+* Ubuntu 24.04 (local), R 4.6.1: `R CMD check --as-cran`
+* GitHub Actions (org reusable workflows): see the badge on the repository
+* win-builder (release, devel), macOS builder and R-hub: TO DO before submission
 
 ## R CMD check results
 
-There were no ERRORs nor WARNINGs nor NOTEs.
+0 errors | 0 warnings | 0 notes (local; the notes about the development
+version number, `Remotes` and `.git` seen on the development branch go away when
+the version is bumped and `Remotes` is removed for the release).
 
-## revdepcheck results
+## Reverse dependencies
 
-> revdepcheck::revdep_report_cran() ## update cran-comments with this output
-## revdepcheck results
-
-We checked 2 reverse dependencies (0 from CRAN + 2 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
-
- * We saw 0 new problems
- * We failed to check 0 packages
+`NetLogoR` and `SpaDES.core` (Imports/Depends) and `SpaDES.tools` (Suggests)
+use `quickPlot`. No exported function changed, so none should be affected.
+`revdepcheck` TO DO before submission.

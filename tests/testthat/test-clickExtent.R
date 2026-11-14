@@ -6,7 +6,7 @@ test_that("clickExtent works", {
 
   # make a SpatialPolygon
   coords1 <- structure(c(-123.98, -117.1, -80.2, -100, -123.98, 60.9, 67.73, 65.58, 51.79, 60.9),
-                       .Dim = c(5L, 2L))
+                       dim = c(5L, 2L))
   shpEcozone <- terra::vect(coords1, type = "polygon")
   terra::crs(shpEcozone) <- "+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
