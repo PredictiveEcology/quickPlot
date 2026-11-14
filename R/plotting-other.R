@@ -613,7 +613,7 @@ assign(
     tcl = -0.5, usr = c(0.64, 10.36, -1.74682466270393, 0.852684557824307
     ), xaxp = c(2, 10, 4), xaxs = "r", xaxt = "s", xpd = FALSE,
     yaxp = c(-1.5, 0.5, 4), yaxs = "r", yaxt = "s", ylbias = 0.2),
-  .Names = c("xlog", "ylog", "adj", "ann", "ask", "bg", "bty", "cex", "cex.axis",
+  names = c("xlog", "ylog", "adj", "ann", "ask", "bg", "bty", "cex", "cex.axis",
     "cex.lab", "cex.main", "cex.sub", "col", "col.axis", "col.lab",
     "col.main", "col.sub", "crt", "err", "family", "fg", "fig", "fin",
     "font", "font.axis", "font.lab", "font.main", "font.sub", "lab",

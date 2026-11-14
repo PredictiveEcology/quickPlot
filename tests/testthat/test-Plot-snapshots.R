@@ -449,7 +449,7 @@ test_that("setColors is not error-free", {
     structure(list(ras1 = c("#FF0000FF", "#0000FFFF", "#00FF00FF"),
       ras2 = c("#A020F0FF", "#B757B3FF", "#CF8F78FF", "#E7C73CFF",
         "#FFFF00FF")),
-    .Names = c("ras1", "ras2"))
+    names = c("ras1", "ras2"))
   ))
 
   ras3 <- rast(matrix(sample(1:3, size = 100, replace = TRUE), ncol = 10))
@@ -469,7 +469,7 @@ test_that("setColors is not error-free", {
       ras1 = c("#FF0000FF", "#0000FFFF", "#00FF00FF"),
       ras2 = c("#A020F0FF", "#B757B3FF", "#CF8F78FF", "#E7C73CFF", "#FFFF00FF"),
       ras3 = c("#FFA500FF", "#FFD200FF", "#FFFF00FF")),
-    .Names = c("ras1", "ras2", "ras3"))
+    names = c("ras1", "ras2", "ras3"))
   ))
 })
 
